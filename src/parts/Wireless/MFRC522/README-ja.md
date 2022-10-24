@@ -73,15 +73,14 @@ RFID-RC522は占有ピンが多い為，宣言不要ピンを設定していま�
 上記”ピン設定”の表で表した宣言必須ピンは必ず wired() 関数内で宣言する必要があります．\
 宣言不要ピンは必ず wired() 関数内で宣言する必要はありませんが，その場合他のモジュールとのピンの共用が必要です．
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-cs | `number(obniz Board io)` | yes |  &nbsp; | SDAと表記のあるピンです。
-clk | `number(obniz Board io)` | yes |  &nbsp; | SCKと表記のあるピンです。
-mosi | `number(obniz Board io)` | yes |  &nbsp; | MOSIと表記のあるピンです。
-miso | `number(obniz Board io)` | yes |  &nbsp; | MISOと表記のあるピンです。
-rst | `number(obniz Board io)` | no |  &nbsp; | RSTと表記のあるピンです。
-gnd | `number(obniz Board io)` | no |  &nbsp; | GNDと表記のあるピンです。
-
+| name | type                     | required | default | description     |
+|------|--------------------------|----------|---------|-----------------|
+| cs   | `number(obniz Board io)` | yes      | &nbsp;  | SDAと表記のあるピンです。  |
+| clk  | `number(obniz Board io)` | yes      | &nbsp;  | SCKと表記のあるピンです。  |
+| mosi | `number(obniz Board io)` | yes      | &nbsp;  | MOSIと表記のあるピンです。 |
+| miso | `number(obniz Board io)` | yes      | &nbsp;  | MISOと表記のあるピンです。 |
+| rst  | `number(obniz Board io)` | no       | &nbsp;  | RSTと表記のあるピンです。  |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | GNDと表記のあるピンです。  |
 
 ```Javascript
 // Javascript Example

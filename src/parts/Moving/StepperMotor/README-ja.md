@@ -21,14 +21,13 @@
 
 ライブラリはcommonの有無でバイポーラかユニポーラかを判断します。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-a | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。
-b | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。
-aa | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。aの逆相を指定します。
-bb | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。bの逆相を指定します。
-common | `number(obniz Board io)` | no |  &nbsp; | ユニポーラの場合に指定します。
-
+| name   | type                     | required | default | description                             |
+|--------|--------------------------|----------|---------|-----------------------------------------|
+| a      | `number(obniz Board io)` | no       | &nbsp;  | つないだobniz Boardのioを指定してください。            |
+| b      | `number(obniz Board io)` | no       | &nbsp;  | つないだobniz Boardのioを指定してください。            |
+| aa     | `number(obniz Board io)` | no       | &nbsp;  | つないだobniz Boardのioを指定してください。aの逆相を指定します。 |
+| bb     | `number(obniz Board io)` | no       | &nbsp;  | つないだobniz Boardのioを指定してください。bの逆相を指定します。 |
+| common | `number(obniz Board io)` | no       | &nbsp;  | ユニポーラの場合に指定します。                         |
 
 ```Javascript
 // Javascript Example
@@ -42,17 +41,17 @@ console.log(motor.currentStep); // => 300
 
 励磁方法を変更します。デフォルトで2となっています。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-type | `string` | yes | `'2'` | 下に詳細を記す
+| name | type     | required | default | description |
+|------|----------|----------|---------|-------------|
+| type | `string` | yes      | `'2'`   | 下に詳細を記す     |
 
 指定できるのは以下です。
 
-keyname | type | description
---- | --- | ---
-`'1'` | 1相励磁 | どれか１つのコイルのみを動作する方法。消費電力が少ないが、パワーは弱い
-`'2'` | 2相励磁 | 必ず２つのコイルを動作する方法。最も一般的
-`'1-2'` | 1-2相励磁 | 上記２つを組み合わせた方式で半分のステップで駆動できるのが特徴
+| keyname | type   | description                         |
+|---------|--------|-------------------------------------|
+| `'1'`   | 1相励磁   | どれか１つのコイルのみを動作する方法。消費電力が少ないが、パワーは弱い |
+| `'2'`   | 2相励磁   | 必ず２つのコイルを動作する方法。最も一般的               |
+| `'1-2'` | 1-2相励磁 | 上記２つを組み合わせた方式で半分のステップで駆動できるのが特徴     |
 
 `'1-2'`のみステップあたりの移動量が変わるので注意が必要です。
 
@@ -69,9 +68,9 @@ console.log(motor.currentStep); // => 300
 
 速度をHzで指定します。100は1秒間に100ステップとなります。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-frequency | `number` | yes | `100` | ステップ移動の周波数
+| name      | type     | required | default | description |
+|-----------|----------|----------|---------|-------------|
+| frequency | `number` | yes      | `100`   | ステップ移動の周波数  |
 
 指定できる最大値はモーターとモーターの負荷によって異なります。大きいほどスリップの可能性(動かしたはずなのに実際は動いていない)が上がります
 
@@ -86,9 +85,9 @@ await motor.stepWait(100);
 
 指定したステップだけ移動します。speedとstepTypeに従ってモーターを駆動します。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-step | `number` | yes | - | 動かしたいステップ数
+| name | type     | required | default | description |
+|------|----------|----------|---------|-------------|
+| step | `number` | yes      | -       | 動かしたいステップ数  |
 
 小数が与えられた場合は四捨五入されます。
 
@@ -104,10 +103,9 @@ await motor.stepWait(-100);
 
 目的となるステップ数の場所まで移動します。speedとstepTypeに従ってモーターを駆動します。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-destination | `number` | yes | - | 目的となるステップ数。
-
+| name        | type     | required | default | description |
+|-------------|----------|----------|---------|-------------|
+| destination | `number` | yes      | -       | 目的となるステップ数。 |
 
 ```Javascript
 // Javascript Example
@@ -157,9 +155,9 @@ console.log(motor.currentStep) // => -150
 指定した角度だけ回転させます。
 rotationStepCount変数に従い動かすので、先に設定する必要があります。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-rotation | `number` | yes | - | 回転させたい角度(度)
+| name     | type     | required | default | description |
+|----------|----------|----------|---------|-------------|
+| rotation | `number` | yes      | -       | 回転させたい角度(度) |
 
 360を指定すれば1回転することになり、-360で逆向きに１回転します。
 
@@ -178,9 +176,9 @@ console.log(motor.currentAngle()); // => 0
 また、最も少ない移動数でその角度に移動します。
 rotationStepCount変数に従い動かすので、先に設定する必要があります。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-angle | `number` | yes | - | 目標となる角度(0 to 360)
+| name  | type     | required | default | description       |
+|-------|----------|----------|---------|-------------------|
+| angle | `number` | yes      | -       | 目標となる角度(0 to 360) |
 
 355度に移動したあと0を指定すると355度ではなく5度の移動となります。
 
@@ -207,10 +205,9 @@ await motor.rotateToWait(90);
 指定した距離(mm)だけ移動します。
 milliMeterStepCount変数に従い動かすので、先に設定する必要があります。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-distance | `number` | yes | - | 移動距離(mm)
-
+| name     | type     | required | default | description |
+|----------|----------|----------|---------|-------------|
+| distance | `number` | yes      | -       | 移動距離(mm)    |
 
 ```Javascript
 // Javascript Example
@@ -226,10 +223,9 @@ console.log(motor.currentDistance()); // => 90
 はじめを0として、指定した位置(mm)に移動します。
 milliMeterStepCount変数に従い動かすので、先に設定する必要があります。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-destination | `number` | yes | - | 目標位置(mm)
-
+| name        | type     | required | default | description |
+|-------------|----------|----------|---------|-------------|
+| destination | `number` | yes      | -       | 目標位置(mm)    |
 
 ```Javascript
 // Javascript Example

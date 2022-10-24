@@ -2,7 +2,7 @@ name: Create PR from stg to master
 on:
   push:
     branches:
-      - stg
+      - develop
 jobs:
   git-pr-release:
     runs-on: ubuntu-latest

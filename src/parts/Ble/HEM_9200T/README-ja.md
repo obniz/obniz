@@ -67,8 +67,8 @@ await obniz.ble.scan.startWait();
 
 データフォーマットは次の通りで、celsius　もしくは fahrenheit に温度データが入っています。
 
-```json
- {
+```
+{
   bloodPressure?: {
     systolic: number;
     diastolic: number;

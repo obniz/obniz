@@ -104,9 +104,11 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#forceconnect" class="tsd-kind-icon">force<wbr>Connect</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#mturequest" class="tsd-kind-icon">mtu<wbr>Request</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#pairingoption" class="tsd-kind-icon">pairing<wbr>Option</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#retry" class="tsd-kind-icon">retry</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#usepyh1m" class="tsd-kind-icon">use<wbr>Pyh1m</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#usepyh2m" class="tsd-kind-icon">use<wbr>Pyh2m</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#usepyhcoded" class="tsd-kind-icon">use<wbr>Pyh<wbr>Coded</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obnizcore.components.ble.hci.bleconnectsetting.html#waituntilpairing" class="tsd-kind-icon">wait<wbr>Until<wbr>Pairing</a></li>
 							</ul>
 						</section>
 					</div>
@@ -120,7 +122,7 @@
 					<div class="tsd-signature tsd-kind-icon">auto<wbr>Discovery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:75</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:76</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -151,7 +153,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<div class="tsd-signature tsd-kind-icon">force<wbr>Connect<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:92</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:95</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -168,7 +170,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<div class="tsd-signature tsd-kind-icon">mtu<wbr>Request<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:102</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:105</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -186,7 +188,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<div class="tsd-signature tsd-kind-icon">pairing<wbr>Option<span class="tsd-signature-symbol">:</span> <a href="obnizcore.components.ble.hci.blepairingoptions.html" class="tsd-signature-type">BlePairingOptions</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:83</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:86</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -198,12 +200,22 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="retry" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> retry</h3>
+					<div class="tsd-signature tsd-kind-icon">retry<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:134</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="usepyh1m" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> use<wbr>Pyh1m</h3>
 					<div class="tsd-signature tsd-kind-icon">use<wbr>Pyh1m<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:111</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:114</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -220,7 +232,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<div class="tsd-signature tsd-kind-icon">use<wbr>Pyh2m<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:120</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:123</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -237,7 +249,7 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 					<div class="tsd-signature tsd-kind-icon">use<wbr>Pyh<wbr>Coded<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:129</li>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:132</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -248,6 +260,16 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 						<p>Default : true</p>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="waituntilpairing" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wait<wbr>Until<wbr>Pairing</h3>
+					<div class="tsd-signature tsd-kind-icon">wait<wbr>Until<wbr>Pairing<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/embeds/bleHci/bleRemotePeripheral.ts:78</li>
+						</ul>
+					</aside>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -255,66 +277,6 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 				<ul>
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_mesh_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESH&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_base_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Base&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_brightness_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Brightness&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_button_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Button&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_gpio_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/GPIO&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_led_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/LED&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_motion_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Motion&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_move_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Move&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_temphumid_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Temp<wbr>Humid&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_util_error_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/util/<wbr>Error&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
-						<ul>
-							<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="../modules/obnizcore.components.html">Components</a>
-								<ul>
-									<li class="current tsd-kind-external-module tsd-parent-kind-external-module tsd-is-not-exported">
-										<a href="../modules/obnizcore.components.ble.html">Ble</a>
-										<ul>
-											<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
-												<a href="../modules/obnizcore.components.ble.hci.html">Hci</a>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="../modules/obnizcore.errors.html">Errors</a>
-							</li>
-							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="../modules/obnizcore.hardware.html">Hardware</a>
-							</li>
-						</ul>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-not-exported">
-						<a href="../modules/parts.html">Parts</a>
 					</li>
 				</ul>
 			</nav>
@@ -338,6 +300,9 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#pairingoption" class="tsd-kind-icon">pairing<wbr>Option</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#retry" class="tsd-kind-icon">retry</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#usepyh1m" class="tsd-kind-icon">use<wbr>Pyh1m</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
@@ -345,6 +310,9 @@ obniz.ble.scan.onfind = <span class="hljs-function"><span class="hljs-keyword">f
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#usepyhcoded" class="tsd-kind-icon">use<wbr>Pyh<wbr>Coded</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="obnizcore.components.ble.hci.bleconnectsetting.html#waituntilpairing" class="tsd-kind-icon">wait<wbr>Until<wbr>Pairing</a>
 							</li>
 						</ul>
 					</li>

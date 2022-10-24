@@ -31,24 +31,24 @@ obniz Board-DIN[1つ目のディスプレイ]DOUT-DIN[2つ目のディスプレ�
 
 7セグメントLEDとMAX7219は以下のように接続します。
 
-|MAX7219<br>ピン名(ピン番号)|7セグメントLED|
-|:---:|:---:|
-|SEG A(14)|A|
-|SEG B(16)|B|
-|SEG C(20)|C|
-|SEG D(23)|D|
-|SEG E(21)|E|
-|SEG F(15)|F|
-|SEG G(17)|G|
-|SEG DP(22)|DP|
-|DIG 0(2)|COM0|
-|DIG 1(11)|COM1|
-|DIG 2(6)|COM2|
-|DIG 3(7)|COM3|
-|DIG 4(3)|COM4|
-|DIG 5(10)|COM5|
-|DIG 6(5)|COM6|
-|DIG 7(8)|COM7|
+| MAX7219<br>ピン名(ピン番号) | 7セグメントLED |
+|:--------------------:|:---------:|
+|      SEG A(14)       |     A     |
+|      SEG B(16)       |     B     |
+|      SEG C(20)       |     C     |
+|      SEG D(23)       |     D     |
+|      SEG E(21)       |     E     |
+|      SEG F(15)       |     F     |
+|      SEG G(17)       |     G     |
+|      SEG DP(22)      |    DP     |
+|       DIG 0(2)       |   COM0    |
+|      DIG 1(11)       |   COM1    |
+|       DIG 2(6)       |   COM2    |
+|       DIG 3(7)       |   COM3    |
+|       DIG 4(3)       |   COM4    |
+|      DIG 5(10)       |   COM5    |
+|       DIG 6(5)       |   COM6    |
+|       DIG 7(8)       |   COM7    |
 
 *補足
 - 7セグメントLEDのピン番号は製品によって異なるので、データシートで確認してください。
@@ -114,16 +114,16 @@ dp : ドット表示がある7セグメントLEDのドットの点灯/消灯を�
 
 number accept 
 
-| Value        | description   | 
-| ------------- |-------------| 
-| 0 to 9      | number | 
-| 'on'      | all on (=8) | 
-| 'off'      | all off | 
-| '-'      |  show "-" | 
-| 'e'      |  show "E" | 
-| 'h'      |  show "H" | 
-| 'l'      |  show "L" | 
-| 'p'      |  show "P" | 
+| Value  | description |
+|--------|-------------|
+| 0 to 9 | number      |
+| 'on'   | all on (=8) | 
+| 'off'  | all off     | 
+| '-'    | show "-"    | 
+| 'e'    | show "E"    | 
+| 'h'    | show "H"    | 
+| 'l'    | show "L"    | 
+| 'p'    | show "P"    | 
 
 ```Javascript
 // Javascript Example

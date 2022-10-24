@@ -24,11 +24,15 @@ if (process.env.OBNIZ_DEVICE === 'devkitc') {
   json = require('./board/m5stackbasic_check_io.json');
 } else if (process.env.OBNIZ_DEVICE === 'devkitm') {
   json = require('./board/esp32c3devkitm_check_io.json');
+} else if (process.env.OBNIZ_DEVICE === 'blewifi_gw') {
+  json = require('./board/blewifi_gw.json');
+} else if (process.env.OBNIZ_DEVICE === 'blewifi_gw2') {
+  json = require('./board/blewifi_gw2.json');
 } else if (process.env.OBNIZ_DEVICE) {
   throw new Error(`unknown device ${process.env.OBNIZ_DEVICE}`);
 }
 
-let checkBoard_ID = process.env.OBNIZ_ID;
+let checkBoard_ID = process.env.OBNIZ_ID || '7002-0516';
 if (!checkBoard_ID) {
   // test device
   if (json.name === 'ESP32 Dev Kit') {
@@ -48,7 +52,7 @@ if (!checkBoard_ID) {
   }
 }
 
-const obnizA_ID = process.env.OBNIZA_ID || '54371148';
+const obnizA_ID = process.env.OBNIZA_ID || '77487247';
 const obnizB_ID = process.env.OBNIZB_ID || '10803935';
 
 let obnizA;

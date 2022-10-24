@@ -776,6 +776,7 @@ export default abstract class ObnizConnection extends EventEmitter<
 
   protected wsOnClose(event: any) {
     this._print_debug(`closed from remote event=${event}`);
+    this.connectionState = 'closing';
     const beforeOnConnectCalled = this._onConnectCalled;
     this._close();
     this.connectionState = 'closed';

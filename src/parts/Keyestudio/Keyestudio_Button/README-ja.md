@@ -7,12 +7,11 @@ Keyestudio社製ボタンモジュールです。押されたかどうかを検�
 ## wired(obniz,  {signal [, vcc, gnd]});
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal ボタンの状態を示す端子(s pin of Keyestudio)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC端子(+ pin of Keyestudio)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(- pin of Keyestudio)
-
+| name   | type                     | required | default | description                             |
+|--------|--------------------------|----------|---------|-----------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal ボタンの状態を示す端子(s pin of Keyestudio) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC端子(+ pin of Keyestudio)              |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND端子(- pin of Keyestudio)              |
 
 ```Javascript
 // Javascript Example

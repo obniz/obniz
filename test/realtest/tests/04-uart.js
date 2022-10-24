@@ -7,12 +7,15 @@ let check_io;
 describe('4-uart', function () {
   this.timeout(20000);
 
-  before(() => {
+  before(function () {
     return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
         checkBoard = config.checkBoard;
         check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
+        if (check_io.length === 0) {
+          this.skip();
+        }
         resolve();
       });
     });

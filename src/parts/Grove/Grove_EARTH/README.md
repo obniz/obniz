@@ -10,13 +10,13 @@ It has both analog and digital outputs.
 ## wired(obniz, { aout, dout, vcc, gnd, grove })
 connect EARTH UNIT to the obniz Device.  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | power supply
-gnd | `number(obniz Board io)` | no |  &nbsp; | power supply
-dout | `number(obniz Board io)` | no |  &nbsp; | digital out
-aout | `number(obniz Board io)` | no | &nbsp;  | analog out
-grove | `object` | no | &nbsp;  | grove property when device has a grove interface
+| name  | type                     | required | default | description                                      |
+|-------|--------------------------|----------|---------|--------------------------------------------------|
+| vcc   | `number(obniz Board io)` | no       | &nbsp;  | power supply                                     |
+| gnd   | `number(obniz Board io)` | no       | &nbsp;  | power supply                                     |
+| dout  | `number(obniz Board io)` | no       | &nbsp;  | digital out                                      |
+| aout  | `number(obniz Board io)` | no       | &nbsp;  | analog out                                       |
+| grove | `object`                 | no       | &nbsp;  | grove property when device has a grove interface |
 
 ```javascript
 obniz.onconnect = async function() {

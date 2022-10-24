@@ -15,17 +15,17 @@ obniz Board has internal pull up. But for communication stability, please add pu
 
 ![](image3.jpg)
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vio | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply for interface
-vcore | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply for core
-gnd | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply
-csb | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. I2C/SPI selection.
-sdi | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. data port
-sck | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. clock
-sdo | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. data port or address selection
-i2c | `i2c object` | no | &nbsp; | configured i2c object
-address | `number` | no | 0x76  | 0x76 or 0x77
+| name    | type                     | required | default | description                                              |
+|---------|--------------------------|----------|---------|----------------------------------------------------------|
+| vio     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. power supply for interface     |
+| vcore   | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. power supply for core          |
+| gnd     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. power supply                   |
+| csb     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. I2C/SPI selection.             |
+| sdi     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. data port                      |
+| sck     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. clock                          |
+| sdo     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. data port or address selection |
+| i2c     | `i2c object`             | no       | &nbsp;  | configured i2c object                                    |
+| address | `number`                 | no       | 0x76    | 0x76 or 0x77                                             |
 
 This library use I2C to communicate.
 
