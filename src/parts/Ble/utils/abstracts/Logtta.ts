@@ -10,8 +10,8 @@ import {
   ObnizPartsBleConnectable,
   ObnizPartsBleMode,
 } from '../../../../obniz/ObnizPartsBleAbstract';
-import BleBatteryService from '../services/batteryService';
-import BleGenericAccess from '../services/genericAccess';
+import { BleBatteryService } from '../services/batteryService';
+import { BleGenericAccess } from '../services/genericAccess';
 
 type PinCodeType = 'Authentication' | 'Rewrite';
 
