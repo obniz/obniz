@@ -2,14 +2,14 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleCharacteristic from './bleCharacteristic';
-import BleLocalValueAttributeAbstract from './bleLocalValueAttributeAbstract';
+import { BleCharacteristic } from './bleCharacteristic';
+import { BleLocalValueAttributeAbstract } from './bleLocalValueAttributeAbstract';
 import { BleDescriptorDefine } from './bleTypes';
 
 /**
  * @category Use as Peripheral
  */
-export default class BleDescriptor extends BleLocalValueAttributeAbstract<
+export class BleDescriptor extends BleLocalValueAttributeAbstract<
   BleCharacteristic,
   null
 > {

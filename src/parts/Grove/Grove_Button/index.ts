@@ -4,9 +4,10 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import ObnizPartsInterface, {
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

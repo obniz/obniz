@@ -8,11 +8,11 @@ obnizデバイスと接続します。
 
 このセンサーは外部から電源を供給する必要があります。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
-sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
-i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
+| name | type                     | required | default | description       |
+|------|--------------------------|----------|---------|-------------------|
+| scl  | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsclとなる端子です    |
+| sda  | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsdaとなる端子です    |
+| i2c  | `object`                 | no       | &nbsp;  | obnizのi2cオブジェクトです |
 
 ```javascript
 // JavaScript Examples

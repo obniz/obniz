@@ -4,12 +4,12 @@
 
 ## wired(obniz,  { signal [, vcc, gnd, grove]});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | Signal pin of state output(4 pin of Grove)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC for button(2 pin of Grove)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND for button(0 pin of Grove)
-grove | `object` | no | &nbsp;  | grove interface object if a device has
+| name   | type                     | required | default | description                                |
+|--------|--------------------------|----------|---------|--------------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | Signal pin of state output(4 pin of Grove) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC for button(2 pin of Grove)             |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND for button(0 pin of Grove)             |
+| grove  | `object`                 | no       | &nbsp;  | grove interface object if a device has     |
 
 ```Javascript
 // Javascript Example
@@ -33,12 +33,12 @@ This example used "Grove 4 pin Female Jumper to Grove 4 pin Conversion Cable" co
 
 Connect the Grove cable Grove parts. Connect the color of each the Grove cables to the obniz pins.
 
-Grove cable color | obniz pin | function |
---- | --- | --- |
-black | 0 | gnd |
-red | 1 | vcc |
-white | 2 | -- |
-yellow | 3 | signal |
+| Grove cable color | obniz pin | function |
+|-------------------|-----------|----------|
+| black             | 0         | gnd      |
+| red               | 1         | vcc      |
+| white             | 2         | --       |
+| yellow            | 3         | signal   |
 
 In this case, `obniz.wired` set like this.
 

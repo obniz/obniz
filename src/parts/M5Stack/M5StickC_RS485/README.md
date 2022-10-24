@@ -25,13 +25,13 @@ obniz.onconnect = async function() {
 
 When using other devices, White, yellow, red and black wires correspond to scl, sda, vcc and gnd respectively.  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-tx | `number(obniz Board io)` | yes |  &nbsp; | tx
-rx | `number(obniz Board io)` | yes | &nbsp;  | rx
-baud | `number` | no | &nbsp;  | baudrate
+| name | type                     | required | default | description  |
+|------|--------------------------|----------|---------|--------------|
+| vcc  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply |
+| tx   | `number(obniz Board io)` | yes      | &nbsp;  | tx           |
+| rx   | `number(obniz Board io)` | yes      | &nbsp;  | rx           |
+| baud | `number`                 | no       | &nbsp;  | baudrate     |
 
 ```javascript
 // Javascript Example

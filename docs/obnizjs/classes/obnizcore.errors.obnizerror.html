@@ -179,13 +179,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Obniz<wbr>Error<span class="tsd-signature-symbol">(</span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, e<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.errors.obnizerror.html" class="tsd-signature-type">ObnizError</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Obniz<wbr>Error<span class="tsd-signature-symbol">(</span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, e<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, __namedParameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>cause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obnizcore.errors.obnizerror.html" class="tsd-signature-type">ObnizError</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/ObnizError.ts:8</li>
+									<li>Defined in src/obniz/ObnizError.ts:12</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -195,6 +195,14 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> e: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> __namedParameters: <span class="tsd-signature-symbol">{ </span>cause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>cause<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span></h5>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="obnizcore.errors.obnizerror.html" class="tsd-signature-type">ObnizError</a></h4>
@@ -210,7 +218,7 @@
 					<div class="tsd-signature tsd-kind-icon">code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/obniz/ObnizError.ts:9</li>
+							<li>Defined in src/obniz/ObnizError.ts:14</li>
 						</ul>
 					</aside>
 				</section>
@@ -221,7 +229,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from Error.message</p>
 						<ul>
-							<li>Defined in node_modules/typescript/lib/lib.es5.d.ts:974</li>
+							<li>Defined in node_modules/typedoc/node_modules/typescript/lib/lib.es5.d.ts:974</li>
 						</ul>
 					</aside>
 				</section>
@@ -232,7 +240,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from Error.name</p>
 						<ul>
-							<li>Defined in node_modules/typescript/lib/lib.es5.d.ts:973</li>
+							<li>Defined in node_modules/typedoc/node_modules/typescript/lib/lib.es5.d.ts:973</li>
 						</ul>
 					</aside>
 				</section>
@@ -243,7 +251,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from Error.stack</p>
 						<ul>
-							<li>Defined in node_modules/typescript/lib/lib.es5.d.ts:975</li>
+							<li>Defined in node_modules/typedoc/node_modules/typescript/lib/lib.es5.d.ts:975</li>
 						</ul>
 					</aside>
 				</section>
@@ -253,7 +261,7 @@
 					<div class="tsd-signature tsd-kind-icon">Error<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ErrorConstructor</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in node_modules/typescript/lib/lib.es5.d.ts:984</li>
+							<li>Defined in node_modules/typedoc/node_modules/typescript/lib/lib.es5.d.ts:984</li>
 						</ul>
 					</aside>
 				</section>
@@ -264,56 +272,6 @@
 				<ul>
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_mesh_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESH&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_base_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Base&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_brightness_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Brightness&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_button_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Button&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_gpio_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/GPIO&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_led_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/LED&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_motion_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Motion&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_move_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Move&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_block_temphumid_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/block/<wbr>Temp<wbr>Humid&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_parts_ble_utils_abstracts_meshjs_util_error_.html">&quot;parts/<wbr>Ble/utils/abstracts/MESHjs/util/<wbr>Error&quot;</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
-						<ul>
-							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="../modules/obnizcore.components.html">Components</a>
-							</li>
-							<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="../modules/obnizcore.errors.html">Errors</a>
-							</li>
-							<li class=" tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="../modules/obnizcore.hardware.html">Hardware</a>
-							</li>
-						</ul>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-not-exported">
-						<a href="../modules/parts.html">Parts</a>
 					</li>
 				</ul>
 			</nav>
@@ -408,6 +366,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="obnizcore.errors.obniztimeouterror.html" class="tsd-kind-icon">Obniz<wbr>Timeout<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/obnizcore.errors.obnizerrorstatic.html" class="tsd-kind-icon">Obniz<wbr>Error<wbr>Static</a>
 					</li>
 				</ul>
 			</nav>

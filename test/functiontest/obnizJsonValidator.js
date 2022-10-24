@@ -1,5 +1,4 @@
-const Obniz = require('../../index');
-const tv4 = Obniz.WSCommand.schema;
+const tv4 = require('../../dist/src/obniz/libs/wscommand/WSSchema').default;
 
 class obnizJsonValidator {
   constructor() {

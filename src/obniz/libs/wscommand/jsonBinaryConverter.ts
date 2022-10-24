@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-class JsonBinaryConverter {
+export class JsonBinaryConverter {
   public static convertFromBinaryToJson(schema: any, binary: any) {
     const types: any = {
       hex: this.hexFromBinary.bind(this),
@@ -277,5 +277,3 @@ class JsonBinaryConverter {
     return new Uint8Array(Buffer.from(data, 'utf8'));
   }
 }
-
-export default JsonBinaryConverter;

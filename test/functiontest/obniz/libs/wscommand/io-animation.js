@@ -119,10 +119,7 @@ function compressTest(obniz, requestJson, expecteBinarystrings) {
   const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
   expect(isValidCommand.valid).to.be.true;
 
-  const compress = obniz.constructor.WSCommand.compress(
-    obniz.wscommands,
-    requestJson[0]
-  );
+  const compress = obniz.wsCommandManager.compress(requestJson[0]);
 
   expect(compress).to.be.deep.equal(binary);
 }

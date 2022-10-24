@@ -281,8 +281,6 @@ import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
-import ObnizPartsBleInterface from './ObnizPartsBleInterface';
-import ObnizPartsInterface from './ObnizPartsInterface';
 import TR7, { TR7Options } from '../parts/Ble/TR7';
 import MM_BLEBC5, { MM_BLEBC5_Options } from '../parts/Ble/MM_BLEBC5';
 import MESH_100BU, { MESH_100BUOptions } from '../parts/Ble/MESH_100BU';
@@ -292,6 +290,7 @@ import MESH_100MD, { MESH_100MDOptions } from '../parts/Ble/MESH_100MD';
 import MESH_100PA, { MESH_100PAOptions } from '../parts/Ble/MESH_100PA';
 import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
+import DR_MARK, { DR_MARKOptions } from '../parts/Ble/DR_MARK';
 import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
 import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
 
@@ -725,4 +724,5 @@ export interface PartsList {
   MESH_100TH: PartsInterface<MESH_100TH, MESH_100THOptions, typeof MESH_100TH>;
   MESH_100GP: PartsInterface<MESH_100GP, MESH_100GPOptions, typeof MESH_100GP>;
   MM_BLEBC5: PartsInterface<MM_BLEBC5, MM_BLEBC5_Options, typeof MM_BLEBC5>;
+  DR_MARK: PartsInterface<DR_MARK, DR_MARKOptions, typeof DR_MARK>;
 }

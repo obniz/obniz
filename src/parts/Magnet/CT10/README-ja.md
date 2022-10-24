@@ -7,12 +7,11 @@ Groveコネクタで利用できる磁気センサーです。磁石と一緒に
 ## wired(obniz,  { signal [, vcc, gnd]});
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal 地場の状態を示す端子(4 pin of Grove)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC端子(2 pin of Grove)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(0 pin of Grove)
-
+| name   | type                     | required | default | description                       |
+|--------|--------------------------|----------|---------|-----------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal 地場の状態を示す端子(4 pin of Grove) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC端子(2 pin of Grove)             |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND端子(0 pin of Grove)             |
 
 ```Javascript
 // Javascript Example

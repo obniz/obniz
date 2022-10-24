@@ -17,11 +17,11 @@ var sensor = obniz.wired("M5StickC_FINGER");
 
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-tx | `number(obniz Board io)` | no |  &nbsp; | tx of uart
-rx | `number(obniz Board io)` | no | &nbsp;  | rx of uart
-gnd | `number(obniz Board io)` | no | &nbsp;  | Power Supply
+| name | type                     | required | default | description  |
+|------|--------------------------|----------|---------|--------------|
+| tx   | `number(obniz Board io)` | no       | &nbsp;  | tx of uart   |
+| rx   | `number(obniz Board io)` | no       | &nbsp;  | rx of uart   |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply |
 
 ```javascript
 // JavaScript Examples

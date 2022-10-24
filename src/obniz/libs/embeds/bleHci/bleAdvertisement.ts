@@ -2,15 +2,14 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizBLE from './ble';
-import Builder from './bleAdvertisementBuilder';
-import BleAdvertisementBuilder from './bleAdvertisementBuilder';
+import { ObnizBLE } from './ble';
+import { BleAdvertisementBuilder } from './bleAdvertisementBuilder';
 import { BleAdvertisementData, BleScanResponseData } from './bleTypes';
 
 /**
  * @category Use as Peripheral
  */
-export default class BleAdvertisement {
+export class BleAdvertisement {
   protected obnizBle: ObnizBLE;
   protected adv_data: number[];
   protected scan_resp: number[];
@@ -178,12 +177,12 @@ export default class BleAdvertisement {
   protected advDataBulider(
     jsonVal: BleAdvertisementData
   ): BleAdvertisementBuilder {
-    return new Builder(jsonVal);
+    return new BleAdvertisementBuilder(jsonVal);
   }
 
   protected scanRespDataBuilder(
     json: BleScanResponseData
   ): BleAdvertisementBuilder {
-    return new Builder(json);
+    return new BleAdvertisementBuilder(json);
   }
 }

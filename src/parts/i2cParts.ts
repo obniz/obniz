@@ -5,8 +5,9 @@
 
 import Obniz from '../obniz';
 import { DriveType, PullType } from '../obniz/libs/io_peripherals/common';
-import PeripheralI2C from '../obniz/libs/io_peripherals/i2c';
-import ObnizPartsInterface, {
+import { PeripheralI2C } from '../obniz/libs/io_peripherals/i2c';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../obniz/ObnizPartsInterface';
 

@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-class WSCommandBleHci {
+export class WSCommandBleHci {
   public _delegate: any;
   public _CommandHCIInit = 41;
   public _CommandHCIDeinit = 42;
@@ -75,5 +75,3 @@ class WSCommandBleHci {
     this._delegate.sendCommand(this._CommandHCIAdvertisementFilter, buf);
   }
 }
-
-export default WSCommandBleHci;

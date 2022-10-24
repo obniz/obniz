@@ -2,38 +2,23 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-class WSCommandSystem extends WSCommand {
-  public module: number;
-  public _CommandReboot: number;
-  public _CommandReset: number;
-  public _CommandSelfCheck: number;
-  public _CommandWait: number;
-  public _CommandResetOnDisconnect: number;
-  public _CommandPingPong: number;
-  public _CommandVCC: number;
-  public _CommandSleepSeconds: number;
-  public _CommandSleepMinute: number;
-  public _CommandSleepIoTrigger: number;
+export class WSCommandSystem extends WSCommandAbstract {
+  module = 0;
 
-  constructor() {
-    super();
-    this.module = 0;
+  _CommandReboot = 0;
 
-    this._CommandReboot = 0;
+  _CommandReset = 2;
+  _CommandSelfCheck = 3;
+  _CommandWait = 4;
+  _CommandResetOnDisconnect = 5;
 
-    this._CommandReset = 2;
-    this._CommandSelfCheck = 3;
-    this._CommandWait = 4;
-    this._CommandResetOnDisconnect = 5;
-
-    this._CommandPingPong = 8;
-    this._CommandVCC = 9;
-    this._CommandSleepSeconds = 10;
-    this._CommandSleepMinute = 11;
-    this._CommandSleepIoTrigger = 12;
-  }
+  _CommandPingPong = 8;
+  _CommandVCC = 9;
+  _CommandSleepSeconds = 10;
+  _CommandSleepMinute = 11;
+  _CommandSleepIoTrigger = 12;
 
   // Commands
 
@@ -188,5 +173,3 @@ class WSCommandSystem extends WSCommand {
     this.sendCommand(this._CommandSleepIoTrigger, buf);
   }
 }
-
-export default WSCommandSystem;

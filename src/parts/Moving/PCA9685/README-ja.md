@@ -18,18 +18,17 @@ PCA9685は16の独立したPWMを出力できるチップです。周波数は16
 
 サーボモーターに供給する電源（AdafruitのモジュールではV+と表示されています。）はobniz Boardからではなく、別の電源を利用して下さい。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-scl | `number(obniz Board io)` | no |  &nbsp; | つないだobniz Boardのioを指定してください。
-sda | `number(obniz Board io)` | no | &nbsp;  | つないだobniz Boardのioを指定してください。
-i2c | `i2c object` | no | &nbsp;  | 設定済みのi2cに接続している場合に利用できます。
-vcc | `number(obniz Board io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-gnd | `number(obniz Board io)` | no |  &nbsp; | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。
-oe | `number(obniz Board io)` | no |  &nbsp; | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。
-enabled | `boolean` | no | true  | oeが指定されていた場合、初期状態をどちらにするか指定できます。
-address | `number` | no | 0x40 | モジュールのアドレスです。初期設定(0x40)から変更している場合は指定して下さい。
-drive | `boolean` | no |  'push-pull' | 標準で出力はプッシュプル出力ですが、'open-drain'を指定することでオープンドレイン出力にできます。
-
+| name    | type                     | required | default     | description                                                                                                       |
+|---------|--------------------------|----------|-------------|-------------------------------------------------------------------------------------------------------------------|
+| scl     | `number(obniz Board io)` | no       | &nbsp;      | つないだobniz Boardのioを指定してください。                                                                                      |
+| sda     | `number(obniz Board io)` | no       | &nbsp;      | つないだobniz Boardのioを指定してください。                                                                                      |
+| i2c     | `i2c object`             | no       | &nbsp;      | 設定済みのi2cに接続している場合に利用できます。                                                                                         |
+| vcc     | `number(obniz Board io)` | no       | &nbsp;      | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。                                        |
+| gnd     | `number(obniz Board io)` | no       | &nbsp;      | 別の電源につないでいる場合は指定する必要はありません。vcc/gndどちらかでも指定されている場合は、電源投入後にこの関数の中でwaitが入ります。                                        |
+| oe      | `number(obniz Board io)` | no       | &nbsp;      | 出力ピンすべてをonでもoffでもないハイインピーダンスに切り替えるためのピンです。指定した場合はsetEnable()関数が使えるようになります。enabled=falseを指定しない限りenabledが初期状態となります。 |
+| enabled | `boolean`                | no       | true        | oeが指定されていた場合、初期状態をどちらにするか指定できます。                                                                                  |
+| address | `number`                 | no       | 0x40        | モジュールのアドレスです。初期設定(0x40)から変更している場合は指定して下さい。                                                                      |
+| drive   | `boolean`                | no       | 'push-pull' | 標準で出力はプッシュプル出力ですが、'open-drain'を指定することでオープンドレイン出力にできます。                                                        |
 
 ```Javascript
 // Javascript Example

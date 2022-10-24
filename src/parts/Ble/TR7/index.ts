@@ -4,8 +4,9 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import {
+  ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 import { BleAdvBinaryAnalyzer } from '../utils/advertisement/advertismentAnalyzer';

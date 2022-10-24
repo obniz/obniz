@@ -4,9 +4,10 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import ObnizPartsInterface, {
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

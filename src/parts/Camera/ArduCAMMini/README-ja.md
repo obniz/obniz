@@ -28,21 +28,21 @@ ArduCAM-Mini-2MP-Plusを使用する場合はwiredの引数で```module_version:
 
 このモジュールはSPIとI2Cがそれぞれ１つずつ必要です。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-cs | `number(obniz Board io)` | yes | &nbsp; | obniz Board io. チップ選択
-vcc | `number(obniz Board io)` | no | &nbsp; | obniz Board io. 電源 +5V
-gnd | `number(obniz Board io)` | no | &nbsp; | obniz Board io. 電源 0v
-mosi | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI mosi 端子
-miso | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI miso 端子
-sclk | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI clk 端子
-sda | `number(obniz Board io)` | no | &nbsp; | obniz Board io. I2C sda 端子
-scl | `number(obniz Board io)` | no | &nbsp; | obniz Board io. I2C scl 端子
-i2c | `i2c object` | no | &nbsp; | configured i2c object
-spi | `spi object` | no | &nbsp; | configured spi object
-spi_frequency | `spi object` | no | 4Mhz | SPI通信がうまくいかない場合に周波数を下げる時に利用します
-spi_drive | `spi object` | no | `'3v'` | SPI通信がうまくいかない場合に駆動方法を変更する時に利用します
-module_version | `number` | no | 0 | ArduCAM-Mini-2MP-Plusを使用する場合は1を指定してください
+| name           | type                     | required | default | description                             |
+|----------------|--------------------------|----------|---------|-----------------------------------------|
+| cs             | `number(obniz Board io)` | yes      | &nbsp;  | obniz Board io. チップ選択                   |
+| vcc            | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. 電源 +5V                  |
+| gnd            | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. 電源 0v                   |
+| mosi           | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. SPI mosi 端子             |
+| miso           | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. SPI miso 端子             |
+| sclk           | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. SPI clk 端子              |
+| sda            | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. I2C sda 端子              |
+| scl            | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. I2C scl 端子              |
+| i2c            | `i2c object`             | no       | &nbsp;  | configured i2c object                   |
+| spi            | `spi object`             | no       | &nbsp;  | configured spi object                   |
+| spi_frequency  | `spi object`             | no       | 4Mhz    | SPI通信がうまくいかない場合に周波数を下げる時に利用します          |
+| spi_drive      | `spi object`             | no       | `'3v'`  | SPI通信がうまくいかない場合に駆動方法を変更する時に利用します        |
+| module_version | `number`                 | no       | 0       | ArduCAM-Mini-2MP-Plusを使用する場合は1を指定してください |
 
 ピンだけを指定して以下のように設定することが出来ます。
 

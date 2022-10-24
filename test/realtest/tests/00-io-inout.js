@@ -9,19 +9,18 @@ let check_read;
 describe('0-io-input', function () {
   this.timeout(10000);
 
-  before(() => {
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        checkBoard = config.checkBoard;
-        check_io = config.check_io.filter((io) =>
-          io.mode.some((mode) => mode === 'digitalWrite')
-        );
-        check_read = config.check_io.filter((io) =>
-          io.mode.some((mode) => mode === 'digitalRead')
-        );
-        resolve();
-      });
-    });
+  before(async function () {
+    await config.waitForConenct();
+    checkBoard = config.checkBoard;
+    check_io = config.check_io.filter((io) =>
+      io.mode.some((mode) => mode === 'digitalWrite')
+    );
+    check_read = config.check_io.filter((io) =>
+      io.mode.some((mode) => mode === 'digitalRead')
+    );
+    if (check_io.length === 0) {
+      this.skip();
+    }
   });
 
   it('checkBoard -> obniz 3v low', async () => {

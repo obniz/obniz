@@ -8,14 +8,14 @@ X軸Y軸とプッシュスイッチをもつGrove対応のジョイスティッ�
 obnizデバイスと接続します。  
 白線、黄線、赤線、黒線がそれぞれscl、sda、vcc、gndに対応します。  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
-sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
-i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
-grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
+| name  | type                     | required | default | description                                             |
+|-------|--------------------------|----------|---------|---------------------------------------------------------|
+| vcc   | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| gnd   | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| scl   | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsclとなる端子です                                          |
+| sda   | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsdaとなる端子です                                          |
+| i2c   | `object`                 | no       | &nbsp;  | obnizのi2cオブジェクトです                                       |
+| grove | `object`                 | no       | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます                              |
 
 ```javascript
 var joystick = obniz.wired("Grove_JoyStick", { scl:0, sda:1, vcc:2, gnd:3 });

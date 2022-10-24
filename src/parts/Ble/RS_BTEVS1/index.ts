@@ -8,7 +8,8 @@ import Obniz, {
   BleRemoteCharacteristic,
   BleRemotePeripheral,
 } from '../../../obniz';
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 import {

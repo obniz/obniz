@@ -46,7 +46,7 @@ describe('ble.hci', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;

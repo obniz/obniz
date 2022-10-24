@@ -122,7 +122,7 @@ await obniz.ble.scan.startWait();
 
 [https://obniz.github.io/obniz/obnizjs/interfaces/parts.ua651ble.ua651bleresult.html](https://obniz.github.io/obniz/obnizjs/interfaces/parts.ua651ble.ua651bleresult.html)
 
-```json
+```
 {
   SystolicPressure_mmHg?: number; // ex) 128mmHg → 0x80 = 128, 0x00
   DiastolicPressure_mmHg?: number;

@@ -16,7 +16,7 @@ type ObnizSwitchCallback = (result: ObnizSwitchState) => void;
  *
  * @category Embeds
  */
-export default class ObnizSwitch extends ComponentAbstract {
+export class ObnizSwitch extends ComponentAbstract {
   /**
    * current switch state
    */

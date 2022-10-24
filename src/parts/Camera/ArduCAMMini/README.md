@@ -27,21 +27,21 @@ In this case, supply vcc / gnd from the + and - of the power pins.
 
 Arducam require each SPI and I2C.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-cs | `number(obniz Board io)` | yes | &nbsp; | obniz Board io. チップ選択
-vcc | `number(obniz Board io)` | no | &nbsp; | obniz Board io. 電源 +5V
-gnd | `number(obniz Board io)` | no | &nbsp; | obniz Board io. 電源 0v
-mosi | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI mosi 端子
-miso | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI miso 端子
-sclk | `number(obniz Board io)` | no | &nbsp; | obniz Board io. SPI clk 端子
-sda | `number(obniz Board io)` | no | &nbsp; | obniz Board io. I2C sda 端子
-scl | `number(obniz Board io)` | no | &nbsp; | obniz Board io. I2C scl 端子
-i2c | `i2c object` | no | &nbsp; | configured i2c object
-spi | `spi object` | no | &nbsp; | configured spi object
-spi_frequency | `spi object` | no | 4Mhz | for unstable situation, change frequency of spi
-spi_drive | `spi object` | no | `'3v'` | for unstable situation, change drive method of spi
-module_version | `number` | no | 0 | Specify 1 when using ArduCAM-Mini-2MP-Plus
+| name           | type                     | required | default | description                                        |
+|----------------|--------------------------|----------|---------|----------------------------------------------------|
+| cs             | `number(obniz Board io)` | yes      | &nbsp;  | obniz Board io. チップ選択                              |
+| vcc            | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. 電源 +5V                             |
+| gnd            | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. 電源 0v                              |
+| mosi           | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. SPI mosi 端子                        |
+| miso           | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. SPI miso 端子                        |
+| sclk           | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. SPI clk 端子                         |
+| sda            | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. I2C sda 端子                         |
+| scl            | `number(obniz Board io)` | no       | &nbsp;  | obniz Board io. I2C scl 端子                         |
+| i2c            | `i2c object`             | no       | &nbsp;  | configured i2c object                              |
+| spi            | `spi object`             | no       | &nbsp;  | configured spi object                              |
+| spi_frequency  | `spi object`             | no       | 4Mhz    | for unstable situation, change frequency of spi    |
+| spi_drive      | `spi object`             | no       | `'3v'`  | for unstable situation, change drive method of spi |
+| module_version | `number`                 | no       | 0       | Specify 1 when using ArduCAM-Mini-2MP-Plus         |
 
 Just specify connected io to configure.
 

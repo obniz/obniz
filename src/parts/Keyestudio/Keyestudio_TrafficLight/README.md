@@ -7,13 +7,12 @@ Keyestudio traffic light module, which has green, yellow and red LEDs.
 ## obniz.wired("Keyestudio_TrafficLight", {green, yellow, red [, gnd]})
 connect to obniz Board.  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-green | `number(obniz Board io)` | yes |  &nbsp; | green LED(G pin of Keyestudio)
-yellow | `number(obniz Board io)` | yes |  &nbsp; | yellow LED(Y pin of Keyestudio)
-red | `number(obniz Board io)` | yes |  &nbsp; | red LED(R pin of Keyestudio)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND for LED(GND pin of Keyestudio)
-
+| name   | type                     | required | default | description                        |
+|--------|--------------------------|----------|---------|------------------------------------|
+| green  | `number(obniz Board io)` | yes      | &nbsp;  | green LED(G pin of Keyestudio)     |
+| yellow | `number(obniz Board io)` | yes      | &nbsp;  | yellow LED(Y pin of Keyestudio)    |
+| red    | `number(obniz Board io)` | yes      | &nbsp;  | red LED(R pin of Keyestudio)       |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND for LED(GND pin of Keyestudio) |
 
 ```javascript
 // JavaScript Example

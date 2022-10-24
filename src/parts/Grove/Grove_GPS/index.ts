@@ -4,9 +4,10 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import PeripheralUART from '../../../obniz/libs/io_peripherals/uart';
-import ObnizPartsInterface, {
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralUART } from '../../../obniz/libs/io_peripherals/uart';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
