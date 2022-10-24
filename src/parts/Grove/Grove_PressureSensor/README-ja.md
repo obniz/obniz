@@ -8,12 +8,12 @@ Groveコネクタで利用できる圧力センサです。
 obnizデバイスと接続します。  
 黄線、赤線、黒線がそれぞれoutput、vcc、gndに対応します。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-output | `number(obniz Board io)` | no |  &nbsp; | output 出力端子
-grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
+| name   | type                     | required | default | description                                             |
+|--------|--------------------------|----------|---------|---------------------------------------------------------|
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| output | `number(obniz Board io)` | no       | &nbsp;  | output 出力端子                                             |
+| grove  | `object`                 | no       | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます                              |
 
 ```Javascript
 // Javascript Example

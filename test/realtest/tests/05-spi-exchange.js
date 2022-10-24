@@ -9,7 +9,7 @@ let check_io;
 describe('5-spi-exchange', function () {
   this.timeout(30000);
 
-  before(() => {
+  before(function () {
     return new Promise((resolve) => {
       config.waitForConenct(() => {
         obnizA = config.obnizA;
@@ -19,6 +19,10 @@ describe('5-spi-exchange', function () {
             io.obniz === 'obnizA' &&
             io.mode.some((mode) => mode === 'digitalWrite')
         );
+        if (check_io.length === 0) {
+          this.skip();
+        }
+
         resolve();
       });
     });

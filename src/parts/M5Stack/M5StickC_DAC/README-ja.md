@@ -20,13 +20,13 @@ dac.setVoltage(1.5);
 
 その他のデバイス場合には，下記のようにピンを指定してください． 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclとなる端子です
-sda | `number(obniz Board io)` | no | &nbsp;  | I2Cのsdaとなる端子です
-i2c | `object` | no | &nbsp;  | obnizのi2cオブジェクトです
+| name | type                     | required | default | description                                             |
+|------|--------------------------|----------|---------|---------------------------------------------------------|
+| vcc  | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| scl  | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsclとなる端子です                                          |
+| sda  | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsdaとなる端子です                                          |
+| i2c  | `object`                 | no       | &nbsp;  | obnizのi2cオブジェクトです                                       |
 
 ```javascript
 // JavaScript Examples

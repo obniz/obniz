@@ -19,11 +19,11 @@ var sensor = obniz.wired("M5StickC_FINGER");
 
 その他のデバイスの場合は、ux,rxを指定してください
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-tx | `number(obniz Board io)` | yes |  &nbsp; | uartのtxとなる端子です
-rx | `number(obniz Board io)` | yes | &nbsp;  | uartのrxとなる端子です
-gnd | `number(obniz Board io)` | no | &nbsp;  | gndとなる端子です
+| name | type                     | required | default | description    |
+|------|--------------------------|----------|---------|----------------|
+| tx   | `number(obniz Board io)` | yes      | &nbsp;  | uartのtxとなる端子です |
+| rx   | `number(obniz Board io)` | yes      | &nbsp;  | uartのrxとなる端子です |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | gndとなる端子です     |
 
 ```javascript
 // JavaScript Examples

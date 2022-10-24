@@ -294,7 +294,7 @@
 					<a name="getphysicalstatuswait" class="tsd-anchor"></a>
 					<h3>get<wbr>Physical<wbr>Status<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Physical<wbr>Status<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.w5500.w5500parts.physicallayerstatus.html" class="tsd-signature-type">PhysicalLayerStatus</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Physical<wbr>Status<wbr>Wait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts_ethernet_w5500.physicallayerstatus.html" class="tsd-signature-type">PhysicalLayerStatus</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -308,7 +308,7 @@
 									<p>Get physical layer status 物理層のステータス取得</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.w5500.w5500parts.physicallayerstatus.html" class="tsd-signature-type">PhysicalLayerStatus</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts_ethernet_w5500.physicallayerstatus.html" class="tsd-signature-type">PhysicalLayerStatus</a><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>Physical layer status 物理層のステータス</p>
 						</li>
 					</ul>
@@ -468,7 +468,7 @@
 					<a name="initwait" class="tsd-anchor"></a>
 					<h3>init<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">init<wbr>Wait<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.w5500.w5500parts.config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">init<wbr>Wait<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/parts_ethernet_w5500.config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -486,7 +486,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>config: <a href="../interfaces/parts.w5500.w5500parts.config.html" class="tsd-signature-type">Config</a></h5>
+									<h5>config: <a href="../interfaces/parts_ethernet_w5500.config.html" class="tsd-signature-type">Config</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>W5500 config W5500の設定内容</p>
 									</div>
@@ -501,7 +501,7 @@
 					<a name="setallinterrupthandler" class="tsd-anchor"></a>
 					<h3>set<wbr>All<wbr>Interrupt<wbr>Handler</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>All<wbr>Interrupt<wbr>Handler<span class="tsd-signature-symbol">(</span>handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, name<span class="tsd-signature-symbol">: </span><a href="../modules/parts.w5500.w5500parts.html#interrupt" class="tsd-signature-type">Interrupt</a>, extra<span class="tsd-signature-symbol">?: </span><a href="parts.w5500.w5500parts.destinfo.html" class="tsd-signature-type">DestInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>All<wbr>Interrupt<wbr>Handler<span class="tsd-signature-symbol">(</span>handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">W5500Parts.Interrupt</span>, extra<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">W5500Parts.DestInfo</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -521,7 +521,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>handler: <span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, name<span class="tsd-signature-symbol">: </span><a href="../modules/parts.w5500.w5500parts.html#interrupt" class="tsd-signature-type">Interrupt</a>, extra<span class="tsd-signature-symbol">?: </span><a href="parts.w5500.w5500parts.destinfo.html" class="tsd-signature-type">DestInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>handler: <span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">W5500Parts.Interrupt</span>, extra<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">W5500Parts.DestInfo</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Callback function, name is the name of the interrupt received, extra is only when name=DestUnreach</p>
 										<p>コールバック関数、nameには受け取った割り込み名が入ります、extraはname=DestUnreachのときのみ</p>
@@ -529,7 +529,7 @@
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, name<span class="tsd-signature-symbol">: </span><a href="../modules/parts.w5500.w5500parts.html#interrupt" class="tsd-signature-type">Interrupt</a>, extra<span class="tsd-signature-symbol">?: </span><a href="parts.w5500.w5500parts.destinfo.html" class="tsd-signature-type">DestInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">W5500Parts.Interrupt</span>, extra<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">W5500Parts.DestInfo</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
@@ -539,10 +539,10 @@
 															<h5>ethernet: <a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a></h5>
 														</li>
 														<li>
-															<h5>name: <a href="../modules/parts.w5500.w5500parts.html#interrupt" class="tsd-signature-type">Interrupt</a></h5>
+															<h5>name: <span class="tsd-signature-type">W5500Parts.Interrupt</span></h5>
 														</li>
 														<li>
-															<h5><span class="tsd-flag ts-flagOptional">Optional</span> extra: <a href="parts.w5500.w5500parts.destinfo.html" class="tsd-signature-type">DestInfo</a></h5>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> extra: <span class="tsd-signature-type">W5500Parts.DestInfo</span></h5>
 														</li>
 													</ul>
 													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -593,7 +593,7 @@
 					<a name="setinterrupthandler" class="tsd-anchor"></a>
 					<h3>set<wbr>Interrupt<wbr>Handler</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Interrupt<wbr>Handler<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><a href="../modules/parts.w5500.w5500parts.html#interrupt" class="tsd-signature-type">Interrupt</a>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, extra<span class="tsd-signature-symbol">?: </span><a href="parts.w5500.w5500parts.destinfo.html" class="tsd-signature-type">DestInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Interrupt<wbr>Handler<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">W5500Parts.Interrupt</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, extra<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">W5500Parts.DestInfo</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -613,13 +613,13 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>name: <a href="../modules/parts.w5500.w5500parts.html#interrupt" class="tsd-signature-type">Interrupt</a></h5>
+									<h5>name: <span class="tsd-signature-type">W5500Parts.Interrupt</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Name of the interrupt to get 取得する割り込みの名前 (IPConflict | DestUnreach | PPPoEClose | MagicPacket)</p>
 									</div>
 								</li>
 								<li>
-									<h5>handler: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, extra<span class="tsd-signature-symbol">?: </span><a href="parts.w5500.w5500parts.destinfo.html" class="tsd-signature-type">DestInfo</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span></h5>
+									<h5>handler: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ethernet<span class="tsd-signature-symbol">: </span><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a>, extra<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">W5500Parts.DestInfo</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Callback function, extra is only when name=DestUnreach</p>
 										<p>コールバック関数、extraはname=DestUnreachのときのみ</p>
@@ -730,7 +730,7 @@
 					<a name="setmodewait" class="tsd-anchor"></a>
 					<h3>set<wbr>Mode<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Mode<wbr>Wait<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.w5500.w5500parts.config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Mode<wbr>Wait<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/parts_ethernet_w5500.config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -747,7 +747,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>config: <a href="../interfaces/parts.w5500.w5500parts.config.html" class="tsd-signature-type">Config</a></h5>
+									<h5>config: <a href="../interfaces/parts_ethernet_w5500.config.html" class="tsd-signature-type">Config</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>WakeOnLAN(WoL), PingBlock, PPPoE and ForceARP</p>
 									</div>
@@ -924,7 +924,7 @@
 					<a name="setphysicalconfigwait" class="tsd-anchor"></a>
 					<h3>set<wbr>Physical<wbr>Config<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Physical<wbr>Config<wbr>Wait<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/parts.w5500.w5500parts.physicallayeroptions.html" class="tsd-signature-type">PhysicalLayerOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Physical<wbr>Config<wbr>Wait<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/parts_ethernet_w5500.physicallayeroptions.html" class="tsd-signature-type">PhysicalLayerOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -941,7 +941,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>config: <a href="../interfaces/parts.w5500.w5500parts.physicallayeroptions.html" class="tsd-signature-type">PhysicalLayerOptions</a></h5>
+									<h5>config: <a href="../interfaces/parts_ethernet_w5500.physicallayeroptions.html" class="tsd-signature-type">PhysicalLayerOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Physical layer config 物理層の設定内容</p>
 									</div>
@@ -1052,7 +1052,7 @@
 					<a name="waitlinkupwait" class="tsd-anchor"></a>
 					<h3>wait<wbr>Link<wbr>UpWait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">wait<wbr>Link<wbr>UpWait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.w5500.w5500parts.physicallayerstatus.html" class="tsd-signature-type">PhysicalLayerStatus</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">wait<wbr>Link<wbr>UpWait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts_ethernet_w5500.physicallayerstatus.html" class="tsd-signature-type">PhysicalLayerStatus</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -1067,7 +1067,7 @@
 								</div>
 								<p>ルーターとの接続が確立されるまで待機</p>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts.w5500.w5500parts.physicallayerstatus.html" class="tsd-signature-type">PhysicalLayerStatus</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/parts_ethernet_w5500.physicallayerstatus.html" class="tsd-signature-type">PhysicalLayerStatus</a><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>Physical layer status 物理層のステータス</p>
 						</li>
 					</ul>
@@ -1119,22 +1119,6 @@
 				<ul>
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
-					</li>
-					<li class="current tsd-kind-external-module tsd-is-not-exported">
-						<a href="../modules/parts.html">Parts</a>
-						<ul>
-							<li class="current tsd-kind-external-module tsd-parent-kind-external-module">
-								<a href="../modules/parts.w5500.html">W5500</a>
-								<ul>
-									<li class=" tsd-kind-module tsd-parent-kind-external-module">
-										<a href="../modules/parts.w5500.w5500parts.html">W5500<wbr>Parts</a>
-									</li>
-									<li class=" tsd-kind-module tsd-parent-kind-external-module">
-										<a href="../modules/parts.w5500.w5500socketparts.html">W5500<wbr>Socket<wbr>Parts</a>
-									</li>
-								</ul>
-							</li>
-						</ul>
 					</li>
 				</ul>
 			</nav>
