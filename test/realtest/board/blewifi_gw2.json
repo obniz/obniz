@@ -1,9 +1,12 @@
 {
-  "name": "obniz board",
+  "name": "blewifi_gw",
   "board": [
     "obnizA"
   ],
   "sleep_test": false,
   "io": [
-  ]
+  ],
+  "ble": {
+    "extended" : true
+  }
 }

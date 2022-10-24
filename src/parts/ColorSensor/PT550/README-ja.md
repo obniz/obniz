@@ -8,11 +8,11 @@
 
 ## wired(obniz, { signal[, vcc, gnd]});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | 出力となるアナログ端子です。(DFROBOT社のコネクタでは青色ケーブルです)
-vcc | `number(obniz Board io)` | no |  &nbsp; | 電源として5vを出力する端子です。(DFROBOT社のコネクタでは赤色ケーブルです)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GNDにつないだピン番号です。(DFROBOT社のコネクタでは黒色ケーブルです)
+| name   | type                     | required | default | description                                |
+|--------|--------------------------|----------|---------|--------------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | 出力となるアナログ端子です。(DFROBOT社のコネクタでは青色ケーブルです)    |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | 電源として5vを出力する端子です。(DFROBOT社のコネクタでは赤色ケーブルです) |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GNDにつないだピン番号です。(DFROBOT社のコネクタでは黒色ケーブルです)   |
 
 PT550は3端子のフォトトランジスタで、vcc,gndに電圧をかけると、明るさに応じて流れる電流が変わります。
 抵抗を利用することでその電流の変化を読み取ることができます。

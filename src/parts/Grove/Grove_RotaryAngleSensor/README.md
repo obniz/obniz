@@ -12,12 +12,12 @@ This parts can treat only 10 ohm to 10 k ohm.
 
 ## wired(obniz, {[signal, vcc, gnd, grove]})
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal (4 pin of Grove)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC(2 pin of Grove)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND(0 pin of Grove)
-grove | `object` | no | &nbsp;  | grove interface object if a device has
+| name   | type                     | required | default | description                            |
+|--------|--------------------------|----------|---------|----------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal (4 pin of Grove)                |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC(2 pin of Grove)                    |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND(0 pin of Grove)                    |
+| grove  | `object`                 | no       | &nbsp;  | grove interface object if a device has |
 
 ```Javascript
 // Javascript Example

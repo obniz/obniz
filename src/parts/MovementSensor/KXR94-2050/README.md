@@ -10,15 +10,15 @@ This is used for determin direction and angle of a device.
 
 Connect pins to an obniz Board and specify io.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-x | `number(obniz Board io)` | yes | &nbsp; | value of x
-y | `number(obniz Board io)` | yes | &nbsp; | value of y
-z | `number(obniz Board io)` | yes | &nbsp; | value of z
-vcc | `number(obniz Board io)` | &nbsp; | &nbsp; | Power supply. 5v
-gnd | `number(obniz Board io)` | &nbsp; | &nbsp; | Power supply. gnd
-self_test | `number(obniz Board io)` | &nbsp; | &nbsp; | high for enter test mode
-enable | `number(obniz Board io)` | &nbsp; | &nbsp; | low for disable device.
+| name      | type                     | required | default | description              |
+|-----------|--------------------------|----------|---------|--------------------------|
+| x         | `number(obniz Board io)` | yes      | &nbsp;  | value of x               |
+| y         | `number(obniz Board io)` | yes      | &nbsp;  | value of y               |
+| z         | `number(obniz Board io)` | yes      | &nbsp;  | value of z               |
+| vcc       | `number(obniz Board io)` | &nbsp;   | &nbsp;  | Power supply. 5v         |
+| gnd       | `number(obniz Board io)` | &nbsp;   | &nbsp;  | Power supply. gnd        |
+| self_test | `number(obniz Board io)` | &nbsp;   | &nbsp;  | high for enter test mode |
+| enable    | `number(obniz Board io)` | &nbsp;   | &nbsp;  | low for disable device.  |
 
 ```javascript
 

@@ -68,7 +68,7 @@ await obniz.ble.scan.startWait();
 
 Output format is here. 
 
-```json
+```
 {
   bloodPressure?: {
     systolic: number;

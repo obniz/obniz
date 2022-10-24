@@ -1,6 +1,6 @@
 module.exports = {
   "name": "obniz",
-  "version": "3.23.0",
+  "version": "3.24.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -19,7 +19,7 @@ module.exports = {
     "buildAndtest": "npm run build && npm test",
     "tstest": "mocha --require espower-typescript/guess test/functiontest/**/*.ts",
     "tsExampleTest": "tsc --project ./test/functiontest",
-    "realtest": "mocha $NODE_DEBUG_OPTION ./test/realtest/index.js",
+    "realtest": "mocha --exit $NODE_DEBUG_OPTION ./test/realtest/index.js",
     "realtest-debug": "DEBUG=1 mocha $NODE_DEBUG_OPTION -b ./test/realtest/index.js",
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "watch": "tsc -w & webpack --watch --config ./devtools/webpack.config.js  ",

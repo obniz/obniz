@@ -18,23 +18,23 @@ const tcpArray = [];
 describe('11-tcp', function () {
   this.timeout(30000);
 
-  before(() => {
-    return new Promise((resolve) => {
-      config.waitForConenct(async () => {
-        checkBoard = config.checkBoard;
-        // checkBoard.tcp0.onconnection = state => {
-        //   console.log(state);
-        // };
-        for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
-          const tcp = checkBoard['tcp' + i];
-          if (tcp.isUsed()) {
-            tcp.close();
-            await checkBoard.pingWait();
-          }
-        }
-        resolve();
-      });
-    });
+  before(async function () {
+    if (process.env.IGNORE_TCP_TEST === 'true') {
+      this.skip();
+      return;
+    }
+    await config.waitForConenct();
+    checkBoard = config.checkBoard;
+    // checkBoard.tcp0.onconnection = state => {
+    //   console.log(state);
+    // };
+    for (let i = 0; i < MAX_TCP_CONNECTION; i++) {
+      const tcp = checkBoard['tcp' + i];
+      if (tcp.isUsed()) {
+        tcp.close();
+        await checkBoard.pingWait();
+      }
+    }
   });
 
   afterEach(async () => {

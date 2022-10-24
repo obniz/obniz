@@ -4,12 +4,12 @@
 
 ## wired(obniz,  { signal [, vcc, gnd, grove]});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal ボタンの状態を示す端子(4 pin of Grove)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC端子(2 pin of Grove)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(0 pin of Grove)
-grove | `object` | no | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます
+| name   | type                     | required | default | description                        |
+|--------|--------------------------|----------|---------|------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal ボタンの状態を示す端子(4 pin of Grove) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC端子(2 pin of Grove)              |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND端子(0 pin of Grove)              |
+| grove  | `object`                 | no       | &nbsp;  | 接続するデバイスにgroveがある場合に利用できます         |
 
 ```Javascript
 // Javascript Example
@@ -33,12 +33,12 @@ Grove 4ピンコネクタ-ジャンパーピン変換ケーブルという、黒
 
 まず、Grove ケーブルと Grove パーツをつなぎ、Grove と obniz はケーブルの色と obniz ピンが対応して差し込みます。
 
-Grove ケーブル色 | obniz ピン | 機能 |
---- | --- | --- |
-黒 | 0 | gnd |
-赤 | 1 | vcc |
-白 | 2 | -- |
-黄 | 3 | signal |
+| Grove ケーブル色 | obniz ピン | 機能     |
+|-------------|----------|--------|
+| 黒           | 0        | gnd    |
+| 赤           | 1        | vcc    |
+| 白           | 2        | --     |
+| 黄           | 3        | signal |
 
 この場合、接続する `obniz.wired` は、このように指定します。
 

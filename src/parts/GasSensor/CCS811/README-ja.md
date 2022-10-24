@@ -9,20 +9,20 @@
 
 ## wired(obniz,  { vcc, gnd, do, ao});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-scl | `number(obniz Board io)` | no |  &nbsp; | I2Cのsclに接続したobnizのIOです
-sda | `number(obniz Board io)` | no |  &nbsp; | I2Cのsdaに接続したobnizのIOです
-nwak | `number(obniz Board io)` | no |  &nbsp; | センサーのnwak端子に接続したobnizのIOです
-nwak | `number(obniz Board io)` | no |  &nbsp; | センサーのnwak端子に接続したobnizのIOです
-nrst | `number(obniz Board io)` | no |  &nbsp; | センサーのnrst端子に接続したobnizのIOです
-nrst | `number(obniz Board io)` | no |  &nbsp; | センサーのnrst端子に接続したobnizのIOです
-nint | `number(obniz Board io)` | no |  &nbsp; | センサーのnint端子に接続したobnizのIOです
-i2c | `number(obniz Board io)` | no |  &nbsp; | 初期化されたobnizのi2cオブジェクトです。i2cが存在する場合scl,sdaよりも優先的に利用されます。
-add | `number(obniz Board io)` | no |  &nbsp; | アドレス指定端子です。接続したobnizのIOを指定します。指定することでaddressが0x5aならfalseにそれ以外ならtrueとして出力されます。
-address | `number(obniz Board io)` | no | 0x5b | アドレス指定です。0x5bか0x5aのどちらかでそれ以外ではエラーとなります。
+| name    | type                     | required | default | description                                                                   |
+|---------|--------------------------|----------|---------|-------------------------------------------------------------------------------|
+| vcc     | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。                       |
+| gnd     | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。                       |
+| scl     | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsclに接続したobnizのIOです                                                        |
+| sda     | `number(obniz Board io)` | no       | &nbsp;  | I2Cのsdaに接続したobnizのIOです                                                        |
+| nwak    | `number(obniz Board io)` | no       | &nbsp;  | センサーのnwak端子に接続したobnizのIOです                                                    |
+| nwak    | `number(obniz Board io)` | no       | &nbsp;  | センサーのnwak端子に接続したobnizのIOです                                                    |
+| nrst    | `number(obniz Board io)` | no       | &nbsp;  | センサーのnrst端子に接続したobnizのIOです                                                    |
+| nrst    | `number(obniz Board io)` | no       | &nbsp;  | センサーのnrst端子に接続したobnizのIOです                                                    |
+| nint    | `number(obniz Board io)` | no       | &nbsp;  | センサーのnint端子に接続したobnizのIOです                                                    |
+| i2c     | `number(obniz Board io)` | no       | &nbsp;  | 初期化されたobnizのi2cオブジェクトです。i2cが存在する場合scl,sdaよりも優先的に利用されます。                       |
+| add     | `number(obniz Board io)` | no       | &nbsp;  | アドレス指定端子です。接続したobnizのIOを指定します。指定することでaddressが0x5aならfalseにそれ以外ならtrueとして出力されます。 |
+| address | `number(obniz Board io)` | no       | 0x5b    | アドレス指定です。0x5bか0x5aのどちらかでそれ以外ではエラーとなります。                                       |
 
 ```Javascript
 // Javascript Example

@@ -17,13 +17,13 @@ obniz.onconnect = async function() {
 
 その他のデバイスの場合は、下記のように指定してください。  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-tx | `number(obniz Board io)` | yes |  &nbsp; | tx
-rx | `number(obniz Board io)` | yes | &nbsp;  | rx
-baud | `number` | no | &nbsp;  | baudrate
+| name | type                     | required | default | description  |
+|------|--------------------------|----------|---------|--------------|
+| vcc  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply |
+| tx   | `number(obniz Board io)` | yes      | &nbsp;  | tx           |
+| rx   | `number(obniz Board io)` | yes      | &nbsp;  | rx           |
+| baud | `number`                 | no       | &nbsp;  | baudrate     |
 
 ```javascript
 // Javascript Example

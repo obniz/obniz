@@ -7,12 +7,11 @@ Keyestudio buzzer. It make a specified sound.
 ## wired(obniz,  { signal [, vcc, gnd]});
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal output pin(s pin of Keyestudio)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC(+ pin of Keyestudio)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND(- pin of Keyestudio)
-
+| name   | type                     | required | default | description                            |
+|--------|--------------------------|----------|---------|----------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal output pin(s pin of Keyestudio) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC(+ pin of Keyestudio)               |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND(- pin of Keyestudio)               |
 
 ```Javascript
 // Javascript Example
