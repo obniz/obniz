@@ -5,7 +5,7 @@
 
 import semver from 'semver';
 import Obniz from '../../index';
-import ObnizUtil from '../utils/util';
+import { ObnizUtil } from '../utils/util';
 
 /**
  * @param PluginReceiveCallbackFunction.data
@@ -16,7 +16,7 @@ type PluginReceiveCallbackFunction = (
   str: string | null
 ) => void;
 
-export default class Plugin {
+export class Plugin {
   /**
    * Callback function is called when Plugin is received.
    *

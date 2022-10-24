@@ -4,7 +4,7 @@
  */
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export declare type AK09916Options = I2cPartsAbstractOptions;
 export default class AK09916 extends i2cParts implements ObnizPartsInterface {
     static info(): ObnizPartsInfo;

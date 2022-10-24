@@ -1,16 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandSystem = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandSystem extends WSCommand_1.default {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 0;
         this._CommandReboot = 0;
         this._CommandReset = 2;
@@ -157,4 +155,4 @@ class WSCommandSystem extends WSCommand_1.default {
         this.sendCommand(this._CommandSleepIoTrigger, buf);
     }
 }
-exports.default = WSCommandSystem;
+exports.WSCommandSystem = WSCommandSystem;

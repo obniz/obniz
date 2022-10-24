@@ -7,7 +7,8 @@ import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
 
 import Obniz from '../../../obniz';
 import { DriveType, PullType } from '../../../obniz/libs/io_peripherals/common';
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

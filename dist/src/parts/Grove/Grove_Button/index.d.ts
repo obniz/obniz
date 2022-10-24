@@ -3,8 +3,8 @@
  * @module Parts.Grove_Button
  */
 import Obniz from '../../../obniz';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 interface Grove_ButtonOptionsA {
     signal: number;
     vcc?: number;

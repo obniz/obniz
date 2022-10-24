@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandSystem extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandSystem extends WSCommandAbstract {
     module: number;
     _CommandReboot: number;
     _CommandReset: number;
@@ -15,7 +15,6 @@ declare class WSCommandSystem extends WSCommand {
     _CommandSleepSeconds: number;
     _CommandSleepMinute: number;
     _CommandSleepIoTrigger: number;
-    constructor();
     reboot(params: any): void;
     reset(params: any): void;
     selfCheck(params: any): void;
@@ -30,4 +29,3 @@ declare class WSCommandSystem extends WSCommand {
     sleepMinute(params: any): void;
     sleepIoTrigger(params: any): void;
 }
-export default WSCommandSystem;

@@ -3,7 +3,7 @@ declare type SignalingEventTypes = 'connectionParameterUpdateRequest';
 /**
  * @ignore
  */
-declare class Signaling extends EventEmitter<SignalingEventTypes> {
+export declare class Signaling extends EventEmitter<SignalingEventTypes> {
     _handle: any;
     _aclStream: any;
     onAclStreamDataBinded: any;
@@ -13,4 +13,4 @@ declare class Signaling extends EventEmitter<SignalingEventTypes> {
     onAclStreamEnd(): void;
     private processConnectionParameterUpdateRequest;
 }
-export default Signaling;
+export {};

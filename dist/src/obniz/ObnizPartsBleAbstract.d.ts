@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-import BleRemoteCharacteristic from './libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral, { IBeacon } from './libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemoteCharacteristic } from './libs/embeds/bleHci/bleRemoteCharacteristic';
+import { BleRemotePeripheral, IBeacon } from './libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
 declare const ObnizPartsBleModeList: readonly ["Beacon", "Connectable", "Pairing"];

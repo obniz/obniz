@@ -14,7 +14,7 @@ declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' 
 /**
  * @ignore
  */
-declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
+export declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     _connectable: {
         [key: string]: boolean;
     };
@@ -81,4 +81,4 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     private getGatt;
     private debug;
 }
-export default NobleBindings;
+export {};

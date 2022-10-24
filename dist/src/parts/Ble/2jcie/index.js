@@ -4,11 +4,8 @@
  * @module Parts.OMRON_2JCIE
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
 /** 2JCIE management class 2JCIEを管理するクラス */
 class OMRON_2JCIE {
     constructor(peripheral) {
@@ -66,16 +63,16 @@ class OMRON_2JCIE {
         const adv_data = peripheral.adv_data;
         if (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[9], adv_data[8]) *
+                temperature: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[9], adv_data[8]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
-                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
-                uv_index: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
-                barometric_pressure: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
-                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
-                acceleration_x: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[21], adv_data[20]),
-                acceleration_y: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[23], adv_data[22]),
-                acceleration_z: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[25], adv_data[24]),
+                relative_humidity: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
+                light: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
+                uv_index: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
+                barometric_pressure: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
+                sound_noise: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
+                acceleration_x: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[21], adv_data[20]),
+                acceleration_y: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[23], adv_data[22]),
+                acceleration_z: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[25], adv_data[24]),
                 battery: (adv_data[26] + 100) / 100,
             };
         }
@@ -85,14 +82,14 @@ class OMRON_2JCIE {
             adv_data[6] === 0x02 &&
             adv_data[7] === 0x01) {
             return {
-                temperature: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[10], adv_data[9]) *
+                temperature: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[9]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
-                light: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
-                barometric_pressure: ObnizPartsBleInterface_1.default.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
-                sound_noise: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
-                etvoc: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[22], adv_data[21]),
-                eco2: ObnizPartsBleInterface_1.default.signed16FromBinary(adv_data[24], adv_data[23]),
+                relative_humidity: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
+                light: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
+                barometric_pressure: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
+                sound_noise: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+                etvoc: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[21]),
+                eco2: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[23]),
             };
         }
         return null;

@@ -5,16 +5,16 @@
  */
 /// <reference types="node" />
 /// <reference types="node" />
-import Hci from '../hci';
+import { Hci } from '../hci';
 import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';
-import Gap from './gap';
-import GattPeripheral from './gatt';
+import { Gap } from './gap';
+import { GattPeripheral } from './gatt';
 declare type BlenoBindingsEventType = 'stateChange' | 'mtuChange' | 'accept' | 'disconnect';
 /**
  * @ignore
  */
-declare class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
+export declare class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     _state: any;
     _advertising: any;
     _extended: boolean;
@@ -50,4 +50,4 @@ declare class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     onMtuChange(mtu: any): void;
     onAclDataPkt(handle: Handle, cid?: any, data?: any): void;
 }
-export default BlenoBindings;
+export {};

@@ -10,7 +10,7 @@ import fetch from 'node-fetch';
 import packageJson from '../../package';
 import { ObnizOptions } from './ObnizOptions'; // pakcage.js will be created from package.json on build.
 
-export default class ObnizApi {
+export class ObnizApi {
   /**
    * obniz.js major version string
    */

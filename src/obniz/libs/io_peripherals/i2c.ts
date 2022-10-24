@@ -6,7 +6,7 @@
 import Obniz from '../../index';
 import { ObnizI2cError, ObnizI2cWarning } from '../../ObnizError';
 import { ComponentAbstract } from '../ComponentAbstact';
-import ObnizUtil from '../utils/util';
+import { ObnizUtil } from '../utils/util';
 import { PullType } from './common';
 
 type I2CMode = 'master' | 'slave';
@@ -35,7 +35,7 @@ interface PeripheralI2COptions extends PeripheralI2CState {
  *
  * @category Peripherals
  */
-class PeripheralI2C extends ComponentAbstract {
+export class PeripheralI2C extends ComponentAbstract {
   /**
    * from obniz.js 1.14.0
    *
@@ -378,5 +378,3 @@ class PeripheralI2C extends ComponentAbstract {
     this.onwritten = undefined;
   }
 }
-
-export default PeripheralI2C;

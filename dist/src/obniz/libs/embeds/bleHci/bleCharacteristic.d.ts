@@ -2,14 +2,14 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleDescriptor from './bleDescriptor';
-import BleLocalValueAttributeAbstract from './bleLocalValueAttributeAbstract';
-import BleService from './bleService';
+import { BleDescriptor } from './bleDescriptor';
+import { BleLocalValueAttributeAbstract } from './bleLocalValueAttributeAbstract';
+import { BleService } from './bleService';
 import { BleAttributePropery, BleCharacteristicDefine, BleDescriptorDefine, BleDeviceAddress, UUID } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
-export default class BleCharacteristic extends BleLocalValueAttributeAbstract<BleService, BleDescriptor> {
+export declare class BleCharacteristic extends BleLocalValueAttributeAbstract<BleService, BleDescriptor> {
     /**
      * This is a callback function used when characteristic is read by an external device.
      *

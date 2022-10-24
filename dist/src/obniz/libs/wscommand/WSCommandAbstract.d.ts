@@ -4,26 +4,7 @@
  */
 /// <reference types="tv4" />
 import WSSchema from './WSSchema';
-declare type WSCommandConstructor = new () => WSCommand;
-interface PayloadChunk {
-    /**
-     * module number
-     */
-    module: number;
-    /**
-     * function index number
-     */
-    func: number;
-    /**
-     * payload for wscommand
-     */
-    payload: Uint8Array;
-    /**
-     * left binary array
-     */
-    next: Uint8Array;
-}
-interface HW {
+export interface HW {
     /**
      * hardware identifer. "esp32w"
      */
@@ -33,27 +14,13 @@ interface HW {
      */
     firmware: string | undefined;
 }
-export default abstract class WSCommand {
-    static get schema(): any;
-    static get CommandClasses(): {
-        [key: string]: WSCommandConstructor;
-    };
+export declare abstract class WSCommandAbstract {
     get WSCommandNotFoundError(): any;
-    static addCommandClass(name: string, classObj: WSCommandConstructor): void;
-    static framed(module: number, func: number, payload: Uint8Array | null): Uint8Array;
-    /**
-     * Dequeue a next wscommands from binary array.
-     *
-     * @param buf binary array received from obniz cloud.
-     * @returns chunk
-     */
-    static dequeueOne(buf: Uint8Array): PayloadChunk | null;
-    static compress(wscommands: any, json: any): Uint8Array | null;
     _hw: HW;
     ioNotUsed: number;
     COMMAND_FUNC_ID_ERROR: number;
     abstract module: number;
-    private parsed?;
+    parsed?: (module: number, func: number, payload: Uint8Array | null) => void;
     constructor();
     setHw(obj: HW): void;
     sendCommand(func: number, payload: Uint8Array | null): void;
@@ -76,4 +43,3 @@ export default abstract class WSCommand {
     filter(commandUri: any, json: any): any;
     _filterSchema(schema: any, json: any): any;
 }
-export {};

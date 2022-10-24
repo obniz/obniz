@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizUtil = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore
@@ -137,4 +138,4 @@ class ObnizUtil {
         }
     }
 }
-exports.default = ObnizUtil;
+exports.ObnizUtil = ObnizUtil;

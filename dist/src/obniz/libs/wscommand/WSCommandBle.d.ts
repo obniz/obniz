@@ -1,5 +1,6 @@
-import WSCommand from './WSCommand';
-declare class WSCommandBle extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+import { WSCommandBleHci } from './WSCommandBleHci';
+export declare class WSCommandBle extends WSCommandAbstract {
     module: number;
     uuidLength: number;
     _CommandSetAdvData: number;
@@ -43,16 +44,63 @@ declare class WSCommandBle extends WSCommand {
     _CommandSecuritySetKeyMaxSize: number;
     _CommandSecuritySetIOCapability: number;
     _CommandSecurityClearBondingDevices: number;
-    _CommandScanResultsDevice: any;
-    _CommandScanResultsDeviceAddress: any;
-    _CommandScanResultsEvet: any;
-    _CommandScanResultsBleEvent: any;
-    _CommandCharacteristicsProperties: any;
-    _commandResults: any;
-    _securityAuthValues: any;
-    _securityEncryotionLevels: any;
-    _securityKeyTypes: any;
-    hciCommand: any;
+    _CommandScanResultsDevice: {
+        breder: number;
+        ble: number;
+        dumo: number;
+    };
+    _CommandScanResultsDeviceAddress: {
+        public: number;
+        random: number;
+        rpa_public: number;
+        rpa_random: number;
+    };
+    _CommandScanResultsEvet: {
+        inquiry_result: number;
+        inquiry_complete: number;
+        discovery_result: number;
+        discovery_ble_result: number;
+        discovery_cmoplete: number;
+        discovery_di_cmoplete: number;
+        cancelled: number;
+    };
+    _CommandScanResultsBleEvent: {
+        connectable_advertisemnt: number;
+        connectable_directed_advertisemnt: number;
+        scannable_advertising: number;
+        non_connectable_advertising: number;
+        scan_response: number;
+    };
+    _CommandCharacteristicsProperties: {
+        broadcast: number;
+        read: number;
+        write_without_response: number;
+        write: number;
+        notify: number;
+        indicate: number;
+        auth: number;
+        extended_properties: number;
+    };
+    _commandResults: {
+        success: number;
+        failed: number;
+    };
+    _securityAuthValues: {
+        1: string;
+        4: string;
+        8: string;
+    };
+    _securityEncryotionLevels: {
+        none: number;
+        encryption: number;
+        mitm: number;
+    };
+    _securityKeyTypes: {
+        1: string;
+        2: string;
+        4: string;
+    };
+    hciCommand: WSCommandBleHci;
     private _funcList;
     constructor();
     centralScanStart(params: any): void;
@@ -109,4 +157,3 @@ declare class WSCommandBle extends WSCommand {
     notifyFromBinaryError(objToSend: any, payload?: any): void;
     _addRowForPath(sendObj: any, path: any, row: any): void;
 }
-export default WSCommandBle;

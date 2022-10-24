@@ -5,11 +5,12 @@
 
 import Obniz from '../../../obniz';
 import { DriveType } from '../../../obniz/libs/io_peripherals/common';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
 
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
-import ObnizPartsInterface, {
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralSPI } from '../../../obniz/libs/io_peripherals/spi';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

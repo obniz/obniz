@@ -3,13 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandDisplay = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
 const qr_1 = __importDefault(require("../utils/qr"));
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandDisplay extends WSCommand_1.default {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandDisplay extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super(...arguments);
         this.module = 8;
@@ -139,4 +140,4 @@ class WSCommandDisplay extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandDisplay;
+exports.WSCommandDisplay = WSCommandDisplay;

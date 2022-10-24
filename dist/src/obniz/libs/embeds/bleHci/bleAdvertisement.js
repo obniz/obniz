@@ -1,9 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleAdvertisementBuilder_1 = __importDefault(require("./bleAdvertisementBuilder"));
+exports.BleAdvertisement = void 0;
+const bleAdvertisementBuilder_1 = require("./bleAdvertisementBuilder");
 /**
  * @category Use as Peripheral
  */
@@ -156,10 +154,10 @@ class BleAdvertisement {
         this.setScanRespDataRaw(this.scanRespDataBuilder(json).build());
     }
     advDataBulider(jsonVal) {
-        return new bleAdvertisementBuilder_1.default(jsonVal);
+        return new bleAdvertisementBuilder_1.BleAdvertisementBuilder(jsonVal);
     }
     scanRespDataBuilder(json) {
-        return new bleAdvertisementBuilder_1.default(json);
+        return new bleAdvertisementBuilder_1.BleAdvertisementBuilder(json);
     }
 }
-exports.default = BleAdvertisement;
+exports.BleAdvertisement = BleAdvertisement;

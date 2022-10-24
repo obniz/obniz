@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizApp
  */
-export default class ObnizApp {
+export declare class ObnizApp {
     /**
      * Determine obniz.js is running on obniz Cloud or not.
      */

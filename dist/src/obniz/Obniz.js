@@ -1,14 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Obniz = void 0;
 const m5stack_basic_1 = require("./libs/hw/m5stack_basic");
 const m5stickc_1 = require("./libs/hw/m5stickc");
-const ObnizApi_1 = __importDefault(require("./ObnizApi"));
-const ObnizApp_1 = __importDefault(require("./ObnizApp"));
-const ObnizDevice_1 = __importDefault(require("./ObnizDevice"));
+const ObnizApi_1 = require("./ObnizApi");
+const ObnizApp_1 = require("./ObnizApp");
+const ObnizDevice_1 = require("./ObnizDevice");
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
  *
@@ -32,14 +29,14 @@ const ObnizDevice_1 = __importDefault(require("./ObnizDevice"));
  * If you'd like to receive, you need to specify `local_connect: false` at all of obniz.js to disable local connect.
  *
  */
-class Obniz extends ObnizDevice_1.default {
+class Obniz extends ObnizDevice_1.ObnizDevice {
     /**
      * obniz REST api class
      *
      * @returns {ObnizApi}
      */
     static get api() {
-        return ObnizApi_1.default;
+        return ObnizApi_1.ObnizApi;
     }
     /**
      * App Support class
@@ -47,7 +44,7 @@ class Obniz extends ObnizDevice_1.default {
      * @returns {ObnizApp}
      */
     static get App() {
-        return ObnizApp_1.default;
+        return ObnizApp_1.ObnizApp;
     }
 }
 exports.Obniz = Obniz;

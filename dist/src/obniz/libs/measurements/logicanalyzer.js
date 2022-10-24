@@ -3,12 +3,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LogicAnalyzer = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
-const util_1 = __importDefault(require("../utils/util"));
+const util_1 = require("../utils/util");
 /**
  * LogicAnalyzer records samples read from io periodically.
  * This is useful for digital bus signal check.
@@ -84,11 +82,11 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ['io', 'interval', 'duration']);
+        const err = util_1.ObnizUtil._requiredKeys(params, ['io', 'interval', 'duration']);
         if (err) {
             throw new Error("LogicAnalyzer start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
+        this.params = util_1.ObnizUtil._keyFilter(params, [
             'io',
             'interval',
             'duration',
@@ -130,4 +128,4 @@ class LogicAnalyzer extends ComponentAbstact_1.ComponentAbstract {
         return 'logic_analyzer';
     }
 }
-exports.default = LogicAnalyzer;
+exports.LogicAnalyzer = LogicAnalyzer;

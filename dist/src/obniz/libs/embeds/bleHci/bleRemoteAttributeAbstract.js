@@ -1,17 +1,15 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteAttributeAbstract = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleAttributeAbstract_1 = __importDefault(require("./bleAttributeAbstract"));
+const bleAttributeAbstract_1 = require("./bleAttributeAbstract");
 /**
  * @category Use as Central
  */
-class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
+class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.BleAttributeAbstract {
     constructor(params) {
         super(params);
         this.isRemote = false;
@@ -29,4 +27,4 @@ class BleRemoteAttributeAbstract extends bleAttributeAbstract_1.default {
         return childName + '_uuid';
     }
 }
-exports.default = BleRemoteAttributeAbstract;
+exports.BleRemoteAttributeAbstract = BleRemoteAttributeAbstract;

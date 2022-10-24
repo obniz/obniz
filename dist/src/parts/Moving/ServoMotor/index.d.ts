@@ -4,7 +4,7 @@
  */
 import Obniz from '../../../obniz';
 import { PWMInterface } from '../../../obniz/libs/io_peripherals/pwm';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface ServoMotorOptions {
     vcc?: number;
     gnd?: number;

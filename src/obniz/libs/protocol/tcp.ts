@@ -32,7 +32,7 @@ type TCPErrorCallbackFunction = (error: any) => void;
  *
  * @category Protocol
  */
-export default class Tcp extends ComponentAbstract {
+export class Tcp extends ComponentAbstract {
   /**
    * Callback function is called when there is a change in TCP connection status.
    *

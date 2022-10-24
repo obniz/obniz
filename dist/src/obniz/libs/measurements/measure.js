@@ -3,12 +3,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizMeasure = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
-const util_1 = __importDefault(require("../utils/util"));
+const util_1 = require("../utils/util");
 /**
  * The measure module provides hardware level measurement.
  *
@@ -52,7 +50,7 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     echo(params) {
-        const err = util_1.default._requiredKeys(params, [
+        const err = util_1.ObnizUtil._requiredKeys(params, [
             'io_pulse',
             'pulse',
             'pulse_width',
@@ -62,7 +60,7 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         if (err) {
             throw new Error("Measure start param '" + err + "' required, but not found ");
         }
-        params = util_1.default._keyFilter(params, [
+        params = util_1.ObnizUtil._keyFilter(params, [
             'io_pulse',
             'pulse',
             'pulse_width',
@@ -95,4 +93,4 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
         return 'measure';
     }
 }
-exports.default = ObnizMeasure;
+exports.ObnizMeasure = ObnizMeasure;

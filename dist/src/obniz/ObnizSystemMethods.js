@@ -3,12 +3,10 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizComponents_1 = __importDefault(require("./ObnizComponents"));
-class ObnizSystemMethods extends ObnizComponents_1.default {
+exports.ObnizSystemMethods = void 0;
+const ObnizComponents_1 = require("./ObnizComponents");
+class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
     constructor(id, options) {
         super(id, options);
     }
@@ -301,4 +299,4 @@ class ObnizSystemMethods extends ObnizComponents_1.default {
         });
     }
 }
-exports.default = ObnizSystemMethods;
+exports.ObnizSystemMethods = ObnizSystemMethods;

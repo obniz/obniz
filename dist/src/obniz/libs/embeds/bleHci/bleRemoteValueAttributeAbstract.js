@@ -1,17 +1,15 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteValueAttributeAbstract = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleRemoteAttributeAbstract_1 = __importDefault(require("./bleRemoteAttributeAbstract"));
+const bleRemoteAttributeAbstract_1 = require("./bleRemoteAttributeAbstract");
 /**
  * @category Use as Central
  */
-class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.default {
+class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.BleRemoteAttributeAbstract {
     /**
      * Wrapper for [[readWait]] with data converting to text.
      * It convert  UTF-8 and write binary array to string.
@@ -57,4 +55,4 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.defau
         return super.writeNumberWait(val, needResponse);
     }
 }
-exports.default = BleRemoteValueAttributeAbstract;
+exports.BleRemoteValueAttributeAbstract = BleRemoteValueAttributeAbstract;

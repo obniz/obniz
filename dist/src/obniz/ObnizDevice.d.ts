@@ -4,7 +4,7 @@
  */
 import { ObnizErrorMessage } from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
-import ObnizUIs from './ObnizUIs';
+import { ObnizUIs } from './ObnizUIs';
 /**
  * @ignore
  */
@@ -19,7 +19,7 @@ declare global {
         showObnizDebugError: any;
     }
 }
-export default class ObnizDevice extends ObnizUIs {
+export declare class ObnizDevice extends ObnizUIs {
     /**
      * @ignore
      */

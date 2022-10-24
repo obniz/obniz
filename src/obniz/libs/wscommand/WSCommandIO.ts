@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
@@ -29,27 +29,15 @@ const COMMAND_IO_MUTEX_NAMES: any = {
   8: 'Measure',
 };
 
-class WSCommandIO extends WSCommand {
-  public module: number;
-  public _CommandOutput: number;
-  public _CommandInputStream: number;
-  public _CommandInputOnece: number;
-  public _CommandOutputType: number;
-  public _CommandPullResisterType: number;
-  public _CommandEnd: number;
+export class WSCommandIO extends WSCommandAbstract {
+  module = 2;
 
-  constructor() {
-    super();
-    this.module = 2;
-
-    this._CommandOutput = 0;
-    this._CommandInputStream = 1;
-    this._CommandInputOnece = 2;
-    this._CommandOutputType = 3;
-    this._CommandPullResisterType = 4;
-    this._CommandEnd = 5;
-  }
-
+  _CommandOutput = 0;
+  _CommandInputStream = 1;
+  _CommandInputOnece = 2;
+  _CommandOutputType = 3;
+  _CommandPullResisterType = 4;
+  _CommandEnd = 5;
   // Commands
 
   public output(value: any, id: number) {
@@ -180,5 +168,3 @@ class WSCommandIO extends WSCommand {
     }
   }
 }
-
-export default WSCommandIO;

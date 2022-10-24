@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.Linking
  */
-import BleRemotePeripheral, { BleConnectSetting } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral, BleConnectSetting } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 export default class LinkingDevice {
     PRIMARY_SERVICE_UUID: string;
     WRITE_CHARACTERRISTIC_UUID: string;

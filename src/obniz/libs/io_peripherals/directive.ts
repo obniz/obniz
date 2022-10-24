@@ -26,7 +26,7 @@ export interface DirectiveAnimationFrame {
 /**
  * @category Peripherals
  */
-export default class Directive extends ComponentAbstract {
+export class Directive extends ComponentAbstract {
   private observers: any[] = [];
   private _animationIdentifier = 0;
 

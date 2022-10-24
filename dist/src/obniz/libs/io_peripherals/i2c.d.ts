@@ -28,7 +28,7 @@ interface PeripheralI2COptions extends PeripheralI2CState {
  *
  * @category Peripherals
  */
-declare class PeripheralI2C extends ComponentAbstract {
+export declare class PeripheralI2C extends ComponentAbstract {
     /**
      * from obniz.js 1.14.0
      *
@@ -158,4 +158,4 @@ declare class PeripheralI2C extends ComponentAbstract {
      */
     protected _reset(): void;
 }
-export default PeripheralI2C;
+export {};

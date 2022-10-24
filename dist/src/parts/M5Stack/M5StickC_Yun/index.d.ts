@@ -3,8 +3,8 @@
  * @module Parts.M5StickC_Yun
  */
 import Obniz from '../../../obniz';
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../i2cParts';
 import BMP280 from '../../PressureSensor/BMP280';
 import SHT20 from '../../TemperatureSensor/i2c/SHT20';

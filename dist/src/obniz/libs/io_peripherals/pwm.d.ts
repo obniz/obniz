@@ -30,7 +30,7 @@ export declare type PWMModulateType = 'am';
  *
  * @category Peripherals
  */
-export default class PeripheralPWM extends ComponentAbstract implements PWMInterface {
+export declare class PeripheralPWM extends ComponentAbstract implements PWMInterface {
     /**
      * @ignore
      */

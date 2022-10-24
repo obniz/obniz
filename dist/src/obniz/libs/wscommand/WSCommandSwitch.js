@@ -1,16 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandSwitch = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandSwitch extends WSCommand_1.default {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandSwitch extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 9;
         this._CommandNotifyValue = 0;
         this._CommandOnece = 1;
@@ -53,4 +51,4 @@ class WSCommandSwitch extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandSwitch;
+exports.WSCommandSwitch = WSCommandSwitch;

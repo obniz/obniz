@@ -3,12 +3,13 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import EventEmitter from 'eventemitter3';
-import BleAttributeAbstract, {
+import {
+  BleAttributeAbstract,
   BleAttributeChildrenName,
 } from './bleAttributeAbstract';
-import BleCharacteristic from './bleCharacteristic';
+import { BleCharacteristic } from './bleCharacteristic';
 import BleHelper from './bleHelper';
-import BleService from './bleService';
+import { BleService } from './bleService';
 import { UUID } from './bleTypes';
 
 /**
@@ -31,7 +32,7 @@ export type BleLocalAttributeBufferObj<ChildrenName extends string> = {
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalAttributeAbstract<
+export class BleLocalAttributeAbstract<
   ParentClass,
   ChildrenClass
 > extends BleAttributeAbstract<ParentClass, ChildrenClass> {

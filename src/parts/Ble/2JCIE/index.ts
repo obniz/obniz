@@ -5,11 +5,10 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
-import bleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import JsonBinaryConverter from '../../../obniz/libs/wscommand/jsonBinaryConverter';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
-import ObnizPartsInterface, {
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

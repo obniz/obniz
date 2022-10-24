@@ -8,8 +8,8 @@
 import EventEmitter from 'eventemitter3';
 
 import { Handle } from '../../bleTypes';
-import Hci from '../hci';
-import Smp, { SmpEncryptOptions } from './smp';
+import { Hci } from '../hci';
+import { Smp, SmpEncryptOptions } from './smp';
 
 type AclStreamEventTypes = 'data' | 'end' | 'encrypt' | 'encryptFail';
 
@@ -17,7 +17,7 @@ type AclStreamEventTypes = 'data' | 'end' | 'encrypt' | 'encryptFail';
  *
  * @ignore
  */
-export default class AclStream extends EventEmitter<AclStreamEventTypes> {
+export class AclStream extends EventEmitter<AclStreamEventTypes> {
   public _hci: Hci;
   public _handle: Handle;
   public _smp: Smp;

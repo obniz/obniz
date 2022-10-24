@@ -2,13 +2,13 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizBLE from './ble';
-import BleAdvertisementBuilder from './bleAdvertisementBuilder';
+import { ObnizBLE } from './ble';
+import { BleAdvertisementBuilder } from './bleAdvertisementBuilder';
 import { BleAdvertisementData, BleScanResponseData } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
-export default class BleAdvertisement {
+export declare class BleAdvertisement {
     protected obnizBle: ObnizBLE;
     protected adv_data: number[];
     protected scan_resp: number[];

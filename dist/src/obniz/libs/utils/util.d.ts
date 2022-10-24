@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-declare class ObnizUtil {
+export declare class ObnizUtil {
     /**
      * @ignore
      * @param params
@@ -62,4 +62,3 @@ declare class ObnizUtil {
      */
     createCanvasContext(width: number, height: number): any;
 }
-export default ObnizUtil;

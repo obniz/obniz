@@ -1,16 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandBle = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const jsonBinaryConverter_1 = __importDefault(require("./jsonBinaryConverter"));
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-const WSCommandBleHci_1 = __importDefault(require("./WSCommandBleHci"));
-class WSCommandBle extends WSCommand_1.default {
+const jsonBinaryConverter_1 = require("./jsonBinaryConverter");
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+const WSCommandBleHci_1 = require("./WSCommandBleHci");
+class WSCommandBle extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 11;
@@ -113,7 +111,7 @@ class WSCommandBle extends WSCommand_1.default {
             0x02: 'irk',
             0x04: 'csrk',
         };
-        this.hciCommand = new WSCommandBleHci_1.default(this);
+        this.hciCommand = new WSCommandBleHci_1.WSCommandBleHci(this);
         const funcList = {};
         funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(this);
         funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
@@ -145,7 +143,7 @@ class WSCommandBle extends WSCommand_1.default {
         const schema = [
             { path: 'scan.duration', length: 4, type: 'int', default: 30 },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandStartScan, buf);
     }
     centralScanStop(params) {
@@ -162,7 +160,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: null, length: 1, type: 'char', default: false }, // const val
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandConnect, buf);
     }
     centralDisconnect(params) {
@@ -176,7 +174,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: null, length: 1, type: 'char', default: true }, // const val
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandConnect, buf);
     }
     centralServiceGet(params) {
@@ -189,7 +187,7 @@ class WSCommandBle extends WSCommand_1.default {
                 endianness: 'little',
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServices, buf);
     }
     centralCharacteristicGet(params) {
@@ -208,7 +206,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandCharacteristics, buf);
     }
     centralCharacteristicRead(params) {
@@ -233,7 +231,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandReadCharacteristics, buf);
     }
     centralCharacteristicWrite(params) {
@@ -265,7 +263,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: 'write_characteristic.data', length: null, type: 'dataArray' },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandWriteCharacteristics, buf);
     }
     centralCharacteristicRegisterNotify(params) {
@@ -290,7 +288,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandRegisterNotifyCharacteristic, buf);
     }
     centralCharacteristicUnregisterNotify(params) {
@@ -315,7 +313,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandUnregisterNotifyCharacteristic, buf);
     }
     centralDescriptorGet(params) {
@@ -340,7 +338,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandDescriptors, buf);
     }
     centralDescriptorRead(params) {
@@ -371,7 +369,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandReadDescriptor, buf);
     }
     centralDescriptorWrite(params) {
@@ -409,7 +407,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: 'write_descriptor.data', length: null, type: 'dataArray' },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandWriteDescriptor, buf);
     }
     /* PERIPHERAL   */
@@ -506,12 +504,12 @@ class WSCommandBle extends WSCommand_1.default {
         let buf;
         for (const serviceIndex in val.services) {
             const service = val.services[serviceIndex];
-            buf = jsonBinaryConverter_1.default.createSendBuffer(schema.service.schema, service);
+            buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema.service.schema, service);
             if (buf.length === 0) {
                 return;
             }
             sendBufs.push({ command: schema.service.command, buffer: buf });
-            buf = jsonBinaryConverter_1.default.createSendBuffer(schema.startService.schema, service);
+            buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema.startService.schema, service);
             startServiceBufs.push({
                 command: schema.startService.command,
                 buffer: buf,
@@ -519,7 +517,7 @@ class WSCommandBle extends WSCommand_1.default {
             for (const charaIndex in service.characteristics) {
                 const chara = service.characteristics[charaIndex];
                 chara.service_uuid = service.uuid;
-                buf = jsonBinaryConverter_1.default.createSendBuffer(schema.characteristic.schema, chara);
+                buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema.characteristic.schema, chara);
                 if (buf.length === 0) {
                     return;
                 }
@@ -531,7 +529,7 @@ class WSCommandBle extends WSCommand_1.default {
                     const desc = chara.descriptors[descIndex];
                     desc.service_uuid = service.uuid;
                     desc.characteristic_uuid = chara.uuid;
-                    buf = jsonBinaryConverter_1.default.createSendBuffer(schema.descriptor.schema, desc);
+                    buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema.descriptor.schema, desc);
                     if (buf.length === 0) {
                         return;
                     }
@@ -556,7 +554,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: null, length: 1, type: 'char', default: 1 }, // const val
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerStartStopService, buf);
     }
     peripheralServiceStopAll() {
@@ -577,7 +575,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerReadCharavteristicValue, buf);
     }
     peripheralCharacteristicWrite(params) {
@@ -596,7 +594,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: 'peripheral.write_characteristic.data', type: 'dataArray' },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerWriteCharavteristicValue, buf);
     }
     peripheralCharacteristicNotify(params) {
@@ -614,7 +612,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerNotifyCharavteristic, buf);
     }
     peripheralDescriptorRead(params) {
@@ -638,7 +636,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerReadDescriptorValue, buf);
     }
     peripheralDescriptorWrite(params) {
@@ -663,7 +661,7 @@ class WSCommandBle extends WSCommand_1.default {
             },
             { path: 'peripheral.write_descriptor.data', type: 'dataArray' },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandServerWriteDescriptorValue, buf);
     }
     securityAuth(params) {
@@ -676,7 +674,7 @@ class WSCommandBle extends WSCommand_1.default {
                 flags: this._securityAuthValues,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandSecuritySetAuth, buf);
     }
     securityIndicateLevel(params) {
@@ -688,7 +686,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandSecuritySetEncryptionLevel, buf);
     }
     securityKeyType(params) {
@@ -701,7 +699,7 @@ class WSCommandBle extends WSCommand_1.default {
                 flags: this._securityKeyTypes,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandSecuritySetEnableKeyTypes, buf);
     }
     securityKeySize(params) {
@@ -713,7 +711,7 @@ class WSCommandBle extends WSCommand_1.default {
                 required: true,
             },
         ];
-        const buf = jsonBinaryConverter_1.default.createSendBuffer(schema, params);
+        const buf = jsonBinaryConverter_1.JsonBinaryConverter.createSendBuffer(schema, params);
         this.sendCommand(this._CommandSecuritySetKeyMaxSize, buf);
     }
     clearBondingDevicesList(params) {
@@ -884,7 +882,7 @@ class WSCommandBle extends WSCommand_1.default {
                 { name: 'advertise_length', type: 'number', length: 1 },
                 { name: 'scan_response_length', type: 'number', length: 1 },
             ];
-            const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+            const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
             results.scan_resp = results.adv_data.slice(results.advertise_length, results.advertise_length + results.scan_response_length);
             results.adv_data = results.adv_data.slice(0, results.advertise_length);
             delete results.num_response;
@@ -911,7 +909,7 @@ class WSCommandBle extends WSCommand_1.default {
                     enum: { connected: 0, disconnected: 1 },
                 },
             ];
-            const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+            const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
             this._addRowForPath(objToSend, 'ble.status_update', results);
         }
     }
@@ -920,7 +918,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'address', type: 'hex', length: 6, endianness: 'little' },
             { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         if (results.service_uuid !== null) {
             this._addRowForPath(objToSend, 'ble.get_service_result', results);
         }
@@ -942,7 +940,7 @@ class WSCommandBle extends WSCommand_1.default {
                 flags: true,
             },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         if (results.characteristic_uuid !== null) {
             this._addRowForPath(objToSend, 'ble.get_characteristic_result', results);
         }
@@ -960,7 +958,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'result', type: 'int', length: 1 },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.read_characteristic_result', results);
@@ -972,7 +970,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.write_characteristic_result', results);
@@ -984,7 +982,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.register_notify_characteristic_result', results);
@@ -996,7 +994,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.unregister_notify_characteristic_result', results);
@@ -1009,7 +1007,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'is_notify', type: 'int', length: 1 },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.is_notify = results.is_notify === 1;
         this._addRowForPath(objToSend, 'ble.notify_characteristic', results);
     }
@@ -1020,7 +1018,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         if (results.descriptor_uuid !== null) {
             this._addRowForPath(objToSend, 'ble.get_descriptor_result', results);
         }
@@ -1038,7 +1036,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'result', type: 'int', length: 1 },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.read_descriptor_result', results);
@@ -1051,7 +1049,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.write_descriptor_result', results);
@@ -1066,7 +1064,7 @@ class WSCommandBle extends WSCommand_1.default {
                 enum: { connected: 1, disconnected: 0 },
             },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.connection_status', results);
     }
     notifyFromBinaryServerWriteCharavteristicValue(objToSend, payload) {
@@ -1075,7 +1073,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.peripheral.write_characteristic_result', results);
@@ -1086,7 +1084,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result = 'success'; // always success
         this._addRowForPath(objToSend, 'ble.peripheral.read_characteristic_result', results);
     }
@@ -1096,7 +1094,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'service_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.notify_read_characteristic', results);
     }
     notifyFromBinaryServerNotifyWriteCharavteristicValue(objToSend, payload) {
@@ -1106,7 +1104,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.notify_write_characteristic', results);
     }
     notifyFromBinaryServerReadDescriptorValue(objToSend, payload) {
@@ -1116,7 +1114,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result = 'success'; // always success
         this._addRowForPath(objToSend, 'ble.peripheral.read_descriptor_result', results);
     }
@@ -1127,7 +1125,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'result', type: 'int', length: 1 },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         results.result =
             results.result === this._commandResults.success ? 'success' : 'failed';
         this._addRowForPath(objToSend, 'ble.peripheral.write_descriptor_result', results);
@@ -1139,7 +1137,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.notify_read_descriptor', results);
     }
     notifyFromBinaryServerNotifyWriteDescriptorValue(objToSend, payload) {
@@ -1150,7 +1148,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'data', type: 'dataArray', length: null },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         this._addRowForPath(objToSend, 'ble.peripheral.notify_write_descriptor', results);
     }
     notifyFromBinaryError(objToSend, payload) {
@@ -1163,7 +1161,7 @@ class WSCommandBle extends WSCommand_1.default {
             { name: 'characteristic_uuid', type: 'uuid', length: this.uuidLength },
             { name: 'descriptor_uuid', type: 'uuid', length: this.uuidLength },
         ];
-        const results = jsonBinaryConverter_1.default.convertFromBinaryToJson(schema, payload);
+        const results = jsonBinaryConverter_1.JsonBinaryConverter.convertFromBinaryToJson(schema, payload);
         const errorMessage = {
             0x00: 'no error',
             0x01: 'device not connected',
@@ -1231,4 +1229,4 @@ class WSCommandBle extends WSCommand_1.default {
         target[keys[keys.length - 1]] = row;
     }
 }
-exports.default = WSCommandBle;
+exports.WSCommandBle = WSCommandBle;
