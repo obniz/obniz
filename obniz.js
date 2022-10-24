@@ -5797,9 +5797,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      *
      * @deprecated replaced by {@link #directConnectWait()}
      */
-    directConnect(address, addressType) {
+    directConnect(address, addressType, connectionSetting) {
         // noinspection JSIgnoredPromiseFromCall
-        this.directConnectWait(address, addressType).catch((e) => {
+        this.directConnectWait(address, addressType, connectionSetting).catch((e) => {
             // background
             this.Obniz.error(e);
         });
@@ -5826,14 +5826,14 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @param address peripheral device address
      * @param addressType "random" or "public"
      */
-    async directConnectWait(address, addressType) {
+    async directConnectWait(address, addressType, connectionSetting) {
         let peripheral = this.findPeripheral(address);
         if (!peripheral) {
             peripheral = new bleRemotePeripheral_1.BleRemotePeripheral(this, address);
             this.remotePeripherals.push(peripheral);
         }
         this.centralBindings.addPeripheralData(address, addressType);
-        await peripheral.connectWait();
+        await peripheral.connectWait(connectionSetting);
         return peripheral;
     }
     /**
