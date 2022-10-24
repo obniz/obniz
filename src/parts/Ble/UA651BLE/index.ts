@@ -10,8 +10,8 @@ import {
   ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
-import BleBatteryService from '../utils/services/batteryService';
-import BleGenericAccess from '../utils/services/genericAccess';
+import { BleBatteryService } from '../utils/services/batteryService';
+import { BleGenericAccess } from '../utils/services/genericAccess';
 
 export interface UA651BLEOptions {}
 

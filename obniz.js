@@ -25677,8 +25677,10 @@ var map = {
 	"./Ble/RS_BTIREX2/index.js": "./dist/src/parts/Ble/RS_BTIREX2/index.js",
 	"./Ble/RS_BTWATTCH2/index.js": "./dist/src/parts/Ble/RS_BTWATTCH2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
+	"./Ble/RTR500B/index.js": "./dist/src/parts/Ble/RTR500B/index.js",
 	"./Ble/STM550B/index.js": "./dist/src/parts/Ble/STM550B/index.js",
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
+	"./Ble/TR4A/index.js": "./dist/src/parts/Ble/TR4A/index.js",
 	"./Ble/TR7/index.js": "./dist/src/parts/Ble/TR7/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
@@ -27009,11 +27011,8 @@ DR_MARK.pulseDataArray = [];
  * @module Parts.ENERTALK_TOUCH
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
+const batteryService_1 = __webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js");
 /** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 class ENERTALK_TOUCH {
     constructor(peripheral) {
@@ -27089,7 +27088,7 @@ class ENERTALK_TOUCH {
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
         const service180F = this._peripheral.getService('180F');
         if (service180F) {
-            this.batteryService = new batteryService_1.default(service180F);
+            this.batteryService = new batteryService_1.BleBatteryService(service180F);
         }
     }
     /**
@@ -32125,6 +32124,121 @@ exports.default = RS_Seek3;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/RTR500B/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.RTR500B
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** Tr4 series management class RTR500Bシリーズを管理するクラス */
+class RTR500B {
+    constructor() {
+        // local name adv is exist, but cannot use for filter
+        // .groupStart('localName')
+        // .groupEnd();
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'RTR500B',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the RTR500B
+     *
+     * 受け取ったPeripheralがRTR500Bのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the RTR500B
+     *
+     * RTR500Bかどうか
+     */
+    static isDevice(peripheral) {
+        var _a;
+        if (!((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('RTR'))) {
+            return false;
+        }
+        return RTR500B._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    /**
+     * Get a data from the RTR500B
+     *
+     * Tr4からデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the RTR500B RTR500Bから受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
+     * }
+     * ```
+     */
+    static getData(peripheral) {
+        if (!RTR500B.isDevice(peripheral)) {
+            return null;
+        }
+        const measureData = RTR500B._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measureData');
+        if (!measureData) {
+            return null;
+        }
+        if (measureData[0] === 0xee && measureData[1] === 0xee) {
+            // sensor error
+            return null;
+        }
+        const temperatureRaw = Buffer.from(measureData).readInt16LE(0);
+        const measureData2 = RTR500B._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measureData2');
+        if (!measureData2) {
+            return {
+                temperature: (temperatureRaw - 1000) / 10,
+            };
+        }
+        if (measureData2[0] === 0x00 && measureData2[1] === 0x00) {
+            return {
+                temperature: (temperatureRaw - 1000) / 10,
+            };
+        }
+        const humidityRaw = Buffer.from(measureData2).readInt16LE(0);
+        return {
+            temperature: (temperatureRaw - 1000) / 10,
+            humidity: (humidityRaw - 1000) / 10,
+        };
+    }
+}
+exports.default = RTR500B;
+RTR500B._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06])
+    .groupStart('manufacture')
+    .addTarget('length', [0x05])
+    .addTarget('type', [0x05])
+    .addTargetByLength('uuid', 4)
+    .addTarget('length2', [0x15])
+    .addTarget('type2', [0xff])
+    .addTarget('companyId', [0x92, 0x03])
+    .addTargetByLength('deviceSerial', 4)
+    .addTarget('operationCode', [-1])
+    .addTarget('statusCode1', [-1])
+    .addTarget('statusCode2', [-1])
+    .addTarget('statusCode3', [-1])
+    .addTarget('measureData', [-1, -1])
+    .addTarget('measureData2', [-1, -1])
+    .addTargetByLength('reserved', 6) // from datasheet length=14, but device send length=13
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/STM550B/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32392,6 +32506,121 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .groupEnd()
     // local name adv is exist, but cannot use for filter
     .groupStart('localName')
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/TR4A/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.TR4A
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** Tr4A series management class Tr4Aシリーズを管理するクラス */
+class Tr4A {
+    constructor() {
+        // local name adv is exist, but cannot use for filter
+        // .groupStart('localName')
+        // .groupEnd();
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TR4A',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Tr4A
+     *
+     * 受け取ったPeripheralがTr4Aのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Tr4A
+     *
+     * Tr4Aかどうか
+     */
+    static isDevice(peripheral) {
+        var _a;
+        if (!((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('TR4'))) {
+            return false;
+        }
+        return Tr4A._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    /**
+     * Get a data from the Tr4A
+     *
+     * Tr4Aからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Tr4A Tr4Aから受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
+     * }
+     * ```
+     */
+    static getData(peripheral) {
+        if (!Tr4A.isDevice(peripheral)) {
+            return null;
+        }
+        const measureData = Tr4A._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measureData');
+        if (!measureData) {
+            return null;
+        }
+        if (measureData[0] === 0xee && measureData[1] === 0xee) {
+            // sensor error
+            return null;
+        }
+        const temperatureRaw = Buffer.from(measureData).readInt16LE(0);
+        const measureData2 = Tr4A._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measureData2');
+        if (!measureData2) {
+            return {
+                temperature: (temperatureRaw - 1000) / 10,
+            };
+        }
+        if (measureData2[0] === 0x00 && measureData2[1] === 0x00) {
+            return {
+                temperature: (temperatureRaw - 1000) / 10,
+            };
+        }
+        const humidityRaw = Buffer.from(measureData2).readInt16LE(0);
+        return {
+            temperature: (temperatureRaw - 1000) / 10,
+            humidity: (humidityRaw - 1000) / 10,
+        };
+    }
+}
+exports.default = Tr4A;
+Tr4A._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06])
+    .groupStart('manufacture')
+    .addTarget('length', [0x05])
+    .addTarget('type', [0x05])
+    .addTargetByLength('uuid', 4)
+    .addTarget('length2', [0x15])
+    .addTarget('type2', [0xff])
+    .addTarget('companyId', [0x92, 0x03])
+    .addTargetByLength('deviceSerial', 4)
+    .addTarget('operationCode', [0x00])
+    .addTarget('count', [-1])
+    .addTarget('statusCode1', [-1])
+    .addTarget('statusCode2', [-1])
+    .addTarget('measureData', [-1, -1])
+    .addTarget('measureData2', [-1, -1])
+    .addTargetByLength('reserved', 6) // from datasheet length=14, but device send length=13
     .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
@@ -40056,13 +40285,10 @@ exports.default = uPRISM;
  * @module Parts.Logtta
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
-const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js"));
+const batteryService_1 = __webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js");
+const genericAccess_1 = __webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js");
 const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
@@ -40089,11 +40315,11 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await super.connectWait(keys);
         const service1800 = this.peripheral.getService('1800');
         if (service1800) {
-            this.genericAccess = new genericAccess_1.default(service1800);
+            this.genericAccess = new genericAccess_1.BleGenericAccess(service1800);
         }
         const service180F = this.peripheral.getService('180F');
         if (service180F) {
-            this.batteryService = new batteryService_1.default(service180F);
+            this.batteryService = new batteryService_1.BleBatteryService(service180F);
         }
     }
     async beforeOnDisconnectWait() {
@@ -41917,6 +42143,7 @@ exports.BleAdvBinaryAnalyzer = BleAdvBinaryAnalyzer;
  * @module Parts.utils.services
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleBatteryService = void 0;
 class BleBatteryService {
     constructor(service) {
         this._service = service;
@@ -41932,7 +42159,7 @@ class BleBatteryService {
         return this.getBatteryLevelWait();
     }
 }
-exports.default = BleBatteryService;
+exports.BleBatteryService = BleBatteryService;
 
 
 /***/ }),
@@ -41947,6 +42174,7 @@ exports.default = BleBatteryService;
  * @module Parts.utils.services
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleGenericAccess = void 0;
 class BleGenericAccess {
     constructor(service) {
         this._service = service;
@@ -41959,7 +42187,7 @@ class BleGenericAccess {
         return await char.readTextWait();
     }
 }
-exports.default = BleGenericAccess;
+exports.BleGenericAccess = BleGenericAccess;
 
 
 /***/ }),

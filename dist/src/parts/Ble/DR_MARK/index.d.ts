@@ -2,10 +2,10 @@
  * @packageDocumentation
  * @module Parts.DR_MARK
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
-import BleBatteryService from '../utils/services/batteryService';
+import { BleBatteryService } from '../utils/services/batteryService';
 export declare type CommandResultType = 'ok' | 'errorId' | 'errorMode' | 'errorExecution' | 'errorParams' | 'errorFrom' | 'errorTimeout' | 'errorObject';
 export declare type CallbackFunctionType = (data: CommandNotifyData) => void;
 export declare type ActionModeType = 'stop' | 'adjust' | 'monitor' | 'suspend' | 'finish' | 'log';

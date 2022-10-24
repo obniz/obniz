@@ -14,7 +14,7 @@ import {
   ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
-import BleGenericAccess from '../utils/services/genericAccess';
+import { BleGenericAccess } from '../utils/services/genericAccess';
 
 export interface MT_500BTOptions {}
 
