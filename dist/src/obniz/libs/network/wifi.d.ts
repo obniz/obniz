@@ -3,7 +3,7 @@
  * @module ObnizCore.Components
  */
 import Obniz from '../../index';
-export default class WiFi {
+export declare class WiFi {
     private Obniz;
     private connectObservers;
     constructor(obniz: Obniz, id: number);

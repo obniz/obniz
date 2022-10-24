@@ -6,6 +6,7 @@
  * @module ObnizCore
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizPartsBleInterface = void 0;
 class ObnizPartsBleInterface {
     constructor() {
         /**
@@ -50,4 +51,4 @@ class ObnizPartsBleInterface {
         return result;
     }
 }
-exports.default = ObnizPartsBleInterface;
+exports.ObnizPartsBleInterface = ObnizPartsBleInterface;

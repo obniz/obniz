@@ -1,16 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandLogicAnalyzer = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandLogicAnalyzer extends WSCommand_1.default {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandLogicAnalyzer extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 10;
         this._CommandInit = 0;
         this._CommandDeinit = 1;
@@ -81,4 +79,4 @@ class WSCommandLogicAnalyzer extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandLogicAnalyzer;
+exports.WSCommandLogicAnalyzer = WSCommandLogicAnalyzer;

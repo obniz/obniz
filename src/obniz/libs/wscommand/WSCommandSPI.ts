@@ -2,26 +2,15 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-class WSCommandSPI extends WSCommand {
-  public module: number;
-  public _CommandInit: number;
-  public _CommandDeinit: number;
-  public _CommandWriteRead: number;
-  public _CommandWrite: number;
-  public ioNotUsed: any;
+export class WSCommandSPI extends WSCommandAbstract {
+  module = 5;
 
-  constructor() {
-    super();
-    this.module = 5;
-
-    this._CommandInit = 0;
-    this._CommandDeinit = 1;
-    this._CommandWriteRead = 2;
-    this._CommandWrite = 3;
-  }
-
+  _CommandInit = 0;
+  _CommandDeinit = 1;
+  _CommandWriteRead = 2;
+  _CommandWrite = 3;
   // Commands
 
   public initMaster(params: any, module: any) {
@@ -125,5 +114,3 @@ class WSCommandSPI extends WSCommand {
     }
   }
 }
-
-export default WSCommandSPI;

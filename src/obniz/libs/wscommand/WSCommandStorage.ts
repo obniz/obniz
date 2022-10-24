@@ -1,6 +1,6 @@
-import WSCommand from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-export default class WSCommandStorage extends WSCommand {
+export class WSCommandStorage extends WSCommandAbstract {
   public module = 17;
 
   public _CommandSave = 0;

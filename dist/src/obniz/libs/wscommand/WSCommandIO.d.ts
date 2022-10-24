@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-declare class WSCommandIO extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandIO extends WSCommandAbstract {
     module: number;
     _CommandOutput: number;
     _CommandInputStream: number;
@@ -11,7 +11,6 @@ declare class WSCommandIO extends WSCommand {
     _CommandOutputType: number;
     _CommandPullResisterType: number;
     _CommandEnd: number;
-    constructor();
     output(value: any, id: number): void;
     outputDetail(params: any, id: number): void;
     input(params: any, id: number): void;
@@ -22,4 +21,3 @@ declare class WSCommandIO extends WSCommand {
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }
-export default WSCommandIO;

@@ -1,7 +1,7 @@
 /// <reference types="node" />
 /// <reference types="node" />
 import { HandleIndex } from '../peripheral/gatt';
-import AclStream from './acl-stream';
+import { AclStream } from './acl-stream';
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, UUID } from '../../bleTypes';
 import { SmpEncryptOptions } from './smp';
@@ -9,7 +9,7 @@ declare type GattEventTypes = 'notification' | 'handleConfirmation' | 'handleNot
 /**
  * @ignore
  */
-declare class GattCentral extends EventEmitter<GattEventTypes> {
+export declare class GattCentral extends EventEmitter<GattEventTypes> {
     onAclStreamDataBinded: (cid: number, data: Buffer) => void;
     onAclStreamEndBinded: () => void;
     private _address;
@@ -61,4 +61,4 @@ declare class GattCentral extends EventEmitter<GattEventTypes> {
     private _execCommandWait;
     private _execNoRespCommandWait;
 }
-export default GattCentral;
+export {};

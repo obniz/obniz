@@ -14,13 +14,12 @@ This sensor response CO2, You can check behavior by breathing.
 
 ## wired(obniz,  { vcc, gnd, do, ao});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC or H on MQ6.
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND or H on MQ6.
-do | `number(obniz Board io)` | no |  &nbsp; | digital out
-ao | `number(obniz Board io)` | no | &nbsp;  | analog out
-
+| name | type                     | required | default | description      |
+|------|--------------------------|----------|---------|------------------|
+| vcc  | `number(obniz Board io)` | no       | &nbsp;  | VCC or H on MQ6. |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | GND or H on MQ6. |
+| do   | `number(obniz Board io)` | no       | &nbsp;  | digital out      |
+| ao   | `number(obniz Board io)` | no       | &nbsp;  | analog out       |
 
 ```Javascript
 // Javascript Example
@@ -46,9 +45,9 @@ mq6.startHeating();
 It start heating and wait for a while.
 You can update wait time.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-sec | `number` | no | 120 | seconds for wait
+| name | type     | required | default | description      |
+|------|----------|----------|---------|------------------|
+| sec  | `number` | no       | 120     | seconds for wait |
 
 ```Javascript
 // Javascript Example

@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/network_value"
+
+type: object
+required: [network]
+properties:
+  network:
+    type: object
+    required: [value]
+    properties:
+        value: string
+

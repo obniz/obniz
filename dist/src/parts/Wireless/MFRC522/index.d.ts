@@ -3,7 +3,7 @@
  * @module Parts.MFRC522
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface MFRC522Options {
     gnd?: number;
     vcc?: number;

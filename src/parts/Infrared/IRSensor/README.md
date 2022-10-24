@@ -11,7 +11,7 @@ Connect vcc and gnd and output. vcc and gnd is optional.
 Various parts can be used. Belows are example.
 
 1. [OSRB38C9AA](http://akizukidenshi.com/download/OSRB38C9AA.pdf)
-1. [TFMS5380](https://www.voti.nl/docs/tfms5360.pdf) etc,,,
+2. [TFMS5380](https://www.voti.nl/docs/tfms5360.pdf) etc,,,
 
 These parts has vcc/gnd/output
 For examle, 
@@ -49,13 +49,13 @@ So, It's like below.
 monitor options and these default value
 See more details on logicanalyzer document
 
-property | type | default | description
---- | --- | --- | --- 
-dataSymbolLength | `number` | 0.07 (msec) | sampling interval of logicanalyzer
-duration | `number` | 500 (msec) | data length
-dataInverted | `number` | true | 0,1 of data should be inverted
-cutTail | `number` | false | cutting of tail 0. It may affect communication.
-output_pullup | `number` | true | pullup to 5v or not of sensor output.
+| property         | type     | default     | description                                     |
+|------------------|----------|-------------|-------------------------------------------------|
+| dataSymbolLength | `number` | 0.07 (msec) | sampling interval of logicanalyzer              |
+| duration         | `number` | 500 (msec)  | data length                                     |
+| dataInverted     | `number` | true        | 0,1 of data should be inverted                  |
+| cutTail          | `number` | false       | cutting of tail 0. It may affect communication. |
+| output_pullup    | `number` | true        | pullup to 5v or not of sensor output.           |
 
 You can chenge these before start.
 

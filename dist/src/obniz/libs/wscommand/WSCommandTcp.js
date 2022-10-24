@@ -1,16 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandTcp = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandTcp extends WSCommand_1.default {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandTcp extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 13;
         this._MaxPort = 8;
         this._CommandConnect = 0;
@@ -131,4 +129,4 @@ class WSCommandTcp extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandTcp;
+exports.WSCommandTcp = WSCommandTcp;

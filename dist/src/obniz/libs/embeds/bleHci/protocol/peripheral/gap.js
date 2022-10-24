@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Gap = void 0;
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
 /**
  * @ignore
@@ -17,7 +18,7 @@ const debug = () => {
     // do nothing.
 };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
-const hci_1 = __importDefault(require("../hci"));
+const hci_1 = require("../hci");
 /**
  * @ignore
  */
@@ -161,7 +162,7 @@ class Gap extends eventemitter3_1.default {
         if (this._advertiseState === 'starting') {
             this._advertiseState = 'started';
             if (status) {
-                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+                throw new Error(hci_1.Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
             }
         }
         else if (this._advertiseState === 'stopping') {
@@ -193,7 +194,7 @@ class Gap extends eventemitter3_1.default {
         if (this._advertiseState === 'starting') {
             this._advertiseState = 'started';
             if (status) {
-                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+                throw new Error(hci_1.Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
             }
         }
         else if (this._advertiseState === 'stopping') {
@@ -209,4 +210,4 @@ class Gap extends eventemitter3_1.default {
         await this._hci.setAdvertiseEnableWait(false);
     }
 }
-exports.default = Gap;
+exports.Gap = Gap;

@@ -3,8 +3,8 @@
  * @ignore
  */
 
-export default class HW {
-  public static getDefinitionFor(hw: any) {
+export class HW {
+  public static getDefinitionFor(hw: string | undefined) {
     if (hw === 'obnizb1') {
       return require('./obnizb1.json');
     } else if (hw === 'obnizb2') {

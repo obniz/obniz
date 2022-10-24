@@ -5,9 +5,9 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizUtil from '../../../obniz/libs/utils/util';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizUtil } from '../../../obniz/libs/utils/util';
+import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 
 /**
  * advertisement data from MiniBreeze

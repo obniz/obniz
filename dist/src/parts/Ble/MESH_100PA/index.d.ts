@@ -3,7 +3,7 @@
  * @module Parts.MESH_100PA
  */
 import { MESH } from '../utils/abstracts/MESH';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 export interface MESH_100PAOptions {
 }
 /**

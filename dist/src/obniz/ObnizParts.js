@@ -3,17 +3,15 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const util_1 = __importDefault(require("./libs/utils/util"));
-const ObnizConnection_1 = __importDefault(require("./ObnizConnection"));
+exports.ObnizParts = void 0;
+const util_1 = require("./libs/utils/util");
+const ObnizConnection_1 = require("./ObnizConnection");
 /**
  * @ignore
  */
 const _parts = {};
-class ObnizParts extends ObnizConnection_1.default {
+class ObnizParts extends ObnizConnection_1.ObnizConnection {
     /**
      * @ignore
      * @private
@@ -92,12 +90,12 @@ class ObnizParts extends ObnizConnection_1.default {
         }
         if (parts.keys) {
             if (parts.requiredKeys) {
-                const err = util_1.default._requiredKeys(args[1], parts.requiredKeys);
+                const err = util_1.ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
                 if (err) {
                     throw new Error(partsName + " wired param '" + err + "' required, but not found ");
                 }
             }
-            parts.params = util_1.default._keyFilter(args[1], parts.keys);
+            parts.params = util_1.ObnizUtil._keyFilter(args[1], parts.keys);
         }
         parts.obniz = this;
         parts.wired(...args);
@@ -143,4 +141,4 @@ class ObnizParts extends ObnizConnection_1.default {
         return parts;
     }
 }
-exports.default = ObnizParts;
+exports.ObnizParts = ObnizParts;

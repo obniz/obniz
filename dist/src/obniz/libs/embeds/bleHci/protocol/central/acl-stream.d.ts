@@ -7,14 +7,14 @@
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';
-import Hci from '../hci';
-import Smp, { SmpEncryptOptions } from './smp';
+import { Hci } from '../hci';
+import { Smp, SmpEncryptOptions } from './smp';
 declare type AclStreamEventTypes = 'data' | 'end' | 'encrypt' | 'encryptFail';
 /**
  *
  * @ignore
  */
-export default class AclStream extends EventEmitter<AclStreamEventTypes> {
+export declare class AclStream extends EventEmitter<AclStreamEventTypes> {
     _hci: Hci;
     _handle: Handle;
     _smp: Smp;

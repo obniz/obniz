@@ -5,8 +5,8 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import MINEW from '../utils/abstracts/MINEW';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizUtil from '../../../obniz/libs/utils/util';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizUtil } from '../../../obniz/libs/utils/util';
 import {
   ObnizPartsBleCompare,
   ObnizBleBeaconStruct,

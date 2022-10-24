@@ -3,8 +3,8 @@
  * @module ObnizCore
  */
 import { ObnizOptions } from './ObnizOptions';
-import ObnizSystemMethods from './ObnizSystemMethods';
-export default class ObnizUIs extends ObnizSystemMethods {
+import { ObnizSystemMethods } from './ObnizSystemMethods';
+export declare class ObnizUIs extends ObnizSystemMethods {
     /**
      * @ignore
      */

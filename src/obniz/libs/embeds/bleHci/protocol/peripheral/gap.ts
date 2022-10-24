@@ -14,14 +14,14 @@ const debug: any = () => {
   // do nothing.
 };
 import EventEmitter from 'eventemitter3';
-import Hci from '../hci';
+import { Hci } from '../hci';
 
 type GapEventTypes = '';
 
 /**
  * @ignore
  */
-class Gap extends EventEmitter<GapEventTypes> {
+export class Gap extends EventEmitter<GapEventTypes> {
   public _hci: Hci;
   public _advertiseState: any;
 
@@ -289,5 +289,3 @@ class Gap extends EventEmitter<GapEventTypes> {
     await this._hci.setAdvertiseEnableWait(false);
   }
 }
-
-export default Gap;

@@ -13,7 +13,7 @@ import BleHelper from '../../bleHelper';
 import { UUID } from '../../bleTypes';
 import { ATT } from '../common/att';
 import { GattCommon } from '../common/gatt';
-import AclStream from './acl-stream';
+import { AclStream } from './acl-stream';
 
 // var debug = require('debug')('gatt');
 const debug: any = () => {
@@ -94,7 +94,7 @@ type GattEventTypes = 'mtuChange';
 /**
  * @ignore
  */
-export default class GattPeripheral extends EventEmitter<GattEventTypes> {
+export class GattPeripheral extends EventEmitter<GattEventTypes> {
   public maxMtu = 256;
   public _mtu = 23;
   public _preparedWriteRequest: any = null;

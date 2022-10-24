@@ -12,7 +12,7 @@ Extract the data from an advertisement.
 
 
 Result format:
-```json
+```
 {
   temperature: Temperature [degC];
   humidity: Humidity [Percentage];

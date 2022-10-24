@@ -3,9 +3,9 @@
  * @module Parts.W5500
  */
 import Obniz from '../../../obniz';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralSPI } from '../../../obniz/libs/io_peripherals/spi';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 /** W5500 type definitions and constants W5500の型定義や定数 */
 export declare namespace W5500Parts {
     /** Pin assignment and SPI options ピンアサインとSPIオプション */

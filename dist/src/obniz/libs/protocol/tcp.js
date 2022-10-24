@@ -7,6 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tcp = void 0;
 const semver_1 = __importDefault(require("semver"));
 const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
@@ -204,4 +205,4 @@ class Tcp extends ComponentAbstact_1.ComponentAbstract {
         }
     }
 }
-exports.default = Tcp;
+exports.Tcp = Tcp;

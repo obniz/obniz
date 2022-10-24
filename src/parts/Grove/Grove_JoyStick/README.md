@@ -10,14 +10,14 @@ It uses the I2C communication.
 connect to the obniz device.  
 White, yellow, red and black wires correspond to scl, sda, vcc and gnd respectively.  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-scl | `number(obniz Board io)` | no |  &nbsp; | scl of I2C
-sda | `number(obniz Board io)` | no | &nbsp;  | sda of I2C
-i2c | `object` | no | &nbsp;  | obniz i2c object
-grove | `object` | no | &nbsp;  | grove interface object if a device has
+| name  | type                     | required | default | description                            |
+|-------|--------------------------|----------|---------|----------------------------------------|
+| vcc   | `number(obniz Board io)` | no       | &nbsp;  | Power Supply                           |
+| gnd   | `number(obniz Board io)` | no       | &nbsp;  | Power Supply                           |
+| scl   | `number(obniz Board io)` | no       | &nbsp;  | scl of I2C                             |
+| sda   | `number(obniz Board io)` | no       | &nbsp;  | sda of I2C                             |
+| i2c   | `object`                 | no       | &nbsp;  | obniz i2c object                       |
+| grove | `object`                 | no       | &nbsp;  | grove interface object if a device has |
 
 ```javascript
 var joystick = obniz.wired("Grove_JoyStick", { scl:0, sda:1, vcc:2, gnd:3 });

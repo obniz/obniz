@@ -7,8 +7,8 @@
  * @module Parts
  */
 import Obniz from '../../../../obniz';
-import PeripheralI2C from '../../../../obniz/libs/io_peripherals/i2c';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../../obniz/ObnizPartsInterface';
+import { PeripheralI2C } from '../../../../obniz/libs/io_peripherals/i2c';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../../i2cParts';
 export declare type AM2320Options = I2cPartsAbstractOptions;
 export default class AM2320 implements ObnizPartsInterface {

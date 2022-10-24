@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { deprecate } from 'util';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import {
   ObnizBleBeaconStruct,
   ObnizPartsBleCompare,

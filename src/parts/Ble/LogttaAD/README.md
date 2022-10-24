@@ -31,7 +31,7 @@ Official product introduction page is [here](http://www.uni-elec.co.jp/logtta_pa
 // Javascript
 const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // Get operation mode, it becomes null when not Logtta_AD
   const mode = Logtta_AD.getDeviceMode(peripheral);
   if (mode === 'Beacon') {
@@ -56,7 +56,7 @@ When the value is 254, the USB power supply is driven, otherwise the remaining a
 // Javascript
 const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // Get operation mode, it becomes null when not Logtta_AD
   const mode = Logtta_AD.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
@@ -101,7 +101,7 @@ Use `startNotifyWait()` to wait for data from the device always.
 // Javascript
 const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // Get operation mode, it becomes null when not Logtta_AD
   const mode = Logtta_AD.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
@@ -138,7 +138,7 @@ To disable beacon mode, it is necessary to press and hold the button on the devi
 // Javascript
 const Logtta_AD = Obniz.getPartsClass('Logtta_AD');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // Get operation mode, it becomes null when not Logtta_AD
   const mode = Logtta_AD.getDeviceMode(peripheral);
   if (mode === 'Connectable') {

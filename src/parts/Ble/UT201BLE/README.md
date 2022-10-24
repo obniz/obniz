@@ -129,7 +129,7 @@ await obniz.ble.scan.startWait();
 
 Output format is here. temperature data is in fahrenheit or celsius.
 
-```json
+```
 {
   fahrenheit?: number;
   celsius?: number;

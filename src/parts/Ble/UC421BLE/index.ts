@@ -7,8 +7,9 @@
 import { EventEmitter } from 'eventemitter3';
 import moment from 'moment';
 import { BleRemoteService, BleRemoteCharacteristic } from '../../../obniz';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import {
+  ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 

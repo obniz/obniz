@@ -3,7 +3,7 @@
  * @module Parts.Grove_GPS
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Grove_GPSOptions {
     vcc?: number;
     gnd?: number;

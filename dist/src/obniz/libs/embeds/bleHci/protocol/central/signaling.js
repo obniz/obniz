@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Signaling = void 0;
 /**
  * @packageDocumentation
  *
@@ -76,4 +77,4 @@ class Signaling extends eventemitter3_1.default {
         this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
     }
 }
-exports.default = Signaling;
+exports.Signaling = Signaling;

@@ -4,7 +4,7 @@
  */
 import { BleDeviceAddress, UUID } from './bleTypes';
 
-class BleHelper {
+export class BleHelper {
   uuidFilter(uuid: string | UUID): UUID {
     return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
   }

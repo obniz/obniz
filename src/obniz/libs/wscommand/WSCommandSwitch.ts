@@ -2,21 +2,13 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-class WSCommandSwitch extends WSCommand {
-  public module: number;
-  public _CommandNotifyValue: number;
-  public _CommandOnece: number;
+export class WSCommandSwitch extends WSCommandAbstract {
+  module = 9;
 
-  constructor() {
-    super();
-    this.module = 9;
-
-    this._CommandNotifyValue = 0;
-    this._CommandOnece = 1;
-  }
-
+  _CommandNotifyValue = 0;
+  _CommandOnece = 1;
   // Commands
 
   public get(params: any) {
@@ -59,5 +51,3 @@ class WSCommandSwitch extends WSCommand {
     }
   }
 }
-
-export default WSCommandSwitch;

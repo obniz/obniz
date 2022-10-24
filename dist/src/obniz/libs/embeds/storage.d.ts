@@ -1,6 +1,6 @@
 import { Obniz } from '../../Obniz';
 import { ComponentAbstract } from '../ComponentAbstact';
-export default class Storage extends ComponentAbstract {
+export declare class Storage extends ComponentAbstract {
     schemaBasePath(): string;
     protected _reset(): void;
     constructor(obniz: Obniz, info: {

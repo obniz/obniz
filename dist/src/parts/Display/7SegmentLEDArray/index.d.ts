@@ -3,7 +3,7 @@
  * @module Parts.7SegmentLEDArray
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import _7SegmentLED from '../7SegmentLED';
 export interface _7SegmentLEDArrayOptions {
     segments: _7SegmentLED[];

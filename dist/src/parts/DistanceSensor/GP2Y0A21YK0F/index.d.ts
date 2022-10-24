@@ -3,8 +3,8 @@
  * @module Parts.GP2Y0A21YK0F
  */
 import Obniz from '../../../obniz';
-import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralAD } from '../../../obniz/libs/io_peripherals/ad';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface GP2Y0A21YK0FOptions {
     vcc?: number;
     gnd?: number;
