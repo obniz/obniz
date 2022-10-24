@@ -8,7 +8,7 @@ It supports TR41A, TR42A, and TR43A.
 Get the data from advertisement.
 
 Results can be retrieved in the following format
-```json
+```
 {
   temperature: Temperature [degrees];
   humidity?: Humidity [percentage];

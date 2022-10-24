@@ -9,7 +9,7 @@ It supports RTR503B and RTR507B.
 Get the data from advertisement.
 
 Results can be retrieved in the following format
-```json
+```
 {
   temperature: Temperature [degrees];
   humidity?: Humidity [percentage];

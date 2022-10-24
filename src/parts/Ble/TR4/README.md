@@ -10,7 +10,7 @@ It supports TR41, TR42, and TR45.
 Get the data from advertisement.
 
 Results can be retrieved in the following format
-```json
+```
 {
   temperature: Temperature [degrees];
 }
