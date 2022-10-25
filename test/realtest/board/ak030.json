@@ -1,0 +1,13 @@
+{
+  "name": "ak030",
+  "board": [
+    "obnizA"
+  ],
+  "long_timeout" : 3,
+  "sleep_test": false,
+  "io": [
+  ],
+  "ble": {
+    "extended" : false
+  }
+}

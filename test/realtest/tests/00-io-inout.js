@@ -7,7 +7,7 @@ let check_io;
 let check_read;
 
 describe('0-io-input', function () {
-  this.timeout(10000);
+  this.timeout(10000 * (config.json.long_timeout || 1));
 
   before(async function () {
     await config.waitForConenct();

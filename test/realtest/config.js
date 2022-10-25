@@ -28,6 +28,8 @@ if (process.env.OBNIZ_DEVICE === 'devkitc') {
   json = require('./board/blewifi_gw.json');
 } else if (process.env.OBNIZ_DEVICE === 'blewifi_gw2') {
   json = require('./board/blewifi_gw2.json');
+} else if (process.env.OBNIZ_DEVICE === 'ak030') {
+  json = require('./board/ak030.json');
 } else if (process.env.OBNIZ_DEVICE) {
   throw new Error(`unknown device ${process.env.OBNIZ_DEVICE}`);
 }
@@ -62,10 +64,7 @@ const check_io = json.io;
 
 const connectCheckboard = async () => {
   if (!checkBoard) {
-    checkBoard = await connectObniz('checkboard', checkBoard_ID, {
-      access_token:
-        'ao4ulERb5pkZ_RGVlnXHJFR0vsuQFWeeLRD_ipu7yoNl_1Mc1boxDePL_an0QjQO',
-    });
+    checkBoard = await connectObniz('checkboard', checkBoard_ID, {});
   }
   if (checkBoard.connectionState !== 'connected') {
     await checkBoard.connectWait();
@@ -135,9 +134,9 @@ const connectObniz = async (name, obnizId, params) => {
   const local_connect = process.env.LOCAL_CONNECT === 'false' ? false : true;
   const obniz = new Obniz(obnizId, Object.assign({ local_connect }, params));
   await obniz.connectWait();
+  console.log(`connected obniz ${obnizId}`);
   if (process.env.DEBUG) {
     obniz.debugprint = true;
-    console.log(obniz);
   }
   if (obniz.display) {
     // obniz.display.clear();
@@ -155,8 +154,6 @@ const connectTwoObniz = (done, params) => {
   const local_connect = process.env.LOCAL_CONNECT === 'false' ? false : true;
   checkBoard = new Obniz(checkBoard_ID, {
     local_connect,
-    access_token:
-      'ao4ulERb5pkZ_RGVlnXHJFR0vsuQFWeeLRD_ipu7yoNl_1Mc1boxDePL_an0QjQO',
   }); // obniz_server: "ws://stg.obniz.io",obniz_server: "ws://oooo.ngrok.io"
   checkBoard.onconnect = () => {
     if (process.env.DEBUG) {
