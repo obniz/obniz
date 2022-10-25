@@ -13,6 +13,7 @@ on:
         options:
           - blewifi_gw
           - blewifi_gw2
+          - ak030
           - board
           - board1y
 
