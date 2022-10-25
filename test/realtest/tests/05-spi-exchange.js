@@ -6,8 +6,8 @@ let obnizA;
 let checkBoard;
 let check_io;
 
-describe("5-spi-exchange", function () {
-  this.timeout(30000);
+describe('5-spi-exchange', function () {
+  this.timeout(30000 * (config.json.long_timeout || 1));
 
   before(async function () {
     await config.waitForConenct();

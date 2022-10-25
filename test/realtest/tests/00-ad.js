@@ -7,7 +7,7 @@ let checkBoard;
 let check_output_io;
 let check_input_io;
 describe('0-ad', function () {
-  this.timeout(15000);
+  this.timeout(15000 * (config.json.long_timeout || 1));
 
   before(() => {
     return new Promise((resolve) => {

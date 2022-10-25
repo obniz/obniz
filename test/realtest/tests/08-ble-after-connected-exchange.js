@@ -7,7 +7,7 @@ let obnizA;
 let checkBoard;
 
 describe('8-ble-exchange', function () {
-  this.timeout(120000);
+  this.timeout(120000 * (config.json.long_timeout || 1));
 
   before(async () => {
     await config.waitForConenct();

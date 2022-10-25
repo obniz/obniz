@@ -6,7 +6,7 @@ let checkBoard;
 let check_io;
 
 describe('3-pwm', function () {
-  this.timeout(20000);
+  this.timeout(20000 * (config.json.long_timeout || 1));
 
   before(async function () {
     await config.waitForConenct();

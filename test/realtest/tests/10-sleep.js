@@ -12,8 +12,8 @@ Sleep test
 let checkBoard;
 let obnizA;
 
-describe("10-sleep", function () {
-  this.timeout(40000);
+describe('10-sleep', function () {
+  this.timeout(40000 * (config.json.long_timeout || 1));
   before(async function () {
     if (!config.json.sleep_test) {
       this.skip();
