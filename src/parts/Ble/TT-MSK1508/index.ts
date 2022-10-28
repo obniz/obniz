@@ -15,33 +15,43 @@ import { BleAdvBinaryAnalyzer } from '../utils/advertisement/advertismentAnalyze
 export interface TT_MSK1508Options {}
 
 export interface TT_MSK1508Data {
-  [k: string]: any;
+  patientId: number;
+  operatingMode: typeof TT_MSK1508['OperatingMode'][keyof typeof TT_MSK1508['OperatingMode']];
+  flowRateStatus: typeof TT_MSK1508['FlowRateStatus'][keyof typeof TT_MSK1508['FlowRateStatus']];
+  batteryStatus: typeof TT_MSK1508['FlowRateStatus'][keyof typeof TT_MSK1508['FlowRateStatus']];
+  model: typeof TT_MSK1508['Model'][keyof typeof TT_MSK1508['Model']];
+  totalDoseVolume: number;
+  totalDoseTime: number;
+  infusionType: typeof TT_MSK1508['InfusionType'][keyof typeof TT_MSK1508['InfusionType']];
+  sensorId: number;
+  errors: typeof TT_MSK1508['Error'][keyof typeof TT_MSK1508['Error']][];
+  battery: number;
 }
 
 /** TT-MSK1508 management class TT-MSK1508を管理するクラス */
 export default class TT_MSK1508 implements ObnizPartsBleInterface {
-  public static OperatingMode: Record<number, string> = {
+  public static OperatingMode = {
     0: 'initial',
     2: 'dosing',
   };
-  public static FlowRateStatus: Record<number, string> = {
+  public static FlowRateStatus = {
     0: 'standard',
     1: 'low',
     2: 'high',
     3: 'none',
   };
-  public static BatteryStatus: Record<number, string> = {
+  public static BatteryStatus = {
     0: 'standard',
     1: 'low',
   };
-  public static Model: Record<number, string> = {
+  public static Model = {
     0: 'drip_navigation_sensor',
     1: 'auto_cremme',
   };
-  public static InfusionType: Record<number, string> = {
+  public static InfusionType = {
     0: '20drops/m',
   };
-  public static Errors: Record<number, string> = {
+  public static Error = {
     0: 'drip_detection_error',
     1: 'device_internal_error',
   };
@@ -132,15 +142,15 @@ export default class TT_MSK1508 implements ObnizPartsBleInterface {
 
     return {
       patientId,
-      operatingMode: this.OperatingMode[operatingMode],
-      flowRateStatus: this.FlowRateStatus[flowRateStatus],
-      batteryStatus: this.BatteryStatus[batteryStatus],
-      model: this.Model[model],
+      operatingMode: this.OperatingMode[operatingMode as 0 | 2],
+      flowRateStatus: this.FlowRateStatus[flowRateStatus as 0 | 1 | 2 | 3],
+      batteryStatus: this.BatteryStatus[batteryStatus as 0 | 1],
+      model: this.Model[model as 0 | 1],
       totalDoseVolume,
       totalDoseTime,
-      infusionType: this.InfusionType[infusionType],
+      infusionType: this.InfusionType[infusionType as 0],
       sensorId,
-      errors: [this.Errors[error]],
+      errors: [this.Error[error as 0 | 1]],
       battery,
     };
   }

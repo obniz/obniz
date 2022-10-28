@@ -84,7 +84,7 @@ class TT_MSK1508 {
             totalDoseTime,
             infusionType: this.InfusionType[infusionType],
             sensorId,
-            errors: [this.Errors[error]],
+            errors: [this.Error[error]],
             battery,
         };
     }
@@ -111,7 +111,7 @@ TT_MSK1508.Model = {
 TT_MSK1508.InfusionType = {
     0: '20drops/m',
 };
-TT_MSK1508.Errors = {
+TT_MSK1508.Error = {
     0: 'drip_detection_error',
     1: 'device_internal_error',
 };

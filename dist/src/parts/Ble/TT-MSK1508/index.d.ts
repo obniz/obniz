@@ -7,16 +7,45 @@ import { ObnizPartsBleInterface, ObnizPartsBleInfo } from '../../../obniz/ObnizP
 export interface TT_MSK1508Options {
 }
 export interface TT_MSK1508Data {
-    [k: string]: any;
+    patientId: number;
+    operatingMode: typeof TT_MSK1508['OperatingMode'][keyof typeof TT_MSK1508['OperatingMode']];
+    flowRateStatus: typeof TT_MSK1508['FlowRateStatus'][keyof typeof TT_MSK1508['FlowRateStatus']];
+    batteryStatus: typeof TT_MSK1508['FlowRateStatus'][keyof typeof TT_MSK1508['FlowRateStatus']];
+    model: typeof TT_MSK1508['Model'][keyof typeof TT_MSK1508['Model']];
+    totalDoseVolume: number;
+    totalDoseTime: number;
+    infusionType: typeof TT_MSK1508['InfusionType'][keyof typeof TT_MSK1508['InfusionType']];
+    sensorId: number;
+    errors: typeof TT_MSK1508['Error'][keyof typeof TT_MSK1508['Error']][];
+    battery: number;
 }
 /** TT-MSK1508 management class TT-MSK1508を管理するクラス */
 export default class TT_MSK1508 implements ObnizPartsBleInterface {
-    static OperatingMode: Record<number, string>;
-    static FlowRateStatus: Record<number, string>;
-    static BatteryStatus: Record<number, string>;
-    static Model: Record<number, string>;
-    static InfusionType: Record<number, string>;
-    static Errors: Record<number, string>;
+    static OperatingMode: {
+        0: string;
+        2: string;
+    };
+    static FlowRateStatus: {
+        0: string;
+        1: string;
+        2: string;
+        3: string;
+    };
+    static BatteryStatus: {
+        0: string;
+        1: string;
+    };
+    static Model: {
+        0: string;
+        1: string;
+    };
+    static InfusionType: {
+        0: string;
+    };
+    static Error: {
+        0: string;
+        1: string;
+    };
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the TT-MSK1508
