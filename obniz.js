@@ -26174,6 +26174,7 @@ var map = {
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
 	"./Ble/HN_300T2/index.js": "./dist/src/parts/Ble/HN_300T2/index.js",
+	"./Ble/IBS_TH/index.js": "./dist/src/parts/Ble/IBS_TH/index.js",
 	"./Ble/KankiAirMier/index.js": "./dist/src/parts/Ble/KankiAirMier/index.js",
 	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
@@ -28221,6 +28222,61 @@ class HN_300T2 {
     }
 }
 exports.default = HN_300T2;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/IBS_TH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.IBS_TH
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** IBS_TH management class IBS_THを管理するクラス */
+class IBS_TH {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'IBS_TH',
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName === 'sps' || peripheral.localName === 'tst';
+    }
+    static getData(peripheral) {
+        if (!this.isDevice(peripheral)) {
+            return null;
+        }
+        const allData = this._deviceAdvAnalyzer.getAllData(peripheral.manufacturerSpecificData);
+        const temperatureRaw = Buffer.from(allData.manufacture.temperature).readInt16LE(0);
+        const humidityRaw = Buffer.from(allData.manufacture.humidity).readInt16LE(0);
+        const batteryRaw = Buffer.from(allData.manufacture.battery).readInt8(0);
+        return {
+            temperature: temperatureRaw / 100,
+            humidity: humidityRaw / 100,
+            battery: batteryRaw,
+        };
+    }
+}
+exports.default = IBS_TH;
+IBS_TH._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .groupStart('manufacture')
+    .addTarget('temperature', [-1, -1])
+    .addTarget('humidity', [-1, -1])
+    .addTarget('probeTags', [-1])
+    .addTarget('crc', [-1, -1])
+    .addTarget('battery', [-1])
+    .addTarget('testData', [-1])
+    .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
