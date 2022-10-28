@@ -293,6 +293,7 @@ import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
 import HN_300T2, { HN_300T2Options } from '../parts/Ble/HN_300T2';
 import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
+import TT_MSK1508, { TT_MSK1508Options } from '../parts/Ble/TT-MSK1508';
 
 export type PartsType = keyof PartsList;
 
@@ -646,6 +647,7 @@ export interface PartsList {
   iBS05G: PartsInterface<IBS05G, iBS05GOptions, typeof IBS05G>;
   TR4: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
   TR7: PartsInterface<TR7, TR7Options, typeof TR7>;
+  TT_MSK1508: PartsInterface<TT_MSK1508, TT_MSK1508Options, typeof TT_MSK1508>;
   KankiAirMier: PartsInterface<
     KankiAirMier,
     KankiAirMierOptions,
