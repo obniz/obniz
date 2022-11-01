@@ -85,14 +85,6 @@ export default class TT_MSK1508 implements ObnizPartsBleInterface {
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    *
    * @returns received data from the TT-MSK1508 TT-MSK1508から受け取ったデータ
-   *
-   * ```
-   * {
-   *
-   * temperature: temperature 温度 (Unit 単位: 0.1 degC)
-   *
-   * }
-   * ```
    */
   public static getData(
     peripheral: BleRemotePeripheral
