@@ -1,4 +1,5 @@
-import ObnizPartsBleInterface, {
+import {
+  ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 import Obniz from '../../../obniz';

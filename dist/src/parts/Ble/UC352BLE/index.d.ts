@@ -1,4 +1,4 @@
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import { ObnizPartsBleInterface, ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 import Obniz from '../../../obniz';
 import BleRemotePeripheral = Obniz.BleRemotePeripheral;
 export interface UC352BLEOptions {

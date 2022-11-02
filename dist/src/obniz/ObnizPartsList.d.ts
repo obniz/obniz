@@ -24,6 +24,7 @@ import IBS03TP, { iBS03TPOptions } from '../parts/Ble/iBS03TP';
 import IBS04, { iBS04Options } from '../parts/Ble/iBS04';
 import IBS04I, { iBS04iOptions } from '../parts/Ble/iBS04i';
 import IBS05G, { iBS05GOptions } from '../parts/Ble/iBS05G';
+import IBS_TH, { IBS_THOptions } from '../parts/Ble/IBS_TH';
 import KankiAirMier, { KankiAirMierOptions } from '../parts/Ble/KankiAirMier';
 import Linking, { LinkingOptions } from '../parts/Ble/linking';
 import Logtta_Accel, { Logtta_AccelOptions } from '../parts/Ble/LogttaAccel';
@@ -342,6 +343,7 @@ export interface PartsList {
     iBS03R: PartsInterface<IBS03R, IBS03ROptions, typeof IBS03R>;
     iBS05H: PartsInterface<iBS05H, iBS05HOptions, typeof iBS05H>;
     iBS05G: PartsInterface<IBS05G, iBS05GOptions, typeof IBS05G>;
+    IBS_TH: PartsInterface<IBS_TH, IBS_THOptions, typeof IBS_TH>;
     TR4: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
     TR7: PartsInterface<TR7, TR7Options, typeof TR7>;
     TT_MSK1508: PartsInterface<TT_MSK1508, TT_MSK1508Options, typeof TT_MSK1508>;
