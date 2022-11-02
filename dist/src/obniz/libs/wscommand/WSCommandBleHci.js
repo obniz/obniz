@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandBleHci = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -67,4 +68,4 @@ class WSCommandBleHci {
         this._delegate.sendCommand(this._CommandHCIAdvertisementFilter, buf);
     }
 }
-exports.default = WSCommandBleHci;
+exports.WSCommandBleHci = WSCommandBleHci;

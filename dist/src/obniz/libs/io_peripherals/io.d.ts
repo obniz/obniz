@@ -11,7 +11,7 @@ import { DriveType, PullType } from './common';
  *
  * @category Peripherals
  */
-export default class PeripheralIO extends ComponentAbstract {
+export declare class PeripheralIO extends ComponentAbstract {
     private value;
     private onchange?;
     private id;

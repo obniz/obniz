@@ -5,7 +5,7 @@
  * @ignore
  */
 import { BleDeviceAddress, UUID } from './bleTypes';
-declare class BleHelper {
+export declare class BleHelper {
     uuidFilter(uuid: string | UUID): UUID;
     deviceAddressFilter(uuid: string | BleDeviceAddress): BleDeviceAddress;
     toCamelCase(str: string): string;

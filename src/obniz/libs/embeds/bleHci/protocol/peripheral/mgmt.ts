@@ -4,7 +4,7 @@
  * @ignore
  */
 // let debug = require('debug')('mgmt');
-import Hci from '../hci';
+import { Hci } from '../hci';
 
 /**
  * @ignore
@@ -24,7 +24,7 @@ const MGMT_OP_LOAD_LONG_TERM_KEYS: any = 0x0013;
 /**
  * @ignore
  */
-export default class Mgmt {
+export class Mgmt {
   public _ltkInfos: any;
   public _hci: Hci;
   public loadLongTermKeys: any;

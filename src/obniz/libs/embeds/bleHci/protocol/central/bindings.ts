@@ -19,12 +19,12 @@ import {
   Handle,
   UUID,
 } from '../../bleTypes';
-import Hci, { HciState } from '../hci';
+import { Hci, HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
-import AclStream from './acl-stream';
-import Gap from './gap';
-import GattCentral from './gatt';
-import Signaling from './signaling';
+import { AclStream } from './acl-stream';
+import { Gap } from './gap';
+import { GattCentral } from './gatt';
+import { Signaling } from './signaling';
 import { SmpEncryptOptions } from './smp';
 
 type NobleBindingsEventType =
@@ -39,7 +39,7 @@ type NobleBindingsEventType =
 /**
  * @ignore
  */
-class NobleBindings extends EventEmitter<NobleBindingsEventType> {
+export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public _connectable: { [key: string]: boolean };
 
   private _state: HciState | null;
@@ -743,5 +743,3 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this.debugHandler(`${text}`);
   }
 }
-
-export default NobleBindings;

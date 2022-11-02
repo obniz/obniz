@@ -8,7 +8,7 @@ declare type SmpEventTypes = 'fail';
 /**
  * @ignore
  */
-export default class Smp extends EventEmitter<SmpEventTypes> {
+export declare class Smp extends EventEmitter<SmpEventTypes> {
     _aclStream: any;
     _mgmt: any;
     _iat: any;

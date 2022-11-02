@@ -9,8 +9,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AclStream = void 0;
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
-const smp_1 = __importDefault(require("./smp"));
+const smp_1 = require("./smp");
 /**
  *
  * @ignore
@@ -23,7 +24,7 @@ class AclStream extends eventemitter3_1.default {
         };
         this._hci = hci;
         this._handle = handle;
-        this._smp = new smp_1.default(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
+        this._smp = new smp_1.Smp(this, localAddressType, localAddress, remoteAddressType, remoteAddress);
         this._smp.debugHandler = (text) => {
             this.debug(text);
         };
@@ -82,4 +83,4 @@ class AclStream extends eventemitter3_1.default {
         this.debugHandler(`AclStream: ${text}`);
     }
 }
-exports.default = AclStream;
+exports.AclStream = AclStream;

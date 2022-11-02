@@ -12,12 +12,11 @@ Keyestudio社製土壌湿度センサです。土壌の湿度を取得できま�
 ## wired(obniz, {signal [, vcc, gnd]})
 obniz Boardに土壌湿度センサをつなぎます。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | signal 土壌センサの値を示す端子(s pin of Keyestudio)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC端子(+ pin of Keyestudio)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND端子(- pin of Keyestudio)
-
+| name   | type                     | required | default | description                              |
+|--------|--------------------------|----------|---------|------------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | signal 土壌センサの値を示す端子(s pin of Keyestudio) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC端子(+ pin of Keyestudio)               |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND端子(- pin of Keyestudio)               |
 
 ```javascript
 // Javascript Example

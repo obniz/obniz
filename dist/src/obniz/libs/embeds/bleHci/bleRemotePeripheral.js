@@ -7,11 +7,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemotePeripheral = void 0;
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../ObnizError");
-const ble_1 = __importDefault(require("./ble"));
+const ble_1 = require("./ble");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
-const bleRemoteService_1 = __importDefault(require("./bleRemoteService"));
+const bleRemoteService_1 = require("./bleRemoteService");
 const retry_1 = require("../../utils/retry");
 /**
  * @category Use as Central
@@ -503,7 +504,7 @@ class BleRemotePeripheral {
         for (const uuid of serviceUuids) {
             let child = this.getService(uuid);
             if (!child) {
-                const newService = new bleRemoteService_1.default({ uuid });
+                const newService = new bleRemoteService_1.BleRemoteService({ uuid });
                 newService.parent = this;
                 this._services.push(newService);
                 child = newService;
@@ -737,8 +738,8 @@ class BleRemotePeripheral {
         const uuidLength = bit / 8;
         for (let i = 0; i < data.length; i = i + uuidLength) {
             const one = data.slice(i, i + uuidLength);
-            results.push(ble_1.default._dataArray2uuidHex(one, true));
+            results.push(ble_1.ObnizBLE._dataArray2uuidHex(one, true));
         }
     }
 }
-exports.default = BleRemotePeripheral;
+exports.BleRemotePeripheral = BleRemotePeripheral;

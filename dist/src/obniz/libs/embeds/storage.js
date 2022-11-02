@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Storage = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
 class Storage extends ComponentAbstact_1.ComponentAbstract {
     schemaBasePath() {
@@ -34,4 +35,4 @@ class Storage extends ComponentAbstact_1.ComponentAbstract {
         return json.read;
     }
 }
-exports.default = Storage;
+exports.Storage = Storage;

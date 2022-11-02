@@ -10,11 +10,11 @@ Below image is InnoSent's module using IPM-165.
 
 ## wired(obniz, { signal[, vcc, gnd]});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | output pin. 
-vcc | `number(obniz Board io)` | no |  &nbsp; | vcc
-gnd | `number(obniz Board io)` | no |  &nbsp; | gnd
+| name   | type                     | required | default | description |
+|--------|--------------------------|----------|---------|-------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | output pin. |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | vcc         |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | gnd         |
 
 See pin assign at [Datasheet](https://manualzz.com/doc/15328561/ist2011-001-r2)
 

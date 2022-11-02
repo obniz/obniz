@@ -9,7 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
-const util_1 = __importDefault(require("../../../obniz/libs/utils/util"));
+const util_1 = require("../../../obniz/libs/utils/util");
 /** MT_500BT management class MT_500BTを管理するクラス */
 class MT_500BT {
     constructor(peripheral) {
@@ -179,8 +179,8 @@ class MT_500BT {
         };
         return {
             cls: deviceType[res1.readUInt8(3)],
-            dvnm: util_1.default.dataArray2string(Array.from(res1.slice(4, -1))),
-            swif: util_1.default.dataArray2string(Array.from(res2.slice(3, -1))),
+            dvnm: util_1.ObnizUtil.dataArray2string(Array.from(res1.slice(4, -1))),
+            swif: util_1.ObnizUtil.dataArray2string(Array.from(res2.slice(3, -1))),
         };
     }
     // device always throw error

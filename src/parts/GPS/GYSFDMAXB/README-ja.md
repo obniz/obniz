@@ -46,8 +46,10 @@ gps.start1pps(function() {
 let gps = obniz.wired("GYSFDMAXB", { vcc:7, gnd:8, txd:9, rxd:10, Opps:11 });
 let gpsInfo = gps.getGpsInfo();
 console.log(gpsInfo);
+```
 
-// 出力結果
+```
+// gpsInfo 出力結果
 gpsInfo: Object
   utc: Sat Sep 08 2018 22:42:14 GMT+0900 (JST)
   status: A [Active]	// Active or Void

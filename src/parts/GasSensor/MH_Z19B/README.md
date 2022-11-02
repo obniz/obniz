@@ -14,12 +14,12 @@ Please see the [datasheet](https://www.winsen-sensor.com/d/files/infrared-gas-se
 
 ## wired(obniz,  { sensor_tx, sensor_rx [,vcc, gnd]});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-sensor_tx | `number(obniz Board io)` | yes | &nbsp; | tx pin on the sensor
-sensor_rx | `number(obniz Board io)` | yes | &nbsp; | rx pin on the sensor
-vcc | `number(obniz Board io)` | no | &nbsp; | vcc pin (v+ pin)
-gnd |`number(obniz Board io)` | no | &nbsp; | gnd pin
+| name      | type                     | required | default | description          |
+|-----------|--------------------------|----------|---------|----------------------|
+| sensor_tx | `number(obniz Board io)` | yes      | &nbsp;  | tx pin on the sensor |
+| sensor_rx | `number(obniz Board io)` | yes      | &nbsp;  | rx pin on the sensor |
+| vcc       | `number(obniz Board io)` | no       | &nbsp;  | vcc pin (v+ pin)     |
+| gnd       | `number(obniz Board io)` | no       | &nbsp;  | gnd pin              |
 
 ```Javascript
 // Javascript Example
@@ -35,9 +35,9 @@ obniz.repeat(async()=>{
 Start heating and waits until the time elapses. You can change the waiting time from the default of 3 minutes by specifying an argument (more than 3 minutes recommended).  
 Be sure to run this function before running any other functions.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-sec | `number` | no | 180 | waiting time
+| name | type     | required | default | description  |
+|------|----------|----------|---------|--------------|
+| sec  | `number` | no       | 180     | waiting time |
 
 ```Javascript
 // Javascript Example
@@ -72,9 +72,9 @@ setTimeout(sensor.calibrateZero(), 1200000);
 
 ## calibrateSpan(ppm: number)
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-ppm | `number` | no | 2000 | CO2 concentration(ppm)
+| name | type     | required | default | description            |
+|------|----------|----------|---------|------------------------|
+| ppm  | `number` | no       | 2000    | CO2 concentration(ppm) |
 
 Do span calibration. This is to improve the accuracy in a 1000-2000ppm environment.    
 Run this function after running the sensor for at least 20 minutes in an environment of about 2000ppm (1000ppm or higher recommended). You can change the CO2 concentration setting by setting the argument, but if the argument is less than 1000ppm, it will not be executed.  
@@ -90,10 +90,9 @@ setTimeout(sensor.calibrateSpan(), 1200000);
 
 ## setAutoCalibration(autoCalibration: boolean)
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-autoCalibration | `boolean` | no | true | ON / OFF
-
+| name            | type      | required | default | description |
+|-----------------|-----------|----------|---------|-------------|
+| autoCalibration | `boolean` | no       | true    | ON / OFF    |
 
 Set the automatic calibration ON/OFF. It is set to ON by default at the factory, and the minimum value of 400ppm is calibrated every 24 hours.  
 For indoor use, it is recommended to turn off the automatic calibration from this function.
@@ -108,9 +107,9 @@ console.log(await sensor.getWait());
 
 ## setDetectionRange(range: number)
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-range | `number` | yes | &nbsp; | the measurement upper limit[2000,5000,10000]
+| name  | type     | required | default | description                                  |
+|-------|----------|----------|---------|----------------------------------------------|
+| range | `number` | yes      | &nbsp;  | the measurement upper limit[2000,5000,10000] |
 
 Change the upper limit of the measurement range. The upper limit of the measurement range can be changed by setting the argument to either 2000, 5000, or 10000 ppm.  
 If you set any other value as the argument, the upper limit will be automatically set to 5000ppm.

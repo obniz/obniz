@@ -3,8 +3,8 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 
-import BleCharacteristic from './bleCharacteristic';
-import BleDescriptor from './bleDescriptor';
+import { BleCharacteristic } from './bleCharacteristic';
+import { BleDescriptor } from './bleDescriptor';
 import { Brand } from '../../utils/brand';
 
 /**

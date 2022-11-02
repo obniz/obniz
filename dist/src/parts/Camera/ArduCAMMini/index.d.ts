@@ -4,9 +4,9 @@
  */
 import Obniz from '../../../obniz';
 import { DriveType } from '../../../obniz/libs/io_peripherals/common';
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralSPI } from '../../../obniz/libs/io_peripherals/spi';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface ArduCAMMiniOptions {
     cs: number;
     mosi?: number;

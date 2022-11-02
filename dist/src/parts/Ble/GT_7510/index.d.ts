@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.GT_7510
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface, ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 export interface GT_7510Options {
 }
 export interface GT_7510Result {

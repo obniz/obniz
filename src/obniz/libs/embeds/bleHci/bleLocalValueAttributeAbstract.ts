@@ -2,12 +2,12 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleLocalAttributeAbstract from './bleLocalAttributeAbstract';
+import { BleLocalAttributeAbstract } from './bleLocalAttributeAbstract';
 
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalValueAttributeAbstract<
+export class BleLocalValueAttributeAbstract<
   ParentClass,
   ChildrenClass
 > extends BleLocalAttributeAbstract<ParentClass, ChildrenClass> {

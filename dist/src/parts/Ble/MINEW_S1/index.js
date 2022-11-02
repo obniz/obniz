@@ -9,7 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MINEW_1 = __importDefault(require("../utils/abstracts/MINEW"));
-const util_1 = __importDefault(require("../../../obniz/libs/utils/util"));
+const util_1 = require("../../../obniz/libs/utils/util");
 /** MINEW_S1 management class MINEW_S1を管理するクラス */
 class MINEW_S1 extends MINEW_1.default {
     constructor() {
@@ -53,7 +53,7 @@ class MINEW_S1 extends MINEW_1.default {
             .match(/.{1,2}/g)) !== null && _a !== void 0 ? _a : [])
             .reverse()
             .join('');
-        const name = util_1.default.dataArray2string(peripheral.adv_data.slice(20));
+        const name = util_1.ObnizUtil.dataArray2string(peripheral.adv_data.slice(20));
         return {
             frameType,
             versionNumber,

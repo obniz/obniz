@@ -6,12 +6,12 @@
  * @ignore
  */
 import EventEmitter from 'eventemitter3';
-import Hci from '../hci';
+import { Hci } from '../hci';
 declare type AclStreamEventTypes = 'data' | 'end' | 'encryptChange';
 /**
  * @ignore
  */
-declare class AclStream extends EventEmitter<AclStreamEventTypes> {
+export declare class AclStream extends EventEmitter<AclStreamEventTypes> {
     _hci: Hci;
     _handle: any;
     encypted: any;
@@ -23,4 +23,4 @@ declare class AclStream extends EventEmitter<AclStreamEventTypes> {
     end(): void;
     pushEncrypt(encrypt: any): void;
 }
-export default AclStream;
+export {};

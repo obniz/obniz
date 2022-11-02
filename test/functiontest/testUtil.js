@@ -434,10 +434,7 @@ class TestUtil {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     this.expect(isValidCommand.valid).to.be.true;
 
-    const compress = self.obniz.constructor.WSCommand.compress(
-      self.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = self.obniz.wsCommandManager.compress(requestJson[0]);
 
     this.expect(compress).to.be.deep.equal(binary);
   }
@@ -448,7 +445,7 @@ class TestUtil {
     });
     const binary = new Uint8Array(binaryArray);
 
-    const json = self.obniz._binary2Json(binary);
+    const json = self.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     this.expect(isValidCommand.valid).to.be.true;

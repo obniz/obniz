@@ -15,17 +15,17 @@ obniz Boardには内部プルアップがありますが、安定した通信の
 
 ![](image3.jpg)
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vio | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply for interface
-vcore | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply for core
-gnd | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. power supply
-csb | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. I2C/SPI 選択.
-sdi | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. データ端子
-sck | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. クロック
-sdo | `number(obniz Board io)` | no | &nbsp; | connected obniz Board io. データ通信かアドレス選択
-i2c | `i2c object` | no | &nbsp; | configured i2c object
-address | `number` | no | 0x76  | 0x76 or 0x77
+| name    | type                     | required | default | description                                          |
+|---------|--------------------------|----------|---------|------------------------------------------------------|
+| vio     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. power supply for interface |
+| vcore   | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. power supply for core      |
+| gnd     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. power supply               |
+| csb     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. I2C/SPI 選択.                |
+| sdi     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. データ端子                      |
+| sck     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. クロック                       |
+| sdo     | `number(obniz Board io)` | no       | &nbsp;  | connected obniz Board io. データ通信かアドレス選択               |
+| i2c     | `i2c object`             | no       | &nbsp;  | configured i2c object                                |
+| address | `number`                 | no       | 0x76    | 0x76 or 0x77                                         |
 
 このライブラリではI2Cで部品と通信します。
 

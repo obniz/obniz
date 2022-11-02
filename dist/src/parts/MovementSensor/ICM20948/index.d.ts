@@ -3,7 +3,7 @@
  * @module Parts.ICM20948
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
 export declare type ICM20948Options = I2cPartsAbstractOptions;
 export default class ICM20948 extends i2cParts implements ObnizPartsInterface {

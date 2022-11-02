@@ -72,14 +72,14 @@ Since RFID-RC522 has many occupied pins, we set some pins that don't require dec
 Required pins shown in the “Pin Relation table above must be declared in the wired(). \
 Not required pins don't have to be declared in the wired() function, but in that case, these pins must share with other modules.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-cs | `number(obniz Board io)` | yes |  &nbsp; | pin which printed as SDA
-clk | `number(obniz Board io)` | yes |  &nbsp; | pin which printed as SCK
-mosi | `number(obniz Board io)` | yes |  &nbsp; | pin which printed as MOSI
-miso | `number(obniz Board io)` | yes |  &nbsp; | pin which printed as MISO
-rst | `number(obniz Board io)` | no |  &nbsp; | pin which printed as RST
-gnd | `number(obniz Board io)` | no |  &nbsp; | pin which printed as GND
+| name | type                     | required | default | description               |
+|------|--------------------------|----------|---------|---------------------------|
+| cs   | `number(obniz Board io)` | yes      | &nbsp;  | pin which printed as SDA  |
+| clk  | `number(obniz Board io)` | yes      | &nbsp;  | pin which printed as SCK  |
+| mosi | `number(obniz Board io)` | yes      | &nbsp;  | pin which printed as MOSI |
+| miso | `number(obniz Board io)` | yes      | &nbsp;  | pin which printed as MISO |
+| rst  | `number(obniz Board io)` | no       | &nbsp;  | pin which printed as RST  |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | pin which printed as GND  |
 
 ```Javascript
 // Javascript Example

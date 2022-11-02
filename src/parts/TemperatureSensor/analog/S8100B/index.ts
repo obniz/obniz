@@ -3,7 +3,8 @@
  * @module Parts.S8100B
  */
 
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../../obniz/ObnizPartsInterface';
 import AnalogTemperatureSensor, {

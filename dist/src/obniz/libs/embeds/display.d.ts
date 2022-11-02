@@ -9,7 +9,7 @@ import { ComponentAbstract } from '../ComponentAbstact';
  *
  * @category Embeds
  */
-export default class Display extends ComponentAbstract {
+export declare class Display extends ComponentAbstract {
     /**
      * display width size
      *

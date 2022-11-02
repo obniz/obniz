@@ -2,19 +2,13 @@
  * @packageDocumentation
  * @ignore
  */
-import JsonBinaryConverter from './jsonBinaryConverter';
-import WSCommand from './WSCommand';
+import { JsonBinaryConverter } from './jsonBinaryConverter';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-class WSCommandWiFi extends WSCommand {
-  public module: number;
-  public _CommandScan: number;
+export class WSCommandWiFi extends WSCommandAbstract {
+  module = 14;
 
-  constructor() {
-    super();
-    this.module = 14;
-
-    this._CommandScan = 0;
-  }
+  _CommandScan = 0;
 
   public scan(params: any, index: any) {
     this.sendCommand(this._CommandScan, null);
@@ -97,5 +91,3 @@ class WSCommandWiFi extends WSCommand {
     }
   }
 }
-
-export default WSCommandWiFi;

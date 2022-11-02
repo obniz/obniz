@@ -27,7 +27,7 @@
 // Javascript
 const Logtta_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // 動作モードを取得、Logtta_CO2でないときはnullに
   const mode = Logtta_CO2.getDeviceMode(peripheral);
   if (mode === 'Beacon') {
@@ -52,7 +52,7 @@ await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 // Javascript
 const Logtta_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // 動作モードを取得、Logtta_CO2でないときはnullに
   const mode = Logtta_CO2.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
@@ -95,7 +95,7 @@ await obniz.ble.scan.startWait();
 // Javascript
 const Logtta_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // 動作モードを取得、Logtta_CO2でないときはnullに
   const mode = Logtta_CO2.getDeviceMode(peripheral);
   if (mode === 'Connectable') {
@@ -130,7 +130,7 @@ await obniz.ble.scan.startWait();
 // Javascript
 const Logtta_CO2 = Obniz.getPartsClass('Logtta_CO2');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (peripheral) => {
+obniz.ble.scan.onfind = async (peripheral) => {
   // 動作モードを取得、Logtta_CO2でないときはnullに
   const mode = Logtta_CO2.getDeviceMode(peripheral);
   if (mode === 'Connectable') {

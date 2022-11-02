@@ -8,6 +8,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Smp = void 0;
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
@@ -433,4 +434,4 @@ class Smp extends eventemitter3_1.default {
         // console.log(new Date(), `SMP: ${text}`);
     }
 }
-exports.default = Smp;
+exports.Smp = Smp;

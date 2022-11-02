@@ -1,18 +1,17 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandDirective = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
 const semver = require("semver");
-const util_1 = __importDefault(require("../utils/util"));
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-const WSCommandIO_1 = __importDefault(require("./WSCommandIO"));
-const WSCommandPWM_1 = __importDefault(require("./WSCommandPWM"));
-class WSCommandDirective extends WSCommand_1.default {
+const util_1 = require("../utils/util");
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+const WSCommandIO_1 = require("./WSCommandIO");
+const WSCommandPWM_1 = require("./WSCommandPWM");
+const WSCommandManager_1 = require("./WSCommandManager");
+class WSCommandDirective extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
         super();
         this.module = 1;
@@ -20,11 +19,14 @@ class WSCommandDirective extends WSCommand_1.default {
         this._CommandPause = 1;
         this._CommandResume = 2;
         this._CommandNotify = 3;
-        this.availableCommands = [new WSCommandIO_1.default(), new WSCommandPWM_1.default()];
+        this.subCommandManager = new WSCommandManager_1.WSCommandManager();
+        this.subCommandManager.addCommandClass('WSCommandIO', WSCommandIO_1.WSCommandIO);
+        this.subCommandManager.addCommandClass('WSCommandPWM', WSCommandPWM_1.WSCommandPWM);
+        this.subCommandManager.createCommandInstances();
     }
     // Commands
     init(params, originalParams) {
-        const nameArray = util_1.default.string2dataArray(params.animation.name);
+        const nameArray = util_1.ObnizUtil.string2dataArray(params.animation.name);
         let frame;
         let offset = 0;
         if (semver.lt(this._hw.firmware || '1.0.0', '2.0.0')) {
@@ -75,9 +77,9 @@ class WSCommandDirective extends WSCommand_1.default {
             }
             let compressed = null;
             for (let commandIndex = 0; commandIndex < parsedCommands.length; commandIndex++) {
-                const _frame = WSCommand_1.default.compress(this.availableCommands, parsedCommands[commandIndex]);
+                const _frame = this.subCommandManager.compress(parsedCommands[commandIndex]);
                 if (!_frame) {
-                    throw new Error('[io.animation.states.state]only io or pwm commands. Pleave provide state at least one of them.');
+                    throw new Error('[io.animation.states.state]only io or pwm commands. Please provide state at least one of them.');
                 }
                 if (compressed) {
                     const _combined = new Uint8Array(compressed.length + _frame.length);
@@ -116,7 +118,7 @@ class WSCommandDirective extends WSCommand_1.default {
     }
     changeState(params) {
         if (params.animation.status === 'resume') {
-            const nameArray = util_1.default.string2dataArray(params.animation.name);
+            const nameArray = util_1.ObnizUtil.string2dataArray(params.animation.name);
             const frame = new Uint8Array(nameArray.length + 2);
             frame[0] = nameArray.length + 1;
             frame.set(nameArray, 1);
@@ -124,7 +126,7 @@ class WSCommandDirective extends WSCommand_1.default {
             this.sendCommand(this._CommandResume, frame);
         }
         else if (params.animation.status === 'pause') {
-            const nameArray = util_1.default.string2dataArray(params.animation.name);
+            const nameArray = util_1.ObnizUtil.string2dataArray(params.animation.name);
             const frame = new Uint8Array(nameArray.length + 2);
             frame[0] = nameArray.length + 1;
             frame.set(nameArray, 1);
@@ -166,7 +168,7 @@ class WSCommandDirective extends WSCommand_1.default {
     }
     notifyFromBinary(objToSend, func, payload) {
         if (func === this._CommandNotify) {
-            const name = util_1.default.dataArray2string(payload.slice(2, payload.byteLength - 1)); // remove null string
+            const name = util_1.ObnizUtil.dataArray2string(payload.slice(2, payload.byteLength - 1)); // remove null string
             objToSend.io = {
                 animation: {
                     name,
@@ -179,4 +181,4 @@ class WSCommandDirective extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandDirective;
+exports.WSCommandDirective = WSCommandDirective;

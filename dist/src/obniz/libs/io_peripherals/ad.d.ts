@@ -7,7 +7,7 @@ import { ComponentAbstract } from '../ComponentAbstact';
 /**
  * @category Peripherals
  */
-export default class PeripheralAD extends ComponentAbstract {
+export declare class PeripheralAD extends ComponentAbstract {
     id: number;
     /**
      * called when voltage gets changed.

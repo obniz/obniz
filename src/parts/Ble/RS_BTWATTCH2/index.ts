@@ -5,9 +5,10 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
-import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsInterface, {
+import { BleRemoteCharacteristic } from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

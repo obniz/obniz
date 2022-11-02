@@ -3,9 +3,9 @@
  * @module Parts.hx711
  */
 import Obniz from '../../../obniz';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralSPI } from '../../../obniz/libs/io_peripherals/spi';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Hx711Options {
     vcc?: number;
     gnd?: number;

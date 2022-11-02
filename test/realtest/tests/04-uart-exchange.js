@@ -7,15 +7,14 @@ let check_io;
 describe('4-uart-exchange', function () {
   this.timeout(20000);
 
-  before(() => {
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
-        check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
-        resolve();
-      });
-    });
+  before(async function () {
+    await config.waitForConenct();
+    obnizA = config.obnizA;
+    checkBoard = config.checkBoard;
+    check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
+    if (check_io.length === 0) {
+      this.skip();
+    }
   });
 
   afterEach(async () => {

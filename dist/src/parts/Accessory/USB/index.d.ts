@@ -3,7 +3,7 @@
  * @module Parts.USB
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface USBOptions {
     vcc: number;
     gnd: number;

@@ -79,7 +79,7 @@ Output format is here. Blood pressure data is in mmHg or kPa format, and Pulse r
 
 [https://obniz.github.io/obniz/obnizjs/interfaces/parts.ua1200ble.ua1200bleresult.html](https://obniz.github.io/obniz/obnizjs/interfaces/parts.ua1200ble.ua1200bleresult.html)
 
-```json
+```
 {
   SystolicPressure_mmHg?: number; // ex) 128mmHg → 0x80 = 128, 0x00
   DiastolicPressure_mmHg?: number;

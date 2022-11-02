@@ -8,11 +8,11 @@ Below image is DFROBOT's module using PT550.
 
 ## wired(obniz, { signal[, vcc, gnd]});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | output pin. (blue connector of DFROBOT's module)
-vcc | `number(obniz Board io)` | no |  &nbsp; | vcc (red connector of DFROBOT's module)
-gnd | `number(obniz Board io)` | no |  &nbsp; | gnd (black connector of DFROBOT's module)
+| name   | type                     | required | default | description                                      |
+|--------|--------------------------|----------|---------|--------------------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | output pin. (blue connector of DFROBOT's module) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | vcc (red connector of DFROBOT's module)          |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | gnd (black connector of DFROBOT's module)        |
 
 PT550 is a photo transistor. Output current of signal change regarding brightness by supplying vcc,gnd.
 It can be read by using resistors.

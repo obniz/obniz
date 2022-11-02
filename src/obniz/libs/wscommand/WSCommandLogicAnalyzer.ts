@@ -2,23 +2,14 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-class WSCommandLogicAnalyzer extends WSCommand {
-  public module: number;
-  public _CommandInit: number;
-  public _CommandDeinit: number;
-  public _CommandRecv: number;
+export class WSCommandLogicAnalyzer extends WSCommandAbstract {
+  module = 10;
 
-  constructor() {
-    super();
-    this.module = 10;
-
-    this._CommandInit = 0;
-    this._CommandDeinit = 1;
-    this._CommandRecv = 2;
-  }
-
+  _CommandInit = 0;
+  _CommandDeinit = 1;
+  _CommandRecv = 2;
   // Commands
 
   public init(params: any) {
@@ -94,5 +85,3 @@ class WSCommandLogicAnalyzer extends WSCommand {
     }
   }
 }
-
-export default WSCommandLogicAnalyzer;

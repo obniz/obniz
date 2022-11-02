@@ -285,6 +285,7 @@ import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
 import UC352BLE, { UC352BLEOptions } from '../parts/Ble/UC352BLE';
 import ObnizPartsBleInterface from './ObnizPartsBleInterface';
 import ObnizPartsInterface from './ObnizPartsInterface';
+
 import TR7, { TR7Options } from '../parts/Ble/TR7';
 import MM_BLEBC5, { MM_BLEBC5_Options } from '../parts/Ble/MM_BLEBC5';
 import MESH_100BU, { MESH_100BUOptions } from '../parts/Ble/MESH_100BU';

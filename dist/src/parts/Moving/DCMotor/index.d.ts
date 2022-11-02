@@ -3,8 +3,8 @@
  * @module Parts.DCMotor
  */
 import Obniz from '../../../obniz';
-import PeripheralPWM from '../../../obniz/libs/io_peripherals/pwm';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralPWM } from '../../../obniz/libs/io_peripherals/pwm';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface DCMotorOptions {
     forward: number;
     back: number;

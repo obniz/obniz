@@ -1,11 +1,11 @@
-import BleRemoteAttributeAbstract from './bleRemoteAttributeAbstract';
-import BleRemoteCharacteristic from './bleRemoteCharacteristic';
-import BleRemotePeripheral from './bleRemotePeripheral';
+import { BleRemoteAttributeAbstract } from './bleRemoteAttributeAbstract';
+import { BleRemoteCharacteristic } from './bleRemoteCharacteristic';
+import { BleRemotePeripheral } from './bleRemotePeripheral';
 import { UUID } from './bleTypes';
 /**
  * @category Use as Central
  */
-export default class BleRemoteService extends BleRemoteAttributeAbstract<BleRemotePeripheral, BleRemoteCharacteristic> {
+export declare class BleRemoteService extends BleRemoteAttributeAbstract<BleRemotePeripheral, BleRemoteCharacteristic> {
     /**
      * Peripheral instance
      */

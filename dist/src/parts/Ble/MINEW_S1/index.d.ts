@@ -3,7 +3,7 @@
  * @module Parts.MINEW_S1
  */
 import MINEW from '../utils/abstracts/MINEW';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsBleCompare, ObnizBleBeaconStruct, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
 /**
  * temperature and humidity data from MINEW_S1 advertisement

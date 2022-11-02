@@ -3,8 +3,8 @@
  * @module Parts.WS2811
  */
 import Obniz from '../../../obniz';
-import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralSPI } from '../../../obniz/libs/io_peripherals/spi';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface WS2811Options {
     gnd?: number;
     vcc?: number;

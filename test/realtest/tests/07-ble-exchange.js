@@ -7,15 +7,11 @@ describe('7-ble-exchange', function () {
   this.timeout(30000);
 
   before(async () => {
-    await new Promise((resolve) => {
-      config.waitForConenct(() => {
-        obnizA = config.obnizA; // exchange A<->B
-        checkBoard = config.checkBoard;
-        resolve();
-      });
-    });
-    await obnizA.ble.initWait();
-    await checkBoard.ble.initWait();
+    await config.waitForConenct();
+    obnizA = config.obnizA; // exchange A<->B
+    checkBoard = config.checkBoard;
+    await checkBoard.ble.initWait({ extended: false });
+    await obnizA.ble.initWait({ extended: false });
   });
 
   it('simple ad', async () => {

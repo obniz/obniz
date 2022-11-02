@@ -3,11 +3,8 @@
  * @packageDocumentation
  * @module Parts.M5StickC_Yun
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const util_1 = __importDefault(require("../../../obniz/libs/utils/util"));
+const util_1 = require("../../../obniz/libs/utils/util");
 class M5StickC_Yun {
     constructor() {
         this.LED_LEN = 14;
@@ -91,9 +88,9 @@ class M5StickC_Yun {
     //   this.rgb(color[0], color[1], color[2]);
     // }
     rgb(red, green, blue) {
-        util_1.default.assertNumber(0, 255, 'red', red);
-        util_1.default.assertNumber(0, 255, 'green', green);
-        util_1.default.assertNumber(0, 255, 'blue', blue);
+        util_1.ObnizUtil.assertNumber(0, 255, 'red', red);
+        util_1.ObnizUtil.assertNumber(0, 255, 'green', green);
+        util_1.ObnizUtil.assertNumber(0, 255, 'blue', blue);
         const leds = [];
         for (let i = 0; i < this.LED_LEN; i++) {
             leds.push([red, green, blue]);
@@ -101,9 +98,9 @@ class M5StickC_Yun {
         this.rgbs(leds);
     }
     hsv(hue, saturation, value) {
-        util_1.default.assertNumber(0, 300, 'hue', hue);
-        util_1.default.assertNumber(0, 1, 'saturation', saturation);
-        util_1.default.assertNumber(0, 1, 'value', value);
+        util_1.ObnizUtil.assertNumber(0, 300, 'hue', hue);
+        util_1.ObnizUtil.assertNumber(0, 1, 'saturation', saturation);
+        util_1.ObnizUtil.assertNumber(0, 1, 'value', value);
         const color = M5StickC_Yun._generateHsvColor(hue, saturation, value);
         this.rgb(color.red, color.green, color.blue);
     }

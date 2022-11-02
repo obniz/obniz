@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Display = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components
@@ -642,4 +643,4 @@ class Display extends ComponentAbstact_1.ComponentAbstract {
         this.raw(raw);
     }
 }
-exports.default = Display;
+exports.Display = Display;

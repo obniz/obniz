@@ -7,13 +7,13 @@ The DA Converter. It makes the potential difference between + and -.
 ## wired(obniz, {[scl, sda, vcc, gnd, i2c]})
 connect to the obniz Board.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-scl | `number(obniz Board io)` | no |  &nbsp; | scl of I2C
-sda | `number(obniz Board io)` | no | &nbsp;  | sda of I2C
-i2c | `object` | no | &nbsp;  | obniz i2c object
+| name | type                     | required | default | description      |
+|------|--------------------------|----------|---------|------------------|
+| vcc  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply     |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | Power Supply     |
+| scl  | `number(obniz Board io)` | no       | &nbsp;  | scl of I2C       |
+| sda  | `number(obniz Board io)` | no       | &nbsp;  | sda of I2C       |
+| i2c  | `object`                 | no       | &nbsp;  | obniz i2c object |
 
 ```javascript
 // JavaScript Examples

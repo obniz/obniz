@@ -7,15 +7,11 @@ describe('7-ble', function () {
   this.timeout(30000);
 
   before(async () => {
-    await new Promise((resolve) => {
-      config.waitForConenct(() => {
-        obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
-        resolve();
-      });
-    });
-    await checkBoard.ble.initWait();
-    await obnizA.ble.initWait();
+    await config.waitForConenct();
+    obnizA = config.obnizA;
+    checkBoard = config.checkBoard;
+    await checkBoard.ble.initWait({ extended: false });
+    await obnizA.ble.initWait({ extended: false });
   });
 
   it('simple ad', async () => {
