@@ -3,8 +3,6 @@ import ObnizPartsBleInterface, {
 } from '../../../obniz/ObnizPartsBleInterface';
 import Obniz from '../../../obniz';
 import BleRemotePeripheral = Obniz.BleRemotePeripheral;
-import { BleRemoteService, BleRemoteCharacteristic } from '../../../obniz';
-import { HN_300T2Result } from '../HN_300T2';
 
 export interface UC352BLEOptions {}
 
@@ -73,7 +71,7 @@ export default class UC352BLE implements ObnizPartsBleInterface {
     });
 
     await chara?.registerNotifyWait((data) => {
-      const _result: HN_300T2Result = {};
+      const _result: UC352BLEResult = {};
       _result.weight = ((data[2] << 8) | data[1]) * 0.005;
       result = _result;
     });
