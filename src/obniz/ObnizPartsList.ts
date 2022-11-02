@@ -283,6 +283,8 @@ import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
+import UC352BLE, { UC352BLEOptions } from '../parts/Ble/UC352BLE';
+
 import TR7, { TR7Options } from '../parts/Ble/TR7';
 import MM_BLEBC5, { MM_BLEBC5_Options } from '../parts/Ble/MM_BLEBC5';
 import MESH_100BU, { MESH_100BUOptions } from '../parts/Ble/MESH_100BU';
@@ -294,6 +296,8 @@ import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
 import HN_300T2, { HN_300T2Options } from '../parts/Ble/HN_300T2';
 import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
+import TT_MSK1508, { TT_MSK1508Options } from '../parts/Ble/TT-MSK1508';
+import INKBIRD, { INKBIRDOptions } from '../parts/Ble/INKBIRD';
 
 export type PartsType = keyof PartsList;
 
@@ -452,6 +456,7 @@ export interface PartsList {
   LMT87: PartsInterface<LMT87, LMT87Options, typeof LMT87>;
   MCP9700: PartsInterface<MCP9700, MCP9700Options, typeof MCP9700>;
   MCP9701: PartsInterface<MCP9701, MCP9701Options, typeof MCP9701>;
+  INKBIRD: PartsInterface<INKBIRD, INKBIRDOptions, typeof INKBIRD>;
   // 'S8100B':{instance: S8100B,options: S8100BOptions},
   // 'S8120C':{instance: S8120C,options: S8120COptions},
   // 'ADT7410':{instance: ADT7410,options: ADT7410Options},
@@ -648,6 +653,7 @@ export interface PartsList {
   IBS_TH: PartsInterface<IBS_TH, IBS_THOptions, typeof IBS_TH>;
   TR4: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
   TR7: PartsInterface<TR7, TR7Options, typeof TR7>;
+  TT_MSK1508: PartsInterface<TT_MSK1508, TT_MSK1508Options, typeof TT_MSK1508>;
   KankiAirMier: PartsInterface<
     KankiAirMier,
     KankiAirMierOptions,
@@ -717,6 +723,7 @@ export interface PartsList {
   EXVital: PartsInterface<EXVital, EXVital_Options, typeof EXVital>;
   STM550B: PartsInterface<STM550B, STM550B_Options, typeof STM550B>;
   UC421BLE: PartsInterface<UC421BLE, UC421BLEOptions, typeof UC421BLE>;
+  UC352BLE: PartsInterface<UC352BLE, UC352BLEOptions, typeof UC352BLE>;
   MESH_100BU: PartsInterface<MESH_100BU, MESH_100BUOptions, typeof MESH_100BU>;
   MESH_100LE: PartsInterface<MESH_100LE, MESH_100LEOptions, typeof MESH_100LE>;
   MESH_100AC: PartsInterface<MESH_100AC, MESH_100ACOptions, typeof MESH_100AC>;
