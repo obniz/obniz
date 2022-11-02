@@ -17,6 +17,13 @@ class UC352BLE {
             return false;
         return peripheral.localName.startsWith('A&D_UC-352BLE');
     }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング 裏のボタンを押しながら起動してペアリングする必要あり
+     *
+     * @returns pairing key ペアリングキー
+     */
     async pairingWait() {
         if (!this._peripheral) {
             throw new Error('UC352BLE not found');
@@ -36,6 +43,13 @@ class UC352BLE {
         });
         return key;
     }
+    /**
+     * Get Weight Data from Device
+     *
+     * デバイスから計測データをとる
+     *
+     * @returns 受け取ったデータ
+     */
     async getDataWait(pairingKeys) {
         if (!this._peripheral) {
             throw new Error('UC352BLE not found');

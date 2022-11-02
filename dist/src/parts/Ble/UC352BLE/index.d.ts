@@ -14,7 +14,21 @@ export default class UC352BLE implements ObnizPartsBleInterface {
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     static isDevice(peripheral: BleRemotePeripheral): boolean;
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング 裏のボタンを押しながら起動してペアリングする必要あり
+     *
+     * @returns pairing key ペアリングキー
+     */
     pairingWait(): Promise<string | null>;
+    /**
+     * Get Weight Data from Device
+     *
+     * デバイスから計測データをとる
+     *
+     * @returns 受け取ったデータ
+     */
     getDataWait(pairingKeys: string): Promise<UC352BLEResult>;
     constructor(peripheral: BleRemotePeripheral);
 }

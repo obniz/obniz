@@ -28,6 +28,13 @@ export default class UC352BLE implements ObnizPartsBleInterface {
     return peripheral.localName.startsWith('A&D_UC-352BLE');
   }
 
+  /**
+   * Pair with the device
+   *
+   * デバイスとペアリング 裏のボタンを押しながら起動してペアリングする必要あり
+   *
+   * @returns pairing key ペアリングキー
+   */
   public async pairingWait(): Promise<string | null> {
     if (!this._peripheral) {
       throw new Error('UC352BLE not found');
@@ -48,6 +55,13 @@ export default class UC352BLE implements ObnizPartsBleInterface {
     return key;
   }
 
+  /**
+   * Get Weight Data from Device
+   *
+   * デバイスから計測データをとる
+   *
+   * @returns 受け取ったデータ
+   */
   public async getDataWait(pairingKeys: string) {
     if (!this._peripheral) {
       throw new Error('UC352BLE not found');
