@@ -282,6 +282,7 @@ import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
+import UC352BLE, { UC352BLEOptions } from '../parts/Ble/UC352BLE';
 import ObnizPartsBleInterface from './ObnizPartsBleInterface';
 import ObnizPartsInterface from './ObnizPartsInterface';
 import TR7, { TR7Options } from '../parts/Ble/TR7';
@@ -719,6 +720,7 @@ export interface PartsList {
   EXVital: PartsInterface<EXVital, EXVital_Options, typeof EXVital>;
   STM550B: PartsInterface<STM550B, STM550B_Options, typeof STM550B>;
   UC421BLE: PartsInterface<UC421BLE, UC421BLEOptions, typeof UC421BLE>;
+  UC352BLE: PartsInterface<UC352BLE, UC352BLEOptions, typeof UC352BLE>;
   MESH_100BU: PartsInterface<MESH_100BU, MESH_100BUOptions, typeof MESH_100BU>;
   MESH_100LE: PartsInterface<MESH_100LE, MESH_100LEOptions, typeof MESH_100LE>;
   MESH_100AC: PartsInterface<MESH_100AC, MESH_100ACOptions, typeof MESH_100AC>;
