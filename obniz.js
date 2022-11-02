@@ -26175,6 +26175,7 @@ var map = {
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
 	"./Ble/HN_300T2/index.js": "./dist/src/parts/Ble/HN_300T2/index.js",
+	"./Ble/INKBIRD/index.js": "./dist/src/parts/Ble/INKBIRD/index.js",
 	"./Ble/KankiAirMier/index.js": "./dist/src/parts/Ble/KankiAirMier/index.js",
 	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
@@ -26203,6 +26204,7 @@ var map = {
 	"./Ble/TT-MSK1508/index.js": "./dist/src/parts/Ble/TT-MSK1508/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
+	"./Ble/UC352BLE/index.js": "./dist/src/parts/Ble/UC352BLE/index.js",
 	"./Ble/UC421BLE/index.js": "./dist/src/parts/Ble/UC421BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
 	"./Ble/VitalBand/index.js": "./dist/src/parts/Ble/VitalBand/index.js",
@@ -28225,6 +28227,115 @@ class HN_300T2 {
 exports.default = HN_300T2;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/node-libs-browser/node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/INKBIRD/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.INKBIRD
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** INKBIRD series management class INKBIRDシリーズを管理するクラス */
+class INKBIRD {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'INKBIRD',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the INKBIRD
+     *
+     * 受け取ったPeripheralがINKBIRDのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the INKBIRD
+     *
+     * INKBIRDかどうか
+     */
+    static isDevice(peripheral) {
+        if (peripheral.adv_data && peripheral.scan_resp) {
+            return (INKBIRD._deviceAdvAnalyzer.validate(peripheral.adv_data) &&
+                INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp));
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Get a data from the INKBIRD
+     *
+     * INKBIRDからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the INKBIRD INKBIRDから受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
+     * }
+     * ```
+     */
+    static getData(peripheral) {
+        if (!INKBIRD.isDevice(peripheral)) {
+            return null;
+        }
+        if (!peripheral.scan_resp) {
+            return null;
+        }
+        const temperature = INKBIRD._deviceScanResponseAnalyzer.getData(peripheral.scan_resp, 'scanData', 'temperature');
+        if (!temperature) {
+            return null;
+        }
+        const temperatureRaw = Buffer.from(temperature).readInt16LE(0);
+        const humidity = INKBIRD._deviceScanResponseAnalyzer.getData(peripheral.scan_resp, 'scanData', 'humidity');
+        if (!humidity) {
+            return null;
+        }
+        const humidityRaw = Buffer.from(humidity).readInt16LE(0);
+        return {
+            temperature: temperatureRaw / 100,
+            humidity: humidityRaw / 100,
+        };
+    }
+}
+exports.default = INKBIRD;
+INKBIRD._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06])
+    .groupStart('manufacture')
+    .addTarget('length', [0x03])
+    .addTarget('type', [0x02])
+    .addTargetByLength('uuid', 2)
+    .groupEnd();
+INKBIRD._deviceScanResponseAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .groupStart('scanData')
+    .addTarget('length2', [0x04])
+    .addTarget('type2', [0x09])
+    .addTarget('deviceName', [0x73, 0x70, 0x73])
+    .addTarget('dataLength', [0x0a])
+    .addTarget('dataType', [0xff])
+    .addTargetByLength('temperature', 2)
+    .addTargetByLength('humidity', 2)
+    .addTargetByLength('proveType', 1)
+    .addTargetByLength('crc', 2)
+    .addTargetByLength('battery', 1)
+    .addTargetByLength('reserved', 1)
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -33508,6 +33619,93 @@ class UA651BLE {
 exports.default = UA651BLE;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/node-libs-browser/node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/UC352BLE/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class UC352BLE {
+    constructor(peripheral) {
+        if (!peripheral || !UC352BLE.isDevice(peripheral)) {
+            throw new Error('peripheral is not UC352BLE');
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'UC352BLE',
+        };
+    }
+    static isDevice(peripheral) {
+        if (!peripheral.localName)
+            return false;
+        return peripheral.localName.startsWith('A&D_UC-352BLE');
+    }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング 裏のボタンを押しながら起動してペアリングする必要あり
+     *
+     * @returns pairing key ペアリングキー
+     */
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error('UC352BLE not found');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        let key = null;
+        await this._peripheral.connectWait({
+            pairingOption: {
+                onPairedCallback: (pairingKey) => {
+                    key = pairingKey;
+                },
+            },
+        });
+        return key;
+    }
+    /**
+     * Get Weight Data from Device
+     *
+     * デバイスから計測データをとる
+     *
+     * @returns 受け取ったデータ
+     */
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error('UC352BLE not found');
+        }
+        let result = {};
+        await this._peripheral.connectWait({
+            pairingOption: { keys: pairingKeys },
+            waitUntilPairing: true,
+        });
+        const service = this._peripheral.getService('181D');
+        const chara = await (service === null || service === void 0 ? void 0 : service.getCharacteristic('2A9D'));
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(result);
+            };
+        });
+        await (chara === null || chara === void 0 ? void 0 : chara.registerNotifyWait((data) => {
+            const _result = {};
+            _result.weight = ((data[2] << 8) | data[1]) * 0.005;
+            result = _result;
+        }));
+        return await waitDisconnect;
+    }
+}
+exports.default = UC352BLE;
+
 
 /***/ }),
 
@@ -82993,7 +83191,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
