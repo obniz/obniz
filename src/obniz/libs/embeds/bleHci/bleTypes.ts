@@ -10,8 +10,48 @@ import { Brand } from '../../utils/brand';
 /**
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
  */
-export type UUID = string; // Brand<string, 'UUID'>;
+type HexDecimal1 =
+  | '0'
+  | '1'
+  | '2'
+  | '3'
+  | '4'
+  | '5'
+  | '6'
+  | '7'
+  | '8'
+  | '9'
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F';
+
+type HyphenOrNone = '' | '-';
+type HexDecimal4 = `${HexDecimal1}${HexDecimal1}${HexDecimal1}${HexDecimal1}`;
+
+// Expression produces a union type that is too complex to represent.
+type HexDecimal8 = string; // `${HexDecimal4}${HexDecimal4}`;
+type HexDecimal12 = string; // `${HexDecimal4}${HexDecimal4}${HexDecimal4}`;
+
+export type UUID16 = `${HexDecimal4}`;
+export type UUID32 = Brand<string, 'UUID32'>;
+
+// 11127000-B364-11E4-AB27-0800200C9A66
+export type UUID128 = string; // `${HexDecimal8}${HyphenOrNone}${HexDecimal4}${HyphenOrNone}${HexDecimal4}${HyphenOrNone}${HexDecimal12}`;
+export type UUID = UUID16 | UUID32 | UUID128;
 export type BleDeviceAddress = Brand<string, 'BleDeviceAddress'>;
+export type BleDeviceAddressReversed = Brand<
+  string,
+  'BleDeviceAddressReversed'
+>;
+
+export type BleDeviceColonSeparatedAddress = Brand<
+  `${string}:${string}:${string}:${string}:${string}:${string}`,
+  'BleDeviceColonSeparatedAddress'
+>;
+
 export type Handle = Brand<number, 'BleHandle'>;
 
 export type BleDeviceType = 'ble' | 'dumo' | 'breder';
@@ -125,6 +165,7 @@ export interface BleCreateConnection {
   phy_2m: BleCreateConnectionParameters;
   phy_coded: BleCreateConnectionParameters;
 }
+
 /* eslint rulesdir/non-ascii: 0 */
 export interface BleCreateConnectionParameters {
   enable: boolean;

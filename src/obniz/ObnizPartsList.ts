@@ -293,6 +293,7 @@ import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
 import DR_MARK, { DR_MARKOptions } from '../parts/Ble/DR_MARK';
 import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
 import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
+import GX_3R_Pro, { GX_3R_Pro_Options } from '../parts/Ble/GX_3R_Pro';
 
 export type PartsType = keyof PartsList;
 
@@ -725,4 +726,5 @@ export interface PartsList {
   MESH_100GP: PartsInterface<MESH_100GP, MESH_100GPOptions, typeof MESH_100GP>;
   MM_BLEBC5: PartsInterface<MM_BLEBC5, MM_BLEBC5_Options, typeof MM_BLEBC5>;
   DR_MARK: PartsInterface<DR_MARK, DR_MARKOptions, typeof DR_MARK>;
+  GX_3R_Pro: PartsInterface<GX_3R_Pro, GX_3R_Pro_Options, typeof GX_3R_Pro>;
 }

@@ -4,6 +4,7 @@
  */
 
 import { BleRemoteService } from '../../../../obniz/libs/embeds/bleHci/bleRemoteService';
+import { UUID16 } from '../../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export class BleBatteryService {
   private _service: BleRemoteService;
@@ -13,7 +14,7 @@ export class BleBatteryService {
   }
 
   public async getBatteryLevelWait(): Promise<number | null> {
-    const char = this._service.getCharacteristic('2A19');
+    const char = this._service.getCharacteristic('2A19' as UUID16);
     if (!char) {
       return null;
     }
