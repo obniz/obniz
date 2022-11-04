@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.Logtta_Accel
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { Triaxial } from '../../../obniz/ObnizParts';
 import { ObnizBleBeaconStruct, ObnizPartsBleCompare } from '../../../obniz/ObnizPartsBleAbstract';
 import Logtta from '../utils/abstracts/Logtta';

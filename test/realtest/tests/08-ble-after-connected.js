@@ -7,18 +7,14 @@ let obnizA;
 let checkBoard;
 
 describe('8-ble', function () {
-  this.timeout(120000);
+  this.timeout(120000 * (config.json.long_timeout || 1));
 
   before(async () => {
-    await new Promise((resolve) => {
-      config.waitForConenct(() => {
-        obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
-        resolve();
-      });
-    });
-    await checkBoard.ble.initWait();
-    await obnizA.ble.initWait();
+    await config.waitForConenct();
+    obnizA = config.obnizA;
+    checkBoard = config.checkBoard;
+    await checkBoard.ble.initWait({ extended: false });
+    await obnizA.ble.initWait({ extended: false });
     const service = new checkBoard.ble.service({ uuid: 'FFF0' });
     const characteristic = new checkBoard.ble.characteristic({
       uuid: 'FFF1',

@@ -6,22 +6,17 @@ let checkBoard;
 let check_io;
 
 describe('3-pwm', function () {
-  this.timeout(20000);
+  this.timeout(20000 * (config.json.long_timeout || 1));
 
-  before(function () {
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        checkBoard = config.checkBoard;
-        check_io = config.check_io.filter((io) =>
-          io.mode.some((mode) => mode === 'digitalWrite')
-        );
-        if (check_io.length === 0) {
-          this.skip();
-        }
-
-        resolve();
-      });
-    });
+  before(async function () {
+    await config.waitForConenct();
+    checkBoard = config.checkBoard;
+    check_io = config.check_io.filter((io) =>
+      io.mode.some((mode) => mode === 'digitalWrite')
+    );
+    if (check_io.length === 0) {
+      this.skip();
+    }
   });
 
   const pwms = new Array(6);

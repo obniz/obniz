@@ -3,12 +3,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralPWM = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
-const util_1 = __importDefault(require("../utils/util"));
+const util_1 = require("../utils/util");
 /**
  * We will now generate PWM.
  * Maximum current depends on the driving mode. See [[PeripheralIO|io]].
@@ -45,11 +43,11 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ['io']);
+        const err = util_1.ObnizUtil._requiredKeys(params, ['io']);
         if (err) {
             throw new Error("pwm start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, ['io', 'drive', 'pull']);
+        this.params = util_1.ObnizUtil._keyFilter(params, ['io', 'drive', 'pull']);
         const io = this.params.io;
         const ioObj = this.Obniz.getIO(io);
         ioObj.drive(this.params.drive || '5v');
@@ -229,4 +227,4 @@ class PeripheralPWM extends ComponentAbstact_1.ComponentAbstract {
         this.Obniz.send(wsObj);
     }
 }
-exports.default = PeripheralPWM;
+exports.PeripheralPWM = PeripheralPWM;

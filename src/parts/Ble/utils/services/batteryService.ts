@@ -3,9 +3,9 @@
  * @module Parts.utils.services
  */
 
-import BleRemoteService from '../../../../obniz/libs/embeds/bleHci/bleRemoteService';
+import { BleRemoteService } from '../../../../obniz/libs/embeds/bleHci/bleRemoteService';
 
-export default class BleBatteryService {
+export class BleBatteryService {
   private _service: BleRemoteService;
 
   constructor(service: BleRemoteService) {

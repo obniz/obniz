@@ -4,11 +4,8 @@
  * @module Parts.TM530
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
 /** TM530 management class TM530を管理するクラス */
 class TM530 {
     constructor() {
@@ -61,9 +58,9 @@ class TM530 {
         const data = {
             battery: peripheral.adv_data[13],
             temperature: peripheral.adv_data[14] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[15]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[15]),
             humidity: peripheral.adv_data[16] +
-                ObnizPartsBleInterface_1.default.readFraction(peripheral.adv_data[17]),
+                ObnizPartsBleInterface_1.ObnizPartsBleInterface.readFraction(peripheral.adv_data[17]),
         };
         return data;
     }

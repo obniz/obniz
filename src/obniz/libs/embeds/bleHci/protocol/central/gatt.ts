@@ -5,8 +5,8 @@
  */
 import { ATT, ATT_ECODE_READABLES, ATT_OP_READABLES } from '../common/att';
 import { GattCommon } from '../common/gatt';
-import GattPeripheral, { HandleIndex } from '../peripheral/gatt';
-import AclStream from './acl-stream';
+import { GattPeripheral, HandleIndex } from '../peripheral/gatt';
+import { AclStream } from './acl-stream';
 
 // let debug = require('debug')('att');
 const debug: any = () => {
@@ -19,7 +19,6 @@ import EventEmitter from 'eventemitter3';
 import {
   ObnizBleAttError,
   ObnizBleGattHandleError,
-  ObnizBleOpError,
   ObnizBleUnknownCharacteristicError,
   ObnizBleUnknownDescriptorError,
   ObnizBleUnknownServiceError,
@@ -79,7 +78,7 @@ interface CommandQueue {
 /**
  * @ignore
  */
-class GattCentral extends EventEmitter<GattEventTypes> {
+export class GattCentral extends EventEmitter<GattEventTypes> {
   public onAclStreamDataBinded: (cid: number, data: Buffer) => void;
   public onAclStreamEndBinded: () => void;
   private _address: BleDeviceAddressWithColon;
@@ -1183,5 +1182,3 @@ class GattCentral extends EventEmitter<GattEventTypes> {
     });
   }
 }
-
-export default GattCentral;

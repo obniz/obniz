@@ -3,15 +3,15 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 import BleHelper from './bleHelper';
-import BleRemoteAttributeAbstract from './bleRemoteAttributeAbstract';
-import BleRemoteCharacteristic from './bleRemoteCharacteristic';
-import BleRemotePeripheral from './bleRemotePeripheral';
+import { BleRemoteAttributeAbstract } from './bleRemoteAttributeAbstract';
+import { BleRemoteCharacteristic } from './bleRemoteCharacteristic';
+import { BleRemotePeripheral } from './bleRemotePeripheral';
 import { BleAttributePropery, UUID } from './bleTypes';
 
 /**
  * @category Use as Central
  */
-export default class BleRemoteService extends BleRemoteAttributeAbstract<
+export class BleRemoteService extends BleRemoteAttributeAbstract<
   BleRemotePeripheral,
   BleRemoteCharacteristic
 > {

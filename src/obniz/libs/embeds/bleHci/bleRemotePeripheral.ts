@@ -5,10 +5,10 @@
 
 import EventEmitter from 'eventemitter3';
 import { ObnizTimeoutError } from '../../../ObnizError';
-import ObnizBLE from './ble';
+import { ObnizBLE } from './ble';
 import BleHelper from './bleHelper';
-import BleRemoteCharacteristic from './bleRemoteCharacteristic';
-import BleRemoteService from './bleRemoteService';
+import { BleRemoteCharacteristic } from './bleRemoteCharacteristic';
+import { BleRemoteService } from './bleRemoteService';
 import {
   BleDeviceAddress,
   BleDeviceAddressType,
@@ -183,7 +183,7 @@ export interface BlePairingOptions extends SmpEncryptOptions {
 /**
  * @category Use as Central
  */
-export default class BleRemotePeripheral {
+export class BleRemotePeripheral {
   /**
    * It contains all discovered services in a peripheral as an array.
    * It is discovered when connection automatically.
@@ -613,6 +613,7 @@ export default class BleRemotePeripheral {
           if (this._extended) {
             await this.obnizBle.centralBindings.connectExtendedWait(
               this.address,
+              this.address_type,
               mtuRequest,
               () => {
                 if (this._connectSetting.pairingOption) {
@@ -626,6 +627,7 @@ export default class BleRemotePeripheral {
           } else {
             await this.obnizBle.centralBindings.connectWait(
               this.address,
+              this.address_type,
               mtuRequest,
               () => {
                 if (this._connectSetting.pairingOption) {

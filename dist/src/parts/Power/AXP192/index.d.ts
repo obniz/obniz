@@ -3,7 +3,7 @@
  * @module Parts.AXP192
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import { I2cPartsAbstractOptions } from '../../../parts/i2cParts';
 export declare type AXP192Options = I2cPartsAbstractOptions;
 export default class AXP192 implements ObnizPartsInterface {

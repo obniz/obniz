@@ -5,15 +5,15 @@
  */
 import EventEmitter from 'eventemitter3';
 
-import Hci from '../hci';
-import Smp from './smp';
+import { Hci } from '../hci';
+import { Smp } from './smp';
 
 type AclStreamEventTypes = 'data' | 'end' | 'encryptChange';
 
 /**
  * @ignore
  */
-class AclStream extends EventEmitter<AclStreamEventTypes> {
+export class AclStream extends EventEmitter<AclStreamEventTypes> {
   public _hci: Hci;
   public _handle: any;
   public encypted: any;
@@ -63,5 +63,3 @@ class AclStream extends EventEmitter<AclStreamEventTypes> {
     this.emit('encryptChange', this.encrypted);
   }
 }
-
-export default AclStream;

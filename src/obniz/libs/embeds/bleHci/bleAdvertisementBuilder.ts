@@ -8,7 +8,7 @@ import { BleAdvertisementData, BleScanResponseData, UUID } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
-export default class BleAdvertisementBuilder {
+export class BleAdvertisementBuilder {
   protected rows: { [key: number]: number[] };
   private _extendedFlg: boolean;
   private _serviceData: number[];

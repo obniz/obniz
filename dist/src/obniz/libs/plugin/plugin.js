@@ -7,8 +7,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Plugin = void 0;
 const semver_1 = __importDefault(require("semver"));
-const util_1 = __importDefault(require("../utils/util"));
+const util_1 = require("../utils/util");
 class Plugin {
     constructor(obniz, id) {
         this.Obniz = obniz;
@@ -61,9 +62,9 @@ class Plugin {
     notified(obj) {
         if (obj.receive) {
             /* Connectino state update. response of connect(), close from destination, response from */
-            const string = util_1.default.dataArray2string(obj.receive);
+            const string = util_1.ObnizUtil.dataArray2string(obj.receive);
             this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
         }
     }
 }
-exports.default = Plugin;
+exports.Plugin = Plugin;

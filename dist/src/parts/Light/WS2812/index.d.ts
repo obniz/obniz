@@ -3,7 +3,7 @@
  * @module Parts.WS2812
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface WS2812Options {
     din: number;
     vcc?: number;

@@ -3,8 +3,8 @@
  * @module Parts.OMRON_2JCIE
  */
 import Obniz from '../../../obniz';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface OMRON_2JCIEOptions {
 }

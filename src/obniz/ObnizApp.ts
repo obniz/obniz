@@ -7,7 +7,7 @@ declare let done: any;
 declare let req: any;
 declare let configs: any;
 
-export default class ObnizApp {
+export class ObnizApp {
   /**
    * Determine obniz.js is running on obniz Cloud or not.
    */

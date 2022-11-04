@@ -6,7 +6,7 @@
 
 import { MESH } from '../utils/abstracts/MESH';
 import { Button } from '../utils/abstracts/MESHjs/block/Button';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100BUOptions {}
 

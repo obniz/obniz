@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleAdvertisementBuilder = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -178,4 +179,4 @@ class BleAdvertisementBuilder {
         this.setRow(0x01, data);
     }
 }
-exports.default = BleAdvertisementBuilder;
+exports.BleAdvertisementBuilder = BleAdvertisementBuilder;

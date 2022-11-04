@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-declare class WSCommandBleHci {
+export declare class WSCommandBleHci {
     _delegate: any;
     _CommandHCIInit: number;
     _CommandHCIDeinit: number;
@@ -21,4 +21,3 @@ declare class WSCommandBleHci {
     recv(objToSend: any, payload?: any): void;
     advertisementFilter(params: any): void;
 }
-export default WSCommandBleHci;

@@ -190,7 +190,7 @@ describe('io.animation2_0_0', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -212,10 +212,7 @@ function compressTest(obniz, requestJson, expecteBinarystrings) {
   const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
   expect(isValidCommand.valid).to.be.true;
 
-  const compress = obniz.constructor.WSCommand.compress(
-    obniz.wscommands,
-    requestJson[0]
-  );
+  const compress = obniz.wsCommandManager.compress(requestJson[0]);
 
   expect(compress).to.be.deep.equal(binary);
 }

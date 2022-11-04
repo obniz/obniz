@@ -40,7 +40,7 @@ interface PeripheralSPIOptions {
  *
  * @category Peripherals
  */
-export default class PeripheralSPI extends ComponentAbstract {
+export declare class PeripheralSPI extends ComponentAbstract {
     /**
      * @ignore
      */

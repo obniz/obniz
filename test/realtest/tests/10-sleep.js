@@ -13,17 +13,15 @@ let checkBoard;
 let obnizA;
 
 describe('10-sleep', function () {
-  this.timeout(40000);
-  before(function () {
+  this.timeout(40000 * (config.json.long_timeout || 1));
+  before(async function () {
     if (!config.json.sleep_test) {
       this.skip();
     }
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        checkBoard = config.checkBoard;
-        obnizA = config.obnizA;
-        resolve();
-      });
+
+    await config.waitForConenct(() => {
+      checkBoard = config.checkBoard;
+      obnizA = config.obnizA;
     });
   });
 

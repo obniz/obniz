@@ -3,7 +3,7 @@
  * @module Parts.DPS310
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface DPS310Options {
 }
 export default class DPS310 implements ObnizPartsInterface {

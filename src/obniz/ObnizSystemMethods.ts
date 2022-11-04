@@ -3,10 +3,10 @@
  * @module ObnizCore
  */
 
-import ObnizComponents from './ObnizComponents';
+import { ObnizComponents } from './ObnizComponents';
 import { ObnizOptions } from './ObnizOptions';
 
-export default class ObnizSystemMethods extends ObnizComponents {
+export class ObnizSystemMethods extends ObnizComponents {
   constructor(id: string, options?: ObnizOptions) {
     super(id, options);
   }

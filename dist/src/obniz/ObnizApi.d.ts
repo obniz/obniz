@@ -3,7 +3,7 @@
  * @module ObnizCore
  */
 import { ObnizOptions } from './ObnizOptions';
-export default class ObnizApi {
+export declare class ObnizApi {
     /**
      * obniz.js major version string
      */

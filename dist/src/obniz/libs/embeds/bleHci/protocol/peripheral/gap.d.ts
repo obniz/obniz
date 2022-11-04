@@ -6,12 +6,12 @@
 /// <reference types="node" />
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
-import Hci from '../hci';
+import { Hci } from '../hci';
 declare type GapEventTypes = '';
 /**
  * @ignore
  */
-declare class Gap extends EventEmitter<GapEventTypes> {
+export declare class Gap extends EventEmitter<GapEventTypes> {
     _hci: Hci;
     _advertiseState: any;
     constructor(hci: any);
@@ -32,4 +32,4 @@ declare class Gap extends EventEmitter<GapEventTypes> {
     restartAdvertisingWait(): Promise<void>;
     stopAdvertisingWait(): Promise<void>;
 }
-export default Gap;
+export {};

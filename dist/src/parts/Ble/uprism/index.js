@@ -4,11 +4,8 @@
  * @module Parts.uPRISM
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
 /** uPRISM management class uPRISMを管理するクラス */
 class uPRISM {
     constructor(peripheral) {
@@ -127,18 +124,18 @@ class uPRISM {
                 this.readIndex = data[19];
                 this.readData = {
                     acceleration: {
-                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) /
+                        x: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[3], data[2]) /
                             this.accelRange,
-                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[5], data[4]) /
+                        y: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[5], data[4]) /
                             this.accelRange,
-                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[7], data[6]) /
+                        z: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[7], data[6]) /
                             this.accelRange,
                     },
                     geomagnetic: {
-                        x: ObnizPartsBleInterface_1.default.signed16FromBinary(data[9], data[8]) / 16,
-                        y: ObnizPartsBleInterface_1.default.signed16FromBinary(data[11], data[10]) /
+                        x: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[9], data[8]) / 16,
+                        y: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[11], data[10]) /
                             16,
-                        z: ObnizPartsBleInterface_1.default.signed16FromBinary(data[13], data[12]) /
+                        z: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[13], data[12]) /
                             16,
                     },
                     time: {
@@ -161,7 +158,7 @@ class uPRISM {
             else if (data[0] === 0xb2) {
                 if (this.readIndex === data[19] && this.readData) {
                     this.readData.temperature =
-                        ObnizPartsBleInterface_1.default.signed16FromBinary(data[3], data[2]) / 100;
+                        ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(data[3], data[2]) / 100;
                     this.readData.humidity = ((data[5] << 8) | data[4]) / 100;
                     this.readData.ambient_light =
                         ((data[8] << 16) | (data[7] << 8) | data[6]) / 128;

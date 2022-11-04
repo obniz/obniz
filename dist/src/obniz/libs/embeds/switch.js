@@ -4,6 +4,7 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizSwitch = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * The embedded switch on obniz Board.
@@ -73,4 +74,4 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
         this.state = 'none';
     }
 }
-exports.default = ObnizSwitch;
+exports.ObnizSwitch = ObnizSwitch;

@@ -3,7 +3,7 @@
  * @module Parts.ENC03R_Module
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface ENC03R_ModuleOptions {
     gnd?: number;
     vcc?: number;

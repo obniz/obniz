@@ -3,8 +3,8 @@
  * @module Parts.JpegSerialCam
  */
 import Obniz from '../../../obniz';
-import PeripheralUART from '../../../obniz/libs/io_peripherals/uart';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralUART } from '../../../obniz/libs/io_peripherals/uart';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface JpegSerialCamOptions {
     vcc?: number;
     cam_tx: number;

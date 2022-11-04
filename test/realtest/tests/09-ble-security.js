@@ -5,18 +5,15 @@ let obnizA;
 let checkBoard;
 
 describe.skip('9-ble-security', function () {
-  this.timeout(30000);
+  this.timeout(30000 * (config.json.long_timeout || 1));
 
-  beforeEach(() => {
+  beforeEach(async () => {
     console.error('reboot start');
-    return new Promise((resolve) => {
-      config.reboot(() => {
-        obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
-        console.error('reboot finished');
-        setTimeout(resolve, 1000);
-      }, false);
-    });
+    await config.reboot();
+    obnizA = config.obnizA;
+    checkBoard = config.checkBoard;
+    console.error('reboot finished');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   });
   it('dummy for reboot', async () => {});
 

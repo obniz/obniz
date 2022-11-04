@@ -6,7 +6,7 @@ import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, UUID } from './bleTypes';
 export declare type BleAttributeParentName = 'peripheral' | 'service' | 'characteristic';
 export declare type BleAttributeChildrenName = 'service' | 'characteristics' | 'descriptors';
-export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
+export declare abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
     /**
      * @ignore
      */

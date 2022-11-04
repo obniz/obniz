@@ -6,23 +6,22 @@
 /// <reference types="node" />
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
-import BleCharacteristic from '../../bleCharacteristic';
+import { BleCharacteristic } from '../../bleCharacteristic';
 import { BleDeviceAddress, BleDeviceAddressType, BleDeviceAddressWithColon, BleDiscoveryAdvertisement, Handle, UUID } from '../../bleTypes';
-import Hci, { HciState } from '../hci';
+import { Hci, HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
 import { SmpEncryptOptions } from './smp';
 declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' | 'notification' | 'handleNotify' | 'updatePhy';
 /**
  * @ignore
  */
-declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
+export declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     _connectable: {
         [key: string]: boolean;
     };
     private _state;
     private _handles;
     private _addresses;
-    private _addresseTypes;
     private _gatts;
     private _aclStreams;
     private _signalings;
@@ -37,7 +36,6 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
      */
     _reset(): void;
     debugHandler: any;
-    addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType): void;
     startExtendedScanningWait(serviceUuids: UUID[], allowDuplicates: boolean, activeScan: boolean, usePhy1m: boolean, usePhyCoded: boolean): Promise<void>;
     startScanningWait(serviceUuids: UUID[], allowDuplicates: boolean, activeScan: boolean): Promise<void>;
     stopScanningWait(): Promise<void>;
@@ -50,7 +48,7 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
      * @param mtu bytes
      * @param onConnectCallback
      */
-    connectWait(peripheralUuid: BleDeviceAddress, mtu: number | null, onConnectCallback?: () => void): Promise<void>;
+    connectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, mtu: number | null, onConnectCallback?: () => void): Promise<void>;
     setDefaultPhyWait(usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean): Promise<void>;
     readPhyWait(address: string): Promise<{
         status: number;
@@ -60,7 +58,7 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     }>;
     setPhyWait(address: string, usePhy1m: boolean, usePhy2m: boolean, usePhyCoded: boolean, useCodedModeS8: boolean, useCodedModeS2: boolean): Promise<void>;
     onPhy(handler: number, txPhy: number, rxPhy: number): void;
-    connectExtendedWait(peripheralUuid: BleDeviceAddress, mtu: number | null, onConnectCallback?: any, usePhy1m?: boolean, usePhy2m?: boolean, usePhyCoded?: boolean): Promise<void>;
+    connectExtendedWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, mtu: number | null, onConnectCallback?: any, usePhy1m?: boolean, usePhy2m?: boolean, usePhyCoded?: boolean): Promise<void>;
     disconnect(address: BleDeviceAddress): void;
     updateRssiWait(address: BleDeviceAddress): Promise<number>;
     onStateChange(state: HciState): void;
@@ -95,4 +93,4 @@ declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     private getGatt;
     private debug;
 }
-export default NobleBindings;
+export {};

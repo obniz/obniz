@@ -4,6 +4,7 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralGrove = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * @category Peripherals
@@ -166,4 +167,4 @@ class PeripheralGrove extends ComponentAbstact_1.ComponentAbstract {
         }
     }
 }
-exports.default = PeripheralGrove;
+exports.PeripheralGrove = PeripheralGrove;

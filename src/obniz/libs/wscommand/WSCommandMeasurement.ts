@@ -2,18 +2,12 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
-class WSCommandMeasurement extends WSCommand {
-  public module: number;
-  public _CommandMeasurementEcho: number;
+export class WSCommandMeasurement extends WSCommandAbstract {
+  module = 12;
 
-  constructor() {
-    super();
-    this.module = 12;
-
-    this._CommandMeasurementEcho = 0;
-  }
+  _CommandMeasurementEcho = 0;
 
   // Commands
 
@@ -86,5 +80,3 @@ class WSCommandMeasurement extends WSCommand {
     }
   }
 }
-
-export default WSCommandMeasurement;

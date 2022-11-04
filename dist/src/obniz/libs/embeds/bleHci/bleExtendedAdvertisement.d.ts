@@ -2,14 +2,14 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import ObnizBLE from './ble';
-import BleAdvertisementBuilder from './bleAdvertisementBuilder';
+import { ObnizBLE } from './ble';
+import { BleAdvertisementBuilder } from './bleAdvertisementBuilder';
 import { BleAdvertisementData, BleExtendedAdvertisementMode, BleScanResponseData } from './bleTypes';
-import BleAdvertisement from './bleAdvertisement';
+import { BleAdvertisement } from './bleAdvertisement';
 /**
  * @category Use as Peripheral
  */
-export default class BleExtendedAdvertisement extends BleAdvertisement {
+export declare class BleExtendedAdvertisement extends BleAdvertisement {
     private mode;
     constructor(obnizBle: ObnizBLE);
     /**

@@ -2,14 +2,14 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import BleCharacteristic from './bleCharacteristic';
-import BleLocalAttributeAbstract from './bleLocalAttributeAbstract';
-import BlePeripheral from './blePeripheral';
+import { BleCharacteristic } from './bleCharacteristic';
+import { BleLocalAttributeAbstract } from './bleLocalAttributeAbstract';
+import { BlePeripheral } from './blePeripheral';
 import { BleAdvertisementData, BleCharacteristicDefine, BleServiceDefine, UUID } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
-export default class BleService extends BleLocalAttributeAbstract<null, BleCharacteristic> {
+export declare class BleService extends BleLocalAttributeAbstract<null, BleCharacteristic> {
     /**
      * Peripheral instance.
      *

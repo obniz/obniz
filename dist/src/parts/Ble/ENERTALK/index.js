@@ -4,11 +4,8 @@
  * @module Parts.ENERTALK_TOUCH
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(require("../utils/services/batteryService"));
+const batteryService_1 = require("../utils/services/batteryService");
 /** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 class ENERTALK_TOUCH {
     constructor(peripheral) {
@@ -84,7 +81,7 @@ class ENERTALK_TOUCH {
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
         const service180F = this._peripheral.getService('180F');
         if (service180F) {
-            this.batteryService = new batteryService_1.default(service180F);
+            this.batteryService = new batteryService_1.BleBatteryService(service180F);
         }
     }
     /**

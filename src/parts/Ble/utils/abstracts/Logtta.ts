@@ -4,14 +4,14 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import BleRemotePeripheral from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import {
   ObnizPartsBleCompare,
   ObnizPartsBleConnectable,
   ObnizPartsBleMode,
 } from '../../../../obniz/ObnizPartsBleAbstract';
-import BleBatteryService from '../services/batteryService';
-import BleGenericAccess from '../services/genericAccess';
+import { BleBatteryService } from '../services/batteryService';
+import { BleGenericAccess } from '../services/genericAccess';
 
 type PinCodeType = 'Authentication' | 'Rewrite';
 

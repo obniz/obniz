@@ -3,13 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BlePeripheral = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
 const ObnizError_1 = require("../../../ObnizError");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
-const bleService_1 = __importDefault(require("./bleService"));
+const bleService_1 = require("./bleService");
 /**
  * @category Use as Peripheral
  */
@@ -68,8 +69,8 @@ class BlePeripheral {
      */
     addService(service) {
         this.obnizBle.warningIfNotInitialize();
-        if (!(service instanceof bleService_1.default)) {
-            service = new bleService_1.default(service);
+        if (!(service instanceof bleService_1.BleService)) {
+            service = new bleService_1.BleService(service);
         }
         this._services.push(service);
         service.peripheral = this;
@@ -174,4 +175,4 @@ class BlePeripheral {
         // do nothing.
     }
 }
-exports.default = BlePeripheral;
+exports.BlePeripheral = BlePeripheral;

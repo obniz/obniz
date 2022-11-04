@@ -7,7 +7,7 @@
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddressType, BleDeviceAddressWithColon } from '../../bleTypes';
-import AclStream from './acl-stream';
+import { AclStream } from './acl-stream';
 import { SmpEventTypes } from '../common/smp';
 /**
  * @ignore
@@ -35,7 +35,7 @@ export interface SmpEncryptOptions {
 /**
  * @ignore
  */
-declare class Smp extends EventEmitter<SmpEventTypes> {
+export declare class Smp extends EventEmitter<SmpEventTypes> {
     private _aclStream;
     private _iat;
     private _ia;
@@ -85,4 +85,3 @@ declare class Smp extends EventEmitter<SmpEventTypes> {
     private _pairingFailReject;
     private debug;
 }
-export default Smp;

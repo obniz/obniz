@@ -1,19 +1,17 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteCharacteristic = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
 const ObnizError_1 = require("../../../ObnizError");
-const bleRemoteDescriptor_1 = __importDefault(require("./bleRemoteDescriptor"));
-const bleRemoteValueAttributeAbstract_1 = __importDefault(require("./bleRemoteValueAttributeAbstract"));
+const bleRemoteDescriptor_1 = require("./bleRemoteDescriptor");
+const bleRemoteValueAttributeAbstract_1 = require("./bleRemoteValueAttributeAbstract");
 /**
  * @category Use as Central
  */
-class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default {
+class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.BleRemoteValueAttributeAbstract {
     constructor(params) {
         super(params);
         this.properties = params.properties || [];
@@ -31,7 +29,7 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
      * @ignore
      */
     get childrenClass() {
-        return bleRemoteDescriptor_1.default;
+        return bleRemoteDescriptor_1.BleRemoteDescriptor;
     }
     /**
      * @ignore
@@ -462,4 +460,4 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.default 
         }
     }
 }
-exports.default = BleRemoteCharacteristic;
+exports.BleRemoteCharacteristic = BleRemoteCharacteristic;

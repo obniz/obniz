@@ -9,13 +9,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NobleBindings = void 0;
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
-const bleHelper_1 = __importDefault(require("../../bleHelper"));
-const acl_stream_1 = __importDefault(require("./acl-stream"));
-const gap_1 = __importDefault(require("./gap"));
-const gatt_1 = __importDefault(require("./gatt"));
-const signaling_1 = __importDefault(require("./signaling"));
+const acl_stream_1 = require("./acl-stream");
+const gap_1 = require("./gap");
+const gatt_1 = require("./gatt");
+const signaling_1 = require("./signaling");
 /**
  * @ignore
  */
@@ -27,10 +27,9 @@ class NobleBindings extends eventemitter3_1.default {
             // do nothing.
         };
         this._hci = hciProtocol;
-        this._gap = new gap_1.default(this._hci);
+        this._gap = new gap_1.Gap(this._hci);
         this._state = null;
         this._addresses = {};
-        this._addresseTypes = {};
         this._connectable = {};
         this._handles = {};
         this._gatts = {};
@@ -57,14 +56,6 @@ class NobleBindings extends eventemitter3_1.default {
         // TODO: It must be canceled.
         this._connectPromises = [];
     }
-    addPeripheralData(uuid, addressType) {
-        if (!this._addresses[uuid]) {
-            const address = bleHelper_1.default.reverseHexString(uuid, ':');
-            this._addresses[uuid] = address;
-            this._addresseTypes[uuid] = addressType;
-            this._connectable[uuid] = true;
-        }
-    }
     async startExtendedScanningWait(serviceUuids, allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
         if (!usePhy1m && !usePhyCoded) {
             throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhyCoded:${usePhyCoded}`);
@@ -90,9 +81,7 @@ class NobleBindings extends eventemitter3_1.default {
      * @param mtu bytes
      * @param onConnectCallback
      */
-    async connectWait(peripheralUuid, mtu, onConnectCallback) {
-        const address = this._addresses[peripheralUuid];
-        const addressType = this._addresseTypes[peripheralUuid];
+    async connectWait(address, addressType, mtu, onConnectCallback) {
         if (!address) {
             throw new ObnizError_1.ObnizBleUnknownPeripheralError(address);
         }
@@ -150,14 +139,12 @@ class NobleBindings extends eventemitter3_1.default {
     onPhy(handler, txPhy, rxPhy) {
         this.emit('updatePhy', handler, txPhy, rxPhy);
     }
-    async connectExtendedWait(peripheralUuid, mtu, onConnectCallback, usePhy1m = true, usePhy2m = true, usePhyCoded = true) {
+    async connectExtendedWait(address, addressType, mtu, onConnectCallback, usePhy1m = true, usePhy2m = true, usePhyCoded = true) {
         if (!usePhy1m && !usePhyCoded && !usePhy2m) {
             throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
         }
-        const address = this._addresses[peripheralUuid];
-        const addressType = this._addresseTypes[peripheralUuid];
-        if (!address) {
-            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+        if (!address || !addressType) {
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(address);
         }
         // Block parall connection ongoing for ESP32 bug.
         const doPromise = Promise.all(this._connectPromises)
@@ -233,12 +220,12 @@ class NobleBindings extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
         const address = addressWithColon.split(':').join('').toLowerCase();
-        const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, addressWithColon);
+        const aclStream = new acl_stream_1.AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, addressWithColon);
         aclStream.debugHandler = (text) => {
             this.debug(text);
         };
-        const gatt = new gatt_1.default(addressWithColon, aclStream);
-        const signaling = new signaling_1.default(handle, aclStream);
+        const gatt = new gatt_1.GattCentral(addressWithColon, aclStream);
+        const signaling = new signaling_1.Signaling(handle, aclStream);
         this._gatts[address] = gatt;
         this._signalings[address] = signaling;
         this._aclStreams[address] = aclStream;
@@ -390,4 +377,4 @@ class NobleBindings extends eventemitter3_1.default {
         this.debugHandler(`${text}`);
     }
 }
-exports.default = NobleBindings;
+exports.NobleBindings = NobleBindings;

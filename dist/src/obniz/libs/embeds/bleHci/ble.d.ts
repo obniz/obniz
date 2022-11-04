@@ -8,27 +8,27 @@
  */
 /// <reference types="node" />
 /// <reference types="node" />
-import ObnizBLEHci from './hci';
-import CentralBindings from './protocol/central/bindings';
-import HciProtocol from './protocol/hci';
-import PeripheralBindings from './protocol/peripheral/bindings';
+import { ObnizBLEHci } from './hci';
+import { NobleBindings as CentralBindings } from './protocol/central/bindings';
+import { Hci as HciProtocol } from './protocol/hci';
+import { BlenoBindings as PeripheralBindings } from './protocol/peripheral/bindings';
 import Obniz from '../../../index';
 import { ObnizBleHciStateError } from '../../../ObnizError';
 import { ComponentAbstract } from '../../ComponentAbstact';
-import BleAdvertisement from './bleAdvertisement';
-import BleCharacteristic from './bleCharacteristic';
-import BleDescriptor from './bleDescriptor';
-import BlePeripheral from './blePeripheral';
-import BleRemotePeripheral from './bleRemotePeripheral';
-import BleScan from './bleScan';
-import BleService from './bleService';
+import { BleAdvertisement } from './bleAdvertisement';
+import { BleCharacteristic } from './bleCharacteristic';
+import { BleDescriptor } from './bleDescriptor';
+import { BlePeripheral } from './blePeripheral';
+import { BleConnectSetting, BleRemotePeripheral } from './bleRemotePeripheral';
+import { BleScan } from './bleScan';
+import { BleService } from './bleService';
 import { BleDeviceAddress, BleDeviceAddressType, BleDiscoveryAdvertisement, BleSupportType, UUID } from './bleTypes';
-import BleExtendedAdvertisement from './bleExtendedAdvertisement';
+import { BleExtendedAdvertisement } from './bleExtendedAdvertisement';
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
-export default class ObnizBLE extends ComponentAbstract {
+export declare class ObnizBLE extends ComponentAbstract {
     /**
      * Initialized status.
      *
@@ -147,7 +147,7 @@ export default class ObnizBLE extends ComponentAbstract {
      *
      * @deprecated replaced by {@link #directConnectWait()}
      */
-    directConnect(address: BleDeviceAddress, addressType: BleDeviceAddressType): BleRemotePeripheral;
+    directConnect(address: BleDeviceAddress, addressType: BleDeviceAddressType, connectionSetting?: BleConnectSetting): BleRemotePeripheral;
     /**
      * Connect to peripheral without scanning, and wait to finish connecting.
      *
@@ -168,7 +168,7 @@ export default class ObnizBLE extends ComponentAbstract {
      * @param address peripheral device address
      * @param addressType "random" or "public"
      */
-    directConnectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType): Promise<BleRemotePeripheral>;
+    directConnectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, connectionSetting?: BleConnectSetting): Promise<BleRemotePeripheral>;
     /**
      * Return connected peripherals.
      *

@@ -4,8 +4,8 @@
  */
 /// <reference types="node" />
 /// <reference types="node" />
-import BleCharacteristic from './bleCharacteristic';
-import BleDescriptor from './bleDescriptor';
+import { BleCharacteristic } from './bleCharacteristic';
+import { BleDescriptor } from './bleDescriptor';
 import { Brand } from '../../utils/brand';
 /**
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.

@@ -20,10 +20,7 @@ describe('message.log', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
     expect(compress).to.be.null; // use server command
   });
 

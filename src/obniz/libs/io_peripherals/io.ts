@@ -13,7 +13,7 @@ import { DriveType, PullType } from './common';
  *
  * @category Peripherals
  */
-export default class PeripheralIO extends ComponentAbstract {
+export class PeripheralIO extends ComponentAbstract {
   private value!: boolean;
   private onchange?: (value: boolean) => void;
   private id: number;

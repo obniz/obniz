@@ -7,7 +7,7 @@ import EventEmitter from 'eventemitter3';
 
 import BleHelper from '../../bleHelper';
 import crypto from '../common/crypto';
-import Mgmt from './mgmt';
+import { Mgmt } from './mgmt';
 import { SMP } from '../common/smp';
 
 type SmpEventTypes = 'fail';
@@ -15,7 +15,7 @@ type SmpEventTypes = 'fail';
 /**
  * @ignore
  */
-export default class Smp extends EventEmitter<SmpEventTypes> {
+export class Smp extends EventEmitter<SmpEventTypes> {
   public _aclStream: any;
   public _mgmt: any;
   public _iat: any;

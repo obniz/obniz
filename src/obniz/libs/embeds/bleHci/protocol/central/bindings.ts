@@ -13,7 +13,7 @@ import {
   ObnizBleUnknownPeripheralError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import BleCharacteristic from '../../bleCharacteristic';
+import { BleCharacteristic } from '../../bleCharacteristic';
 import {
   BleDeviceAddress,
   BleDeviceAddressType,
@@ -22,12 +22,12 @@ import {
   Handle,
   UUID,
 } from '../../bleTypes';
-import Hci, { HciState } from '../hci';
+import { Hci, HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
-import AclStream from './acl-stream';
-import Gap from './gap';
-import GattCentral from './gatt';
-import Signaling from './signaling';
+import { AclStream } from './acl-stream';
+import { Gap } from './gap';
+import { GattCentral } from './gatt';
+import { Signaling } from './signaling';
 import { SmpEncryptOptions } from './smp';
 
 type NobleBindingsEventType =
@@ -42,13 +42,12 @@ type NobleBindingsEventType =
 /**
  * @ignore
  */
-class NobleBindings extends EventEmitter<NobleBindingsEventType> {
+export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public _connectable: { [key: string]: boolean };
 
   private _state: HciState | null;
   private _handles: Record<BleDeviceAddress, number>;
-  private _addresses: Record<string, BleDeviceAddress>;
-  private _addresseTypes: Record<string, BleDeviceAddressType>;
+  private _addresses: Record<number, BleDeviceAddress>;
   private _gatts: Record<BleDeviceAddress, GattCentral>;
   private _aclStreams: Record<BleDeviceAddress, AclStream>;
   private _signalings: Record<BleDeviceAddress, Signaling>;
@@ -65,7 +64,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this._state = null;
 
     this._addresses = {};
-    this._addresseTypes = {};
     this._connectable = {};
 
     this._handles = {};
@@ -102,15 +100,6 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public debugHandler: any = () => {
     // do nothing.
   };
-
-  public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
-    if (!this._addresses[uuid]) {
-      const address: any = BleHelper.reverseHexString(uuid, ':');
-      this._addresses[uuid] = address;
-      this._addresseTypes[uuid] = addressType;
-      this._connectable[uuid] = true;
-    }
-  }
 
   public async startExtendedScanningWait(
     serviceUuids: UUID[],
@@ -162,13 +151,11 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
    * @param onConnectCallback
    */
   public async connectWait(
-    peripheralUuid: BleDeviceAddress,
+    address: BleDeviceAddress,
+    addressType: BleDeviceAddressType,
     mtu: number | null,
     onConnectCallback?: () => void
   ): Promise<void> {
-    const address = this._addresses[peripheralUuid];
-    const addressType = this._addresseTypes[peripheralUuid];
-
     if (!address) {
       throw new ObnizBleUnknownPeripheralError(address);
     }
@@ -294,7 +281,8 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   }
 
   public async connectExtendedWait(
-    peripheralUuid: BleDeviceAddress,
+    address: BleDeviceAddress,
+    addressType: BleDeviceAddressType,
     mtu: number | null,
     onConnectCallback?: any,
     usePhy1m = true,
@@ -307,10 +295,8 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`
       );
     }
-    const address = this._addresses[peripheralUuid];
-    const addressType: any = this._addresseTypes[peripheralUuid];
-    if (!address) {
-      throw new ObnizBleUnknownPeripheralError(peripheralUuid);
+    if (!address || !addressType) {
+      throw new ObnizBleUnknownPeripheralError(address);
     }
 
     // Block parall connection ongoing for ESP32 bug.
@@ -763,5 +749,3 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this.debugHandler(`${text}`);
   }
 }
-
-export default NobleBindings;

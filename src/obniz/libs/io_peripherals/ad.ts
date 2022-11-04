@@ -9,7 +9,7 @@ import { ComponentAbstract } from '../ComponentAbstact';
 /**
  * @category Peripherals
  */
-export default class PeripheralAD extends ComponentAbstract {
+export class PeripheralAD extends ComponentAbstract {
   public id: number;
 
   /**

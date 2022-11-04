@@ -6,20 +6,16 @@ let checkBoard;
 let check_io;
 
 describe('2-io-animation', function () {
-  this.timeout(20000);
-  before(function () {
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        checkBoard = config.checkBoard;
-        check_io = config.check_io.filter((io) =>
-          io.mode.some((mode) => mode === 'digitalWrite')
-        );
-        if (check_io.length === 0) {
-          this.skip();
-        }
-        resolve();
-      });
-    });
+  this.timeout(20000 * (config.json.long_timeout || 1));
+  before(async function () {
+    await config.waitForConenct();
+    checkBoard = config.checkBoard;
+    check_io = config.check_io.filter((io) =>
+      io.mode.some((mode) => mode === 'digitalWrite')
+    );
+    if (check_io.length === 0) {
+      this.skip();
+    }
   });
 
   it('animation', async () => {
