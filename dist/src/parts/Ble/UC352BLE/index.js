@@ -17,6 +17,17 @@ class UC352BLE {
             return false;
         return peripheral.localName.startsWith('A&D_UC-352BLE');
     }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('HN_300TN not found');
+        }
+        if (this._peripheral.adv_data[2] === 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     /**
      * Pair with the device
      *

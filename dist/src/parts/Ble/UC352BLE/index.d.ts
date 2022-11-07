@@ -14,6 +14,7 @@ export default class UC352BLE implements ObnizPartsBleInterface {
     _peripheral: BleRemotePeripheral;
     ondisconnect?: (reason: any) => void;
     static isDevice(peripheral: BleRemotePeripheral): boolean;
+    isPairingMode(): boolean;
     /**
      * Pair with the device
      *

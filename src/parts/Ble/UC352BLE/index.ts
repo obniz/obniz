@@ -29,6 +29,18 @@ export default class UC352BLE implements ObnizPartsBleInterface {
     return peripheral.localName.startsWith('A&D_UC-352BLE');
   }
 
+  public isPairingMode() {
+    if (!this._peripheral) {
+      throw new Error('HN_300TN not found');
+    }
+
+    if (this._peripheral.adv_data[2] === 5) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * Pair with the device
    *
