@@ -298,6 +298,7 @@ import HN_300T2, { HN_300T2Options } from '../parts/Ble/HN_300T2';
 import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
 import TT_MSK1508, { TT_MSK1508Options } from '../parts/Ble/TT-MSK1508';
 import INKBIRD, { INKBIRDOptions } from '../parts/Ble/INKBIRD';
+import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
 
 export type PartsType = keyof PartsList;
 
@@ -734,4 +735,5 @@ export interface PartsList {
   MM_BLEBC5: PartsInterface<MM_BLEBC5, MM_BLEBC5_Options, typeof MM_BLEBC5>;
   HN_300T2: PartsInterface<HN_300T2, HN_300T2Options, typeof HN_300T2>;
   GT_7510: PartsInterface<GT_7510, GT_7510Options, typeof GT_7510>;
+  RTR500B: PartsInterface<RTR500B, RTR500BOptions, typeof RTR500B>;
 }
