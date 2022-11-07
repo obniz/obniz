@@ -33738,7 +33738,7 @@ class UC352BLE {
         if (!this._peripheral) {
             throw new Error('UC352BLE not found');
         }
-        let result = {};
+        let result = { weight: 0 };
         await this._peripheral.connectWait({
             pairingOption: { keys: pairingKeys },
             waitUntilPairing: true,
@@ -33753,7 +33753,7 @@ class UC352BLE {
             };
         });
         await (chara === null || chara === void 0 ? void 0 : chara.registerNotifyWait((data) => {
-            const _result = {};
+            const _result = { weight: 0 };
             _result.weight = ((data[2] << 8) | data[1]) * 0.005;
             result = _result;
         }));

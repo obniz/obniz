@@ -7,7 +7,7 @@ export interface UC352BLEResult {
     /**
      * weight(kg) 体重(kg)
      */
-    weight?: number;
+    weight: number;
 }
 export default class UC352BLE implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;

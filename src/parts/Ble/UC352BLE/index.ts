@@ -11,7 +11,7 @@ export interface UC352BLEResult {
   /**
    * weight(kg) 体重(kg)
    */
-  weight?: number;
+  weight: number;
 }
 
 export default class UC352BLE implements ObnizPartsBleInterface {
@@ -68,7 +68,7 @@ export default class UC352BLE implements ObnizPartsBleInterface {
       throw new Error('UC352BLE not found');
     }
 
-    let result: UC352BLEResult = {};
+    let result: UC352BLEResult = { weight: 0 };
 
     await this._peripheral.connectWait({
       pairingOption: { keys: pairingKeys },
@@ -86,7 +86,7 @@ export default class UC352BLE implements ObnizPartsBleInterface {
     });
 
     await chara?.registerNotifyWait((data) => {
-      const _result: UC352BLEResult = {};
+      const _result: UC352BLEResult = { weight: 0 };
       _result.weight = ((data[2] << 8) | data[1]) * 0.005;
       result = _result;
     });
