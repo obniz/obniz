@@ -4,9 +4,10 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
+import { BleRemoteCharacteristic } from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import {
+  ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 import BleBatteryService from '../utils/services/batteryService';
@@ -51,6 +52,13 @@ export interface UT201BLEResult {
    * Value 値: 'unknown' | 'Armpit' | 'Body' | 'Ear' | 'Finger' | 'Gastro-intestinal Tract' | 'Mouth' | 'Rectum' | 'Toe' | 'Tympanum'
    */
   temperatureType?: string;
+
+  /**
+   * battery(%) バッテリー(%)
+   *
+   * Value 値: 100 | 66 | 40 | 33
+   */
+  battery?: number;
 }
 
 /** UT201BLE management class UT201BLEを管理するクラス */
@@ -94,6 +102,19 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     }
     this._peripheral = peripheral;
     this._timezoneOffsetMinute = timezoneOffsetMinute;
+  }
+
+  public isPairingMode() {
+    if (!this._peripheral) {
+      throw new Error('UT201BLE not found');
+    }
+
+    // adv_data[2]はFlagsで、bit0が1の場合Pairng Mode(Limited Discoverable Mode)
+    if (this._peripheral.adv_data[2] === 5) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -157,6 +178,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
       temperatureMeasurementChar,
       timeChar,
       customServiceChar,
+      batteryChar,
     } = this._getChars();
 
     const waitDisconnect = new Promise<UT201BLEResult[]>((resolve, reject) => {
@@ -166,12 +188,14 @@ export default class UT201BLE implements ObnizPartsBleInterface {
       };
     });
 
+    const battery = await batteryChar.readWait();
+
     await customServiceChar.writeWait([2, 0, 0xe1]); // send all data
 
     await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
     await temperatureMeasurementChar.registerNotifyWait((data: number[]) => {
-      results.push(this._analyzeData(data));
+      results.push(this._analyzeData(data, battery));
     });
 
     return await waitDisconnect;
@@ -187,7 +211,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     return mantissa * Math.pow(10, exponential);
   }
 
-  private _analyzeData(data: number[]): UT201BLEResult {
+  private _analyzeData(data: number[], battery: number[]): UT201BLEResult {
     const buf = Buffer.from(data);
     const flags = buf.readUInt8(0);
 
@@ -230,6 +254,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
       const value = buf.readUInt8(index);
       index++;
       result.temperatureType = types[value] || 'unknown';
+      result.battery = battery[0];
     }
 
     return result;
@@ -249,11 +274,15 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     const customServiceChar = this._peripheral
       .getService('233bf0005a341b6d975c000d5690abe4')!
       .getCharacteristic('233bf0015a341b6d975c000d5690abe4')!;
+    const batteryChar = this._peripheral
+      .getService('180F')!
+      .getCharacteristic('2A19')!;
 
     return {
       temperatureMeasurementChar,
       timeChar,
       customServiceChar,
+      batteryChar,
     };
   }
 

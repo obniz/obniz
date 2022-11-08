@@ -4,8 +4,9 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import ObnizPartsInterface, {
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
@@ -72,9 +73,13 @@ export default class HCSR04 implements ObnizPartsInterface {
       callback: async (edges: any) => {
         if (this.reset_alltime) {
           this.vccIO.output(false);
-          this.obniz.wait(100);
+          this.obniz.wait(100).catch(() => {
+            // ignore error
+          });
           this.vccIO.output(true);
-          this.obniz.wait(100);
+          this.obniz.wait(100).catch(() => {
+            // ignore error
+          });
         }
         let distance: any;
         for (let i = 0; i < edges.length - 1; i++) {

@@ -7,7 +7,8 @@ import i2cParts, { I2cInfo, I2cPartsAbstractOptions } from '../../i2cParts';
 
 import Obniz from '../../../obniz';
 import { DriveType, PullType } from '../../../obniz/libs/io_peripherals/common';
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
@@ -92,7 +93,7 @@ export default class AK09916 extends i2cParts implements ObnizPartsInterface {
       'l'
     );
 
-    this.readWait(this._ST2, 1);
+    await this.readWait(this._ST2, 1);
 
     const xyz: [number, number, number] = raw3.map((d, i) => {
       return (d * this.so - this.offset[i]) * this.scale[i];

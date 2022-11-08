@@ -12,13 +12,12 @@
 
 ## wired(obniz,  { vcc, gnd, do, ao});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-gnd | `number(obniz Board io)` | no |  &nbsp; | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。
-do | `number(obniz Board io)` | no |  &nbsp; | デジタル出力です。モジュールの場合doを接続して下さい。
-ao | `number(obniz Board io)` | no | &nbsp;  | アナログ出力です。単体の場合はRLを接続したVoutを。モジュールの場合はaoを接続して下さい。
-
+| name | type                     | required | default | description                                             |
+|------|--------------------------|----------|---------|---------------------------------------------------------|
+| vcc  | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はvcc, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| gnd  | `number(obniz Board io)` | no       | &nbsp;  | モジュールの場合はgnd, 単体の場合はHに接続します。別の電源につないでいる場合は指定する必要はありません。 |
+| do   | `number(obniz Board io)` | no       | &nbsp;  | デジタル出力です。モジュールの場合doを接続して下さい。                            |
+| ao   | `number(obniz Board io)` | no       | &nbsp;  | アナログ出力です。単体の場合はRLを接続したVoutを。モジュールの場合はaoを接続して下さい。        |
 
 ```Javascript
 // Javascript Example
@@ -43,9 +42,9 @@ mq2.startHeating();
 
 加熱を開始し、時間が経過するまで待ちます。引数を指定することで待ち時間をデフォルトの２分から変更できます。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-sec | `number` | no | 120 | 待機する時間(秒)
+| name | type     | required | default | description |
+|------|----------|----------|---------|-------------|
+| sec  | `number` | no       | 120     | 待機する時間(秒)   |
 
 ```Javascript
 // Javascript Example

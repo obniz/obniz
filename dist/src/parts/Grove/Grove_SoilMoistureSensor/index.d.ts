@@ -3,9 +3,9 @@
  * @module Parts.Grove_SoilMoistureSensor
  */
 import Obniz from '../../../obniz';
-import PeripheralAD from '../../../obniz/libs/io_peripherals/ad';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralAD } from '../../../obniz/libs/io_peripherals/ad';
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 interface Grove_SoilMoistureSensorOptionsA {
     vcc?: number;
     gnd?: number;

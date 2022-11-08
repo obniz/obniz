@@ -11,8 +11,9 @@
  * Date: 2019-11-03
  * ---------------------------------------------------------------- */
 'use strict';
-import BleRemoteCharacteristic from '../../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral, {
+import { BleRemoteCharacteristic } from '../../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import {
+  BleRemotePeripheral,
   BleConnectSetting,
 } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import LinkingAdvertising from './advertising';
@@ -189,7 +190,7 @@ export default class LinkingDevice {
   }
 
   public _wait(msec: number) {
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise<void>((resolve, reject) => {
       setTimeout(() => {
         resolve();
       }, msec);

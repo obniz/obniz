@@ -3,21 +3,28 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 /// <reference types="node" />
-import ObnizDevice from '../../../ObnizDevice';
+/// <reference types="node" />
+import { ObnizDevice } from '../../../ObnizDevice';
 export declare type EventHandler = (...args: any) => any;
-export default class ObnizBLEHci {
+export declare class ObnizBLEHci {
     Obniz: ObnizDevice;
     timeout: number;
     hciProtocolOnSocketData: any;
     protected _eventHandlerQueue: {
         [key: string]: EventHandler[];
     };
-    constructor(Obniz: ObnizDevice);
     /**
      * @ignore
      * @private
      */
-    _reset(): void;
+    _extended: boolean;
+    private defaultExtended;
+    constructor(Obniz: ObnizDevice, extended: boolean);
+    /**
+     * @ignore
+     * @private
+     */
+    _reset(keepExtended: boolean): void;
     /**
      * Initialize BLE HCI module
      */
@@ -51,8 +58,16 @@ export default class ObnizBLEHci {
      * @param option.timeout Timeout number in seconds. If not specified. default timeout is applied. If null specified, never timeout.
      * @param option.waitingFor Readable description of command for waiting. Printed when Error or timeout occured.
      */
-    timeoutPromiseWrapper<T>(promise: Promise<T>, option?: any): Promise<T>;
-    readWait(binaryFilter: number[], option?: any): Promise<Buffer>;
+    timeoutPromiseWrapper<T>(promise: Promise<T>, _option: {
+        timeout?: number | null;
+        waitingFor: string;
+        onTimeout?: () => Promise<void>;
+    }): Promise<T>;
+    readWait(binaryFilter: number[], option: {
+        timeout?: number | null;
+        waitingFor: string;
+        onTimeout?: () => Promise<void>;
+    }): Promise<Buffer>;
     protected onceQueue(binaryFilter: number[], func: EventHandler): void;
     protected validate(str: string, json: any): boolean;
     protected encodeBinaryFilter(binary: number[]): string;

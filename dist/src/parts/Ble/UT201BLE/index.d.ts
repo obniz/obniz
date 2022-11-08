@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.UT201BLE
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface, ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
 import BleBatteryService from '../utils/services/batteryService';
 import BleGenericAccess from '../utils/services/genericAccess';
 export interface UT201BLEOptions {
@@ -45,6 +45,12 @@ export interface UT201BLEResult {
      * Value 値: 'unknown' | 'Armpit' | 'Body' | 'Ear' | 'Finger' | 'Gastro-intestinal Tract' | 'Mouth' | 'Rectum' | 'Toe' | 'Tympanum'
      */
     temperatureType?: string;
+    /**
+     * battery(%) バッテリー(%)
+     *
+     * Value 値: 100 | 66 | 40 | 33
+     */
+    battery?: number;
 }
 /** UT201BLE management class UT201BLEを管理するクラス */
 export default class UT201BLE implements ObnizPartsBleInterface {
@@ -68,6 +74,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     batteryService?: BleBatteryService;
     private _timezoneOffsetMinute;
     constructor(peripheral: BleRemotePeripheral | null, timezoneOffsetMinute: number);
+    isPairingMode(): boolean;
     /**
      * Pair with the device
      *

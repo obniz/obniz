@@ -1,17 +1,15 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleLocalValueAttributeAbstract = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleLocalAttributeAbstract_1 = __importDefault(require("./bleLocalAttributeAbstract"));
+const bleLocalAttributeAbstract_1 = require("./bleLocalAttributeAbstract");
 /**
  * @category Use as Peripheral
  */
-class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default {
+class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.BleLocalAttributeAbstract {
     constructor(params) {
         super(params);
     }
@@ -68,4 +66,4 @@ class BleLocalValueAttributeAbstract extends bleLocalAttributeAbstract_1.default
         }
     }
 }
-exports.default = BleLocalValueAttributeAbstract;
+exports.BleLocalValueAttributeAbstract = BleLocalValueAttributeAbstract;

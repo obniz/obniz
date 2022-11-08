@@ -1,7 +1,12 @@
 
 # PLS_01BT
-株式会社カスタム社製の　酸素飽和度メータです
+株式会社カスタム社製の酸素飽和度メータです。
+
 ![](./image.jpg)
+
+## 注意事項
+<span style="color: red;">**PLS_01BT は BLE5.0 の機器とうまく接続できないことが確認されております。  
+そのため、obniz BLE/Wi-Fi Gateway Gen2.0 および obniz BLE/LTE Gateway (Cat.4) とは接続できません。**</span>
 
 ## isDevice(peripheral)
 

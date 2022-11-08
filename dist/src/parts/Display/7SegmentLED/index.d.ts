@@ -3,8 +3,8 @@
  * @module Parts.7SegmentLED
  */
 import Obniz from '../../../obniz';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface _7SegmentLEDOptions {
     a: number;
     b: number;

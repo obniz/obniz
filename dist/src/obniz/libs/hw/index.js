@@ -4,6 +4,7 @@
  * @ignore
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HW = void 0;
 class HW {
     static getDefinitionFor(hw) {
         if (hw === 'obnizb1') {
@@ -36,10 +37,16 @@ class HW {
         else if (hw === 'esp32c3') {
             return require('./esp32c3.json');
         }
+        else if (hw === 'blewifi_gw2') {
+            return require('./blewifi_gw2.json');
+        }
+        else if (hw === 'blelte_gw2') {
+            return require('./blelte_gw2.json');
+        }
         else {
             // default
             return require('./esp32w.json');
         }
     }
 }
-exports.default = HW;
+exports.HW = HW;

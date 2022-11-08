@@ -4,8 +4,8 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 
 export interface HEM_6233TOptions {}
@@ -187,7 +187,7 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
         0x0a, // error code : 10 = Attribute Not Found
       ]);
 
-      this._writeTimeCharWait(this._timezoneOffsetMinute);
+      await this._writeTimeCharWait(this._timezoneOffsetMinute);
     }); // battery Level
     await this.subscribeWait('1810', '2A35', async (data: number[]) => {
       // console.log('SUCCESS', data);

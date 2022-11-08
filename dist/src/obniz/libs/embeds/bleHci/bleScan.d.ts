@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
-import ObnizBLE from './ble';
-import BleRemotePeripheral from './bleRemotePeripheral';
+import { ObnizBLE } from './ble';
+import { BleRemotePeripheral } from './bleRemotePeripheral';
 import { BleDeviceAddress, UUID } from './bleTypes';
 export declare type BleScanMode = 'passive' | 'active';
 export declare type BleBinary = number[];
@@ -101,6 +101,34 @@ export interface BleScanSetting {
      */
     filterOnDevice?: boolean;
     /**
+     * (ESP32 C3 or ESP32 S3)
+     *
+     * True: Scan phy<br/>
+     * False : Do not scan phy
+     *
+     * Default is true : Scan phy
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * var target = {
+     *     localName: "obniz-BLE",     //scan only has localName "obniz-BLE"
+     * };
+     *
+     * var setting = {
+     *    usePhy1m : false,
+     *    usePhyCoded: true
+     * }
+     *
+     * await obniz.ble.initWait();
+     * await obniz.ble.scan.startWait(target, setting);
+     * ```
+     *
+     *
+     */
+    usePhy1m?: boolean;
+    usePhyCoded?: boolean;
+    /**
      * If only one of advertisement and scanResponse is coming, wait until both come.
      *
      * True : wait for other data come until 10 seconds
@@ -114,7 +142,7 @@ declare type BleScanState = 'stopped' | 'stopping' | 'started' | 'starting';
 /**
  * @category Use as Central
  */
-export default class BleScan {
+export declare class BleScan {
     /**
      * This function gets called when obniz Board finishes scanning.
      *

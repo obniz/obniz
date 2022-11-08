@@ -31,9 +31,9 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
      */
     async connectWait(keys) {
         var _a;
-        this.serviceUuid = (_a = this.staticClass.getServiceUuids('Connectable'), (_a !== null && _a !== void 0 ? _a : [
+        this.serviceUuid = ((_a = this.staticClass.getServiceUuids('Connectable')) !== null && _a !== void 0 ? _a : [
             '',
-        ]))[0];
+        ])[0];
         await super.connectWait(keys);
         const service1800 = this.peripheral.getService('1800');
         if (service1800) {

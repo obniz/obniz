@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
+import { WSCommandAbstract } from './WSCommandAbstract';
 
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_HIGH = 1;
 const COMMAND_IO_ERRORS_IO_TOO_HEAVY_WHEN_LOW = 2;
@@ -29,45 +29,33 @@ const COMMAND_IO_MUTEX_NAMES: any = {
   8: 'Measure',
 };
 
-class WSCommandIO extends WSCommand {
-  public module: number;
-  public _CommandOutput: number;
-  public _CommandInputStream: number;
-  public _CommandInputOnece: number;
-  public _CommandOutputType: number;
-  public _CommandPullResisterType: number;
-  public _CommandEnd: number;
+export class WSCommandIO extends WSCommandAbstract {
+  module = 2;
 
-  constructor() {
-    super();
-    this.module = 2;
-
-    this._CommandOutput = 0;
-    this._CommandInputStream = 1;
-    this._CommandInputOnece = 2;
-    this._CommandOutputType = 3;
-    this._CommandPullResisterType = 4;
-    this._CommandEnd = 5;
-  }
-
+  _CommandOutput = 0;
+  _CommandInputStream = 1;
+  _CommandInputOnece = 2;
+  _CommandOutputType = 3;
+  _CommandPullResisterType = 4;
+  _CommandEnd = 5;
   // Commands
 
-  public output(value: any, id: any) {
+  public output(value: any, id: number) {
     const buf = new Uint8Array([id, value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
-  public outputDetail(params: any, id: any) {
+  public outputDetail(params: any, id: number) {
     const buf = new Uint8Array([id, params.value]);
     this.sendCommand(this._CommandOutput, buf);
   }
 
-  public input(params: any, id: any) {
+  public input(params: any, id: number) {
     const buf = new Uint8Array([id]);
     this.sendCommand(this._CommandInputOnece, buf);
   }
 
-  public inputDetail(params: any, id: any) {
+  public inputDetail(params: any, id: number) {
     const buf = new Uint8Array([id]);
     this.sendCommand(
       params.stream ? this._CommandInputStream : this._CommandInputOnece,
@@ -75,7 +63,7 @@ class WSCommandIO extends WSCommand {
     );
   }
 
-  public outputType(params: any, id: any) {
+  public outputType(params: any, id: number) {
     const buf = new Uint8Array(2);
     buf[0] = id;
     if (params.output_type === 'push-pull5v') {
@@ -180,5 +168,3 @@ class WSCommandIO extends WSCommand {
     }
   }
 }
-
-export default WSCommandIO;

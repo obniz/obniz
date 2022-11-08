@@ -1,16 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandPlugin = void 0;
 /**
  * @packageDocumentation
  * @ignore
  */
-const WSCommand_1 = __importDefault(require("./WSCommand"));
-class WSCommandPlugin extends WSCommand_1.default {
+const WSCommandAbstract_1 = require("./WSCommandAbstract");
+class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
     constructor() {
-        super();
+        super(...arguments);
         this.module = 15;
         this._CommandSend = 0;
         this._CommandReceive = 1;
@@ -51,4 +49,4 @@ class WSCommandPlugin extends WSCommand_1.default {
         }
     }
 }
-exports.default = WSCommandPlugin;
+exports.WSCommandPlugin = WSCommandPlugin;

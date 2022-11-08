@@ -1,5 +1,5 @@
-import WSCommand from './WSCommand';
-declare class WSCommandDisplay extends WSCommand {
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandDisplay extends WSCommandAbstract {
     module: number;
     _CommandClear: number;
     _CommandPrint: number;
@@ -22,4 +22,3 @@ declare class WSCommandDisplay extends WSCommand {
     drawRawColors(raw: number[], colorDepth: number): void;
     parseFromJson(json: any): void;
 }
-export default WSCommandDisplay;

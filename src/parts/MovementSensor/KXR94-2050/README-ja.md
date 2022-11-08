@@ -10,15 +10,15 @@ x,y,zの3軸加速度センサ
 
 部品のピンをobniz Boardに接続し、どこに接続したかなどを設定します。
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-x | `number(obniz Board io)` | yes | &nbsp; | X軸の加速度の値が電圧として出力されます。
-y | `number(obniz Board io)` | yes | &nbsp; | Y軸の加速度の値が電圧として出力されます。
-z | `number(obniz Board io)` | yes | &nbsp; | Z軸の加速度の値が電圧として出力されます。
-vcc | `number(obniz Board io)` | &nbsp; | &nbsp; | 電源です。5V。
-gnd | `number(obniz Board io)` | &nbsp; | &nbsp; | 電源です。GND
-self_test | `number(obniz Board io)` | &nbsp; | &nbsp; | highにするとセルフテストモードになります。
-enable | `number(obniz Board io)` | &nbsp; | &nbsp; | lowにすると加速度の計測を無効化出来ます。
+| name      | type                     | required | default | description             |
+|-----------|--------------------------|----------|---------|-------------------------|
+| x         | `number(obniz Board io)` | yes      | &nbsp;  | X軸の加速度の値が電圧として出力されます。  |
+| y         | `number(obniz Board io)` | yes      | &nbsp;  | Y軸の加速度の値が電圧として出力されます。  |
+| z         | `number(obniz Board io)` | yes      | &nbsp;  | Z軸の加速度の値が電圧として出力されます。  |
+| vcc       | `number(obniz Board io)` | &nbsp;   | &nbsp;  | 電源です。5V。                |
+| gnd       | `number(obniz Board io)` | &nbsp;   | &nbsp;  | 電源です。GND                |
+| self_test | `number(obniz Board io)` | &nbsp;   | &nbsp;  | highにするとセルフテストモードになります。 |
+| enable    | `number(obniz Board io)` | &nbsp;   | &nbsp;  | lowにすると加速度の計測を無効化出来ます。 |
 
 ```javascript
 

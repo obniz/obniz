@@ -7,12 +7,11 @@ Keyestudio button module.
 ## wired(obniz,  { signal [, vcc, gnd]});
 
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | Signal pin of state output(s pin of Keyestudio)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC for button(+ pin of Keyestudio)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND for button(- pin of Keyestudio)
-
+| name   | type                     | required | default | description                                     |
+|--------|--------------------------|----------|---------|-------------------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | Signal pin of state output(s pin of Keyestudio) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC for button(+ pin of Keyestudio)             |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND for button(- pin of Keyestudio)             |
 
 ```Javascript
 // Javascript Example

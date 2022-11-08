@@ -5,7 +5,7 @@
 
 import Obniz from '../../index';
 import { ComponentAbstract } from '../ComponentAbstact';
-import ObnizUtil from '../utils/util';
+import { ObnizUtil } from '../utils/util';
 
 export interface ObnizMeasureResult {
   edge: boolean;
@@ -90,7 +90,7 @@ export interface ObnizMeasureOptions {
  *
  * @category Measurement
  */
-export default class ObnizMeasure extends ComponentAbstract {
+export class ObnizMeasure extends ComponentAbstract {
   private observers!: ((edges: ObnizMeasureResultArray) => void)[];
   private params?: ObnizMeasureOptions;
 

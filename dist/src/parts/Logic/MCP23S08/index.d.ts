@@ -3,9 +3,9 @@
  * @module Parts.MCP23S08
  */
 import Obniz from '../../../obniz';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
-import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralSPI } from '../../../obniz/libs/io_peripherals/spi';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface MCP23S08Options {
     vcc: number;
     gnd: number;

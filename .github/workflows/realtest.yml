@@ -1,0 +1,83 @@
+name: Realtest
+on:
+  workflow_dispatch:
+    inputs:
+      targetObnizId:
+        type: string
+        required: true
+        description: "Test target obnizID (XXXX-XXXX)"
+
+      targetObnizHw:
+        type: choice
+        description: "Test target obniz hardware type"
+        options:
+          - blewifi_gw
+          - blewifi_gw2
+          - board
+          - board1y
+
+      supportObnizId:
+        type: string
+        required: true
+        description: "Test support obnizID (XXXX-XXXX)"
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-18.04]
+        node: [16.x]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      TZ: Asia/Tokyo
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Cache node_modules
+        id: node_modules-cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ matrix.os }}-node-v${{ matrix.node }}-npm-
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build --if-present
+
+      - name: Realtest
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          command: npm run realtest
+        env:
+          OBNIZ_DEVICE: ${{ github.event.inputs.targetObnizHw }}
+          OBNIZ_ID: ${{ github.event.inputs.targetObnizId }}
+          OBNIZA_ID: ${{ github.event.inputs.supportObnizId }}
+          IGNORE_TCP_TEST: "true"
+
+
+  slack-notify:
+    name: workflow notification to slack
+    runs-on: ubuntu-latest
+    needs: [build-test]
+    if: always()
+    steps:
+      - uses: come25136/workflow-notification-for-slack@1.0.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          name: "obniz.js CI"
+          icon_url: ${{ secrets.SLACK_ICON_URL }}

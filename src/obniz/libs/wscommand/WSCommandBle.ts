@@ -2,182 +2,203 @@
  * @packageDocumentation
  * @ignore
  */
-import JsonBinaryConverter from './jsonBinaryConverter';
-import WSCommand from './WSCommand';
-import WSCommandBleHci from './WSCommandBleHci';
+import { JsonBinaryConverter } from './jsonBinaryConverter';
+import { WSCommandAbstract } from './WSCommandAbstract';
+import { WSCommandBleHci } from './WSCommandBleHci';
 
-class WSCommandBle extends WSCommand {
-  public module: number;
-  public uuidLength: number;
-  public _CommandSetAdvData: number;
-  public _CommandSetScanRespData: number;
-  public _CommandStartAdv: number;
-  public _CommandStopAdv: number;
-  public _CommandScan: number;
-  public _CommandStartScan: number;
-  public _CommandStopScan: number;
-  public _CommandScanResults: number;
-  public _CommandConnect: number;
-  public _CommandServices: number;
-  public _CommandCharacteristics: number;
-  public _CommandWriteCharacteristics: number;
-  public _CommandReadCharacteristics: number;
-  public _CommandRegisterNotifyCharacteristic: number;
-  public _CommandUnregisterNotifyCharacteristic: number;
-  public _CommandDescriptors: number;
-  public _CommandWriteDescriptor: number;
-  public _CommandReadDescriptor: number;
-  public _CommandNotifyCharacteristic: number;
-  public _CommandSetDeviceName: number;
-  public _CommandServerStartPeripheral: number;
-  public _CommandServerNotifyConnect: number;
-  public _CommandServerAddService: number;
-  public _CommandServerAddCharacteristic: number;
-  public _CommandServerAddDescriptor: number;
-  public _CommandServerWriteCharavteristicValue: number;
-  public _CommandServerReadCharavteristicValue: number;
-  public _CommandServerNotifyWriteCharavteristicValue: number;
-  public _CommandServerNotifyReadCharavteristicValue: number;
-  public _CommandServerWriteDescriptorValue: number;
-  public _CommandServerReadDescriptorValue: number;
-  public _CommandServerNotifyWriteDescriptorValue: number;
-  public _CommandServerNotifyReadDescriptorValue: number;
-  public _CommandServerNotifyCharavteristic: number;
-  public _CommandServerStartStopService: number;
-  public _CommandSecuritySetAuth: number;
-  public _CommandSecuritySetEncryptionLevel: number;
-  public _CommandSecuritySetEnableKeyTypes: number;
-  public _CommandSecuritySetKeyMaxSize: number;
-  public _CommandSecuritySetIOCapability: number;
-  public _CommandSecurityClearBondingDevices: number;
+export class WSCommandBle extends WSCommandAbstract {
+  module = 11;
 
-  public _CommandScanResultsDevice: any;
-  public _CommandScanResultsDeviceAddress: any;
-  public _CommandScanResultsEvet: any;
-  public _CommandScanResultsBleEvent: any;
-  public _CommandCharacteristicsProperties: any;
-  public _commandResults: any;
-  public _securityAuthValues: any;
-  public _securityEncryotionLevels: any;
-  public _securityKeyTypes: any;
-  public hciCommand: any;
+  uuidLength = 16 + 2;
+
+  _CommandSetAdvData = 0;
+  _CommandSetScanRespData = 1;
+  _CommandStartAdv = 2;
+  _CommandStopAdv = 3;
+  _CommandScan = 4;
+  _CommandStartScan = 4;
+  _CommandStopScan = 5;
+  _CommandScanResults = 6;
+  _CommandConnect = 7;
+  _CommandServices = 8;
+  _CommandCharacteristics = 9;
+  _CommandWriteCharacteristics = 10;
+  _CommandReadCharacteristics = 11;
+  _CommandRegisterNotifyCharacteristic = 12;
+  _CommandUnregisterNotifyCharacteristic = 13;
+  _CommandDescriptors = 14;
+  _CommandWriteDescriptor = 15;
+  _CommandReadDescriptor = 16;
+  _CommandNotifyCharacteristic = 17;
+
+  _CommandSetDeviceName = 19;
+  _CommandServerStartPeripheral = 20;
+  _CommandServerNotifyConnect = 21;
+  _CommandServerAddService = 22;
+  _CommandServerAddCharacteristic = 23;
+  _CommandServerAddDescriptor = 24;
+  _CommandServerWriteCharavteristicValue = 25;
+  _CommandServerReadCharavteristicValue = 26;
+  _CommandServerNotifyWriteCharavteristicValue = 27;
+  _CommandServerNotifyReadCharavteristicValue = 28;
+  _CommandServerWriteDescriptorValue = 29;
+  _CommandServerReadDescriptorValue = 30;
+  _CommandServerNotifyWriteDescriptorValue = 31;
+  _CommandServerNotifyReadDescriptorValue = 32;
+  _CommandServerNotifyCharavteristic = 33;
+  _CommandServerStartStopService = 34;
+
+  _CommandSecuritySetAuth = 35;
+  _CommandSecuritySetEncryptionLevel = 36;
+  _CommandSecuritySetEnableKeyTypes = 37;
+  _CommandSecuritySetKeyMaxSize = 38;
+  _CommandSecuritySetIOCapability = 39;
+  _CommandSecurityClearBondingDevices = 40;
+
+  _CommandScanResultsDevice = {
+    breder: 0x01,
+    ble: 0x02,
+    dumo: 0x03,
+  };
+
+  /// BLE device address type
+  _CommandScanResultsDeviceAddress = {
+    public: 0x00,
+    random: 0x01,
+    rpa_public: 0x02,
+    rpa_random: 0x03,
+  };
+
+  _CommandScanResultsEvet = {
+    inquiry_result: 0 /* !< Inquiry result for a peer device. */,
+    inquiry_complete: 1 /* !< Inquiry complete. */,
+    discovery_result: 2 /* !< Discovery result for a peer device. */,
+    discovery_ble_result: 3 /* !< Discovery result for BLE GATT based service on a peer device. */,
+    discovery_cmoplete: 4 /* !< Discovery complete. */,
+    discovery_di_cmoplete: 5 /* !< Discovery complete. */,
+    cancelled: 6 /* !< Search cancelled */,
+  };
+
+  _CommandScanResultsBleEvent = {
+    connectable_advertisemnt: 0x00 /* !< Connectable undirected advertising (ADV_IND) */,
+    connectable_directed_advertisemnt: 0x01 /* !< Connectable directed advertising (ADV_DIRECT_IND) */,
+    scannable_advertising: 0x02 /* !< Scannable undirected advertising (ADV_SCAN_IND) */,
+    non_connectable_advertising: 0x03 /* !< Non connectable undirected advertising (ADV_NONCONN_IND) */,
+    scan_response: 0x04 /* !< Scan Response (SCAN_RSP) */,
+  };
+
+  _CommandCharacteristicsProperties = {
+    broadcast: 0x01,
+    read: 0x02,
+    write_without_response: 0x04,
+    write: 0x08,
+    notify: 0x10,
+    indicate: 0x20,
+    auth: 0x40,
+    extended_properties: 0x80,
+  };
+
+  _commandResults = {
+    success: 0,
+    failed: 1,
+  };
+
+  _securityAuthValues = {
+    0x01: 'bonding',
+    0x04: 'mitm',
+    0x08: 'secure_connection',
+  };
+  _securityEncryotionLevels = {
+    none: 0x01,
+    encryption: 0x02,
+    mitm: 0x03,
+  };
+
+  _securityKeyTypes = {
+    0x01: 'ltk',
+    0x02: 'irk',
+    0x04: 'csrk',
+  };
+
+  hciCommand = new WSCommandBleHci(this);
+
+  private _funcList: {
+    [key: number]: (objToSend: any, payload?: any) => void;
+  };
 
   constructor() {
     super();
-    this.module = 11;
 
-    this.uuidLength = 16 + 2;
+    const funcList: {
+      [key: number]: (objToSend: any, payload?: any) => void;
+    } = {};
+    funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(
+      this
+    );
+    funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
+    funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
+    funcList[
+      this._CommandCharacteristics
+    ] = this.notifyFromBinaryChacateristics.bind(this);
+    funcList[
+      this._CommandWriteCharacteristics
+    ] = this.notifyFromBinaryWriteChacateristics.bind(this);
+    funcList[
+      this._CommandReadCharacteristics
+    ] = this.notifyFromBinaryReadChacateristics.bind(this);
+    funcList[
+      this._CommandRegisterNotifyCharacteristic
+    ] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
+    funcList[
+      this._CommandUnregisterNotifyCharacteristic
+    ] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
+    funcList[
+      this._CommandNotifyCharacteristic
+    ] = this.notifyFromBinaryNotifyChacateristic.bind(this);
+    funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(
+      this
+    );
+    funcList[
+      this._CommandWriteDescriptor
+    ] = this.notifyFromBinaryWriteDescriptor.bind(this);
+    funcList[
+      this._CommandReadDescriptor
+    ] = this.notifyFromBinaryReadDescriptor.bind(this);
 
-    this._CommandSetAdvData = 0;
-    this._CommandSetScanRespData = 1;
-    this._CommandStartAdv = 2;
-    this._CommandStopAdv = 3;
-    this._CommandScan = 4;
-    this._CommandStartScan = 4;
-    this._CommandStopScan = 5;
-    this._CommandScanResults = 6;
-    this._CommandConnect = 7;
-    this._CommandServices = 8;
-    this._CommandCharacteristics = 9;
-    this._CommandWriteCharacteristics = 10;
-    this._CommandReadCharacteristics = 11;
-    this._CommandRegisterNotifyCharacteristic = 12;
-    this._CommandUnregisterNotifyCharacteristic = 13;
-    this._CommandDescriptors = 14;
-    this._CommandWriteDescriptor = 15;
-    this._CommandReadDescriptor = 16;
-    this._CommandNotifyCharacteristic = 17;
+    funcList[
+      this._CommandServerNotifyConnect
+    ] = this.notifyFromBinaryServerConnectionState.bind(this);
+    funcList[
+      this._CommandServerReadCharavteristicValue
+    ] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
+    funcList[
+      this._CommandServerWriteCharavteristicValue
+    ] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
+    funcList[
+      this._CommandServerNotifyReadCharavteristicValue
+    ] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
+    funcList[
+      this._CommandServerNotifyWriteCharavteristicValue
+    ] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
+    funcList[
+      this._CommandServerReadDescriptorValue
+    ] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
+    funcList[
+      this._CommandServerWriteDescriptorValue
+    ] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
+    funcList[
+      this._CommandServerNotifyReadDescriptorValue
+    ] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
+    funcList[
+      this._CommandServerNotifyWriteDescriptorValue
+    ] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
 
-    this._CommandSetDeviceName = 19;
-    this._CommandServerStartPeripheral = 20;
-    this._CommandServerNotifyConnect = 21;
-    this._CommandServerAddService = 22;
-    this._CommandServerAddCharacteristic = 23;
-    this._CommandServerAddDescriptor = 24;
-    this._CommandServerWriteCharavteristicValue = 25;
-    this._CommandServerReadCharavteristicValue = 26;
-    this._CommandServerNotifyWriteCharavteristicValue = 27;
-    this._CommandServerNotifyReadCharavteristicValue = 28;
-    this._CommandServerWriteDescriptorValue = 29;
-    this._CommandServerReadDescriptorValue = 30;
-    this._CommandServerNotifyWriteDescriptorValue = 31;
-    this._CommandServerNotifyReadDescriptorValue = 32;
-    this._CommandServerNotifyCharavteristic = 33;
-    this._CommandServerStartStopService = 34;
+    funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(
+      this
+    );
 
-    this._CommandSecuritySetAuth = 35;
-    this._CommandSecuritySetEncryptionLevel = 36;
-    this._CommandSecuritySetEnableKeyTypes = 37;
-    this._CommandSecuritySetKeyMaxSize = 38;
-    this._CommandSecuritySetIOCapability = 39;
-    this._CommandSecurityClearBondingDevices = 40;
-
-    this._CommandScanResultsDevice = {
-      breder: 0x01,
-      ble: 0x02,
-      dumo: 0x03,
-    };
-
-    /// BLE device address type
-    this._CommandScanResultsDeviceAddress = {
-      public: 0x00,
-      random: 0x01,
-      rpa_public: 0x02,
-      rpa_random: 0x03,
-    };
-
-    this._CommandScanResultsEvet = {
-      inquiry_result: 0 /* !< Inquiry result for a peer device. */,
-      inquiry_complete: 1 /* !< Inquiry complete. */,
-      discovery_result: 2 /* !< Discovery result for a peer device. */,
-      discovery_ble_result: 3 /* !< Discovery result for BLE GATT based service on a peer device. */,
-      discovery_cmoplete: 4 /* !< Discovery complete. */,
-      discovery_di_cmoplete: 5 /* !< Discovery complete. */,
-      cancelled: 6 /* !< Search cancelled */,
-    };
-
-    this._CommandScanResultsBleEvent = {
-      connectable_advertisemnt: 0x00 /* !< Connectable undirected advertising (ADV_IND) */,
-      connectable_directed_advertisemnt: 0x01 /* !< Connectable directed advertising (ADV_DIRECT_IND) */,
-      scannable_advertising: 0x02 /* !< Scannable undirected advertising (ADV_SCAN_IND) */,
-      non_connectable_advertising: 0x03 /* !< Non connectable undirected advertising (ADV_NONCONN_IND) */,
-      scan_response: 0x04 /* !< Scan Response (SCAN_RSP) */,
-    };
-
-    this._CommandCharacteristicsProperties = {
-      broadcast: 0x01,
-      read: 0x02,
-      write_without_response: 0x04,
-      write: 0x08,
-      notify: 0x10,
-      indicate: 0x20,
-      auth: 0x40,
-      extended_properties: 0x80,
-    };
-
-    this._commandResults = {
-      success: 0,
-      failed: 1,
-    };
-
-    this._securityAuthValues = {
-      0x01: 'bonding',
-      0x04: 'mitm',
-      0x08: 'secure_connection',
-    };
-    this._securityEncryotionLevels = {
-      none: 0x01,
-      encryption: 0x02,
-      mitm: 0x03,
-    };
-
-    this._securityKeyTypes = {
-      0x01: 'ltk',
-      0x02: 'irk',
-      0x04: 'csrk',
-    };
-
-    this.hciCommand = new WSCommandBleHci(this);
+    Object.assign(funcList, this.hciCommand.notifyFunctionList());
+    this._funcList = funcList;
   }
 
   /* CENTRAL   */
@@ -944,76 +965,8 @@ class WSCommandBle extends WSCommand {
   }
 
   public notifyFromBinary(objToSend: any, func: number, payload: Uint8Array) {
-    const funcList: any = {};
-    funcList[this._CommandScanResults] = this.notifyFromBinaryScanResponse.bind(
-      this
-    );
-    funcList[this._CommandConnect] = this.notifyFromBinaryConnect.bind(this);
-    funcList[this._CommandServices] = this.notifyFromBinaryServices.bind(this);
-    funcList[
-      this._CommandCharacteristics
-    ] = this.notifyFromBinaryChacateristics.bind(this);
-    funcList[
-      this._CommandWriteCharacteristics
-    ] = this.notifyFromBinaryWriteChacateristics.bind(this);
-    funcList[
-      this._CommandReadCharacteristics
-    ] = this.notifyFromBinaryReadChacateristics.bind(this);
-    funcList[
-      this._CommandRegisterNotifyCharacteristic
-    ] = this.notifyFromBinaryRegisterNotifyChacateristic.bind(this);
-    funcList[
-      this._CommandUnregisterNotifyCharacteristic
-    ] = this.notifyFromBinaryUnregisterNotifyChacateristic.bind(this);
-    funcList[
-      this._CommandNotifyCharacteristic
-    ] = this.notifyFromBinaryNotifyChacateristic.bind(this);
-    funcList[this._CommandDescriptors] = this.notifyFromBinaryDescriptors.bind(
-      this
-    );
-    funcList[
-      this._CommandWriteDescriptor
-    ] = this.notifyFromBinaryWriteDescriptor.bind(this);
-    funcList[
-      this._CommandReadDescriptor
-    ] = this.notifyFromBinaryReadDescriptor.bind(this);
-
-    funcList[
-      this._CommandServerNotifyConnect
-    ] = this.notifyFromBinaryServerConnectionState.bind(this);
-    funcList[
-      this._CommandServerReadCharavteristicValue
-    ] = this.notifyFromBinaryServerReadCharavteristicValue.bind(this);
-    funcList[
-      this._CommandServerWriteCharavteristicValue
-    ] = this.notifyFromBinaryServerWriteCharavteristicValue.bind(this);
-    funcList[
-      this._CommandServerNotifyReadCharavteristicValue
-    ] = this.notifyFromBinaryServerNotifyReadCharavteristicValue.bind(this);
-    funcList[
-      this._CommandServerNotifyWriteCharavteristicValue
-    ] = this.notifyFromBinaryServerNotifyWriteCharavteristicValue.bind(this);
-    funcList[
-      this._CommandServerReadDescriptorValue
-    ] = this.notifyFromBinaryServerReadDescriptorValue.bind(this);
-    funcList[
-      this._CommandServerWriteDescriptorValue
-    ] = this.notifyFromBinaryServerWriteDescriptorValue.bind(this);
-    funcList[
-      this._CommandServerNotifyReadDescriptorValue
-    ] = this.notifyFromBinaryServerNotifyReadDescriptorValue.bind(this);
-    funcList[
-      this._CommandServerNotifyWriteDescriptorValue
-    ] = this.notifyFromBinaryServerNotifyWriteDescriptorValue.bind(this);
-
-    funcList[this.COMMAND_FUNC_ID_ERROR] = this.notifyFromBinaryError.bind(
-      this
-    );
-
-    Object.assign(funcList, this.hciCommand.notifyFunctionList());
-
-    if (funcList[func]) {
-      funcList[func](objToSend, payload);
+    if (this._funcList[func]) {
+      this._funcList[func](objToSend, payload);
     }
   }
 
@@ -1596,5 +1549,3 @@ class WSCommandBle extends WSCommand {
     target[keys[keys.length - 1]] = row;
   }
 }
-
-export default WSCommandBle;

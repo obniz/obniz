@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-class ObnizUtil {
+export class ObnizUtil {
   /**
    * @ignore
    * @param params
@@ -156,5 +156,3 @@ class ObnizUtil {
     }
   }
 }
-
-export default ObnizUtil;

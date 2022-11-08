@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module Parts.ENERTALK_TOUCH
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import BleBatteryService from '../utils/services/batteryService';
 export interface ENERTALK_TOUCHOptions {
@@ -26,7 +26,6 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     keys: string[];
     requiredKeys: string[];
     params: any;
-    onbuttonpressed: ((pressed: boolean) => void) | null;
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     batteryService?: BleBatteryService;

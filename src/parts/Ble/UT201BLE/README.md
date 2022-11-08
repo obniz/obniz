@@ -1,5 +1,7 @@
 # UT201BLE
-This is a thermometer from A&D Corporation.
+This is a thermometer from A&D Corporation.  
+
+In order to measure body temperature, the device must first be paired to get a pairing key.  
 
 ![](./image.jpg)
 
@@ -37,28 +39,72 @@ await obniz.ble.scan.startWait();
 
 ```
 
+## isPairingMode()
 
-## [await]getDataWait()
-
-Connects to the device and collects data in batches.
-The only data that can be retrieved is the data that the device has not yet sent.
-
-After the data is sent, the connection to the device is automatically terminated.
-
-
+Based on the advertisement information received by BLE, it determines whether it is in pairing mode or measurement mode.  
+In case of pairing mode, true is returned.
 
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
 const UT201BLE = Obniz.getPartsClass("UT201BLE");
+let key;
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (UT201BLE.isDevice(peripheral)) {
+    console.log("device find");
+    const device = new UT201BLE(peripheral);
+    console.log(device.isPairingMode());
+  }
+};
+await obniz.ble.scan.startWait();
+```
+
+## [await]pairingWait()
+
+Pair with UT201BLE and obtain a pairing key.
+
+```javascript
+// Javascript Example
+await obniz.ble.initWait();
+const UT201BLE = Obniz.getPartsClass("UT201BLE");
+let key;
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (UT201BLE.isDevice(peripheral) ) {
+    console.log("device find");
+    const device = new UT201BLE(peripheral);
+    if(device.isPairingMode()){
+      key = await device.pairingWait();
+      console.log(key);
+    };
+  }
+};
+await obniz.ble.scan.startWait();
+
+```
+
+
+## [await]getDataWait()
+
+Connects to the device and collects data in batches.  
+The only data that can be retrieved is the data that the device has not yet sent.  
+
+A pairing key is required to get data.  
+
+After the data is sent, the connection to the device is automatically terminated.  
+
+```javascript
+// Javascript Example
+await obniz.ble.initWait();
+const UT201BLE = Obniz.getPartsClass("UT201BLE");
+let key = "pairing key here";
 obniz.ble.scan.onfind = async (peripheral) => {
   if (UT201BLE.isDevice(peripheral)) {
     console.log("find");
     const device = new UT201BLE(peripheral);
-    
-    const data = await device.getDataWait();
-    
-    console.log(data);
+    if(key){
+      const data = await device.getDataWait(key);
+      console.log(data);
+    }
     // {
     //     fahrenheit?: number;
     //     celsius?: number;
@@ -71,9 +117,11 @@ obniz.ble.scan.onfind = async (peripheral) => {
     //       second: number;
     //     };
     //     temperatureType?: string;
+    //     battery?: number;
     //   }
   }
 };
+
 await obniz.ble.scan.startWait();
 
 ```
@@ -81,7 +129,7 @@ await obniz.ble.scan.startWait();
 
 Output format is here. temperature data is in fahrenheit or celsius.
 
-```json
+```
 {
   fahrenheit?: number;
   celsius?: number;
@@ -94,5 +142,6 @@ Output format is here. temperature data is in fahrenheit or celsius.
     second: number;
   };
   temperatureType?: string;
+  battery?: number;
 }
 ```

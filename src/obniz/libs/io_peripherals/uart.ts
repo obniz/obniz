@@ -5,7 +5,7 @@
 
 import Obniz from '../../index';
 import { ComponentAbstract } from '../ComponentAbstact';
-import ObnizUtil from '../utils/util';
+import { ObnizUtil } from '../utils/util';
 import {
   BitType,
   DriveType,
@@ -84,7 +84,7 @@ export interface PeripheralUARTOptions {
  *
  * @category Peripherals
  */
-export default class PeripheralUART extends ComponentAbstract {
+export class PeripheralUART extends ComponentAbstract {
   public received: any;
 
   /**

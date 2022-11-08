@@ -1,17 +1,18 @@
 /// <reference types="node" />
+/// <reference types="node" />
 /**
  * @packageDocumentation
  * @ignore
  */
 import EventEmitter from 'eventemitter3';
-import ObnizBLEHci from '../hci';
-import { BleDeviceAddress, BleDeviceAddressType, Handle } from '../bleTypes';
-declare type HciEventTypes = 'leAdvertisingReport' | 'leConnComplete' | 'stateChange' | 'leConnUpdateComplete' | 'disconnComplete' | 'encryptChange' | 'aclDataPkt';
+import { ObnizBLEHci } from '../hci';
+import { BleDeviceAddress, BleDeviceAddressType, BleExtendedAdvertisingEnable, Handle } from '../bleTypes';
+declare type HciEventTypes = 'leAdvertisingReport' | 'leExtendedAdvertisingReport' | 'leConnComplete' | 'stateChange' | 'leConnUpdateComplete' | 'disconnComplete' | 'encryptChange' | 'aclDataPkt' | 'updatePhy';
 export declare type HciState = 'poweredOn' | 'poweredOff';
 /**
  * @ignore
  */
-declare class Hci extends EventEmitter<HciEventTypes> {
+export declare class Hci extends EventEmitter<HciEventTypes> {
     static STATUS_MAPPER: any;
     _obnizHci: ObnizBLEHci;
     _handleBuffers: any;
@@ -24,6 +25,7 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     private _socket;
     private _state;
     private _aclStreamObservers;
+    private _extendedAdvertiseJoinData;
     constructor(obnizHci: any);
     /**
      * @ignore
@@ -98,7 +100,37 @@ declare class Hci extends EventEmitter<HciEventTypes> {
         supportedMaxRxTime: number;
     }>;
     leReadLocalSupportedFeaturesCommandWait(): Promise<Buffer>;
-    leSetDefaultPhyCommandWait(allPhys: number, txPhys: number, rxPhys: number): Promise<void>;
+    leReadPhyCommandWait(connectionHandle: number): Promise<{
+        status: number;
+        connectionHandle: number;
+        txPhy: number;
+        rxPhy: number;
+    }>;
+    leSetPhyCommandWait(connectionHandle: number, allPhys: number, txPhys: number, rxPhys: number, options: number): Promise<void>;
+    setExtendedAdvertisingParametersWait(handle: number, eventProperties: number, primaryAdvertisingPhy: number, secondaryAdvertisingPhy: number, txPower: number): Promise<{
+        status: number;
+        txPower: number;
+    }>;
+    private extendedAdvertiseOperation;
+    setExtendedAdvertisingDataWait(handle: number, data: Buffer): Promise<number>;
+    setExtendedAdvertisingScanResponseDataWait(handle: number, data: Buffer): Promise<number>;
+    setExtendedAdvertisingEnableWait(enabled: boolean, enableList: BleExtendedAdvertisingEnable[]): Promise<number>;
+    leReadMaximumAdvertisingDataLengthWait(): Promise<number>;
+    leClearAdvertisingSetWait(): Promise<number>;
+    setExtendedScanParametersWait(isActiveScan: boolean, usePhy1m?: boolean, usePhyCoded?: boolean): Promise<number>;
+    setExtendedScanEnabledWait(enabled: boolean, filterDuplicates: boolean): Promise<number>;
+    createLeExtendedConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, timeout: number | undefined, onConnectCallback: any, pyh1m?: boolean, pyh2m?: boolean, pyhCoded?: boolean): Promise<{
+        status: any;
+        handle: number;
+        role: number;
+        addressType: BleDeviceAddressType;
+        address: string;
+        interval: number;
+        latency: number;
+        supervisionTimeout: number;
+        masterClockAccuracy: number;
+    }>;
+    leSetDefaultPhyCommandWait(allPhys: number, txPhys: number, rxPhys: number): Promise<number>;
     leReadAdvertisingPhysicalChannelTxPowerCommandWait(): Promise<number>;
     leReadWhiteListSizeWait(): Promise<number>;
     readBdAddrWait(): Promise<any>;
@@ -174,6 +206,8 @@ declare class Hci extends EventEmitter<HciEventTypes> {
         supervisionTimeout: number;
         masterClockAccuracy: number;
     };
+    private phyToStr;
+    processLeExtendedAdvertisingReport(count: number, data: Buffer): void;
     processLeAdvertisingReport(count: number, data: Buffer): void;
     processCmdStatusEvent(cmd: any, status: any): void;
     processLeReadBufferSizeWait(result: any): Promise<{
@@ -182,7 +216,11 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     } | null | undefined>;
     stateChange(state: HciState): void;
     readAclStreamWait(handle: Handle, cid: number, firstData: number, timeout?: number): Promise<Buffer>;
-    protected readLeMetaEventWait(eventType: number, options?: any): Promise<{
+    protected readLeMetaEventWait(eventType: number, options: {
+        timeout?: number | null;
+        waitingFor: string;
+        onTimeout?: () => Promise<void>;
+    }): Promise<{
         type: number;
         status: number;
         data: Buffer;
@@ -204,4 +242,4 @@ declare class Hci extends EventEmitter<HciEventTypes> {
     private writeNoParamCommandWait;
     private writeSingleParamCommandWait;
 }
-export default Hci;
+export {};

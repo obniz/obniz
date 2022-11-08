@@ -4,7 +4,8 @@
  */
 
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 import { Inertia6, Xyz } from '../../i2cImu6';

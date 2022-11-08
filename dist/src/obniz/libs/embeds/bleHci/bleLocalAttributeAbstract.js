@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bleAttributeAbstract_1 = __importDefault(require("./bleAttributeAbstract"));
+exports.BleLocalAttributeAbstract = void 0;
+const bleAttributeAbstract_1 = require("./bleAttributeAbstract");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 /**
  * @ignore
@@ -19,7 +20,7 @@ var BleResponseResult;
 /**
  * @category Use as Peripheral
  */
-class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
+class BleLocalAttributeAbstract extends bleAttributeAbstract_1.BleAttributeAbstract {
     constructor(params) {
         super(params);
     }
@@ -116,4 +117,4 @@ class BleLocalAttributeAbstract extends bleAttributeAbstract_1.default {
         return this.data;
     }
 }
-exports.default = BleLocalAttributeAbstract;
+exports.BleLocalAttributeAbstract = BleLocalAttributeAbstract;

@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BlenoBindings = void 0;
 /**
  * @ignore
  */
@@ -16,9 +17,9 @@ const debug = () => {
     // do nothing.
 };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
-const acl_stream_1 = __importDefault(require("./acl-stream"));
-const gap_1 = __importDefault(require("./gap"));
-const gatt_1 = __importDefault(require("./gatt"));
+const acl_stream_1 = require("./acl-stream");
+const gap_1 = require("./gap");
+const gatt_1 = require("./gatt");
 /**
  * @ignore
  */
@@ -26,10 +27,11 @@ class BlenoBindings extends eventemitter3_1.default {
     constructor(hciProtocol) {
         super();
         this._state = null;
+        this._extended = false;
         this._advertising = false;
         this._hci = hciProtocol;
-        this._gap = new gap_1.default(this._hci);
-        this._gatt = new gatt_1.default();
+        this._gap = new gap_1.Gap(this._hci);
+        this._gatt = new gatt_1.GattPeripheral();
         this._gatt.on('mtuChange', this.onMtuChange.bind(this));
         this._hci.on('stateChange', this.onStateChange.bind(this));
         this._hci.on('leConnComplete', this.onLeConnComplete.bind(this));
@@ -69,6 +71,25 @@ class BlenoBindings extends eventemitter3_1.default {
     async stopAdvertisingWait() {
         this._advertising = false;
         await this._gap.stopAdvertisingWait();
+    }
+    async setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._gap.setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._gap.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertising = true;
+        this._extended = true;
+        await this._gap.startExtendedAdvertisingWait(handle);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertising = false;
+        this._extended = false;
+        await this._gap.stopExtendedAdvertisingWait(handle);
     }
     setServices(services) {
         this._gatt.setServices(services);
@@ -110,7 +131,7 @@ class BlenoBindings extends eventemitter3_1.default {
         }
         this._address = address;
         this._handle = handle;
-        this._aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        this._aclStream = new acl_stream_1.AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         this._gatt.setAclStream(this._aclStream);
         this.emit('accept', address);
     }
@@ -132,7 +153,12 @@ class BlenoBindings extends eventemitter3_1.default {
             this.emit('disconnect', address, reason); // TODO: use reason
         }
         if (this._advertising) {
-            await this._gap.restartAdvertisingWait();
+            if (this._extended) {
+                await this._gap.restartExtendedAdvertisingWait(0);
+            }
+            else {
+                await this._gap.restartAdvertisingWait();
+            }
         }
     }
     onEncryptChange(handle, encrypt) {
@@ -149,4 +175,4 @@ class BlenoBindings extends eventemitter3_1.default {
         }
     }
 }
-exports.default = BlenoBindings;
+exports.BlenoBindings = BlenoBindings;

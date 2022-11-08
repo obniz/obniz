@@ -4,13 +4,10 @@
  * @module Parts.EXVital
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
 /** EXVital management class EXVitalを管理するクラス */
-class EXVital extends ObnizPartsBleInterface_1.default {
+class EXVital extends ObnizPartsBleInterface_1.ObnizPartsBleInterface {
     constructor(peripheral) {
         super();
         this._peripheral = peripheral;
@@ -110,7 +107,7 @@ EXVital.DefaultAdvData = [
     -1,
     -1,
     -1,
-    -1,
+    -1, // Steps
 ];
 const unsigned16 = (value) => {
     return (value[0] << 8) | value[1];

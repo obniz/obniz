@@ -6,7 +6,7 @@
 import semver from 'semver';
 import Obniz from '../../index';
 
-export default class WiFi {
+export class WiFi {
   private Obniz: Obniz;
   private connectObservers: any;
 

@@ -1,0 +1,9 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/storage"
+basePath: "storage"
+
+"anyOf":
+  - { $ref: "/request/storage/save" }
+  - { $ref: "/request/storage/read" }

@@ -8,12 +8,17 @@ import { BleAdvertisementData, BleScanResponseData, UUID } from './bleTypes';
 /**
  * @category Use as Peripheral
  */
-export default class BleAdvertisementBuilder {
+export class BleAdvertisementBuilder {
   protected rows: { [key: number]: number[] };
-
-  constructor(json: BleAdvertisementData | BleScanResponseData) {
+  private _extendedFlg: boolean;
+  private _serviceData: number[];
+  constructor(
+    json: BleAdvertisementData | BleScanResponseData,
+    extendedFlg = false
+  ) {
     this.rows = {};
-
+    this._extendedFlg = extendedFlg;
+    this._serviceData = [];
     if (json) {
       if (json.localName) {
         this.setCompleteLocalName(json.localName);
@@ -31,6 +36,11 @@ export default class BleAdvertisementBuilder {
       if (json.serviceUuids) {
         for (const uuid of json.serviceUuids) {
           this.setUuid(uuid);
+        }
+      }
+      if (json.serviceData) {
+        for (const service of json.serviceData) {
+          this.setServiceData(service.uuid, service.data);
         }
       }
     }
@@ -58,10 +68,21 @@ export default class BleAdvertisementBuilder {
       data.push(parseInt(key));
       Array.prototype.push.apply(data, this.rows[key]);
     }
-    if (data.length > 31) {
-      throw new Error(
-        'Too large data. Advertise/ScanResponse data are must be less than 32 byte.'
-      );
+    if (this._serviceData.length !== 0) {
+      Array.prototype.push.apply(data, this._serviceData);
+    }
+    if (this._extendedFlg) {
+      if (data.length > 1650) {
+        throw new Error(
+          'Too large data. Advertise/ScanResponse data are must be less than 1650 byte.'
+        );
+      }
+    } else {
+      if (data.length > 31) {
+        throw new Error(
+          'Too large data. Advertise/ScanResponse data are must be less than 32 byte.'
+        );
+      }
     }
 
     return data;
@@ -76,7 +97,20 @@ export default class BleAdvertisementBuilder {
 
     this.setRow(type, data);
   }
-
+  public setServiceData(uuid: number, data: number[]) {
+    const row: any = [];
+    row.push(uuid & 0xff);
+    row.push((uuid >> 8) & 0xff);
+    if (data.length > 252) {
+      throw new Error('ServiceData Length Over UUID' + uuid);
+    }
+    for (const d of data) {
+      row.push(d & 0xff);
+    }
+    this._serviceData.push(row.length + 1);
+    this._serviceData.push(0x16);
+    Array.prototype.push.apply(this._serviceData, row);
+  }
   public setShortenedLocalName(name: string) {
     this.setStringData(0x08, name);
   }

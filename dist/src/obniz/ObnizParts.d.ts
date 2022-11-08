@@ -2,18 +2,21 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-import BleRemotePeripheral from './libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizConnection from './ObnizConnection';
+import { BleRemotePeripheral } from './libs/embeds/bleHci/bleRemotePeripheral';
+import { Obniz } from './Obniz';
+import { ObnizConnection } from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
 import { ObnizPartsBle } from './ObnizPartsBleAbstract';
-import ObnizPartsInterface from './ObnizPartsInterface';
-import { PartsList } from './ObnizPartsList';
+import { ObnizPartsInterface } from './ObnizPartsInterface';
+import { PartsList, PartsType } from './ObnizPartsList';
+import PartsClass = Obniz.PartsClass;
+import Parts = Obniz.Parts;
 export interface Triaxial {
     x: number;
     y: number;
     z: number;
 }
-export default abstract class ObnizParts extends ObnizConnection {
+export declare abstract class ObnizParts extends ObnizConnection {
     /**
      * @ignore
      * @private
@@ -32,7 +35,7 @@ export default abstract class ObnizParts extends ObnizConnection {
      * @param name string
      * @constructor
      */
-    static getPartsClass<K extends keyof PartsList>(name: K): any;
+    static getPartsClass<K extends PartsType>(name: K): PartsClass<K>;
     constructor(id: string, options?: ObnizOptions);
     /**
      * Check the param is valid io pin no.
@@ -52,6 +55,6 @@ export default abstract class ObnizParts extends ObnizConnection {
      * @param partsName
      * @param options
      */
-    wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]['options']): PartsList[K]['class'];
+    wired<K extends keyof PartsList>(partsName: K, options?: PartsList[K]['options']): Parts<K>;
     static getBleParts(peripheral: BleRemotePeripheral): ObnizPartsBle<unknown> | null;
 }

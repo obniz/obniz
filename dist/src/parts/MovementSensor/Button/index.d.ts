@@ -3,7 +3,7 @@
  * @module Parts.Button
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface ButtonOptions {
     signal: number;
     gnd?: number;

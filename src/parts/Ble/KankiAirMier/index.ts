@@ -6,11 +6,13 @@
 
 // import {BleRemotePeripheral, ObnizPartsBleInterface, ObnizPartsBleInfo} from 'obniz';
 
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import ObnizPartsBleInterface, {
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import {
+  ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 import { BleAdvBinaryAnalyzer } from '../utils/advertisement/advertismentAnalyzer';
+import roundTo from 'round-to';
 
 export interface KankiAirMierOptions {}
 
@@ -101,8 +103,8 @@ export default class KankiAirMier implements ObnizPartsBleInterface {
     );
     return {
       co2: co2Raw,
-      temperature: temperatureRaw / 10,
-      humidity: humidityRaw / 10,
+      temperature: roundTo(temperatureRaw / 10, 1),
+      humidity: roundTo(humidityRaw / 10, 1),
       sequenceNumber,
       deviceName,
     };

@@ -2,5 +2,6 @@
  * @packageDocumentation
  * @ignore
  */
-import WSCommand from './WSCommand';
-export default WSCommand;
+import { WSCommandManager } from './WSCommandManager';
+export declare const createCommandManager: () => WSCommandManager;
+export declare const WSCommandManagerInstance: WSCommandManager;

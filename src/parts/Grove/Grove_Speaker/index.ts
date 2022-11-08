@@ -4,9 +4,10 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
-import PeripheralPWM from '../../../obniz/libs/io_peripherals/pwm';
-import ObnizPartsInterface, {
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
+import { PeripheralPWM } from '../../../obniz/libs/io_peripherals/pwm';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

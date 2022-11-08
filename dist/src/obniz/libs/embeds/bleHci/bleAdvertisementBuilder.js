@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleAdvertisementBuilder = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -12,8 +13,10 @@ const bleHelper_1 = __importDefault(require("./bleHelper"));
  * @category Use as Peripheral
  */
 class BleAdvertisementBuilder {
-    constructor(json) {
+    constructor(json, extendedFlg = false) {
         this.rows = {};
+        this._extendedFlg = extendedFlg;
+        this._serviceData = [];
         if (json) {
             if (json.localName) {
                 this.setCompleteLocalName(json.localName);
@@ -26,6 +29,11 @@ class BleAdvertisementBuilder {
             if (json.serviceUuids) {
                 for (const uuid of json.serviceUuids) {
                     this.setUuid(uuid);
+                }
+            }
+            if (json.serviceData) {
+                for (const service of json.serviceData) {
+                    this.setServiceData(service.uuid, service.data);
                 }
             }
         }
@@ -49,8 +57,18 @@ class BleAdvertisementBuilder {
             data.push(parseInt(key));
             Array.prototype.push.apply(data, this.rows[key]);
         }
-        if (data.length > 31) {
-            throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
+        if (this._serviceData.length !== 0) {
+            Array.prototype.push.apply(data, this._serviceData);
+        }
+        if (this._extendedFlg) {
+            if (data.length > 1650) {
+                throw new Error('Too large data. Advertise/ScanResponse data are must be less than 1650 byte.');
+            }
+        }
+        else {
+            if (data.length > 31) {
+                throw new Error('Too large data. Advertise/ScanResponse data are must be less than 32 byte.');
+            }
         }
         return data;
     }
@@ -60,6 +78,20 @@ class BleAdvertisementBuilder {
             data.push(string.charCodeAt(i));
         }
         this.setRow(type, data);
+    }
+    setServiceData(uuid, data) {
+        const row = [];
+        row.push(uuid & 0xff);
+        row.push((uuid >> 8) & 0xff);
+        if (data.length > 252) {
+            throw new Error('ServiceData Length Over UUID' + uuid);
+        }
+        for (const d of data) {
+            row.push(d & 0xff);
+        }
+        this._serviceData.push(row.length + 1);
+        this._serviceData.push(0x16);
+        Array.prototype.push.apply(this._serviceData, row);
     }
     setShortenedLocalName(name) {
         this.setStringData(0x08, name);
@@ -147,4 +179,4 @@ class BleAdvertisementBuilder {
         this.setRow(0x01, data);
     }
 }
-exports.default = BleAdvertisementBuilder;
+exports.BleAdvertisementBuilder = BleAdvertisementBuilder;

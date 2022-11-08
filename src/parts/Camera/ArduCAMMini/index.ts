@@ -5,11 +5,12 @@
 
 import Obniz from '../../../obniz';
 import { DriveType } from '../../../obniz/libs/io_peripherals/common';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
 
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import PeripheralSPI from '../../../obniz/libs/io_peripherals/spi';
-import ObnizPartsInterface, {
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralSPI } from '../../../obniz/libs/io_peripherals/spi';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
@@ -808,7 +809,9 @@ export default class ArduCAMMini implements ObnizPartsInterface {
   public init() {
     this.i2c_byte_write(0xff, 0x01);
     this.i2c_byte_write(0x12, 0x80);
-    this.obniz.wait(100);
+    this.obniz.wait(100).catch(() => {
+      // ignore error
+    });
 
     this.i2c_regs_write(this.configs.OV2640_JPEG_INIT);
     this.i2c_regs_write(this.configs.OV2640_YUV422);
@@ -831,7 +834,7 @@ export default class ArduCAMMini implements ObnizPartsInterface {
   public async takeWait(size?: string): Promise<number[]> {
     if (typeof size === 'string' && this._size !== size) {
       this.setSize(size);
-      this.obniz.wait(1000);
+      await this.obniz.wait(1000);
     }
 
     this.flushFIFO();

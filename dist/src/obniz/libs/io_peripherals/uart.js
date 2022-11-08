@@ -3,12 +3,10 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralUART = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
-const util_1 = __importDefault(require("../utils/util"));
+const util_1 = require("../utils/util");
 /**
  * Uart module
  *
@@ -40,11 +38,11 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * @param params
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ['tx', 'rx']);
+        const err = util_1.ObnizUtil._requiredKeys(params, ['tx', 'rx']);
         if (err) {
             throw new Error("uart start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
+        this.params = util_1.ObnizUtil._keyFilter(params, [
             'tx',
             'rx',
             'baud',
@@ -92,7 +90,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
             }
         }
         const obj = {};
-        const sendParams = util_1.default._keyFilter(this.params, [
+        const sendParams = util_1.ObnizUtil._keyFilter(this.params, [
             'tx',
             'rx',
             'baud',
@@ -293,7 +291,7 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
      * @return converted string. If convert failed, return null.
      */
     tryConvertString(data) {
-        return util_1.default.dataArray2string(data);
+        return util_1.ObnizUtil.dataArray2string(data);
     }
     /**
      * @ignore
@@ -311,4 +309,4 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         this.used = false;
     }
 }
-exports.default = PeripheralUART;
+exports.PeripheralUART = PeripheralUART;

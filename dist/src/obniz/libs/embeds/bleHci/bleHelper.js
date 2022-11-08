@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleHelper = void 0;
 class BleHelper {
     uuidFilter(uuid) {
         return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
@@ -52,4 +53,5 @@ class BleHelper {
         return result;
     }
 }
+exports.BleHelper = BleHelper;
 exports.default = new BleHelper();

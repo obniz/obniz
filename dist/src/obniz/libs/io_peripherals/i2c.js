@@ -3,13 +3,11 @@
  * @packageDocumentation
  * @module ObnizCore.Components
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralI2C = void 0;
 const ObnizError_1 = require("../../ObnizError");
 const ComponentAbstact_1 = require("../ComponentAbstact");
-const util_1 = __importDefault(require("../utils/util"));
+const util_1 = require("../utils/util");
 /**
  * i2c can be used.
  * Master/Slave mode.
@@ -81,11 +79,11 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
      * @param arg
      */
     start(arg) {
-        const err = util_1.default._requiredKeys(arg, ['mode', 'sda', 'scl']);
+        const err = util_1.ObnizUtil._requiredKeys(arg, ['mode', 'sda', 'scl']);
         if (err) {
             throw new Error("I2C start param '" + err + "' required, but not found ");
         }
-        this.state = util_1.default._keyFilter(arg, [
+        this.state = util_1.ObnizUtil._keyFilter(arg, [
             'mode',
             'sda',
             'scl',
@@ -155,7 +153,7 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
                 this.Obniz.display.setPinNames('i2c' + this.id, ioNames);
             }
         }
-        const startObj = util_1.default._keyFilter(this.state, [
+        const startObj = util_1.ObnizUtil._keyFilter(this.state, [
             'mode',
             'sda',
             'scl',
@@ -291,4 +289,4 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
         this.onwritten = undefined;
     }
 }
-exports.default = PeripheralI2C;
+exports.PeripheralI2C = PeripheralI2C;

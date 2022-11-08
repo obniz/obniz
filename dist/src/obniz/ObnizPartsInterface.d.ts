@@ -12,7 +12,7 @@ export interface ObnizPartsProps {
     info(): ObnizPartsInfo;
     PartsName: PartsType;
 }
-export default abstract class ObnizPartsInterface {
+export declare abstract class ObnizPartsInterface {
     static info: () => ObnizPartsInfo;
     abstract keys: string[];
     abstract requiredKeys: string[];

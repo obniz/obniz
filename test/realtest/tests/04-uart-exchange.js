@@ -7,28 +7,27 @@ let check_io;
 describe('4-uart-exchange', function () {
   this.timeout(20000);
 
-  before(() => {
-    return new Promise((resolve) => {
-      config.waitForConenct(() => {
-        obnizA = config.obnizA;
-        checkBoard = config.checkBoard;
-        check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
-        resolve();
-      });
-    });
+  before(async function () {
+    await config.waitForConenct();
+    obnizA = config.obnizA;
+    checkBoard = config.checkBoard;
+    check_io = config.check_io.filter((io) => io.obniz === 'obnizA');
+    if (check_io.length === 0) {
+      this.skip();
+    }
   });
 
   afterEach(async () => {
-    if (obnizA.uart0.isUsed()) {
+    if (obnizA.uart0 && obnizA.uart0.isUsed()) {
       obnizA.uart0.end();
     }
-    if (obnizA.uart1.isUsed()) {
+    if (obnizA.uart1 && obnizA.uart1.isUsed()) {
       obnizA.uart1.end();
     }
-    if (checkBoard.uart0.isUsed()) {
+    if (checkBoard.uart0 && checkBoard.uart0.isUsed()) {
       checkBoard.uart0.end();
     }
-    if (checkBoard.uart1.isUsed()) {
+    if (checkBoard.uart1 && checkBoard.uart1.isUsed()) {
       checkBoard.uart1.end();
     }
   });
@@ -195,6 +194,10 @@ describe('4-uart-exchange', function () {
   });
 
   it('two port at same time', async () => {
+    if (!checkBoard.uart1) {
+      console.log('skipped');
+      return;
+    }
     const receiver0 = checkBoard.getFreeUart();
     receiver0.start({
       tx: check_io[0].board_io,

@@ -5,10 +5,10 @@
 
 import EventEmitter from 'eventemitter3';
 import { ObnizTimeoutError } from '../../../ObnizError';
-import ObnizBLE from './ble';
+import { ObnizBLE } from './ble';
 import BleHelper from './bleHelper';
-import BleRemoteCharacteristic from './bleRemoteCharacteristic';
-import BleRemoteService from './bleRemoteService';
+import { BleRemoteCharacteristic } from './bleRemoteCharacteristic';
+import { BleRemoteService } from './bleRemoteService';
 import {
   BleDeviceAddress,
   BleDeviceAddressType,
@@ -17,6 +17,7 @@ import {
   UUID,
 } from './bleTypes';
 import { SmpEncryptOptions } from './protocol/central/smp';
+import { retry } from '../../utils/retry';
 
 /**
  * The return values are shown below.
@@ -74,6 +75,8 @@ export interface BleConnectSetting {
    */
   autoDiscovery?: boolean;
 
+  waitUntilPairing?: boolean;
+
   /**
    * Pairing Option
    *
@@ -100,6 +103,35 @@ export interface BleConnectSetting {
    * Default : 256
    */
   mtuRequest?: null | number;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyh1m?: boolean;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyh2m?: boolean;
+
+  /**
+   * PHY used for connection
+   *
+   * It was May connect using that PHY
+   *
+   * Default : true
+   */
+  usePyhCoded?: boolean;
+
+  retry?: number;
 }
 
 /**
@@ -151,7 +183,7 @@ export interface BlePairingOptions extends SmpEncryptOptions {
 /**
  * @category Use as Central
  */
-export default class BleRemotePeripheral {
+export class BleRemotePeripheral {
   /**
    * It contains all discovered services in a peripheral as an array.
    * It is discovered when connection automatically.
@@ -301,6 +333,11 @@ export default class BleRemotePeripheral {
   public manufacturerSpecificData: number[] | null;
 
   public manufacturerSpecificDataInScanResponse: number[] | null;
+  public service_data: { uuid: number; data: number[] }[] | null;
+  /**
+   * Ad Type: 0x16 (16bit UUID)
+   */
+  public serviceData: number[] | null;
 
   /**
    * This returns iBeacon data if the peripheral has it. If none, it will return null.
@@ -410,9 +447,11 @@ export default class BleRemotePeripheral {
     'rssi',
     'adv_data',
     'scan_resp',
+    'service_data',
   ];
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
+  private _extended = false;
 
   constructor(obnizBle: ObnizBLE, address: BleDeviceAddress) {
     this.obnizBle = obnizBle;
@@ -429,10 +468,12 @@ export default class BleRemotePeripheral {
     this.localName = null;
     this.manufacturerSpecificData = null;
     this.manufacturerSpecificDataInScanResponse = null;
+    this.serviceData = null;
     this.iBeacon = null;
 
     this._services = [];
     this.emitter = new EventEmitter();
+    this.service_data = null;
   }
 
   /**
@@ -462,6 +503,14 @@ export default class BleRemotePeripheral {
       }
     }
     this.analyseAdvertisement();
+  }
+
+  /**
+   * @ignore
+   * @param extendedMode
+   */
+  public setExtendFlg(extendedMode: boolean) {
+    this._extended = extendedMode;
   }
 
   /**
@@ -539,41 +588,84 @@ export default class BleRemotePeripheral {
       this._connectSetting.mtuRequest === undefined
         ? 256
         : this._connectSetting.mtuRequest;
+    if (this._connectSetting.usePyh1m === undefined) {
+      this._connectSetting.usePyh1m = true;
+    }
+    if (this._connectSetting.usePyh2m === undefined) {
+      this._connectSetting.usePyh2m = true;
+    }
+    if (this._connectSetting.usePyhCoded === undefined) {
+      this._connectSetting.usePyhCoded = true;
+    }
     await this.obnizBle.scan.endWait();
 
-    try {
-      await this.obnizBle.centralBindings.connectWait(
-        this.address,
-        this._connectSetting.mtuRequest,
-        () => {
-          if (this._connectSetting.pairingOption) {
-            this.setPairingOption(this._connectSetting.pairingOption);
+    // for only typescript type
+    const mtuRequest = this._connectSetting.mtuRequest;
+
+    await retry(
+      this._connectSetting.retry ?? 1,
+      async () => {
+        try {
+          if (this._extended) {
+            await this.obnizBle.centralBindings.connectExtendedWait(
+              this.address,
+              mtuRequest,
+              () => {
+                if (this._connectSetting.pairingOption) {
+                  this.setPairingOption(this._connectSetting.pairingOption);
+                }
+              },
+              this._connectSetting.usePyh1m,
+              this._connectSetting.usePyh2m,
+              this._connectSetting.usePyhCoded
+            );
+          } else {
+            await this.obnizBle.centralBindings.connectWait(
+              this.address,
+              mtuRequest,
+              () => {
+                if (this._connectSetting.pairingOption) {
+                  this.setPairingOption(this._connectSetting.pairingOption);
+                }
+              }
+            );
           }
+        } catch (e) {
+          if (e instanceof ObnizTimeoutError) {
+            await this.obnizBle.resetWait();
+            throw new Error(
+              `Connection to device(address=${this.address}) was timedout. ble have been reseted`
+            );
+          }
+          throw e;
         }
-      );
-    } catch (e) {
-      if (e instanceof ObnizTimeoutError) {
-        await this.obnizBle.resetWait();
-        throw new Error(
-          `Connection to device(address=${this.address}) was timedout. ble have been reseted`
-        );
+        this.connected = true;
+        this.connected_at = new Date();
+        try {
+          if (
+            this._connectSetting.waitUntilPairing &&
+            !(await this.isPairingFinishedWait())
+          ) {
+            // console.log('waitUntilPairing');
+            await this.pairingWait(this._connectSetting.pairingOption);
+            // console.log('waitUntilPairing finished');
+          }
+          if (this._connectSetting.autoDiscovery) {
+            await this.discoverAllHandlesWait();
+          }
+        } catch (e) {
+          try {
+            await this.disconnectWait();
+          } catch (e2) {
+            // nothing
+          }
+          throw e;
+        }
+      },
+      async (err) => {
+        // console.log('connection fail, retry', err);
       }
-      throw e;
-    }
-    this.connected = true;
-    this.connected_at = new Date();
-    try {
-      if (this._connectSetting.autoDiscovery) {
-        await this.discoverAllHandlesWait();
-      }
-    } catch (e) {
-      try {
-        await this.disconnectWait();
-      } catch (e2) {
-        // nothing
-      }
-      throw e;
-    }
+    );
     this.obnizBle.Obniz._runUserCreatedFunction(this.onconnect);
     this.emitter.emit('connect');
   }
@@ -639,6 +731,101 @@ export default class BleRemotePeripheral {
 
       this.obnizBle.centralBindings.disconnect(this.address);
     });
+  }
+
+  /**
+   * Check the PHY used in the connection
+   *
+   * ```javascript
+   * // Javascript Example
+   *
+   * await obniz.ble.initWait();
+   * var target = {
+   *   uuids: ["fff0"],
+   * };
+   * var peripheral = await obniz.ble.scan.startOneWait(target);
+   * if(!peripheral) {
+   *   console.log('no such peripheral')
+   *   return;
+   * }
+   * try {
+   *   await peripheral.connectWait();
+   *   console.log("connected");
+   *   const phy = await peripheral.readPhyWait()
+   *   console.log(phy)
+   * } catch(e) {
+   *   console.error(e);
+   * }
+   * ```
+   *
+   */
+  public async readPhyWait() {
+    const phyToStr = (phy: number) => {
+      switch (phy) {
+        case 1:
+          return '1m';
+        case 2:
+          return '2m';
+        case 3:
+          return 'coded';
+        default:
+          throw new Error('decode Phy Error');
+      }
+    };
+    const data = await this.obnizBle.centralBindings.readPhyWait(this.address);
+    if (data.status === 0) {
+      return { txPhy: phyToStr(data.txPhy), rxPhy: phyToStr(data.rxPhy) };
+    }
+  }
+
+  /**
+   * Check the PHY used in the connection.
+   * Request to change the current PHY
+   *
+   * It will be changed if it corresponds to the PHY set by the other party.
+   *
+   * Changes can be seen on onUpdatePhy
+   *
+   * ```javascript
+   * // Javascript Example
+   *
+   * await obniz.ble.initWait();
+   * obniz.ble.onUpdatePhy = ((txPhy, rxPhy) => {
+   *  console.log("txPhy "+txPhy+" rxPhy "+rxPhy);
+   * });
+   * var target = {
+   *   uuids: ["fff0"],
+   * };
+   * var peripheral = await obniz.ble.scan.startOneWait(target);
+   * if(!peripheral) {
+   *   console.log('no such peripheral')
+   *   return;
+   * }
+   * try {
+   *   await peripheral.connectWait();
+   *   console.log("connected");
+   *   await peripheral.setPhyWait(false,false,true,true,true);//Request Only PHY Coded
+   * } catch(e) {
+   *   console.error(e);
+   * }
+   * ```
+   *
+   */
+  public async setPhyWait(
+    usePhy1m: boolean,
+    usePhy2m: boolean,
+    usePhyCoded: boolean,
+    useCodedModeS8: boolean,
+    useCodedModeS2: boolean
+  ) {
+    await this.obnizBle.centralBindings.setPhyWait(
+      this.address,
+      usePhy1m,
+      usePhy2m,
+      usePhyCoded,
+      useCodedModeS8,
+      useCodedModeS2
+    );
   }
 
   /**
@@ -901,6 +1088,20 @@ export default class BleRemotePeripheral {
     return result;
   }
 
+  public async getPairingKeysWait(): Promise<string | null> {
+    const result = await this.obnizBle.centralBindings.getPairingKeysWait(
+      this.address
+    );
+    return result;
+  }
+
+  public async isPairingFinishedWait(): Promise<boolean> {
+    const result = await this.obnizBle.centralBindings.isPairingFinishedWait(
+      this.address
+    );
+    return result;
+  }
+
   public setPairingOption(options: BlePairingOptions) {
     this.obnizBle.centralBindings.setPairingOption(this.address, options);
   }
@@ -941,6 +1142,7 @@ export default class BleRemotePeripheral {
     }
     this.setLocalName();
     this.setManufacturerSpecificData();
+    this.setServiceData();
     this.setIBeacon();
   }
 
@@ -965,6 +1167,10 @@ export default class BleRemotePeripheral {
     this.manufacturerSpecificData = this.searchTypeVal(0xff) ?? null;
     this.manufacturerSpecificDataInScanResponse =
       this.searchTypeVal(0xff, true) ?? null;
+  }
+
+  protected setServiceData(): void {
+    this.serviceData = this.searchTypeVal(0x16) ?? null;
   }
 
   protected setIBeacon(): void {

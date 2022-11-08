@@ -9,12 +9,11 @@ Keyestudio PIR sensor. It is used tot detects human/animals' motion.
 
 connect to the obniz Board.  
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | Signal pin outputs value of sensor(s pin of Keyestudio)
-vcc | `number(obniz Board io)` | no |  &nbsp; | VCC for sensor(+ pin of Keyestudio)
-gnd | `number(obniz Board io)` | no |  &nbsp; | GND for sensor(- pin of Keyestudio)
-
+| name   | type                     | required | default | description                                             |
+|--------|--------------------------|----------|---------|---------------------------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | Signal pin outputs value of sensor(s pin of Keyestudio) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | VCC for sensor(+ pin of Keyestudio)                     |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | GND for sensor(- pin of Keyestudio)                     |
 
 ```Javascript
 // Javascript Example

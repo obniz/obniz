@@ -1,6 +1,6 @@
-import BleAttributeAbstract, { BleAttributeChildrenName } from './bleAttributeAbstract';
-import BleCharacteristic from './bleCharacteristic';
-import BleService from './bleService';
+import { BleAttributeAbstract, BleAttributeChildrenName } from './bleAttributeAbstract';
+import { BleCharacteristic } from './bleCharacteristic';
+import { BleService } from './bleService';
 import { UUID } from './bleTypes';
 export declare type BleLocalAttributeBufferObj<ChildrenName extends string> = {
     [key in ChildrenName]: any;
@@ -11,7 +11,7 @@ export declare type BleLocalAttributeBufferObj<ChildrenName extends string> = {
 /**
  * @category Use as Peripheral
  */
-export default class BleLocalAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
+export declare class BleLocalAttributeAbstract<ParentClass, ChildrenClass> extends BleAttributeAbstract<ParentClass, ChildrenClass> {
     /**
      * @ignore
      */

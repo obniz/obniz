@@ -4,13 +4,10 @@
  * @module Parts.EXTxx
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleInterface_1 = __importDefault(require("../../../obniz/ObnizPartsBleInterface"));
+const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
 /** EXTxx management class EXTxxを管理するクラス */
-class EXTxx extends ObnizPartsBleInterface_1.default {
+class EXTxx extends ObnizPartsBleInterface_1.ObnizPartsBleInterface {
     constructor(peripheral) {
         super();
         this._peripheral = peripheral;
@@ -108,7 +105,7 @@ EXTxx.DefaultAdvData = [
     -1,
     -1,
     -1,
-    0x00,
+    0x00, // Type  0: wBeacon  1: BatteryLevelNotification
 ];
 const unsigned16 = (value) => {
     return (value[0] << 8) | value[1];

@@ -7,9 +7,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizUIs = void 0;
 const dialogPollyfill_1 = __importDefault(require("./libs/webpackReplace/dialogPollyfill"));
-const ObnizSystemMethods_1 = __importDefault(require("./ObnizSystemMethods"));
-class ObnizUIs extends ObnizSystemMethods_1.default {
+const ObnizSystemMethods_1 = require("./ObnizSystemMethods");
+class ObnizUIs extends ObnizSystemMethods_1.ObnizSystemMethods {
     constructor(id, options) {
         super(id, options);
     }
@@ -261,7 +262,7 @@ class ObnizUIs extends ObnizSystemMethods_1.default {
         }
     }
 }
-exports.default = ObnizUIs;
+exports.ObnizUIs = ObnizUIs;
 /**
  * @ignore
  */

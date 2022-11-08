@@ -1,18 +1,16 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleService = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-const bleCharacteristic_1 = __importDefault(require("./bleCharacteristic"));
-const bleLocalAttributeAbstract_1 = __importDefault(require("./bleLocalAttributeAbstract"));
+const bleCharacteristic_1 = require("./bleCharacteristic");
+const bleLocalAttributeAbstract_1 = require("./bleLocalAttributeAbstract");
 /**
  * @category Use as Peripheral
  */
-class BleService extends bleLocalAttributeAbstract_1.default {
+class BleService extends bleLocalAttributeAbstract_1.BleLocalAttributeAbstract {
     constructor(obj) {
         super(obj);
         this.addCharacteristic = this.addChild;
@@ -50,7 +48,7 @@ class BleService extends bleLocalAttributeAbstract_1.default {
      * @ignore
      */
     get childrenClass() {
-        return bleCharacteristic_1.default;
+        return bleCharacteristic_1.BleCharacteristic;
     }
     get characteristics() {
         return this.children;
@@ -105,4 +103,4 @@ class BleService extends bleLocalAttributeAbstract_1.default {
         // nothing
     }
 }
-exports.default = BleService;
+exports.BleService = BleService;

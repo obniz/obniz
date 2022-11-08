@@ -9,13 +9,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NobleBindings = void 0;
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const ObnizError_1 = require("../../../../../ObnizError");
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
-const acl_stream_1 = __importDefault(require("./acl-stream"));
-const gap_1 = __importDefault(require("./gap"));
-const gatt_1 = __importDefault(require("./gatt"));
-const signaling_1 = __importDefault(require("./signaling"));
+const acl_stream_1 = require("./acl-stream");
+const gap_1 = require("./gap");
+const gatt_1 = require("./gatt");
+const signaling_1 = require("./signaling");
 /**
  * @ignore
  */
@@ -27,7 +28,7 @@ class NobleBindings extends eventemitter3_1.default {
             // do nothing.
         };
         this._hci = hciProtocol;
-        this._gap = new gap_1.default(this._hci);
+        this._gap = new gap_1.Gap(this._hci);
         this._state = null;
         this._addresses = {};
         this._addresseTypes = {};
@@ -40,6 +41,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._hci.on('stateChange', this.onStateChange.bind(this));
         this._hci.on('disconnComplete', this.onDisconnComplete.bind(this));
         this._hci.on('aclDataPkt', this.onAclDataPkt.bind(this));
+        this._hci.on('updatePhy', this.onPhy.bind(this));
         this._gap.on('discover', this.onDiscover.bind(this));
     }
     /**
@@ -67,12 +69,22 @@ class NobleBindings extends eventemitter3_1.default {
             this._connectable[uuid] = true;
         }
     }
+    async startExtendedScanningWait(serviceUuids, allowDuplicates, activeScan, usePhy1m, usePhyCoded) {
+        if (!usePhy1m && !usePhyCoded) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhyCoded:${usePhyCoded}`);
+        }
+        this._scanServiceUuids = serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null;
+        await this._gap.startExtendedScanningWait(allowDuplicates, activeScan, usePhy1m, usePhyCoded);
+    }
     async startScanningWait(serviceUuids, allowDuplicates, activeScan) {
-        this._scanServiceUuids = (serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null);
+        this._scanServiceUuids = serviceUuids !== null && serviceUuids !== void 0 ? serviceUuids : null;
         await this._gap.startScanningWait(allowDuplicates, activeScan);
     }
     async stopScanningWait() {
         await this._gap.stopScanningWait();
+    }
+    async stopExtendedScanningWait() {
+        await this._gap.stopExtendedScanningWait();
     }
     async connectWait(peripheralUuid, mtu, onConnectCallback) {
         const address = this._addresses[peripheralUuid];
@@ -93,6 +105,69 @@ class NobleBindings extends eventemitter3_1.default {
                     onConnectCallback();
                 }
             }); // connection timeout for 90 secs.
+            return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
+        })
+            .then(() => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.resolve();
+        }, (error) => {
+            this._connectPromises = this._connectPromises.filter((e) => e === doPromise);
+            return Promise.reject(error);
+        });
+        this._connectPromises.push(doPromise);
+        return doPromise;
+    }
+    async setDefaultPhyWait(usePhy1m, usePhy2m, usePhyCoded) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetDefaultPhyCommandWait(0, setPhy, setPhy);
+    }
+    async readPhyWait(address) {
+        return await this._hci.leReadPhyCommandWait(this._handles[address]);
+    }
+    async setPhyWait(address, usePhy1m, usePhy2m, usePhyCoded, useCodedModeS8, useCodedModeS2) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        if (usePhyCoded && !useCodedModeS8 && !useCodedModeS2) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `useCodedModeS8:${useCodedModeS8} useCodedModeS2:${useCodedModeS2}`);
+        }
+        const booleanToNumber = (flg) => (flg ? 1 : 0);
+        const setPhy = booleanToNumber(usePhy1m) +
+            booleanToNumber(usePhy2m) * 2 +
+            booleanToNumber(usePhyCoded) * 4;
+        await this._hci.leSetPhyCommandWait(this._handles[address], 0, setPhy, setPhy, booleanToNumber(useCodedModeS8) * 2 + booleanToNumber(useCodedModeS2));
+    }
+    onPhy(handler, txPhy, rxPhy) {
+        this.emit('updatePhy', handler, txPhy, rxPhy);
+    }
+    async connectExtendedWait(peripheralUuid, mtu, onConnectCallback, usePhy1m = true, usePhy2m = true, usePhyCoded = true) {
+        if (!usePhy1m && !usePhyCoded && !usePhy2m) {
+            throw new ObnizError_1.ObnizBleInvalidParameterError('Please make either true', `usePhy1M:${usePhy1m} usePhy2M:${usePhy2m} usePhyCoded:${usePhyCoded}`);
+        }
+        const address = this._addresses[peripheralUuid];
+        const addressType = this._addresseTypes[peripheralUuid];
+        if (!address) {
+            throw new ObnizError_1.ObnizBleUnknownPeripheralError(peripheralUuid);
+        }
+        // Block parall connection ongoing for ESP32 bug.
+        const doPromise = Promise.all(this._connectPromises)
+            .catch((error) => {
+            // nothing
+        })
+            .then(async () => {
+            const conResult = await this._hci.createLeExtendedConnWait(address, addressType, 90 * 1000, (result) => {
+                // on connect success
+                this.onLeConnComplete(result.status, result.handle, result.role, result.addressType, result.address, result.interval, result.latency, result.supervisionTimeout, result.masterClockAccuracy);
+                if (onConnectCallback && typeof onConnectCallback === 'function') {
+                    onConnectCallback();
+                }
+            }, usePhy1m, usePhy2m, usePhyCoded); // connection timeout for 90 secs.
             return await this._gatts[conResult.handle].exchangeMtuWait(mtu);
         })
             .then(() => {
@@ -157,12 +232,12 @@ class NobleBindings extends eventemitter3_1.default {
             throw new ObnizError_1.ObnizBleHciStateError(status);
         }
         const uuid = address.split(':').join('').toLowerCase();
-        const aclStream = new acl_stream_1.default(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
+        const aclStream = new acl_stream_1.AclStream(this._hci, handle, this._hci.addressType, this._hci.address, addressType, address);
         aclStream.debugHandler = (text) => {
             this.debug(text);
         };
-        const gatt = new gatt_1.default(address, aclStream);
-        const signaling = new signaling_1.default(handle, aclStream);
+        const gatt = new gatt_1.GattCentral(address, aclStream);
+        const signaling = new signaling_1.Signaling(handle, aclStream);
         this._gatts[uuid] = this._gatts[handle] = gatt;
         this._signalings[uuid] = this._signalings[handle] = signaling;
         this._aclStreams[handle] = aclStream;
@@ -278,6 +353,16 @@ class NobleBindings extends eventemitter3_1.default {
         });
         // this.onLeConnUpdateComplete(); is nop
     }
+    async isPairingFinishedWait(peripheralUuid) {
+        const gatt = this.getGatt(peripheralUuid);
+        const result = gatt.hasEncryptKeys();
+        return result;
+    }
+    async getPairingKeysWait(peripheralUuid) {
+        const gatt = this.getGatt(peripheralUuid);
+        const result = gatt.getEncryptKeys();
+        return result;
+    }
     async pairingWait(peripheralUuid, options) {
         options = options || {};
         const gatt = this.getGatt(peripheralUuid);
@@ -301,4 +386,4 @@ class NobleBindings extends eventemitter3_1.default {
         this.debugHandler(`${text}`);
     }
 }
-exports.default = NobleBindings;
+exports.NobleBindings = NobleBindings;

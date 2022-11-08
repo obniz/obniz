@@ -89,7 +89,7 @@
     }
   },
   "embeds": {
-    "ble": {}
+    "ble": {"extended": false}
   },
   "protocol": {
     "tcp": {

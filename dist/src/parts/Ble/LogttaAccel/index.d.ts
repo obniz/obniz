@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.Logtta_Accel
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { Triaxial } from '../../../obniz/ObnizParts';
 import { ObnizBleBeaconStruct, ObnizPartsBleCompare } from '../../../obniz/ObnizPartsBleAbstract';
 import Logtta from '../utils/abstracts/Logtta';
@@ -249,4 +249,16 @@ export default class Logtta_Accel extends Logtta<Logtta_Accel_Data, unknown> {
      * Logtta_Accelから受け取った加速度データ
      */
     static getAccelData(peripheral: BleRemotePeripheral): Logtta_Accel_AccelData | null;
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    private static _convertAccel;
+    /**
+     * 加速度ピークを物理量に変換する
+     *
+     * @private
+     */
+    private static _convertRms;
 }

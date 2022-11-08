@@ -8,11 +8,11 @@ Below image is DFROBOT's module using YG1006.
 
 ## wired(obniz, { signal[, vcc, gnd]});
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-signal | `number(obniz Board io)` | yes |  &nbsp; | output pin. (blue connector of DFROBOT's module)
-vcc | `number(obniz Board io)` | no |  &nbsp; | vcc (red connector of DFROBOT's module)
-gnd | `number(obniz Board io)` | no |  &nbsp; | gnd (black connector of DFROBOT's module)
+| name   | type                     | required | default | description                                      |
+|--------|--------------------------|----------|---------|--------------------------------------------------|
+| signal | `number(obniz Board io)` | yes      | &nbsp;  | output pin. (blue connector of DFROBOT's module) |
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | vcc (red connector of DFROBOT's module)          |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | gnd (black connector of DFROBOT's module)        |
 
 YG1006 is a infrared sensor. Output current of signal change regarding infrared from fire.
 It can be read by using resistors.

@@ -3,7 +3,7 @@
  * @module Parts.JoyStick
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface JoyStickOptions {
     sw: number;
     x: number;

@@ -109,6 +109,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.ibs03g.ibs03g.html#beacondata" class="tsd-kind-icon">beacon<wbr>Data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.ibs03g.ibs03g.html#beacondatainscanresponse" class="tsd-kind-icon">beacon<wbr>Data<wbr>InScan<wbr>Response</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.ibs03g.ibs03g.html#peripheral" class="tsd-kind-icon">peripheral</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="parts.ibs03g.ibs03g.html#servicedata" class="tsd-kind-icon">service<wbr>Data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#address-1" class="tsd-kind-icon">Address</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#availableblemode" class="tsd-kind-icon">Available<wbr>Ble<wbr>Mode</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#beacondatalength" class="tsd-kind-icon">Beacon<wbr>Data<wbr>Length</a></li>
@@ -117,6 +118,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#companyid_scanresponse" class="tsd-kind-icon">CompanyID_<wbr><wbr>Scan<wbr>Response</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#localname" class="tsd-kind-icon">Local<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="parts.ibs03g.ibs03g.html#partsname" class="tsd-kind-icon">Parts<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#servicedatalength" class="tsd-kind-icon">Service<wbr>Data<wbr>Length</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#servicedatastruct" class="tsd-kind-icon">Service<wbr>Data<wbr>Struct</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#servicedatauuid" class="tsd-kind-icon">Service<wbr>DataUUID</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="parts.ibs03g.ibs03g.html#serviceuuids" class="tsd-kind-icon">Service<wbr>Uuids</a></li>
 							</ul>
 						</section>
@@ -156,14 +160,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">new iBS03G<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a>, mode<span class="tsd-signature-symbol">: </span><a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="parts.ibs03g.ibs03g.html" class="tsd-signature-type">iBS03G</a></li>
+						<li class="tsd-signature tsd-kind-icon">new iBS03G<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a>, mode<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="parts.ibs03g.ibs03g.html" class="tsd-signature-type">iBS03G</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:454</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:526</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -172,7 +176,7 @@
 									<h5>peripheral: <a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h5>
 								</li>
 								<li>
-									<h5>mode: <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h5>
+									<h5>mode: <a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="parts.ibs03g.ibs03g.html" class="tsd-signature-type">iBS03G</a></h4>
@@ -189,7 +193,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#address">address</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:439</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:509</li>
 						</ul>
 					</aside>
 				</section>
@@ -200,7 +204,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#beacondata">beaconData</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:441</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:511</li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +215,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#beacondatainscanresponse">beaconDataInScanResponse</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:443</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:513</li>
 						</ul>
 					</aside>
 				</section>
@@ -222,18 +226,29 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#peripheral">peripheral</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:437</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:507</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="servicedata" class="tsd-anchor"></a>
+					<h3>service<wbr>Data</h3>
+					<div class="tsd-signature tsd-kind-icon">service<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#servicedata">serviceData</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:515</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="address-1" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Address</h3>
-					<div class="tsd-signature tsd-kind-icon">Address<span class="tsd-signature-symbol">:</span> <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<div class="tsd-signature tsd-kind-icon">Address<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#address-1">Address</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:152</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:180</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -260,7 +275,7 @@
 					<div class="tsd-signature tsd-kind-icon">Beacon<wbr>Data<wbr>Length<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 18</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#beacondatalength">BeaconDataLength</a></p>
-						<p>Overrides <a href="parts.rs_btevs1.rs_btevs1.html">RS_BTEVS1</a>.<a href="parts.rs_btevs1.rs_btevs1.html#beacondatalength">BeaconDataLength</a></p>
+						<p>Overrides <a href="parts.minew.minew.html">MINEW</a>.<a href="parts.minew.minew.html#beacondatalength">BeaconDataLength</a></p>
 						<ul>
 							<li>Defined in src/parts/Ble/utils/abstracts/iBS.ts:49</li>
 						</ul>
@@ -269,11 +284,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="beacondatalength_scanresponse" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Beacon<wbr>Data<wbr>Length_<wbr><wbr>Scan<wbr>Response</h3>
-					<div class="tsd-signature tsd-kind-icon">Beacon<wbr>Data<wbr>Length_<wbr><wbr>Scan<wbr>Response<span class="tsd-signature-symbol">:</span> <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<div class="tsd-signature tsd-kind-icon">Beacon<wbr>Data<wbr>Length_<wbr><wbr>Scan<wbr>Response<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#beacondatalength_scanresponse">BeaconDataLength_ScanResponse</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:197</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:225</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -289,7 +304,7 @@
 					<div class="tsd-signature tsd-kind-icon">CompanyID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = [0x0d, 0x00]</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#companyid">CompanyID</a></p>
-						<p>Overrides <a href="_obniz_obnizpartsbleabstract_.obnizpartsble.html">ObnizPartsBle</a>.<a href="_obniz_obnizpartsbleabstract_.obnizpartsble.html#companyid">CompanyID</a></p>
+						<p>Overrides <a href="parts.minew.minew.html">MINEW</a>.<a href="parts.minew.minew.html#companyid">CompanyID</a></p>
 						<ul>
 							<li>Defined in src/parts/Ble/utils/abstracts/iBS.ts:51</li>
 						</ul>
@@ -298,11 +313,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="companyid_scanresponse" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> CompanyID_<wbr><wbr>Scan<wbr>Response</h3>
-					<div class="tsd-signature tsd-kind-icon">CompanyID_<wbr><wbr>Scan<wbr>Response<span class="tsd-signature-symbol">:</span> <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<div class="tsd-signature tsd-kind-icon">CompanyID_<wbr><wbr>Scan<wbr>Response<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#companyid_scanresponse">CompanyID_ScanResponse</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:215</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:243</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -315,11 +330,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="localname" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Local<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">Local<wbr>Name<span class="tsd-signature-symbol">:</span> <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<div class="tsd-signature tsd-kind-icon">Local<wbr>Name<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#localname">LocalName</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:159</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:187</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -340,13 +355,66 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="servicedatalength" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Service<wbr>Data<wbr>Length</h3>
+					<div class="tsd-signature tsd-kind-icon">Service<wbr>Data<wbr>Length<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#servicedatalength">ServiceDataLength</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:261</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Used as a condition of isDevice() by default.</p>
+						</div>
+						<p>標準でisDevice()の条件として使用</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="servicedatastruct" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Service<wbr>Data<wbr>Struct</h3>
+					<div class="tsd-signature tsd-kind-icon">Service<wbr>Data<wbr>Struct<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><a href="../modules/obnizcore.html#obnizblebeaconstruct" class="tsd-signature-type">ObnizBleBeaconStruct</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#servicedatastruct">ServiceDataStruct</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:281</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Used as a condition of isDevice() by default.
+							Compare with data after Service UUID.</p>
+						</div>
+						<p>標準でisDevice()の条件として使用
+						ServiceUUID以降のデータと比較</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="servicedatauuid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Service<wbr>DataUUID</h3>
+					<div class="tsd-signature tsd-kind-icon">Service<wbr>DataUUID<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#servicedatauuid">ServiceDataUUID</a></p>
+						<ul>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:270</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Used as a condition of isDevice() by default.</p>
+						</div>
+						<p>標準でisDevice()の条件として使用</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="serviceuuids" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagOptional">Optional</span> Service<wbr>Uuids</h3>
-					<div class="tsd-signature tsd-kind-icon">Service<wbr>Uuids<span class="tsd-signature-symbol">:</span> <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
+					<div class="tsd-signature tsd-kind-icon">Service<wbr>Uuids<span class="tsd-signature-symbol">:</span> <a href="../modules/obnizcore.html#obnizpartsblecompare" class="tsd-signature-type">ObnizPartsBleCompare</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = undefined</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#serviceuuids">ServiceUuids</a></p>
 						<ul>
-							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:166</li>
+							<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:194</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -363,17 +431,17 @@
 					<a name="mode" class="tsd-anchor"></a>
 					<h3>mode</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> mode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> mode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#mode">mode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:447</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:519</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -384,14 +452,14 @@
 					<a name="checkmode" class="tsd-anchor"></a>
 					<h3>check<wbr>Mode</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>Mode<span class="tsd-signature-symbol">(</span>force<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></li>
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Mode<span class="tsd-signature-symbol">(</span>force<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#checkmode">checkMode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:467</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:541</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -400,7 +468,7 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> force: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -415,7 +483,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getdata-1">getData</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:480</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:554</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -434,14 +502,14 @@
 					<a name="getavailableblemode" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Available<wbr>Ble<wbr>Mode</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Available<wbr>Ble<wbr>Mode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Available<wbr>Ble<wbr>Mode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getavailableblemode">getAvailableBleMode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:139</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:167</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -450,7 +518,7 @@
 								</div>
 								<p>利用可能なBLEのモード (Beacon | Connectable | Pairing)</p>
 							</div>
-							<h4 class="tsd-returns-title">Returns <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">[]</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -465,7 +533,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getdata-1">getData</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:425</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:495</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -492,14 +560,14 @@
 					<a name="getdevicemode" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Device<wbr>Mode</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Device<wbr>Mode<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Device<wbr>Mode<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getdevicemode">getDeviceMode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:243</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:298</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -517,7 +585,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
 							<p>If the corresponding device is that mode, it must be null if not applicable 該当するデバイスならばそのモード、該当しなければnull</p>
 						</li>
 					</ul>
@@ -526,20 +594,20 @@
 					<a name="getserviceuuids" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Service<wbr>Uuids</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Service<wbr>Uuids<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">: </span><a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Service<wbr>Uuids<span class="tsd-signature-symbol">(</span>mode<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#getserviceuuids">getServiceUuids</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:170</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:198</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>mode: <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h5>
+									<h5>mode: <a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
@@ -557,7 +625,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#info">info</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:130</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:158</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -581,7 +649,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#isdevice">isDevice</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:231</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:286</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -604,14 +672,14 @@
 					<a name="isdevicewithmode" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> is<wbr>Device<wbr>With<wbr>Mode</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Device<wbr>With<wbr>Mode<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a>, mode<span class="tsd-signature-symbol">: </span><a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Device<wbr>With<wbr>Mode<span class="tsd-signature-symbol">(</span>peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a>, mode<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="parts.ibs.baseibs.html">BaseiBS</a>.<a href="parts.ibs.baseibs.html#isdevicewithmode">isDeviceWithMode</a></p>
 								<ul>
-									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:264</li>
+									<li>Defined in src/obniz/ObnizPartsBleAbstract.ts:319</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -629,7 +697,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>mode: <a href="../modules/_obniz_obnizpartsbleabstract_.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h5>
+									<h5>mode: <a href="../modules/obnizcore.html#obnizpartsblemode" class="tsd-signature-type">ObnizPartsBleMode</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Beacon | Connectable | Pairing</p>
 									</div>
@@ -656,7 +724,7 @@
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="beacondatastruct.battery" class="tsd-anchor"></a>
 						<h3>battery</h3>
-						<div class="tsd-signature tsd-kind-icon">battery<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_obniz_obnizpartsbleabstract_.obnizblebeaconstructstandard.html" class="tsd-signature-type">ObnizBleBeaconStructStandard</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0001"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0010"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0100"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool1000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00010000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00100000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool01000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool10000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"xyz"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>func<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">key</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>multiple<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = BaseiBS.Config.battery</span></div>
+						<div class="tsd-signature tsd-kind-icon">battery<span class="tsd-signature-symbol">:</span> <a href="../interfaces/obnizcore.obnizblebeaconstructstandard.html" class="tsd-signature-type">ObnizBleBeaconStructStandard</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0001"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0010"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0100"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool1000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00010000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00100000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool01000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool10000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"xyz"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>fixedIntegerBytes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>func<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">key</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>multiple<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>round<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = BaseiBS.Config.battery</span></div>
 						<aside class="tsd-sources">
 							<ul>
 								<li>Defined in src/parts/Ble/iBS03G/index.ts:37</li>
@@ -666,7 +734,7 @@
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="beacondatastruct.button" class="tsd-anchor"></a>
 						<h3>button</h3>
-						<div class="tsd-signature tsd-kind-icon">button<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_obniz_obnizpartsbleabstract_.obnizblebeaconstructstandard.html" class="tsd-signature-type">ObnizBleBeaconStructStandard</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0001"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0010"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0100"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool1000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00010000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00100000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool01000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool10000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"xyz"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>func<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">key</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>multiple<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = BaseiBS.Config.button</span></div>
+						<div class="tsd-signature tsd-kind-icon">button<span class="tsd-signature-symbol">:</span> <a href="../interfaces/obnizcore.obnizblebeaconstructstandard.html" class="tsd-signature-type">ObnizBleBeaconStructStandard</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0001"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0010"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0100"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool1000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00010000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00100000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool01000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool10000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"xyz"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>fixedIntegerBytes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>func<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">key</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>multiple<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>round<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = BaseiBS.Config.button</span></div>
 						<aside class="tsd-sources">
 							<ul>
 								<li>Defined in src/parts/Ble/iBS03G/index.ts:38</li>
@@ -676,7 +744,7 @@
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="beacondatastruct.fall" class="tsd-anchor"></a>
 						<h3>fall</h3>
-						<div class="tsd-signature tsd-kind-icon">fall<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_obniz_obnizpartsbleabstract_.obnizblebeaconstructstandard.html" class="tsd-signature-type">ObnizBleBeaconStructStandard</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0001"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0010"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0100"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool1000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00010000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00100000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool01000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool10000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"xyz"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>func<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">key</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>multiple<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = BaseiBS.Config.fall</span></div>
+						<div class="tsd-signature tsd-kind-icon">fall<span class="tsd-signature-symbol">:</span> <a href="../interfaces/obnizcore.obnizblebeaconstructstandard.html" class="tsd-signature-type">ObnizBleBeaconStructStandard</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0001"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0010"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0100"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool1000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00010000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00100000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool01000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool10000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"xyz"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>fixedIntegerBytes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>func<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">key</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>multiple<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>round<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = BaseiBS.Config.fall</span></div>
 						<aside class="tsd-sources">
 							<ul>
 								<li>Defined in src/parts/Ble/iBS03G/index.ts:40</li>
@@ -686,7 +754,7 @@
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="beacondatastruct.moving" class="tsd-anchor"></a>
 						<h3>moving</h3>
-						<div class="tsd-signature tsd-kind-icon">moving<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_obniz_obnizpartsbleabstract_.obnizblebeaconstructstandard.html" class="tsd-signature-type">ObnizBleBeaconStructStandard</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0001"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0010"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0100"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool1000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00010000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00100000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool01000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool10000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"xyz"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>func<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">key</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>multiple<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = BaseiBS.Config.moving</span></div>
+						<div class="tsd-signature tsd-kind-icon">moving<span class="tsd-signature-symbol">:</span> <a href="../interfaces/obnizcore.obnizblebeaconstructstandard.html" class="tsd-signature-type">ObnizBleBeaconStructStandard</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"numBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumLE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"unsignedNumBE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0001"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0010"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool0100"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool1000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00010000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool00100000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool01000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"bool10000000"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"xyz"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>fixedIntegerBytes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>func<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, peripheral<span class="tsd-signature-symbol">: </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">key</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>multiple<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>round<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = BaseiBS.Config.moving</span></div>
 						<aside class="tsd-sources">
 							<ul>
 								<li>Defined in src/parts/Ble/iBS03G/index.ts:39</li>
@@ -1122,6 +1190,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="parts.ibs03g.ibs03g.html#peripheral" class="tsd-kind-icon">peripheral</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="parts.ibs03g.ibs03g.html#servicedata" class="tsd-kind-icon">service<wbr>Data</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="parts.ibs03g.ibs03g.html#address-1" class="tsd-kind-icon">Address</a>
 							</li>
@@ -1145,6 +1216,15 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
 								<a href="parts.ibs03g.ibs03g.html#partsname" class="tsd-kind-icon">Parts<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.ibs03g.ibs03g.html#servicedatalength" class="tsd-kind-icon">Service<wbr>Data<wbr>Length</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.ibs03g.ibs03g.html#servicedatastruct" class="tsd-kind-icon">Service<wbr>Data<wbr>Struct</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="parts.ibs03g.ibs03g.html#servicedatauuid" class="tsd-kind-icon">Service<wbr>DataUUID</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="parts.ibs03g.ibs03g.html#serviceuuids" class="tsd-kind-icon">Service<wbr>Uuids</a>

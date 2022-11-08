@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.STM550B
  */
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizBleBeaconStruct, ObnizPartsBle, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
 export interface STM550B_Options {
 }

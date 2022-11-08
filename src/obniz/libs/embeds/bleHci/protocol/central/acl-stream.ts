@@ -8,8 +8,8 @@
 import EventEmitter from 'eventemitter3';
 
 import { Handle } from '../../bleTypes';
-import Hci from '../hci';
-import Smp, { SmpEncryptOptions } from './smp';
+import { Hci } from '../hci';
+import { Smp, SmpEncryptOptions } from './smp';
 
 type AclStreamEventTypes = 'data' | 'end' | 'encrypt' | 'encryptFail';
 
@@ -17,7 +17,7 @@ type AclStreamEventTypes = 'data' | 'end' | 'encrypt' | 'encryptFail';
  *
  * @ignore
  */
-export default class AclStream extends EventEmitter<AclStreamEventTypes> {
+export class AclStream extends EventEmitter<AclStreamEventTypes> {
   public _hci: Hci;
   public _handle: Handle;
   public _smp: Smp;
@@ -59,13 +59,11 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
   };
 
   public async encryptWait(options?: SmpEncryptOptions) {
-    const encrpytResult = await this._smp.pairingWait(options);
-    return encrpytResult;
+    await this._smp.pairingWait(options);
   }
 
   public setEncryptOption(options: SmpEncryptOptions) {
-    const encrpytResult = this._smp.setPairingOption(options);
-    return encrpytResult;
+    this._smp.setPairingOption(options);
   }
 
   public write(cid: any, data: any) {
@@ -112,7 +110,7 @@ export default class AclStream extends EventEmitter<AclStreamEventTypes> {
     return result;
   }
 
-  public async onSmpLtkWait(ltk: any, random: Buffer, diversifier: Buffer) {
+  public async onSmpLtkWait(ltk: Buffer, random: Buffer, diversifier: Buffer) {
     const result = await this._hci.startLeEncryptionWait(
       this._handle,
       random,

@@ -3,30 +3,29 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ble_1 = __importDefault(require("./libs/embeds/bleHci/ble"));
-const display_1 = __importDefault(require("./libs/embeds/display"));
-const switch_1 = __importDefault(require("./libs/embeds/switch"));
-const ad_1 = __importDefault(require("./libs/io_peripherals/ad"));
-const directive_1 = __importDefault(require("./libs/io_peripherals/directive"));
-const i2c_1 = __importDefault(require("./libs/io_peripherals/i2c"));
-const io_1 = __importDefault(require("./libs/io_peripherals/io"));
-const pwm_1 = __importDefault(require("./libs/io_peripherals/pwm"));
-const spi_1 = __importDefault(require("./libs/io_peripherals/spi"));
-const uart_1 = __importDefault(require("./libs/io_peripherals/uart"));
-const logicanalyzer_1 = __importDefault(require("./libs/measurements/logicanalyzer"));
-const measure_1 = __importDefault(require("./libs/measurements/measure"));
-const wifi_1 = __importDefault(require("./libs/network/wifi"));
-const plugin_1 = __importDefault(require("./libs/plugin/plugin"));
-const tcp_1 = __importDefault(require("./libs/protocol/tcp"));
-const ObnizParts_1 = __importDefault(require("./ObnizParts"));
+exports.ObnizComponents = void 0;
+const ble_1 = require("./libs/embeds/bleHci/ble");
+const display_1 = require("./libs/embeds/display");
+const switch_1 = require("./libs/embeds/switch");
+const ad_1 = require("./libs/io_peripherals/ad");
+const directive_1 = require("./libs/io_peripherals/directive");
+const i2c_1 = require("./libs/io_peripherals/i2c");
+const io_1 = require("./libs/io_peripherals/io");
+const pwm_1 = require("./libs/io_peripherals/pwm");
+const spi_1 = require("./libs/io_peripherals/spi");
+const uart_1 = require("./libs/io_peripherals/uart");
+const logicanalyzer_1 = require("./libs/measurements/logicanalyzer");
+const measure_1 = require("./libs/measurements/measure");
+const wifi_1 = require("./libs/network/wifi");
+const plugin_1 = require("./libs/plugin/plugin");
+const tcp_1 = require("./libs/protocol/tcp");
+const ObnizParts_1 = require("./ObnizParts");
 const ComponentAbstact_1 = require("./libs/ComponentAbstact");
-const hw_1 = __importDefault(require("./libs/hw"));
-const grove_1 = __importDefault(require("./libs/io_peripherals/grove"));
-class ObnizComponents extends ObnizParts_1.default {
+const hw_1 = require("./libs/hw");
+const grove_1 = require("./libs/io_peripherals/grove");
+const storage_1 = require("./libs/embeds/storage");
+class ObnizComponents extends ObnizParts_1.ObnizParts {
     constructor(id, options) {
         super(id, options);
         this.pongObservers = [];
@@ -163,7 +162,7 @@ class ObnizComponents extends ObnizParts_1.default {
         if (this._allComponentKeys.length !== 0) {
             return;
         }
-        this._hwDefinition = hw_1.default.getDefinitionFor(this.hw);
+        this._hwDefinition = hw_1.HW.getDefinitionFor(this.hw);
         if (!this._hwDefinition) {
             throw new Error(`unkown hw ${this.hw || ''}`);
         }
@@ -173,31 +172,32 @@ class ObnizComponents extends ObnizParts_1.default {
         const hw_protocol = this._hwDefinition.protocol;
         const hw_network = this._hwDefinition.network;
         const shared_map = {
-            io: directive_1.default,
-            logicAnalyzer: logicanalyzer_1.default,
-            measure: measure_1.default,
-            plugin: plugin_1.default,
+            io: directive_1.Directive,
+            logicAnalyzer: logicanalyzer_1.LogicAnalyzer,
+            measure: measure_1.ObnizMeasure,
+            plugin: plugin_1.Plugin,
         };
         const peripheral_map = {
-            io: io_1.default,
-            ad: ad_1.default,
-            uart: uart_1.default,
-            spi: spi_1.default,
-            i2c: i2c_1.default,
-            pwm: pwm_1.default,
-            grove: grove_1.default,
+            io: io_1.PeripheralIO,
+            ad: ad_1.PeripheralAD,
+            uart: uart_1.PeripheralUART,
+            spi: spi_1.PeripheralSPI,
+            i2c: i2c_1.PeripheralI2C,
+            pwm: pwm_1.PeripheralPWM,
+            grove: grove_1.PeripheralGrove,
         };
-        const ble = ble_1.default;
+        const ble = ble_1.ObnizBLE;
         const embeds_map = {
-            display: display_1.default,
-            switch: switch_1.default,
+            display: display_1.Display,
+            switch: switch_1.ObnizSwitch,
             ble,
+            storage: storage_1.Storage,
         };
         const protocol_map = {
-            tcp: tcp_1.default,
+            tcp: tcp_1.Tcp,
         };
         const network_map = {
-            wifi: wifi_1.default,
+            wifi: wifi_1.WiFi,
         };
         for (const key in shared_map) {
             const Class = shared_map[key];
@@ -221,6 +221,7 @@ class ObnizComponents extends ObnizParts_1.default {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
+                    // 'this' must be an instance of Obniz class since it's the only class that gets instantiated by user.
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                     if (typeof this[key].debugHandler === 'function') {
@@ -322,4 +323,4 @@ class ObnizComponents extends ObnizParts_1.default {
         throw new Error(`No More ${peripheral} Available.`);
     }
 }
-exports.default = ObnizComponents;
+exports.ObnizComponents = ObnizComponents;

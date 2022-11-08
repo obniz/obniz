@@ -3,7 +3,7 @@
  * @module Parts.XBee
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface XBeeOptions {
     tx: number;
     rx: number;
@@ -36,5 +36,5 @@ export default class XBee implements ObnizPartsInterface {
     sendCommand(): void;
     enterAtMode(): void;
     exitAtMode(): void;
-    configWait(config: any): Promise<unknown>;
+    configWait(config: any): Promise<void>;
 }

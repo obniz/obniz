@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JsonBinaryConverter = void 0;
 /**
  * @packageDocumentation
  * @ignore
@@ -247,4 +248,4 @@ class JsonBinaryConverter {
         return new Uint8Array(Buffer.from(data, 'utf8'));
     }
 }
-exports.default = JsonBinaryConverter;
+exports.JsonBinaryConverter = JsonBinaryConverter;

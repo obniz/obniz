@@ -5,7 +5,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import { deprecate } from 'util';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import {
   ObnizBleBeaconStruct,
   ObnizPartsBleCompare,
@@ -14,6 +14,7 @@ import {
   uintBE,
 } from '../../../obniz/ObnizPartsBleAbstract';
 import Logtta from '../utils/abstracts/Logtta';
+import roundTo from 'round-to';
 
 export interface Logtta_THOptions {}
 
@@ -135,11 +136,11 @@ export default class Logtta_TH extends Logtta<
   };
 
   protected static parseTemperatureData(data: number[], func = uint): number {
-    return (func(data) / 0x10000) * 175.72 - 46.85;
+    return roundTo((func(data) / 0x10000) * 175.72 - 46.85, 2);
   }
 
   protected static parseHumidityData(data: number[], func = uint): number {
-    return (func(data) / 0x10000) * 125 - 6;
+    return roundTo((func(data) / 0x10000) * 125 - 6, 2);
   }
 
   /**

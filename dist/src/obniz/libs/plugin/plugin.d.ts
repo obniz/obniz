@@ -3,13 +3,14 @@
  * @module ObnizCore.Components
  */
 /// <reference types="node" />
+/// <reference types="node" />
 import Obniz from '../../index';
 /**
  * @param PluginReceiveCallbackFunction.data
  * received data
  */
 declare type PluginReceiveCallbackFunction = (data: number[], str: string | null) => void;
-export default class Plugin {
+export declare class Plugin {
     /**
      * Callback function is called when Plugin is received.
      *

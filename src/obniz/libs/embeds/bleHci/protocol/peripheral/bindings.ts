@@ -5,7 +5,7 @@
  */
 // var debug = require('debug')('bindings');
 
-import Hci from '../hci';
+import { Hci } from '../hci';
 
 /**
  * @ignore
@@ -15,9 +15,9 @@ const debug: any = () => {
 };
 import EventEmitter from 'eventemitter3';
 import { Handle } from '../../bleTypes';
-import AclStream from './acl-stream';
-import Gap from './gap';
-import GattPeripheral from './gatt';
+import { AclStream } from './acl-stream';
+import { Gap } from './gap';
+import { GattPeripheral } from './gatt';
 
 type BlenoBindingsEventType =
   | 'stateChange'
@@ -28,9 +28,10 @@ type BlenoBindingsEventType =
 /**
  * @ignore
  */
-class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
+export class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   public _state: any;
   public _advertising: any;
+  public _extended: boolean;
   public _hci: Hci;
   public _gap: Gap;
   public _gatt: GattPeripheral;
@@ -41,7 +42,7 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
   constructor(hciProtocol: any) {
     super();
     this._state = null;
-
+    this._extended = false;
     this._advertising = false;
 
     this._hci = hciProtocol;
@@ -111,6 +112,45 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     this._advertising = false;
 
     await this._gap.stopAdvertisingWait();
+  }
+
+  public async setExtendedAdvertisingParametersWait(
+    handle: number,
+    eventProperties: number,
+    primaryAdvertisingPhy: number,
+    secondaryAdvertisingPhy: number,
+    txPower: number
+  ) {
+    await this._gap.setExtendedAdvertiseParametersWait(
+      handle,
+      eventProperties,
+      primaryAdvertisingPhy,
+      secondaryAdvertisingPhy,
+      txPower
+    );
+  }
+
+  public async setExtendedAdvertisingDataWait(handle: number, data: Buffer) {
+    await this._gap.setExtendedAdvertisingDataWait(handle, data);
+  }
+
+  public async setExtendedAdvertisingScanResponseDataWait(
+    handle: number,
+    data: Buffer
+  ) {
+    await this._gap.setExtendedAdvertisingScanResponseDataWait(handle, data);
+  }
+
+  public async startExtendedAdvertisingWait(handle: number) {
+    this._advertising = true;
+    this._extended = true;
+    await this._gap.startExtendedAdvertisingWait(handle);
+  }
+
+  public async stopExtendedAdvertisingWait(handle: number) {
+    this._advertising = false;
+    this._extended = false;
+    await this._gap.stopExtendedAdvertisingWait(handle);
   }
 
   public setServices(services: any) {
@@ -219,7 +259,11 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     }
 
     if (this._advertising) {
-      await this._gap.restartAdvertisingWait();
+      if (this._extended) {
+        await this._gap.restartExtendedAdvertisingWait(0);
+      } else {
+        await this._gap.restartAdvertisingWait();
+      }
     }
   }
 
@@ -239,5 +283,3 @@ class BlenoBindings extends EventEmitter<BlenoBindingsEventType> {
     }
   }
 }
-
-export default BlenoBindings;

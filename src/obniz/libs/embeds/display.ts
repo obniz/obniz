@@ -10,7 +10,7 @@ import { ComponentAbstract } from '../ComponentAbstact';
  *
  * @category Embeds
  */
-export default class Display extends ComponentAbstract {
+export class Display extends ComponentAbstract {
   /**
    * display width size
    *
@@ -577,6 +577,7 @@ export default class Display extends ComponentAbstract {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const { createCanvas } = require('canvas');
         this._canvas = createCanvas(this.width, this.height);
+        this._reset_canvas();
       } catch (e) {
         return undefined;
       }

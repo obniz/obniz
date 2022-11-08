@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Mgmt = void 0;
 /**
  * @ignore
  */
@@ -55,4 +56,4 @@ class Mgmt {
         this.write(MGMT_OP_LOAD_LONG_TERM_KEYS, 0, op);
     }
 }
-exports.default = Mgmt;
+exports.Mgmt = Mgmt;

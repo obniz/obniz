@@ -8,12 +8,12 @@ Returns the pressure acquired by the sensor between 0 and voltage.
 Connects to the obniz device.  
 The yellow, red, and black lines correspond to OUTPUT, VCC, and GND, respectively.
 
-name | type | required | default | description
---- | --- | --- | --- | ---
-vcc | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-gnd | `number(obniz Board io)` | no |  &nbsp; | Power Supply
-output | `number(obniz Board io)` | no |  &nbsp; | output pin
-grove | `object` | no | &nbsp;  | grove interface object if a device has
+| name   | type                     | required | default | description                            |
+|--------|--------------------------|----------|---------|----------------------------------------|
+| vcc    | `number(obniz Board io)` | no       | &nbsp;  | Power Supply                           |
+| gnd    | `number(obniz Board io)` | no       | &nbsp;  | Power Supply                           |
+| output | `number(obniz Board io)` | no       | &nbsp;  | output pin                             |
+| grove  | `object`                 | no       | &nbsp;  | grove interface object if a device has |
 
 ```Javascript
 // Javascript Example

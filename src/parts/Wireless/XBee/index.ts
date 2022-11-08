@@ -4,9 +4,10 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralUART from '../../../obniz/libs/io_peripherals/uart';
+import { PeripheralUART } from '../../../obniz/libs/io_peripherals/uart';
 
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
@@ -155,7 +156,7 @@ export default class XBee implements ObnizPartsInterface {
     if (this.isAtMode) {
       throw new Error('Xbee : duplicate config setting');
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const standaloneKeys: any = {
         destination_address_high: 'DH',
         destination_address_low: 'DL',

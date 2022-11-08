@@ -7,9 +7,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralSPI = void 0;
 const semver_1 = __importDefault(require("semver"));
 const ComponentAbstact_1 = require("../ComponentAbstact");
-const util_1 = __importDefault(require("../utils/util"));
+const util_1 = require("../utils/util");
 /**
  * It is General Purpose SPI
  *
@@ -42,11 +43,11 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
      * @param params spi parameters
      */
     start(params) {
-        const err = util_1.default._requiredKeys(params, ['mode', 'frequency']);
+        const err = util_1.ObnizUtil._requiredKeys(params, ['mode', 'frequency']);
         if (err) {
             throw new Error("spi start param '" + err + "' required, but not found ");
         }
-        this.params = util_1.default._keyFilter(params, [
+        this.params = util_1.ObnizUtil._keyFilter(params, [
             'mode',
             'clk',
             'mosi',
@@ -70,7 +71,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         }
         obj['spi' + this.id] = {
             mode: this.params.mode,
-            clock: this.params.frequency,
+            clock: this.params.frequency, // name different
         };
         if (this.params.clk !== undefined) {
             obj['spi' + this.id].clk = this.params.clk;
@@ -236,4 +237,4 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         this.params = null;
     }
 }
-exports.default = PeripheralSPI;
+exports.PeripheralSPI = PeripheralSPI;

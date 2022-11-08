@@ -55,13 +55,13 @@ sensor.start(function (arr) {
 
 設定可能なのは以下のとおりです。
 
-property | type | default | description
---- | --- | --- | --- 
-dataSymbolLength | `number` | 0.07 (msec) | LogicAnalyzerのサンプリング間隔
-duration | `number` | 500 (msec) | 取得データの長さ
-dataInverted | `number` | true | 取得データの0,1を反転するかどうか
-cutTail | `number` | false | 信号の最後の無駄な0を除去します。除去することでうまく通信できないこともあります。
-output_pullup | `number` | true | センサーの出力端子を5vで内部プルアップします。
+| property         | type     | default     | description                               |
+|------------------|----------|-------------|-------------------------------------------|
+| dataSymbolLength | `number` | 0.07 (msec) | LogicAnalyzerのサンプリング間隔                    |
+| duration         | `number` | 500 (msec)  | 取得データの長さ                                  |
+| dataInverted     | `number` | true        | 取得データの0,1を反転するかどうか                        |
+| cutTail          | `number` | false       | 信号の最後の無駄な0を除去します。除去することでうまく通信できないこともあります。 |
+| output_pullup    | `number` | true        | センサーの出力端子を5vで内部プルアップします。                  |
 
 どれも`start()`で開始する前に設定して下さい。
 

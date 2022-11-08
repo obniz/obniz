@@ -4,6 +4,7 @@
  * @module ObnizCore.Components
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralIO = void 0;
 const ComponentAbstact_1 = require("../ComponentAbstact");
 /**
  * General purpose IO
@@ -209,4 +210,4 @@ class PeripheralIO extends ComponentAbstact_1.ComponentAbstract {
         this.value = false;
     }
 }
-exports.default = PeripheralIO;
+exports.PeripheralIO = PeripheralIO;

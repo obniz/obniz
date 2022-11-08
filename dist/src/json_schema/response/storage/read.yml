@@ -1,0 +1,9 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/storage/read"
+
+type: object
+required: [read]
+properties:
+  read: {$ref: "/dataArray"}

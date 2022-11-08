@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Gap = void 0;
 const bleHelper_1 = __importDefault(require("../../bleHelper"));
 /**
  * @ignore
@@ -17,7 +18,7 @@ const debug = () => {
     // do nothing.
 };
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
-const hci_1 = __importDefault(require("../hci"));
+const hci_1 = require("../hci");
 /**
  * @ignore
  */
@@ -120,6 +121,54 @@ class Gap extends eventemitter3_1.default {
         data.copy(advertisementData, 9);
         await this.startAdvertisingWithEIRDataWait(advertisementData, scanData);
     }
+    async setExtendedAdvertiseParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower) {
+        await this._hci.setExtendedAdvertisingParametersWait(handle, eventProperties, primaryAdvertisingPhy, secondaryAdvertisingPhy, txPower);
+    }
+    async setExtendedAdvertisingDataWait(handle, data) {
+        await this._hci.setExtendedAdvertisingDataWait(handle, data);
+    }
+    async setExtendedAdvertisingScanResponseDataWait(handle, data) {
+        await this._hci.setExtendedAdvertisingScanResponseDataWait(handle, data);
+    }
+    async restartExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'restarting';
+        await this._hci.setExtendedAdvertisingEnableWait(true, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+    }
+    async stopExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'stopping';
+        await this._hci.setExtendedAdvertisingEnableWait(false, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+    }
+    async startExtendedAdvertisingWait(handle) {
+        this._advertiseState = 'starting';
+        const status = await this._hci.setExtendedAdvertisingEnableWait(true, [
+            {
+                handle,
+                duration: 0,
+                events: 0,
+            },
+        ]);
+        if (this._advertiseState === 'starting') {
+            this._advertiseState = 'started';
+            if (status) {
+                throw new Error(hci_1.Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+            }
+        }
+        else if (this._advertiseState === 'stopping') {
+            this._advertiseState = 'stopped';
+        }
+    }
     async startAdvertisingWithEIRDataWait(advertisementData, scanData) {
         advertisementData = advertisementData || Buffer.alloc(0);
         scanData = scanData || Buffer.alloc(0);
@@ -145,7 +194,7 @@ class Gap extends eventemitter3_1.default {
         if (this._advertiseState === 'starting') {
             this._advertiseState = 'started';
             if (status) {
-                throw new Error(hci_1.default.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
+                throw new Error(hci_1.Hci.STATUS_MAPPER[status] || 'Unknown (' + status + ')');
             }
         }
         else if (this._advertiseState === 'stopping') {
@@ -161,4 +210,4 @@ class Gap extends eventemitter3_1.default {
         await this._hci.setAdvertiseEnableWait(false);
     }
 }
-exports.default = Gap;
+exports.Gap = Gap;

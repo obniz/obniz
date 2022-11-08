@@ -3,7 +3,7 @@
  * @module Parts.Keyestudio_Buzzer
  */
 import Obniz from '../../../obniz';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 export interface Keyestudio_BuzzerOptions {
     signal: number;
     gnd?: number;

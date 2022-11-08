@@ -3,8 +3,8 @@
  * @module Parts.Grove_3AxisAccelerometer
  */
 import Obniz from '../../../obniz';
-import PeripheralGrove from '../../../obniz/libs/io_peripherals/grove';
-import ObnizPartsInterface, { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import { PeripheralGrove } from '../../../obniz/libs/io_peripherals/grove';
+import { ObnizPartsInterface, ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 interface Grove_3AxisAccelerometerOptionsA {
     gnd?: number;
     vcc?: number;

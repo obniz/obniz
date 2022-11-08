@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleScan = void 0;
 /**
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
@@ -11,7 +12,7 @@ const assert_1 = require("assert");
 const eventemitter3_1 = __importDefault(require("eventemitter3"));
 const semver_1 = __importDefault(require("semver"));
 const ObnizError_1 = require("../../../ObnizError");
-const util_1 = __importDefault(require("../../utils/util"));
+const util_1 = require("../../utils/util");
 const bleHelper_1 = __importDefault(require("./bleHelper"));
 /**
  * @category Use as Central
@@ -97,6 +98,15 @@ class BleScan {
                 message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
             });
         }
+        const ble5DeviceFilterSupportVersion = '5.0.0'; // TODO: CHANGE
+        if (settings.filterOnDevice === true &&
+            this.obnizBle.hci._extended === true &&
+            semver_1.default.lt(semver_1.default.coerce(this.obnizBle.Obniz.firmware_ver), ble5DeviceFilterSupportVersion)) {
+            this.obnizBle.Obniz.warning({
+                alert: 'warning',
+                message: `filterOnDevice=true on BLE5.0 is not supported obnizOS ${this.obnizBle.Obniz.firmware_ver}. Please use filterOnDevice=false or obniz.ble.initWait({extended:false}) for BLE4.2 scan`,
+            });
+        }
         this.state = 'starting';
         try {
             const timeout = settings.duration === undefined ? 30 : settings.duration;
@@ -130,7 +140,18 @@ class BleScan {
             else {
                 this._setTargetFilterOnDevice({}); // clear
             }
-            await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            if (settings.usePhyCoded === undefined) {
+                settings.usePhyCoded = true;
+            }
+            if (settings.usePhy1m === undefined) {
+                settings.usePhy1m = true;
+            }
+            if (this.obnizBle.hci._extended) {
+                await this.obnizBle.centralBindings.startExtendedScanningWait([], settings.duplicate, settings.activeScan, settings.usePhy1m, settings.usePhyCoded);
+            }
+            else {
+                await this.obnizBle.centralBindings.startScanningWait([], settings.duplicate, settings.activeScan);
+            }
             this.clearTimeoutTimer();
             if (timeout !== null) {
                 this._timeoutTimer = setTimeout(async () => {
@@ -139,7 +160,7 @@ class BleScan {
                         await this.endWait();
                     }
                     catch (e) {
-                        this.finish(e);
+                        this.finish(e instanceof Error ? e : new Error(`${e}`));
                     }
                 }, timeout * 1000);
             }
@@ -181,7 +202,7 @@ class BleScan {
             });
             this.emitter.once('onfinish', (peripherals, error) => {
                 if (error) {
-                    assert_1.rejects(error);
+                    (0, assert_1.rejects)(error);
                     return;
                 }
                 resolve(null);
@@ -257,7 +278,12 @@ class BleScan {
         if (this.state === 'started' || this.state === 'starting') {
             this.state = 'stopping';
             this.clearTimeoutTimer();
-            await this.obnizBle.centralBindings.stopScanningWait();
+            if (this.obnizBle.hci._extended) {
+                await this.obnizBle.centralBindings.stopExtendedScanningWait();
+            }
+            else {
+                await this.obnizBle.centralBindings.stopScanningWait();
+            }
             this.finish(); // state will changed to stopped inside of this function.
         }
     }
@@ -328,14 +354,14 @@ class BleScan {
                         index: 9,
                         length: 255,
                     },
-                    value: [0x08, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                    value: [0x08, ...util_1.ObnizUtil.string2dataArray(filterVal.localNamePrefix)],
                 });
                 filters.push({
                     range: {
                         index: 9,
                         length: 255,
                     },
-                    value: [0x09, ...util_1.default.string2dataArray(filterVal.localNamePrefix)],
+                    value: [0x09, ...util_1.ObnizUtil.string2dataArray(filterVal.localNamePrefix)],
                 });
             }
             if (filterVal.deviceAddress) {
@@ -344,11 +370,11 @@ class BleScan {
                         index: 2,
                         length: 6,
                     },
-                    value: util_1.default.hexToBinary(filterVal.deviceAddress, true),
+                    value: util_1.ObnizUtil.hexToBinary(filterVal.deviceAddress, true),
                 });
             }
             if (filterVal.uuid) {
-                const binary = util_1.default.hexToBinary(filterVal.uuid, true);
+                const binary = util_1.ObnizUtil.hexToBinary(filterVal.uuid, true);
                 filters.push({
                     range: {
                         index: 9,
@@ -567,4 +593,4 @@ class BleScan {
         });
     }
 }
-exports.default = BleScan;
+exports.BleScan = BleScan;

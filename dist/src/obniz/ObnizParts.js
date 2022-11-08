@@ -3,17 +3,15 @@
  * @packageDocumentation
  * @module ObnizCore
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const util_1 = __importDefault(require("./libs/utils/util"));
-const ObnizConnection_1 = __importDefault(require("./ObnizConnection"));
+exports.ObnizParts = void 0;
+const util_1 = require("./libs/utils/util");
+const ObnizConnection_1 = require("./ObnizConnection");
 /**
  * @ignore
  */
 const _parts = {};
-class ObnizParts extends ObnizConnection_1.default {
+class ObnizParts extends ObnizConnection_1.ObnizConnection {
     /**
      * @ignore
      * @private
@@ -78,11 +76,11 @@ class ObnizParts extends ObnizConnection_1.default {
         if (this.connectionState !== 'connected') {
             throw new Error('obniz.wired can only be used after connection');
         }
-        const Parts = ObnizParts.getPartsClass(partsName);
-        if (!Parts) {
+        const TargetPartsClass = ObnizParts.getPartsClass(partsName);
+        if (!TargetPartsClass) {
             throw new Error('No such a parts [' + partsName + '] found');
         }
-        const parts = new Parts();
+        const parts = new TargetPartsClass();
         // eslint-disable-next-line prefer-rest-params
         const args = Array.from(arguments);
         args.shift();
@@ -92,12 +90,12 @@ class ObnizParts extends ObnizConnection_1.default {
         }
         if (parts.keys) {
             if (parts.requiredKeys) {
-                const err = util_1.default._requiredKeys(args[1], parts.requiredKeys);
+                const err = util_1.ObnizUtil._requiredKeys(args[1], parts.requiredKeys);
                 if (err) {
                     throw new Error(partsName + " wired param '" + err + "' required, but not found ");
                 }
             }
-            parts.params = util_1.default._keyFilter(args[1], parts.keys);
+            parts.params = util_1.ObnizUtil._keyFilter(args[1], parts.keys);
         }
         parts.obniz = this;
         parts.wired(...args);
@@ -134,12 +132,13 @@ class ObnizParts extends ObnizConnection_1.default {
         ])
             .filter(([, m]) => m !== null)
             // Hiring with long library names
-            .sort(([na], [nb]) => ((nb !== null && nb !== void 0 ? nb : '')).length - ((na !== null && na !== void 0 ? na : '')).length);
-        if (result.length === 0 || !result[0][0] || !result[0][1])
+            .sort(([na], [nb]) => (nb !== null && nb !== void 0 ? nb : '').length - (na !== null && na !== void 0 ? na : '').length);
+        if (result.length === 0 || !result[0][0] || !result[0][1]) {
             return null;
+        }
         const [name, mode] = result[0];
         const parts = new _parts[name](peripheral, mode);
         return parts;
     }
 }
-exports.default = ObnizParts;
+exports.ObnizParts = ObnizParts;

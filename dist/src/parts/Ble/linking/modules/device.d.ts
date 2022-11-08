@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module Parts.Linking
  */
-import BleRemotePeripheral, { BleConnectSetting } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral, BleConnectSetting } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 export default class LinkingDevice {
     PRIMARY_SERVICE_UUID: string;
     WRITE_CHARACTERRISTIC_UUID: string;
@@ -31,7 +31,7 @@ export default class LinkingDevice {
      */
     connect(setting?: BleConnectSetting): Promise<void>;
     connectWait(setting?: BleConnectSetting): Promise<void>;
-    _wait(msec: number): Promise<unknown>;
+    _wait(msec: number): Promise<void>;
     _writeConfirmNotifyCategory(): Promise<unknown>;
     _writeGetSettingInformation(): Promise<unknown>;
     _writeGetSettingName(name: string): Promise<unknown>;

@@ -7,6 +7,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObnizApi = void 0;
 const node_fetch_1 = __importDefault(require("node-fetch"));
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -71,7 +72,7 @@ class ObnizApi {
         if (params) {
             fetchParams.body = JSON.stringify(params);
         }
-        const res = await node_fetch_1.default(url, fetchParams);
+        const res = await (0, node_fetch_1.default)(url, fetchParams);
         const json = await res.json();
         if (typeof callback === 'function') {
             callback(json);
@@ -94,7 +95,7 @@ class ObnizApi {
             method: 'GET',
             headers,
         };
-        return node_fetch_1.default(url, fetchParams)
+        return (0, node_fetch_1.default)(url, fetchParams)
             .then((res) => {
             return res.json();
         })
@@ -108,4 +109,4 @@ class ObnizApi {
         });
     }
 }
-exports.default = ObnizApi;
+exports.ObnizApi = ObnizApi;
