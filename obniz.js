@@ -33817,6 +33817,17 @@ class UC352BLE {
             return false;
         return peripheral.localName.startsWith('A&D_UC-352BLE');
     }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('HN_300TN not found');
+        }
+        if (this._peripheral.adv_data[2] === 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     /**
      * Pair with the device
      *
@@ -33854,7 +33865,7 @@ class UC352BLE {
         if (!this._peripheral) {
             throw new Error('UC352BLE not found');
         }
-        let result = {};
+        let result = { weight: 0 };
         await this._peripheral.connectWait({
             pairingOption: { keys: pairingKeys },
             waitUntilPairing: true,
@@ -33869,7 +33880,7 @@ class UC352BLE {
             };
         });
         await (chara === null || chara === void 0 ? void 0 : chara.registerNotifyWait((data) => {
-            const _result = {};
+            const _result = { weight: 0 };
             _result.weight = ((data[2] << 8) | data[1]) * 0.005;
             result = _result;
         }));

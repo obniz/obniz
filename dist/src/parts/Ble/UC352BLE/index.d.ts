@@ -7,13 +7,14 @@ export interface UC352BLEResult {
     /**
      * weight(kg) 体重(kg)
      */
-    weight?: number;
+    weight: number;
 }
 export default class UC352BLE implements ObnizPartsBleInterface {
     static info(): ObnizPartsBleInfo;
-    _peripheral: BleRemotePeripheral | null;
+    _peripheral: BleRemotePeripheral;
     ondisconnect?: (reason: any) => void;
     static isDevice(peripheral: BleRemotePeripheral): boolean;
+    isPairingMode(): boolean;
     /**
      * Pair with the device
      *
