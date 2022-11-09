@@ -24,7 +24,7 @@ export interface TT_MSK1508Data {
   totalDoseTime: number;
   infusionType: typeof TT_MSK1508['InfusionType'][keyof typeof TT_MSK1508['InfusionType']];
   sensorId: number;
-  errors: typeof TT_MSK1508['Error'][keyof typeof TT_MSK1508['Error']][];
+  errors: typeof TT_MSK1508['Errors'][keyof typeof TT_MSK1508['Errors']][];
   battery: number;
 }
 
@@ -51,10 +51,10 @@ export default class TT_MSK1508 implements ObnizPartsBleInterface {
   public static InfusionType = {
     0: '20drops/m',
   };
-  public static Error = {
-    0: 'drip_detection_error',
-    1: 'device_internal_error',
-  };
+  public static Errors = [
+    'drip_detection_error',
+    'device_internal_error',
+  ] as const;
 
   public static info(): ObnizPartsBleInfo {
     return {
@@ -123,7 +123,12 @@ export default class TT_MSK1508 implements ObnizPartsBleInterface {
     const sensorId = Number(
       Buffer.from(sendData.slice(12, 14)).toString('hex')
     );
+
+    const errors: typeof TT_MSK1508.Errors[number][] = [];
     const error = sendData[14];
+    if (error & 0x1) errors.push('drip_detection_error');
+    if ((error >>> 1) & 0x1) errors.push('device_internal_error');
+
     const battery = sendData[15];
 
     const crcBeforeCalcData = Buffer.from([...manufacturerId, ...sendData]);
@@ -142,7 +147,7 @@ export default class TT_MSK1508 implements ObnizPartsBleInterface {
       totalDoseTime,
       infusionType: this.InfusionType[infusionType as 0],
       sensorId,
-      errors: [this.Error[error as 0 | 1]],
+      errors,
       battery,
     };
   }
