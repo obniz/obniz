@@ -59,7 +59,12 @@ class TT_MSK1508 {
         const totalDoseTime = Buffer.from(sendData.slice(9, 11)).readUInt16LE(0);
         const infusionType = sendData[11] & 0xc0;
         const sensorId = Number(Buffer.from(sendData.slice(12, 14)).toString('hex'));
+        const errors = [];
         const error = sendData[14];
+        if (error & 0x1)
+            errors.push('drip_detection_error');
+        if ((error >>> 1) & 0x1)
+            errors.push('device_internal_error');
         const battery = sendData[15];
         const crcBeforeCalcData = Buffer.from([...manufacturerId, ...sendData]);
         const crc = (0, easy_crc_1.crc16)('X-25', crcBeforeCalcData);
@@ -76,7 +81,7 @@ class TT_MSK1508 {
             totalDoseTime,
             infusionType: this.InfusionType[infusionType],
             sensorId,
-            errors: [this.Error[error]],
+            errors,
             battery,
         };
     }
@@ -103,10 +108,10 @@ TT_MSK1508.Model = {
 TT_MSK1508.InfusionType = {
     0: '20drops/m',
 };
-TT_MSK1508.Error = {
-    0: 'drip_detection_error',
-    1: 'device_internal_error',
-};
+TT_MSK1508.Errors = [
+    'drip_detection_error',
+    'device_internal_error',
+];
 TT_MSK1508._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .groupStart('flag')
     .addTarget('length', [0x02])

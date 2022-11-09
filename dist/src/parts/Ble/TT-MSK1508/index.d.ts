@@ -16,7 +16,7 @@ export interface TT_MSK1508Data {
     totalDoseTime: number;
     infusionType: typeof TT_MSK1508['InfusionType'][keyof typeof TT_MSK1508['InfusionType']];
     sensorId: number;
-    errors: typeof TT_MSK1508['Error'][keyof typeof TT_MSK1508['Error']][];
+    errors: typeof TT_MSK1508['Errors'][keyof typeof TT_MSK1508['Errors']][];
     battery: number;
 }
 /** TT-MSK1508 management class TT-MSK1508を管理するクラス */
@@ -42,10 +42,7 @@ export default class TT_MSK1508 implements ObnizPartsBleInterface {
     static InfusionType: {
         0: string;
     };
-    static Error: {
-        0: string;
-        1: string;
-    };
+    static Errors: readonly ["drip_detection_error", "device_internal_error"];
     static info(): ObnizPartsBleInfo;
     /**
      * Verify that the received peripheral is from the TT-MSK1508
