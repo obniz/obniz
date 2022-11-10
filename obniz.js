@@ -26202,6 +26202,7 @@ var map = {
 	"./Ble/RTR500B/index.js": "./dist/src/parts/Ble/RTR500B/index.js",
 	"./Ble/STM550B/index.js": "./dist/src/parts/Ble/STM550B/index.js",
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
+	"./Ble/TR4A/index.js": "./dist/src/parts/Ble/TR4A/index.js",
 	"./Ble/TR7/index.js": "./dist/src/parts/Ble/TR7/index.js",
 	"./Ble/TT-MSK1508/index.js": "./dist/src/parts/Ble/TT-MSK1508/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
@@ -33023,6 +33024,121 @@ Tr4._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .groupEnd()
     // local name adv is exist, but cannot use for filter
     .groupStart('localName')
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/node-libs-browser/node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/TR4A/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.TR4A
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** Tr4A series management class Tr4Aシリーズを管理するクラス */
+class Tr4A {
+    constructor() {
+        // local name adv is exist, but cannot use for filter
+        // .groupStart('localName')
+        // .groupEnd();
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TR4A',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Tr4A
+     *
+     * 受け取ったPeripheralがTr4Aのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Tr4A
+     *
+     * Tr4Aかどうか
+     */
+    static isDevice(peripheral) {
+        var _a;
+        if (!((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('TR4'))) {
+            return false;
+        }
+        return Tr4A._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    /**
+     * Get a data from the Tr4A
+     *
+     * Tr4Aからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Tr4A Tr4Aから受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
+     * }
+     * ```
+     */
+    static getData(peripheral) {
+        if (!Tr4A.isDevice(peripheral)) {
+            return null;
+        }
+        const measureData = Tr4A._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measureData');
+        if (!measureData) {
+            return null;
+        }
+        if (measureData[0] === 0xee && measureData[1] === 0xee) {
+            // sensor error
+            return null;
+        }
+        const temperatureRaw = Buffer.from(measureData).readInt16LE(0);
+        const measureData2 = Tr4A._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measureData2');
+        if (!measureData2) {
+            return {
+                temperature: (temperatureRaw - 1000) / 10,
+            };
+        }
+        if (measureData2[0] === 0x00 && measureData2[1] === 0x00) {
+            return {
+                temperature: (temperatureRaw - 1000) / 10,
+            };
+        }
+        const humidityRaw = Buffer.from(measureData2).readInt16LE(0);
+        return {
+            temperature: (temperatureRaw - 1000) / 10,
+            humidity: (humidityRaw - 1000) / 10,
+        };
+    }
+}
+exports.default = Tr4A;
+Tr4A._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06])
+    .groupStart('manufacture')
+    .addTarget('length', [0x05])
+    .addTarget('type', [0x05])
+    .addTargetByLength('uuid', 4)
+    .addTarget('length2', [0x15])
+    .addTarget('type2', [0xff])
+    .addTarget('companyId', [0x92, 0x03])
+    .addTargetByLength('deviceSerial', 4)
+    .addTarget('operationCode', [0x00])
+    .addTarget('count', [-1])
+    .addTarget('statusCode1', [-1])
+    .addTarget('statusCode2', [-1])
+    .addTarget('measureData', [-1, -1])
+    .addTarget('measureData2', [-1, -1])
+    .addTargetByLength('reserved', 6) // from datasheet length=14, but device send length=13
     .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/node-libs-browser/node_modules/buffer/index.js").Buffer))
@@ -83379,7 +83495,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
