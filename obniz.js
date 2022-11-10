@@ -25640,6 +25640,7 @@ var map = {
 	"./Ble/RS_BTWATTCH2/index.js": "./dist/src/parts/Ble/RS_BTWATTCH2/index.js",
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
 	"./Ble/RTR500B/index.js": "./dist/src/parts/Ble/RTR500B/index.js",
+	"./Ble/SCBTGAAAC/index.js": "./dist/src/parts/Ble/SCBTGAAAC/index.js",
 	"./Ble/STM550B/index.js": "./dist/src/parts/Ble/STM550B/index.js",
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
 	"./Ble/TR4A/index.js": "./dist/src/parts/Ble/TR4A/index.js",
@@ -25676,7 +25677,6 @@ var map = {
 	"./Ble/linking/modules/service-sensor.js": "./dist/src/parts/Ble/linking/modules/service-sensor.js",
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
-	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
 	"./Ble/tm511/index.js": "./dist/src/parts/Ble/tm511/index.js",
 	"./Ble/tm530/index.js": "./dist/src/parts/Ble/tm530/index.js",
 	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
@@ -32198,6 +32198,89 @@ RTR500B._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/SCBTGAAAC/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SCBTGAAAC
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
+/** SCBTGAAAC management class SCBTGAAACを管理するクラス */
+class SCBTGAAAC extends ObnizPartsBleAbstract_1.ObnizPartsBle {
+    constructor() {
+        super(...arguments);
+        this.staticClass = SCBTGAAAC;
+    }
+    getData() {
+        const data = super.getData();
+        return `03-${('00000' + data.minor).slice(-5)}`;
+    }
+}
+exports.default = SCBTGAAAC;
+SCBTGAAAC.PartsName = 'SCBTGAAAC';
+SCBTGAAAC.AvailableBleMode = 'Beacon';
+SCBTGAAAC.BeaconDataLength = 0x1a;
+SCBTGAAAC.CompanyID = [0x31, 0x07];
+SCBTGAAAC.BeaconDataStruct = {
+    magic: {
+        index: 0,
+        type: 'check',
+        data: 0x02,
+    },
+    data_length: {
+        index: 1,
+        type: 'check',
+        data: 0x15,
+    },
+    uuid: {
+        index: 2,
+        length: 16,
+        type: 'check',
+        data: [
+            0x5d,
+            0x49,
+            0x0d,
+            0x6c,
+            0x7e,
+            0xb9,
+            0x47,
+            0x4e,
+            0x81,
+            0x60,
+            0x45,
+            0xbd,
+            0xe9,
+            0x99,
+            0x11,
+            0x9a,
+        ],
+    },
+    major: {
+        index: 18,
+        length: 2,
+        type: 'check',
+        data: [0x00, 0x03],
+    },
+    minor: {
+        index: 20,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    power: {
+        index: 22,
+        type: 'check',
+        data: 0xc3,
+    },
+};
+
 
 /***/ }),
 
@@ -39311,89 +39394,6 @@ class LinkingService {
     }
 }
 exports.default = LinkingService;
-
-
-/***/ }),
-
-/***/ "./dist/src/parts/Ble/scbtgaaac/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @packageDocumentation
- * @module Parts.SCBTGAAAC
- */
-/* eslint rulesdir/non-ascii: 0 */
-Object.defineProperty(exports, "__esModule", { value: true });
-const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
-/** SCBTGAAAC management class SCBTGAAACを管理するクラス */
-class SCBTGAAAC extends ObnizPartsBleAbstract_1.ObnizPartsBle {
-    constructor() {
-        super(...arguments);
-        this.staticClass = SCBTGAAAC;
-    }
-    getData() {
-        const data = super.getData();
-        return `03-${('00000' + data.minor).slice(-5)}`;
-    }
-}
-exports.default = SCBTGAAAC;
-SCBTGAAAC.PartsName = 'SCBTGAAAC';
-SCBTGAAAC.AvailableBleMode = 'Beacon';
-SCBTGAAAC.BeaconDataLength = 0x1a;
-SCBTGAAAC.CompanyID = [0x31, 0x07];
-SCBTGAAAC.BeaconDataStruct = {
-    magic: {
-        index: 0,
-        type: 'check',
-        data: 0x02,
-    },
-    data_length: {
-        index: 1,
-        type: 'check',
-        data: 0x15,
-    },
-    uuid: {
-        index: 2,
-        length: 16,
-        type: 'check',
-        data: [
-            0x5d,
-            0x49,
-            0x0d,
-            0x6c,
-            0x7e,
-            0xb9,
-            0x47,
-            0x4e,
-            0x81,
-            0x60,
-            0x45,
-            0xbd,
-            0xe9,
-            0x99,
-            0x11,
-            0x9a,
-        ],
-    },
-    major: {
-        index: 18,
-        length: 2,
-        type: 'check',
-        data: [0x00, 0x03],
-    },
-    minor: {
-        index: 20,
-        length: 2,
-        type: 'unsignedNumBE',
-    },
-    power: {
-        index: 22,
-        type: 'check',
-        data: 0xc3,
-    },
-};
 
 
 /***/ }),

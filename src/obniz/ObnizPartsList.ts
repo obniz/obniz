@@ -42,7 +42,7 @@ import REX_BTPM25V, { REX_BTPM25VOptions } from '../parts/Ble/REX_BTPM25V';
 import RS_BTEVS1, { RS_BTEVS1Options } from '../parts/Ble/RS_BTEVS1';
 import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
 import RS_Seek3, { RS_Seek3Options } from '../parts/Ble/RS_SEEK3';
-import SCBTGAAAC, { SCBTGAAAC_Options } from '../parts/Ble/scbtgaaac';
+import SCBTGAAAC, { SCBTGAAAC_Options } from '../parts/Ble/SCBTGAAAC';
 import STM550B, { STM550B_Options } from '../parts/Ble/STM550B';
 import TM530, { TM530Options } from '../parts/Ble/tm530';
 import TM511, { TM511Options } from '../parts/Ble/tm511';
