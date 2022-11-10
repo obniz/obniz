@@ -43,7 +43,6 @@ export default class INKBIRD implements ObnizPartsBleInterface {
      * ```
      */
     static getData(peripheral: BleRemotePeripheral): INKBIRD_Data | null;
-    private static _deviceAdvAnalyzer;
     private static _deviceScanResponseAnalyzer;
     _peripheral: BleRemotePeripheral | null;
 }
