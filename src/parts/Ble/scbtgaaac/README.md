@@ -1,47 +1,32 @@
 # SCBTGAAAC
 
-This is a leak sensor manufactured by ABLIC.
+Water leak sensor by ABLIC
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
 
-```javascript
-// Javascript Example
-const DEVICE = Obniz.getPartsClass('SCBTGAAAC');
-```
+## Beacon data (getData())
 
-## isDevice(BleRemotePeripheral)
+name (major-minor)
 
-Returns true if a device was found.
+## Use case
 
 ```javascript
-// Javascript Example
-const DEVICE = Obniz.getPartsClass('SCBTGAAAC');
+// Javascript
+const SCBTGAAAC = Obniz.getPartsClass('SCBTGAAAC');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (DEVICE.isDevice(p)) {
-        let name = DEVICE.getData(p);
-        console.log(name);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns the name of the device if found. Returns Null if not found.
-
-```javascript
-// Javascript Example
-const DEVICE = Obniz.getPartsClass('SCBTGAAAC');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (DEVICE.isDevice(p)) {
-        let name = DEVICE.getData(p);
-        console.log(name);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not SCBTGAAAC
+  const mode = SCBTGAAAC.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new SCBTGAAAC(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

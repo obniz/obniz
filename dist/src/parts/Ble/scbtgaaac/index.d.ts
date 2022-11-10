@@ -2,39 +2,19 @@
  * @packageDocumentation
  * @module Parts.SCBTGAAAC
  */
-import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import { ObnizPartsBleInterface, ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
-export interface SCBTGAAACOptions {
+import { ObnizBleBeaconStruct, ObnizPartsBle } from '../../../obniz/ObnizPartsBleAbstract';
+export interface SCBTGAAAC_Options {
 }
+export declare type SCBTGAAAC_Data = string;
 /** SCBTGAAAC management class SCBTGAAACを管理するクラス */
-export default class SCBTGAAAC implements ObnizPartsBleInterface {
-    static info(): ObnizPartsBleInfo;
-    /**
-     * Verify that the received peripheral is from the SCBTGAAAC
-     *
-     * 受け取ったPeripheralがSCBTGAAACのものかどうかを確認する
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns Whether it is the SCBTGAAAC
-     *
-     * SCBTGAAACかどうか
-     */
-    static isDevice(peripheral: BleRemotePeripheral): boolean;
-    /**
-     * Get leakage data from the SCBTGAAAC
-     *
-     * Get advertisement sent out by generating power at the leak
-     *
-     * SCBTGAAACから漏水データを取得する
-     *
-     * 漏水で発電することによって発信されたadvertisementを取得します
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns device name デバイス名
-     */
-    static getData(peripheral: BleRemotePeripheral): string | null;
-    private static searchTypeVal;
-    _peripheral: null | BleRemotePeripheral;
+export default class SCBTGAAAC extends ObnizPartsBle<SCBTGAAAC_Data> {
+    static readonly PartsName = "SCBTGAAAC";
+    static readonly AvailableBleMode = "Beacon";
+    static readonly BeaconDataLength = 26;
+    static readonly CompanyID: number[];
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<{
+        minor: number;
+    }>;
+    getData(): string;
+    protected readonly staticClass: typeof SCBTGAAAC;
 }

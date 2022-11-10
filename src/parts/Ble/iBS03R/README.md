@@ -1,50 +1,33 @@
 # iBS03R
-distance sensor.
 
+Waterproof distance sensor by INGICS
 
 ![](image.jpg)
 
+## Available modes
 
-## getPartsClass(name)
+- Beacon mode
+
+## Beacon data (getData())
+
+- battery: Battery voltage
+- distance: Distance (mm)
+
+## Use case
 
 ```javascript
-// Javascript Example
-const IBS03R = Obniz.getPartsClass('iBS03R');
-```
-
-## isDevice(BleRemotePeripheral)
-
-Returns true if a device was found.
-
-```javascript
-// Javascript Example
-const IBS03R = Obniz.getPartsClass('iBS03R');
+// Javascript
+const iBS03R = Obniz.getPartsClass('iBS03R');
 await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS03R.isDevice(p)) {
-        let data = IBS03R.getData(p);
-        console.log(data);
-    }
-};
-await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
-```
-
-## getData(BleRemotePeripheral)
-
-Returns device information if found. Returns Null if not found.
-
-- battery : Battery voltage 
-- distance: distance value;
-
-```javascript
-// Javascript Example
-const IBS03R = Obniz.getPartsClass('iBS03R');
-await obniz.ble.initWait();
-obniz.ble.scan.onfind = (p) => {
-    if (IBS03R.isDevice(p)) {
-        let data = IBS03R.getData(p);
-        console.log(data);
-    }
+obniz.ble.scan.onfind = (peripheral) => {
+  // Get operation mode, it becomes null when not iBS03R
+  const mode = iBS03R.getDeviceMode(peripheral);
+  if (mode) {
+    // Generate an instance
+    const device = new iBS03R(peripheral, mode);
+    // Get data and output to the console
+    console.log(device.getData());
+  }
 };
 await obniz.ble.scan.startWait(null, { duplicate: true, duration: null });
 ```

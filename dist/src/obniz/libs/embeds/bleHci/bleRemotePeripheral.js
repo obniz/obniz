@@ -109,14 +109,17 @@ class BleRemotePeripheral {
      * @param dic
      */
     setParams(dic) {
-        this.advertise_data_rows = null;
         for (const key in dic) {
             // eslint-disable-next-line no-prototype-builtins
             if (dic[key] && dic.hasOwnProperty(key) && this.keys.includes(key)) {
                 this[key] = dic[key];
             }
         }
-        this.analyseAdvertisement();
+        this.analyzeAdvertisement();
+        this.setLocalName();
+        this.setManufacturerSpecificData();
+        this.setServiceData();
+        this.setIBeacon();
     }
     /**
      * @ignore
@@ -642,41 +645,22 @@ class BleRemotePeripheral {
     setPairingOption(options) {
         this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
-    analyseAdvertisement() {
-        if (this.advertise_data_rows)
-            return;
-        this.advertise_data_rows = [];
-        if (this.adv_data) {
-            for (let i = 0; i < this.adv_data.length; i++) {
-                const length = this.adv_data[i];
-                const arr = new Array(length);
-                for (let j = 0; j < length; j++) {
-                    arr[j] = this.adv_data[i + j + 1];
-                }
-                this.advertise_data_rows.push(arr);
-                this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(i + 2, i + length + 1);
-                i = i + length;
-            }
+    analyzeAdvertisement() {
+        for (let i = 0; this.adv_data && i < this.adv_data.length;) {
+            const length = this.adv_data[i];
+            this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(i + 2, i + length + 1);
+            i += length + 1;
         }
-        if (this.scan_resp) {
-            for (let i = 0; i < this.scan_resp.length; i++) {
-                const length = this.scan_resp[i];
-                const arr = new Array(length);
-                for (let j = 0; j < length; j++) {
-                    arr[j] = this.scan_resp[i + j + 1];
-                }
-                this.advertise_data_rows.push(arr);
-                this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(i + 2, i + length + 1);
-                i = i + length;
-            }
+        for (let i = 0; this.scan_resp && i < this.scan_resp.length;) {
+            const length = this.scan_resp[i];
+            // i: Length
+            // i+1: AD Type
+            // i+2~i+2+(Length-1): Data
+            this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(i + 2, i + length + 1);
+            i += length + 1;
         }
-        this.setLocalName();
-        this.setManufacturerSpecificData();
-        this.setServiceData();
-        this.setIBeacon();
     }
     searchTypeVal(type, fromScanResponseData = false) {
-        this.analyseAdvertisement();
         if (this.advertisingDataRows[type] && !fromScanResponseData)
             return this.advertisingDataRows[type];
         else if (this.scanResponseDataRows[type])

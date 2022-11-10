@@ -359,12 +359,6 @@ export declare class BleRemotePeripheral {
      * ```
      */
     ondisconnect?: (reason?: any) => void;
-    /**
-     * Raw data of advertisement
-     *
-     * @deprecated
-     */
-    advertise_data_rows: number[][] | null;
     protected advertisingDataRows: {
         [key: number]: number[];
     };
@@ -713,7 +707,7 @@ export declare class BleRemotePeripheral {
     getPairingKeysWait(): Promise<string | null>;
     isPairingFinishedWait(): Promise<boolean>;
     setPairingOption(options: BlePairingOptions): void;
-    protected analyseAdvertisement(): void;
+    protected analyzeAdvertisement(): void;
     protected searchTypeVal(type: number, fromScanResponseData?: boolean): number[] | undefined;
     protected setLocalName(): void;
     protected setManufacturerSpecificData(): void;

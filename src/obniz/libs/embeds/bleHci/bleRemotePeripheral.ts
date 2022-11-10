@@ -397,13 +397,6 @@ export class BleRemotePeripheral {
    */
   public ondisconnect?: (reason?: any) => void;
 
-  /**
-   * Raw data of advertisement
-   *
-   * @deprecated
-   */
-  public advertise_data_rows!: number[][] | null;
-
   protected advertisingDataRows: { [key: number]: number[] } = {};
 
   protected scanResponseDataRows: { [key: number]: number[] } = {};
@@ -499,14 +492,18 @@ export class BleRemotePeripheral {
    * @param dic
    */
   public setParams(dic: Record<string, unknown>): void {
-    this.advertise_data_rows = null;
     for (const key in dic) {
       // eslint-disable-next-line no-prototype-builtins
       if (dic[key] && dic.hasOwnProperty(key) && this.keys.includes(key)) {
         (this as typeof dic)[key] = dic[key];
       }
     }
-    this.analyseAdvertisement();
+    this.analyzeAdvertisement();
+
+    this.setLocalName();
+    this.setManufacturerSpecificData();
+    this.setServiceData();
+    this.setIBeacon();
   }
 
   /**
@@ -1115,51 +1112,33 @@ export class BleRemotePeripheral {
     this.obnizBle.centralBindings.setPairingOption(this.address, options);
   }
 
-  protected analyseAdvertisement(): void {
-    if (this.advertise_data_rows) return;
+  protected analyzeAdvertisement(): void {
+    for (let i = 0; this.adv_data && i < this.adv_data.length; ) {
+      const length = this.adv_data[i];
+      this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(
+        i + 2,
+        i + length + 1
+      );
+      i += length + 1;
+    }
 
-    this.advertise_data_rows = [];
-    if (this.adv_data) {
-      for (let i = 0; i < this.adv_data.length; i++) {
-        const length = this.adv_data[i];
-        const arr = new Array<number>(length);
-        for (let j = 0; j < length; j++) {
-          arr[j] = this.adv_data[i + j + 1];
-        }
-        this.advertise_data_rows.push(arr);
-        this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(
-          i + 2,
-          i + length + 1
-        );
-        i = i + length;
-      }
+    for (let i = 0; this.scan_resp && i < this.scan_resp.length; ) {
+      const length = this.scan_resp[i];
+      // i: Length
+      // i+1: AD Type
+      // i+2~i+2+(Length-1): Data
+      this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(
+        i + 2,
+        i + length + 1
+      );
+      i += length + 1;
     }
-    if (this.scan_resp) {
-      for (let i = 0; i < this.scan_resp.length; i++) {
-        const length = this.scan_resp[i];
-        const arr = new Array<number>(length);
-        for (let j = 0; j < length; j++) {
-          arr[j] = this.scan_resp[i + j + 1];
-        }
-        this.advertise_data_rows.push(arr);
-        this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(
-          i + 2,
-          i + length + 1
-        );
-        i = i + length;
-      }
-    }
-    this.setLocalName();
-    this.setManufacturerSpecificData();
-    this.setServiceData();
-    this.setIBeacon();
   }
 
   protected searchTypeVal(
     type: number,
     fromScanResponseData = false
   ): number[] | undefined {
-    this.analyseAdvertisement();
     if (this.advertisingDataRows[type] && !fromScanResponseData)
       return this.advertisingDataRows[type];
     else if (this.scanResponseDataRows[type])

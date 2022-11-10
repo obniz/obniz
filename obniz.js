@@ -8342,14 +8342,17 @@ class BleRemotePeripheral {
      * @param dic
      */
     setParams(dic) {
-        this.advertise_data_rows = null;
         for (const key in dic) {
             // eslint-disable-next-line no-prototype-builtins
             if (dic[key] && dic.hasOwnProperty(key) && this.keys.includes(key)) {
                 this[key] = dic[key];
             }
         }
-        this.analyseAdvertisement();
+        this.analyzeAdvertisement();
+        this.setLocalName();
+        this.setManufacturerSpecificData();
+        this.setServiceData();
+        this.setIBeacon();
     }
     /**
      * @ignore
@@ -8875,41 +8878,22 @@ class BleRemotePeripheral {
     setPairingOption(options) {
         this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
-    analyseAdvertisement() {
-        if (this.advertise_data_rows)
-            return;
-        this.advertise_data_rows = [];
-        if (this.adv_data) {
-            for (let i = 0; i < this.adv_data.length; i++) {
-                const length = this.adv_data[i];
-                const arr = new Array(length);
-                for (let j = 0; j < length; j++) {
-                    arr[j] = this.adv_data[i + j + 1];
-                }
-                this.advertise_data_rows.push(arr);
-                this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(i + 2, i + length + 1);
-                i = i + length;
-            }
+    analyzeAdvertisement() {
+        for (let i = 0; this.adv_data && i < this.adv_data.length;) {
+            const length = this.adv_data[i];
+            this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(i + 2, i + length + 1);
+            i += length + 1;
         }
-        if (this.scan_resp) {
-            for (let i = 0; i < this.scan_resp.length; i++) {
-                const length = this.scan_resp[i];
-                const arr = new Array(length);
-                for (let j = 0; j < length; j++) {
-                    arr[j] = this.scan_resp[i + j + 1];
-                }
-                this.advertise_data_rows.push(arr);
-                this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(i + 2, i + length + 1);
-                i = i + length;
-            }
+        for (let i = 0; this.scan_resp && i < this.scan_resp.length;) {
+            const length = this.scan_resp[i];
+            // i: Length
+            // i+1: AD Type
+            // i+2~i+2+(Length-1): Data
+            this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(i + 2, i + length + 1);
+            i += length + 1;
         }
-        this.setLocalName();
-        this.setManufacturerSpecificData();
-        this.setServiceData();
-        this.setIBeacon();
     }
     searchTypeVal(type, fromScanResponseData = false) {
-        this.analyseAdvertisement();
         if (this.advertisingDataRows[type] && !fromScanResponseData)
             return this.advertisingDataRows[type];
         else if (this.scanResponseDataRows[type])
@@ -34819,104 +34803,36 @@ iBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery,
 
 /**
  * @packageDocumentation
- * @module Parts.iBS04i
+ * @module Parts.iBS03R
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js"));
 /** iBS03R management class iBS03Rを管理するクラス */
-class IBS03R {
+class iBS03R extends iBS_1.default {
     constructor() {
-        this._peripheral = null;
-    }
-    static info() {
-        return {
-            name: 'iBS03R',
-        };
-    }
-    /**
-     * Verify that the received peripheral is from the iBS03R
-     *
-     * 受け取ったPeripheralがiBS03Rのものかどうか確認する
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns Whether it is the iBS03R
-     *
-     * iBS03Rかどうか
-     */
-    static isDevice(peripheral) {
-        return IBS03R.getDeviceArray(peripheral) !== null;
-    }
-    /**
-     * Get a data from the iBS03R
-     *
-     * iBS03Rからデータを取得
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns received data from the iBS03R iBS03Rから受け取ったデータ
-     */
-    static getData(peripheral) {
-        const adv = IBS03R.getDeviceArray(peripheral);
-        if (adv === null) {
-            return null;
-        }
-        const data = {
-            battery: (adv[5] + adv[6] * 256) * 0.01,
-            button: Boolean(adv[7]),
-            distance: adv[10] + adv[11] * 256,
-            address: peripheral.address,
-        };
-        return data;
-    }
-    static getDeviceArray(peripheral) {
-        const advertise = !peripheral.advertise_data_rows
-            ? []
-            : peripheral.advertise_data_rows.filter((adv) => {
-                let find = false;
-                if (this.deviceAdv.length > adv.length) {
-                    return find;
-                }
-                for (let index = 0; index < this.deviceAdv.length; index++) {
-                    if (this.deviceAdv[index] === -1) {
-                        continue;
-                    }
-                    if (adv[index] === this.deviceAdv[index]) {
-                        find = true;
-                        continue;
-                    }
-                    find = false;
-                    break;
-                }
-                return find;
-            });
-        if (advertise.length !== 1) {
-            return null;
-        }
-        return advertise[0];
+        super(...arguments);
+        this.staticClass = iBS03R;
     }
 }
-exports.default = IBS03R;
-IBS03R.deviceAdv = [
-    0xff,
-    0x0d,
-    0x00,
-    0x83,
-    0xbc,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    0x13,
-    -1,
-    -1,
-    -1, // reserved
-];
+exports.default = iBS03R;
+iBS03R.PartsName = 'iBS03R';
+iBS03R.BeaconDataStruct = Object.assign({ battery: iBS_1.default.Config.battery, 
+    // TODO: delete
+    button: iBS_1.default.Config.button, distance: {
+        index: 7,
+        length: 2,
+        type: 'unsignedNumLE',
+    }, 
+    // TODO: delete
+    address: {
+        index: 0,
+        type: 'custom',
+        func: (data, peripheral) => peripheral.address,
+    } }, iBS_1.default.getUniqueData(3, 0x13));
 
 
 /***/ }),
@@ -39410,84 +39326,74 @@ exports.default = LinkingService;
  */
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 /** SCBTGAAAC management class SCBTGAAACを管理するクラス */
-class SCBTGAAAC {
+class SCBTGAAAC extends ObnizPartsBleAbstract_1.ObnizPartsBle {
     constructor() {
-        this._peripheral = null;
+        super(...arguments);
+        this.staticClass = SCBTGAAAC;
     }
-    static info() {
-        return {
-            name: 'SCBTGAAAC',
-        };
-    }
-    /**
-     * Verify that the received peripheral is from the SCBTGAAAC
-     *
-     * 受け取ったPeripheralがSCBTGAAACのものかどうかを確認する
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns Whether it is the SCBTGAAAC
-     *
-     * SCBTGAAACかどうか
-     */
-    static isDevice(peripheral) {
-        return SCBTGAAAC.getData(peripheral) !== null;
-    }
-    /**
-     * Get leakage data from the SCBTGAAAC
-     *
-     * Get advertisement sent out by generating power at the leak
-     *
-     * SCBTGAAACから漏水データを取得する
-     *
-     * 漏水で発電することによって発信されたadvertisementを取得します
-     *
-     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
-     *
-     * @returns device name デバイス名
-     */
-    static getData(peripheral) {
-        const data = SCBTGAAAC.searchTypeVal(peripheral.advertise_data_rows, 0xff);
-        if (!data ||
-            data[0] !== 0x31 ||
-            data[1] !== 0x07 ||
-            data[2] !== 0x02 ||
-            data[3] !== 0x15 ||
-            data.length !== 25) {
-            return null;
-        }
-        const uuidData = data.slice(4, 20);
-        let uuid = '';
-        for (let i = 0; i < uuidData.length; i++) {
-            uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
-            if (i === 4 - 1 ||
-                i === 4 + 2 - 1 ||
-                i === 4 + 2 * 2 - 1 ||
-                i === 4 + 2 * 3 - 1) {
-                uuid += '-';
-            }
-        }
-        const major = (data[20] << 8) + data[21];
-        const minor = (data[22] << 8) + data[23];
-        const power = data[24];
-        if (uuid === '5d490d6c-7eb9-474e-8160-45bde999119a' && major === 3) {
-            return `03-${('00000' + minor).slice(-5)}`;
-        }
-        return null;
-    }
-    static searchTypeVal(advertise_data_rows, type) {
-        for (let i = 0; i < advertise_data_rows.length; i++) {
-            if (advertise_data_rows[i][0] === type) {
-                const results = [].concat(advertise_data_rows[i]);
-                results.shift();
-                return results;
-            }
-        }
-        return undefined;
+    getData() {
+        const data = super.getData();
+        return `03-${('00000' + data.minor).slice(-5)}`;
     }
 }
 exports.default = SCBTGAAAC;
+SCBTGAAAC.PartsName = 'SCBTGAAAC';
+SCBTGAAAC.AvailableBleMode = 'Beacon';
+SCBTGAAAC.BeaconDataLength = 0x1a;
+SCBTGAAAC.CompanyID = [0x31, 0x07];
+SCBTGAAAC.BeaconDataStruct = {
+    magic: {
+        index: 0,
+        type: 'check',
+        data: 0x02,
+    },
+    data_length: {
+        index: 1,
+        type: 'check',
+        data: 0x15,
+    },
+    uuid: {
+        index: 2,
+        length: 16,
+        type: 'check',
+        data: [
+            0x5d,
+            0x49,
+            0x0d,
+            0x6c,
+            0x7e,
+            0xb9,
+            0x47,
+            0x4e,
+            0x81,
+            0x60,
+            0x45,
+            0xbd,
+            0xe9,
+            0x99,
+            0x11,
+            0x9a,
+        ],
+    },
+    major: {
+        index: 18,
+        length: 2,
+        type: 'check',
+        data: [0x00, 0x03],
+    },
+    minor: {
+        index: 20,
+        length: 2,
+        type: 'unsignedNumBE',
+    },
+    power: {
+        index: 22,
+        type: 'check',
+        data: 0xc3,
+    },
+};
 
 
 /***/ }),
@@ -81555,7 +81461,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
