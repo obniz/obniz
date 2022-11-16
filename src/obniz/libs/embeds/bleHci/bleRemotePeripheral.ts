@@ -277,6 +277,8 @@ export class BleRemotePeripheral {
   public rssi: number | null;
 
   /**
+   * @deprecated Please use {@link #getDataByAdType()}
+   *
    * This returns raw advertise data.
    *
    * ```javascript
@@ -292,9 +294,21 @@ export class BleRemotePeripheral {
    * ```
    *
    */
-  public adv_data!: number[];
+  public get adv_data() {
+    const arr = [];
+    for (const type of this.adv_data_keys) {
+      arr.push(this.advertisingDataRows[type].length + 1);
+      arr.push(type);
+      arr.push(...this.advertisingDataRows[type]);
+    }
+    return arr;
+  }
+
+  private adv_data_keys: number[] = [];
 
   /**
+   * @deprecated Please use {@link #getDataByAdType()}
+   *
    * This returns raw scan response data.
    *
    * ```javascript
@@ -311,7 +325,18 @@ export class BleRemotePeripheral {
    * ```
    *
    */
-  public scan_resp: number[] | null;
+  public get scan_resp() {
+    if (Object.keys(this.scanResponseDataRows).length === 0) return null;
+    const arr = [];
+    for (const type of this.scan_resp_keys) {
+      arr.push(this.advertisingDataRows[type].length + 1);
+      arr.push(type);
+      arr.push(...this.advertisingDataRows[type]);
+    }
+    return arr;
+  }
+
+  private scan_resp_keys: number[] = [];
 
   /**
    * This returns local name if the peripheral has it.
@@ -330,14 +355,7 @@ export class BleRemotePeripheral {
    */
   public localName: string | null;
 
-  public manufacturerSpecificData: number[] | null;
-
-  public manufacturerSpecificDataInScanResponse: number[] | null;
   public service_data: { uuid: number; data: number[] }[] | null;
-  /**
-   * Ad Type: 0x16 (16bit UUID)
-   */
-  public serviceData: number[] | null;
 
   /**
    * This returns iBeacon data if the peripheral has it. If none, it will return null.
@@ -397,9 +415,21 @@ export class BleRemotePeripheral {
    */
   public ondisconnect?: (reason?: any) => void;
 
-  protected advertisingDataRows: { [key: number]: number[] } = {};
+  protected advertisingDataRows: Record<number, number[]> = {};
 
-  protected scanResponseDataRows: { [key: number]: number[] } = {};
+  protected scanResponseDataRows: Record<number, number[]> = {};
+
+  public get manufacturerSpecificData() {
+    return this.getDataByAdType(0xff);
+  }
+
+  public get manufacturerSpecificDataInScanResponse() {
+    return this.getDataByAdType(0xff, true);
+  }
+
+  public get serviceData() {
+    return this.getDataByAdType(0x16, true);
+  }
 
   /**
    * @ignore
@@ -438,8 +468,8 @@ export class BleRemotePeripheral {
     'address_type',
     'ble_event_type',
     'rssi',
-    'adv_data',
-    'scan_resp',
+    // 'adv_data',
+    // 'scan_resp',
     'service_data',
   ];
   protected _services: BleRemoteService[];
@@ -461,11 +491,8 @@ export class BleRemotePeripheral {
     this.ble_event_type = null;
     this.rssi = null;
     // this.adv_data = null;
-    this.scan_resp = null;
+    // this.scan_resp = null;
     this.localName = null;
-    this.manufacturerSpecificData = null;
-    this.manufacturerSpecificDataInScanResponse = null;
-    this.serviceData = null;
     this.iBeacon = null;
 
     this._services = [];
@@ -481,8 +508,8 @@ export class BleRemotePeripheral {
     return JSON.stringify({
       address: this.address,
       addressType: this.address_type,
-      advertisement: this.adv_data,
-      scanResponse: this.scan_resp,
+      advertisement: this.advertisingDataRows,
+      scanResponse: this.scanResponseDataRows,
       rssi: this.rssi,
     });
   }
@@ -498,12 +525,16 @@ export class BleRemotePeripheral {
         (this as typeof dic)[key] = dic[key];
       }
     }
-    this.analyzeAdvertisement();
 
-    this.setLocalName();
-    this.setManufacturerSpecificData();
-    this.setServiceData();
-    this.setIBeacon();
+    if (Array.isArray(dic.adv_data) || Array.isArray(dic.sca_resp)) {
+      this.analyzeAdvertisement(
+        dic.adv_data as number[] | undefined,
+        dic.sca_resp as number[] | undefined
+      );
+
+      this.setLocalName();
+      this.setIBeacon();
+    }
   }
 
   /**
@@ -644,7 +675,7 @@ export class BleRemotePeripheral {
         }
         this.connected = true;
         this.connected_at = new Date();
-        this.obnizBle.addConnectedPeripheral(this);
+        // this.obnizBle.addConnectedPeripheral(this);
         try {
           if (
             this._connectSetting.waitUntilPairing &&
@@ -1030,12 +1061,12 @@ export class BleRemotePeripheral {
    */
   public advertisementServiceUuids(): UUID[] {
     const results: UUID[] = [];
-    this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
-    this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
-    this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
-    this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-    this._addServiceUuids(results, this.searchTypeVal(0x06), 128);
-    this._addServiceUuids(results, this.searchTypeVal(0x07), 128);
+    this._addServiceUuids(results, this.getDataByAdType(0x02), 16);
+    this._addServiceUuids(results, this.getDataByAdType(0x03), 16);
+    this._addServiceUuids(results, this.getDataByAdType(0x04), 32);
+    this._addServiceUuids(results, this.getDataByAdType(0x05), 32);
+    this._addServiceUuids(results, this.getDataByAdType(0x06), 128);
+    this._addServiceUuids(results, this.getDataByAdType(0x07), 128);
     return results;
   }
 
@@ -1112,53 +1143,61 @@ export class BleRemotePeripheral {
     this.obnizBle.centralBindings.setPairingOption(this.address, options);
   }
 
-  protected analyzeAdvertisement(): void {
-    for (let i = 0; this.adv_data && i < this.adv_data.length; ) {
-      const length = this.adv_data[i];
-      this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(
-        i + 2,
-        i + length + 1
+  protected analyzeAdvertisement(
+    advData?: number[],
+    scanResp?: number[]
+  ): void {
+    if (advData) this.adv_data_keys = [];
+    for (let i = 0; advData && i < advData.length; ) {
+      const length = advData[i];
+      this.adv_data_keys.push(advData[i + 1]);
+      // i: Length
+      // i+1: AD Type
+      // i+2~i+2+(Length-1): Data
+      this.advertisingDataRows[advData[i + 1]] = advData.slice(
+        i + 1 + 1,
+        i + 1 + length
       );
       i += length + 1;
     }
 
-    for (let i = 0; this.scan_resp && i < this.scan_resp.length; ) {
-      const length = this.scan_resp[i];
+    if (scanResp) this.scan_resp_keys = [];
+    for (let i = 0; scanResp && i < scanResp.length; ) {
+      const length = scanResp[i];
+      this.scan_resp_keys.push(scanResp[i + 1]);
       // i: Length
       // i+1: AD Type
       // i+2~i+2+(Length-1): Data
-      this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(
-        i + 2,
-        i + length + 1
+      this.scanResponseDataRows[scanResp[i + 1]] = scanResp.slice(
+        i + 1 + 1,
+        i + 1 + length
       );
       i += length + 1;
     }
   }
 
-  protected searchTypeVal(
+  /**
+   * AdvertisingDataやScanResponseDataから特定のAD Typeをもつデータを取得
+   * Get data with specific AD Type from AdvertisingData or ScanresponesData
+   *
+   * @param type AD Type
+   * @param fromScanResponseData 必ずScanResponseから Be sure to get from Scan Respone
+   * @returns バイト列 Bytes
+   */
+  public getDataByAdType(
     type: number,
     fromScanResponseData = false
-  ): number[] | undefined {
+  ): number[] | null {
     if (this.advertisingDataRows[type] && !fromScanResponseData)
       return this.advertisingDataRows[type];
     else if (this.scanResponseDataRows[type])
       return this.scanResponseDataRows[type];
-    else return undefined;
+    else return null;
   }
 
   protected setLocalName(): void {
-    const data = this.searchTypeVal(0x09) ?? this.searchTypeVal(0x08);
+    const data = this.getDataByAdType(0x09) ?? this.getDataByAdType(0x08);
     this.localName = data ? String.fromCharCode.apply(null, data) : null;
-  }
-
-  protected setManufacturerSpecificData(): void {
-    this.manufacturerSpecificData = this.searchTypeVal(0xff) ?? null;
-    this.manufacturerSpecificDataInScanResponse =
-      this.searchTypeVal(0xff, true) ?? null;
-  }
-
-  protected setServiceData(): void {
-    this.serviceData = this.searchTypeVal(0x16) ?? null;
   }
 
   protected setIBeacon(): void {

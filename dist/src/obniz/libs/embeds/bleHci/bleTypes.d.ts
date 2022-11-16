@@ -53,8 +53,8 @@ export interface BleDiscoveryAdvertisement {
     serviceUuids: UUID[];
     serviceSolicitationUuids: UUID[];
     solicitationServiceUuids: UUID[];
-    advertisementRaw: unknown[];
-    scanResponseRaw: unknown[];
+    advertisementRaw: number[];
+    scanResponseRaw: number[];
     raw: unknown[];
 }
 export interface BleDescriptorDefine {

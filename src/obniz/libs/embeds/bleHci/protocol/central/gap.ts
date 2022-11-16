@@ -267,13 +267,13 @@ export class Gap extends EventEmitter<GapEventTypes> {
     type: number,
     address: any,
     addressType: any,
-    eir: any,
+    eir: Buffer,
     rssi: number,
     extended: boolean
   ) {
     const previouslyDiscovered: any = !!this._discoveries[address];
 
-    const advertisement: any = previouslyDiscovered
+    const advertisement: BleDiscoveryAdvertisement = previouslyDiscovered
       ? this._discoveries[address].advertisement
       : {
           localName: undefined,

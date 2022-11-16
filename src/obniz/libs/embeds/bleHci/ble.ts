@@ -113,7 +113,7 @@ export class ObnizBLE extends ComponentAbstract {
   public extendedAdvertisement?: BleExtendedAdvertisement;
   protected hciProtocol!: HciProtocol;
   protected _initializeWarning!: boolean;
-  protected connectedPeripherals: Record<
+  protected remotePeripherals: Record<
     BleDeviceAddress,
     BleRemotePeripheral
   > = {};
@@ -322,7 +322,7 @@ export class ObnizBLE extends ComponentAbstract {
     this._initializeWarning = true;
 
     // clear all found peripherals.
-    Object.values(this.connectedPeripherals)
+    Object.values(this.remotePeripherals)
       .filter((p) => p.connected)
       .forEach((p) =>
         p.notifyFromServer('statusupdate', {
@@ -330,7 +330,7 @@ export class ObnizBLE extends ComponentAbstract {
           reason: new ObnizOfflineError(),
         })
       );
-    this.connectedPeripherals = {};
+    // this.remotePeripherals = {};
 
     // instantiate
     if (!this.peripheral) {
@@ -433,7 +433,7 @@ export class ObnizBLE extends ComponentAbstract {
         this.Obniz.error(e);
       }
     );
-    return this.connectedPeripherals[address];
+    return this.remotePeripherals[address];
   }
 
   /**
@@ -462,6 +462,7 @@ export class ObnizBLE extends ComponentAbstract {
     connectionSetting?: BleConnectSetting
   ) {
     const peripheral = new BleRemotePeripheral(this, address, addressType);
+    this.remotePeripherals[address] = peripheral;
     await peripheral.connectWait(connectionSetting);
     return peripheral;
   }
@@ -489,7 +490,7 @@ export class ObnizBLE extends ComponentAbstract {
    * @returns connected peripherals
    */
   public getConnectedPeripherals(): BleRemotePeripheral[] {
-    return Object.values(this.connectedPeripherals);
+    return Object.values(this.remotePeripherals).filter((p) => p.connected);
   }
 
   /**
@@ -515,9 +516,9 @@ export class ObnizBLE extends ComponentAbstract {
   /**
    * @ignore
    */
-  public addConnectedPeripheral(peripheral: BleRemotePeripheral): void {
-    this.connectedPeripherals[peripheral.address] = peripheral;
-  }
+  // public addConnectedPeripheral(peripheral: BleRemotePeripheral): void {
+  //   this.connectedPeripherals[peripheral.address] = peripheral;
+  // }
 
   protected onStateChange() {
     // do nothing.
@@ -530,7 +531,9 @@ export class ObnizBLE extends ComponentAbstract {
     advertisement: BleDiscoveryAdvertisement,
     rssi: number
   ): void {
-    const val = new BleRemotePeripheral(this, address, addressType);
+    const val = Object.keys(this.remotePeripherals).includes(address)
+      ? this.remotePeripherals[address]
+      : new BleRemotePeripheral(this, address, addressType);
     val.discoverdOnRemote = true;
 
     const peripheralData = {
@@ -553,12 +556,12 @@ export class ObnizBLE extends ComponentAbstract {
     address: BleDeviceAddress,
     reason: ObnizBleHciStateError
   ): void {
-    const peripheral = this.connectedPeripherals[address];
+    const peripheral = this.remotePeripherals[address];
     peripheral.notifyFromServer('statusupdate', {
       status: 'disconnected',
       reason,
     });
-    delete this.connectedPeripherals[address];
+    // delete this.connectedPeripherals[address];
   }
 
   //
@@ -593,7 +596,7 @@ export class ObnizBLE extends ComponentAbstract {
     isNotification: boolean,
     isSuccess: boolean
   ): void {
-    const peripheral = this.connectedPeripherals[address];
+    const peripheral = this.remotePeripherals[address];
     const characteristic = peripheral.findCharacteristic({
       service_uuid: serviceUuid,
       characteristic_uuid: characteristicUuid,

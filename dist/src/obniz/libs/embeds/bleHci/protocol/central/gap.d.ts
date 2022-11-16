@@ -37,7 +37,7 @@ export declare class Gap extends EventEmitter<GapEventTypes> {
     startExtendedScanningWait(allowDuplicates: boolean, activeScan: boolean, usePhy1m: boolean, usePhyCoded: boolean): Promise<void>;
     onHciLeExtendedAdvertisingReport(status: 0, type: number, address: BleDeviceAddressWithColon, addressType: BleDeviceAddressType, eir: Buffer, rssi: number, primaryPhy?: any, secondaryPhy?: any, sid?: any, txPower?: any, periodicAdvertisingInterval?: any, directAddressType?: any, directAddress?: any): void;
     private isAdvOrScanResp;
-    onHciLeAdvertisingReport(status: any, type: number, address: any, addressType: any, eir: any, rssi: number, extended: boolean): void;
+    onHciLeAdvertisingReport(status: any, type: number, address: any, addressType: any, eir: Buffer, rssi: number, extended: boolean): void;
     private setExtendedScanEnabledWait;
     private setScanEnabledWait;
 }

@@ -69,7 +69,7 @@ export declare class ObnizBLE extends ComponentAbstract {
     extendedAdvertisement?: BleExtendedAdvertisement;
     protected hciProtocol: HciProtocol;
     protected _initializeWarning: boolean;
-    protected connectedPeripherals: Record<BleDeviceAddress, BleRemotePeripheral>;
+    protected remotePeripherals: Record<BleDeviceAddress, BleRemotePeripheral>;
     /**
      * This is a callback function used when an external device gets connected or disconnected.
      *
@@ -200,7 +200,6 @@ export declare class ObnizBLE extends ComponentAbstract {
     /**
      * @ignore
      */
-    addConnectedPeripheral(peripheral: BleRemotePeripheral): void;
     protected onStateChange(): void;
     protected onDiscover(address: BleDeviceAddress, addressType: BleDeviceAddressType, connectable: boolean, advertisement: BleDiscoveryAdvertisement, rssi: number): void;
     protected onDisconnect(address: BleDeviceAddress, reason: ObnizBleHciStateError): void;

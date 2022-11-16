@@ -244,6 +244,8 @@ export declare class BleRemotePeripheral {
      */
     rssi: number | null;
     /**
+     * @deprecated Please use {@link #getDataByAdType()}
+     *
      * This returns raw advertise data.
      *
      * ```javascript
@@ -259,8 +261,11 @@ export declare class BleRemotePeripheral {
      * ```
      *
      */
-    adv_data: number[];
+    get adv_data(): number[];
+    private adv_data_keys;
     /**
+     * @deprecated Please use {@link #getDataByAdType()}
+     *
      * This returns raw scan response data.
      *
      * ```javascript
@@ -277,7 +282,8 @@ export declare class BleRemotePeripheral {
      * ```
      *
      */
-    scan_resp: number[] | null;
+    get scan_resp(): number[] | null;
+    private scan_resp_keys;
     /**
      * This returns local name if the peripheral has it.
      *
@@ -294,16 +300,10 @@ export declare class BleRemotePeripheral {
      * ```
      */
     localName: string | null;
-    manufacturerSpecificData: number[] | null;
-    manufacturerSpecificDataInScanResponse: number[] | null;
     service_data: {
         uuid: number;
         data: number[];
     }[] | null;
-    /**
-     * Ad Type: 0x16 (16bit UUID)
-     */
-    serviceData: number[] | null;
     /**
      * This returns iBeacon data if the peripheral has it. If none, it will return null.
      *
@@ -359,12 +359,11 @@ export declare class BleRemotePeripheral {
      * ```
      */
     ondisconnect?: (reason?: any) => void;
-    protected advertisingDataRows: {
-        [key: number]: number[];
-    };
-    protected scanResponseDataRows: {
-        [key: number]: number[];
-    };
+    protected advertisingDataRows: Record<number, number[]>;
+    protected scanResponseDataRows: Record<number, number[]>;
+    get manufacturerSpecificData(): number[] | null;
+    get manufacturerSpecificDataInScanResponse(): number[] | null;
+    get serviceData(): number[] | null;
     /**
      * @ignore
      */
@@ -707,11 +706,17 @@ export declare class BleRemotePeripheral {
     getPairingKeysWait(): Promise<string | null>;
     isPairingFinishedWait(): Promise<boolean>;
     setPairingOption(options: BlePairingOptions): void;
-    protected analyzeAdvertisement(): void;
-    protected searchTypeVal(type: number, fromScanResponseData?: boolean): number[] | undefined;
+    protected analyzeAdvertisement(advData?: number[], scanResp?: number[]): void;
+    /**
+     * AdvertisingDataやScanResponseDataから特定のAD Typeをもつデータを取得
+     * Get data with specific AD Type from AdvertisingData or ScanresponesData
+     *
+     * @param type AD Type
+     * @param fromScanResponseData 必ずScanResponseから Be sure to get from Scan Respone
+     * @returns バイト列 Bytes
+     */
+    getDataByAdType(type: number, fromScanResponseData?: boolean): number[] | null;
     protected setLocalName(): void;
-    protected setManufacturerSpecificData(): void;
-    protected setServiceData(): void;
     protected setIBeacon(): void;
     protected _addServiceUuids(results: UUID[], data: any, bit: any): void;
 }

@@ -5504,7 +5504,7 @@ const bleExtendedAdvertisement_1 = __webpack_require__("./dist/src/obniz/libs/em
 class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, info) {
         super(obniz);
-        this.connectedPeripherals = {};
+        this.remotePeripherals = {};
         /**
          * @ignore
          */
@@ -5707,13 +5707,13 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this._initialized = false;
         this._initializeWarning = true;
         // clear all found peripherals.
-        Object.values(this.connectedPeripherals)
+        Object.values(this.remotePeripherals)
             .filter((p) => p.connected)
             .forEach((p) => p.notifyFromServer('statusupdate', {
             status: 'disconnected',
             reason: new ObnizError_1.ObnizOfflineError(),
         }));
-        this.connectedPeripherals = {};
+        // this.remotePeripherals = {};
         // instantiate
         if (!this.peripheral) {
             this.peripheral = new blePeripheral_1.BlePeripheral(this);
@@ -5801,7 +5801,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             // background
             this.Obniz.error(e);
         });
-        return this.connectedPeripherals[address];
+        return this.remotePeripherals[address];
     }
     /**
      * Connect to peripheral without scanning, and wait to finish connecting.
@@ -5825,6 +5825,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      */
     async directConnectWait(address, addressType, connectionSetting) {
         const peripheral = new bleRemotePeripheral_1.BleRemotePeripheral(this, address, addressType);
+        this.remotePeripherals[address] = peripheral;
         await peripheral.connectWait(connectionSetting);
         return peripheral;
     }
@@ -5851,7 +5852,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @returns connected peripherals
      */
     getConnectedPeripherals() {
-        return Object.values(this.connectedPeripherals);
+        return Object.values(this.remotePeripherals).filter((p) => p.connected);
     }
     /**
      * @ignore
@@ -5874,14 +5875,16 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     /**
      * @ignore
      */
-    addConnectedPeripheral(peripheral) {
-        this.connectedPeripherals[peripheral.address] = peripheral;
-    }
+    // public addConnectedPeripheral(peripheral: BleRemotePeripheral): void {
+    //   this.connectedPeripherals[peripheral.address] = peripheral;
+    // }
     onStateChange() {
         // do nothing.
     }
     onDiscover(address, addressType, connectable, advertisement, rssi) {
-        const val = new bleRemotePeripheral_1.BleRemotePeripheral(this, address, addressType);
+        const val = Object.keys(this.remotePeripherals).includes(address)
+            ? this.remotePeripherals[address]
+            : new bleRemotePeripheral_1.BleRemotePeripheral(this, address, addressType);
         val.discoverdOnRemote = true;
         const peripheralData = {
             device_type: 'ble',
@@ -5898,12 +5901,12 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         this.scan.notifyFromServer('onfind', val);
     }
     onDisconnect(address, reason) {
-        const peripheral = this.connectedPeripherals[address];
+        const peripheral = this.remotePeripherals[address];
         peripheral.notifyFromServer('statusupdate', {
             status: 'disconnected',
             reason,
         });
-        delete this.connectedPeripherals[address];
+        // delete this.connectedPeripherals[address];
     }
     //
     // protected onServicesDiscover(peripheralUuid: any, serviceUuids?: any) {
@@ -5927,7 +5930,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
     //   service.notifyFromServer("discoverfinished", {});
     // }
     onNotification(address, serviceUuid, characteristicUuid, data, isNotification, isSuccess) {
-        const peripheral = this.connectedPeripherals[address];
+        const peripheral = this.remotePeripherals[address];
         const characteristic = peripheral.findCharacteristic({
             service_uuid: serviceUuid,
             characteristic_uuid: characteristicUuid,
@@ -8252,6 +8255,8 @@ const retry_1 = __webpack_require__("./dist/src/obniz/libs/utils/retry.js");
  */
 class BleRemotePeripheral {
     constructor(obnizBle, address, address_type) {
+        this.adv_data_keys = [];
+        this.scan_resp_keys = [];
         this.advertisingDataRows = {};
         this.scanResponseDataRows = {};
         /**
@@ -8269,8 +8274,8 @@ class BleRemotePeripheral {
             'address_type',
             'ble_event_type',
             'rssi',
-            'adv_data',
-            'scan_resp',
+            // 'adv_data',
+            // 'scan_resp',
             'service_data',
         ];
         this._extended = false;
@@ -8283,11 +8288,8 @@ class BleRemotePeripheral {
         this.ble_event_type = null;
         this.rssi = null;
         // this.adv_data = null;
-        this.scan_resp = null;
+        // this.scan_resp = null;
         this.localName = null;
-        this.manufacturerSpecificData = null;
-        this.manufacturerSpecificDataInScanResponse = null;
-        this.serviceData = null;
         this.iBeacon = null;
         this._services = [];
         this.emitter = new eventemitter3_1.default();
@@ -8325,6 +8327,72 @@ class BleRemotePeripheral {
         return this._services;
     }
     /**
+     * @deprecated Please use {@link #getDataByAdType()}
+     *
+     * This returns raw advertise data.
+     *
+     * ```javascript
+     *
+     * // Javascript Example
+     *  await obniz.ble.initWait();
+     *  var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     *
+     * console.log(peripheral.adv_data)
+     * ```
+     *
+     */
+    get adv_data() {
+        const arr = [];
+        for (const type of this.adv_data_keys) {
+            arr.push(this.advertisingDataRows[type].length + 1);
+            arr.push(type);
+            arr.push(...this.advertisingDataRows[type]);
+        }
+        return arr;
+    }
+    /**
+     * @deprecated Please use {@link #getDataByAdType()}
+     *
+     * This returns raw scan response data.
+     *
+     * ```javascript
+     *
+     * // Javascript Example
+     *  await obniz.ble.initWait();
+     *  var target = {
+     *   uuids: ["fff0"],
+     * };
+     * var peripheral = await obniz.ble.scan.startOneWait(target);
+     *
+     * console.log(peripheral.adv_data)
+     * console.log(peripheral.scan_resp)
+     * ```
+     *
+     */
+    get scan_resp() {
+        if (Object.keys(this.scanResponseDataRows).length === 0)
+            return null;
+        const arr = [];
+        for (const type of this.scan_resp_keys) {
+            arr.push(this.advertisingDataRows[type].length + 1);
+            arr.push(type);
+            arr.push(...this.advertisingDataRows[type]);
+        }
+        return arr;
+    }
+    get manufacturerSpecificData() {
+        return this.getDataByAdType(0xff);
+    }
+    get manufacturerSpecificDataInScanResponse() {
+        return this.getDataByAdType(0xff, true);
+    }
+    get serviceData() {
+        return this.getDataByAdType(0x16, true);
+    }
+    /**
      * @ignore
      * @return {String} json value
      */
@@ -8332,8 +8400,8 @@ class BleRemotePeripheral {
         return JSON.stringify({
             address: this.address,
             addressType: this.address_type,
-            advertisement: this.adv_data,
-            scanResponse: this.scan_resp,
+            advertisement: this.advertisingDataRows,
+            scanResponse: this.scanResponseDataRows,
             rssi: this.rssi,
         });
     }
@@ -8348,11 +8416,11 @@ class BleRemotePeripheral {
                 this[key] = dic[key];
             }
         }
-        this.analyzeAdvertisement();
-        this.setLocalName();
-        this.setManufacturerSpecificData();
-        this.setServiceData();
-        this.setIBeacon();
+        if (Array.isArray(dic.adv_data) || Array.isArray(dic.sca_resp)) {
+            this.analyzeAdvertisement(dic.adv_data, dic.sca_resp);
+            this.setLocalName();
+            this.setIBeacon();
+        }
     }
     /**
      * @ignore
@@ -8475,7 +8543,7 @@ class BleRemotePeripheral {
             }
             this.connected = true;
             this.connected_at = new Date();
-            this.obnizBle.addConnectedPeripheral(this);
+            // this.obnizBle.addConnectedPeripheral(this);
             try {
                 if (this._connectSetting.waitUntilPairing &&
                     !(await this.isPairingFinishedWait())) {
@@ -8808,12 +8876,12 @@ class BleRemotePeripheral {
      */
     advertisementServiceUuids() {
         const results = [];
-        this._addServiceUuids(results, this.searchTypeVal(0x02), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x03), 16);
-        this._addServiceUuids(results, this.searchTypeVal(0x04), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x05), 32);
-        this._addServiceUuids(results, this.searchTypeVal(0x06), 128);
-        this._addServiceUuids(results, this.searchTypeVal(0x07), 128);
+        this._addServiceUuids(results, this.getDataByAdType(0x02), 16);
+        this._addServiceUuids(results, this.getDataByAdType(0x03), 16);
+        this._addServiceUuids(results, this.getDataByAdType(0x04), 32);
+        this._addServiceUuids(results, this.getDataByAdType(0x05), 32);
+        this._addServiceUuids(results, this.getDataByAdType(0x06), 128);
+        this._addServiceUuids(results, this.getDataByAdType(0x07), 128);
         return results;
     }
     /**
@@ -8878,43 +8946,50 @@ class BleRemotePeripheral {
     setPairingOption(options) {
         this.obnizBle.centralBindings.setPairingOption(this.address, options);
     }
-    analyzeAdvertisement() {
-        for (let i = 0; this.adv_data && i < this.adv_data.length;) {
-            const length = this.adv_data[i];
-            this.advertisingDataRows[this.adv_data[i + 1]] = this.adv_data.slice(i + 2, i + length + 1);
-            i += length + 1;
-        }
-        for (let i = 0; this.scan_resp && i < this.scan_resp.length;) {
-            const length = this.scan_resp[i];
+    analyzeAdvertisement(advData, scanResp) {
+        if (advData)
+            this.adv_data_keys = [];
+        for (let i = 0; advData && i < advData.length;) {
+            const length = advData[i];
+            this.adv_data_keys.push(advData[i + 1]);
             // i: Length
             // i+1: AD Type
             // i+2~i+2+(Length-1): Data
-            this.scanResponseDataRows[this.scan_resp[i + 1]] = this.scan_resp.slice(i + 2, i + length + 1);
+            this.advertisingDataRows[advData[i + 1]] = advData.slice(i + 1 + 1, i + 1 + length);
+            i += length + 1;
+        }
+        if (scanResp)
+            this.scan_resp_keys = [];
+        for (let i = 0; scanResp && i < scanResp.length;) {
+            const length = scanResp[i];
+            this.scan_resp_keys.push(scanResp[i + 1]);
+            // i: Length
+            // i+1: AD Type
+            // i+2~i+2+(Length-1): Data
+            this.scanResponseDataRows[scanResp[i + 1]] = scanResp.slice(i + 1 + 1, i + 1 + length);
             i += length + 1;
         }
     }
-    searchTypeVal(type, fromScanResponseData = false) {
+    /**
+     * AdvertisingDataやScanResponseDataから特定のAD Typeをもつデータを取得
+     * Get data with specific AD Type from AdvertisingData or ScanresponesData
+     *
+     * @param type AD Type
+     * @param fromScanResponseData 必ずScanResponseから Be sure to get from Scan Respone
+     * @returns バイト列 Bytes
+     */
+    getDataByAdType(type, fromScanResponseData = false) {
         if (this.advertisingDataRows[type] && !fromScanResponseData)
             return this.advertisingDataRows[type];
         else if (this.scanResponseDataRows[type])
             return this.scanResponseDataRows[type];
         else
-            return undefined;
+            return null;
     }
     setLocalName() {
         var _a;
-        const data = (_a = this.searchTypeVal(0x09)) !== null && _a !== void 0 ? _a : this.searchTypeVal(0x08);
+        const data = (_a = this.getDataByAdType(0x09)) !== null && _a !== void 0 ? _a : this.getDataByAdType(0x08);
         this.localName = data ? String.fromCharCode.apply(null, data) : null;
-    }
-    setManufacturerSpecificData() {
-        var _a, _b;
-        this.manufacturerSpecificData = (_a = this.searchTypeVal(0xff)) !== null && _a !== void 0 ? _a : null;
-        this.manufacturerSpecificDataInScanResponse =
-            (_b = this.searchTypeVal(0xff, true)) !== null && _b !== void 0 ? _b : null;
-    }
-    setServiceData() {
-        var _a;
-        this.serviceData = (_a = this.searchTypeVal(0x16)) !== null && _a !== void 0 ? _a : null;
     }
     setIBeacon() {
         const data = this.manufacturerSpecificData;
