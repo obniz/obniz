@@ -31010,11 +31010,11 @@ class PLS_01BT {
          * 計測結果を受け取ったときにコールバック
          */
         this.onmeasured = null;
+        this._peripheral = null;
         this._uuids = {
             service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
             rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
         };
-        this._peripheral = null;
         this._rxCharacteristic = null;
         this._txCharacteristic = null;
         if (peripheral && !PLS_01BT.isDevice(peripheral)) {

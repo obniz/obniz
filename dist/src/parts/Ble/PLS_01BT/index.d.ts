@@ -57,8 +57,8 @@ export default class PLS_01BT implements ObnizPartsInterface {
      */
     onmeasured: ((result: PLS_01BTResult) => void) | null;
     ondisconnect?: (reason: any) => void;
+    _peripheral: BleRemotePeripheral | null;
     private _uuids;
-    private _peripheral;
     private _rxCharacteristic;
     private _txCharacteristic;
     constructor(peripheral: BleRemotePeripheral | null);
