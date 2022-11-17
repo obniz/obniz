@@ -25,7 +25,7 @@ import { BleAdvertisement } from './bleAdvertisement';
 import { BleCharacteristic } from './bleCharacteristic';
 import { BleDescriptor } from './bleDescriptor';
 import { BlePeripheral } from './blePeripheral';
-import { BleRemotePeripheral } from './bleRemotePeripheral';
+import { BleConnectSetting, BleRemotePeripheral } from './bleRemotePeripheral';
 import { BleScan } from './bleScan';
 import { BleService } from './bleService';
 import {
@@ -419,13 +419,16 @@ export class ObnizBLE extends ComponentAbstract {
    */
   public directConnect(
     address: BleDeviceAddress,
-    addressType: BleDeviceAddressType
+    addressType: BleDeviceAddressType,
+    connectionSetting?: BleConnectSetting
   ) {
     // noinspection JSIgnoredPromiseFromCall
-    this.directConnectWait(address, addressType).catch((e) => {
-      // background
-      this.Obniz.error(e);
-    });
+    this.directConnectWait(address, addressType, connectionSetting).catch(
+      (e) => {
+        // background
+        this.Obniz.error(e);
+      }
+    );
     const peripheral = this.findPeripheral(address);
     return peripheral;
   }
@@ -452,7 +455,8 @@ export class ObnizBLE extends ComponentAbstract {
    */
   public async directConnectWait(
     address: BleDeviceAddress,
-    addressType: BleDeviceAddressType
+    addressType: BleDeviceAddressType,
+    connectionSetting?: BleConnectSetting
   ) {
     let peripheral = this.findPeripheral(address);
     if (!peripheral) {
@@ -460,7 +464,7 @@ export class ObnizBLE extends ComponentAbstract {
       this.remotePeripherals.push(peripheral);
     }
     this.centralBindings.addPeripheralData(address, addressType);
-    await peripheral.connectWait();
+    await peripheral.connectWait(connectionSetting);
     return peripheral;
   }
 

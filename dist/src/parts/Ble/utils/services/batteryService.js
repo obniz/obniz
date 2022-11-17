@@ -4,6 +4,7 @@
  * @module Parts.utils.services
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleBatteryService = void 0;
 class BleBatteryService {
     constructor(service) {
         this._service = service;
@@ -19,4 +20,4 @@ class BleBatteryService {
         return this.getBatteryLevelWait();
     }
 }
-exports.default = BleBatteryService;
+exports.BleBatteryService = BleBatteryService;

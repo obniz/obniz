@@ -5,7 +5,7 @@ let obnizA;
 let checkBoard;
 
 describe.skip('9-ble-security', function () {
-  this.timeout(30000);
+  this.timeout(30000 * (config.json.long_timeout || 1));
 
   beforeEach(async () => {
     console.error('reboot start');

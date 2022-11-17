@@ -421,7 +421,7 @@ obniz.ble.isInitialized; <span class="hljs-comment">// =&gt; true</span></code><
 					<a name="directconnect" class="tsd-anchor"></a>
 					<h3>direct<wbr>Connect</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">direct<wbr>Connect<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-signature-type">BleDeviceAddress</a>, addressType<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddresstype" class="tsd-signature-type">BleDeviceAddressType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></li>
+						<li class="tsd-signature tsd-kind-icon">direct<wbr>Connect<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-signature-type">BleDeviceAddress</a>, addressType<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddresstype" class="tsd-signature-type">BleDeviceAddressType</a>, connectionSetting<span class="tsd-signature-symbol">?: </span><a href="../interfaces/obnizcore.components.ble.hci.bleconnectsetting.html" class="tsd-signature-type">BleConnectSetting</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -462,6 +462,9 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 										<p>&quot;random&quot; or &quot;public&quot;</p>
 									</div>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> connectionSetting: <a href="../interfaces/obnizcore.components.ble.hci.bleconnectsetting.html" class="tsd-signature-type">BleConnectSetting</a></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a></h4>
 						</li>
@@ -471,13 +474,13 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 					<a name="directconnectwait" class="tsd-anchor"></a>
 					<h3>direct<wbr>Connect<wbr>Wait</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">direct<wbr>Connect<wbr>Wait<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-signature-type">BleDeviceAddress</a>, addressType<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddresstype" class="tsd-signature-type">BleDeviceAddressType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">direct<wbr>Connect<wbr>Wait<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddress" class="tsd-signature-type">BleDeviceAddress</a>, addressType<span class="tsd-signature-symbol">: </span><a href="../modules/obnizcore.components.ble.hci.html#bledeviceaddresstype" class="tsd-signature-type">BleDeviceAddressType</a>, connectionSetting<span class="tsd-signature-symbol">?: </span><a href="../interfaces/obnizcore.components.ble.hci.bleconnectsetting.html" class="tsd-signature-type">BleConnectSetting</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:453</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:456</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -508,6 +511,9 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 									<div class="tsd-comment tsd-typography">
 										<p>&quot;random&quot; or &quot;public&quot;</p>
 									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> connectionSetting: <a href="../interfaces/obnizcore.components.ble.hci.bleconnectsetting.html" class="tsd-signature-type">BleConnectSetting</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="obnizcore.components.ble.hci.bleremoteperipheral.html" class="tsd-signature-type">BleRemotePeripheral</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -607,7 +613,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:489</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:493</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -954,7 +960,7 @@ peripheral.onconnect = <span class="hljs-function"><span class="hljs-params">()<
 							<aside class="tsd-sources">
 								<p>Overrides <a href="obnizcore.components.componentabstract.html">ComponentAbstract</a>.<a href="obnizcore.components.componentabstract.html#schemabasepath">schemaBasePath</a></p>
 								<ul>
-									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:515</li>
+									<li>Defined in src/obniz/libs/embeds/bleHci/ble.ts:519</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>

@@ -6,7 +6,7 @@ let checkBoard;
 let check_io;
 
 describe('1-io-pull', function () {
-  this.timeout(10000);
+  this.timeout(10000 * (config.json.long_timeout || 1));
   before(async function () {
     await config.waitForConenct();
     checkBoard = config.checkBoard;

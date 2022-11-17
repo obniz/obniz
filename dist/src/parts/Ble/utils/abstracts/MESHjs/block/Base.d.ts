@@ -8,12 +8,12 @@ export declare class Base {
      */
     onStatusButtonPressed: (() => void) | null;
     readonly UUIDS: {
-        readonly SERVICE_ID: "72c90001-57a9-4d40-b746-534e22ec9f9e";
+        readonly SERVICE_ID: string;
         readonly CHARACTERISTICS: {
-            readonly INDICATE: "72c90005-57a9-4d40-b746-534e22ec9f9e";
-            readonly NOTIFY: "72c90003-57a9-4d40-b746-534e22ec9f9e";
-            readonly WRITE: "72c90004-57a9-4d40-b746-534e22ec9f9e";
-            readonly WRITE_WO_RESPONSE: "72c90002-57a9-4d40-b746-534e22ec9f9e";
+            readonly INDICATE: string;
+            readonly NOTIFY: string;
+            readonly WRITE: string;
+            readonly WRITE_WO_RESPONSE: string;
         };
     };
     protected readonly MESSAGE_TYPE_ID_INDEX: 0;

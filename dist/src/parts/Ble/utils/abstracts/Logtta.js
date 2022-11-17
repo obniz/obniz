@@ -4,13 +4,10 @@
  * @module Parts.Logtta
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../../obniz/ObnizPartsBleAbstract");
-const batteryService_1 = __importDefault(require("../services/batteryService"));
-const genericAccess_1 = __importDefault(require("../services/genericAccess"));
+const batteryService_1 = require("../services/batteryService");
+const genericAccess_1 = require("../services/genericAccess");
 const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
@@ -37,11 +34,11 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await super.connectWait(keys);
         const service1800 = this.peripheral.getService('1800');
         if (service1800) {
-            this.genericAccess = new genericAccess_1.default(service1800);
+            this.genericAccess = new genericAccess_1.BleGenericAccess(service1800);
         }
         const service180F = this.peripheral.getService('180F');
         if (service180F) {
-            this.batteryService = new batteryService_1.default(service180F);
+            this.batteryService = new batteryService_1.BleBatteryService(service180F);
         }
     }
     async beforeOnDisconnectWait() {
