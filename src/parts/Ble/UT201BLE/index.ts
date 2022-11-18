@@ -10,8 +10,9 @@ import {
   ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
-import BleBatteryService from '../utils/services/batteryService';
-import BleGenericAccess from '../utils/services/genericAccess';
+import { BleBatteryService } from '../utils/services/batteryService';
+import { BleGenericAccess } from '../utils/services/genericAccess';
+import { UUID128, UUID16 } from '../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export interface UT201BLEOptions {}
 
@@ -266,17 +267,17 @@ export default class UT201BLE implements ObnizPartsBleInterface {
     }
 
     const temperatureMeasurementChar: BleRemoteCharacteristic = this._peripheral
-      .getService('1809')!
-      .getCharacteristic('2A1C')!;
+      .getService('1809' as UUID16)!
+      .getCharacteristic('2A1C' as UUID16)!;
     const timeChar = this._peripheral
-      .getService('1809')!
-      .getCharacteristic('2A08')!;
+      .getService('1809' as UUID16)!
+      .getCharacteristic('2A08' as UUID16)!;
     const customServiceChar = this._peripheral
-      .getService('233bf0005a341b6d975c000d5690abe4')!
-      .getCharacteristic('233bf0015a341b6d975c000d5690abe4')!;
+      .getService('233bf0005a341b6d975c000d5690abe4' as UUID128)!
+      .getCharacteristic('233bf0015a341b6d975c000d5690abe4' as UUID128)!;
     const batteryChar = this._peripheral
-      .getService('180F')!
-      .getCharacteristic('2A19')!;
+      .getService('180F' as UUID16)!
+      .getCharacteristic('2A19' as UUID16)!;
 
     return {
       temperatureMeasurementChar,

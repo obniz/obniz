@@ -3,7 +3,7 @@
  * @module Parts.utils.services
  */
 import { BleRemoteService } from '../../../../obniz/libs/embeds/bleHci/bleRemoteService';
-export default class BleBatteryService {
+export declare class BleBatteryService {
     private _service;
     constructor(service: BleRemoteService);
     getBatteryLevelWait(): Promise<number | null>;

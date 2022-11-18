@@ -4,6 +4,7 @@
  * @module Parts.utils.services
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleGenericAccess = void 0;
 class BleGenericAccess {
     constructor(service) {
         this._service = service;
@@ -16,4 +17,4 @@ class BleGenericAccess {
         return await char.readTextWait();
     }
 }
-exports.default = BleGenericAccess;
+exports.BleGenericAccess = BleGenericAccess;
