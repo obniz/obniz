@@ -95,3 +95,4 @@ Motion.MotionState = {
     DETECTED: 1,
     NOT_DETECTED: 2,
 };
+//# sourceMappingURL=Motion.js.map

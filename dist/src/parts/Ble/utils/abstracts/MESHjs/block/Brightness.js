@@ -85,3 +85,4 @@ Brightness.NotifyMode = {
     ONCE: 16,
     ALWAYS: 32,
 };
+//# sourceMappingURL=Brightness.js.map

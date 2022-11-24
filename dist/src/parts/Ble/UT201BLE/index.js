@@ -207,3 +207,4 @@ class UT201BLE {
     }
 }
 exports.default = UT201BLE;
+//# sourceMappingURL=index.js.map

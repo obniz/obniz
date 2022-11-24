@@ -204,3 +204,4 @@ class uPRISM {
     }
 }
 exports.default = uPRISM;
+//# sourceMappingURL=index.js.map

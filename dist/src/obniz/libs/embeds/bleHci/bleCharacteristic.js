@@ -232,3 +232,4 @@ class BleCharacteristic extends bleLocalValueAttributeAbstract_1.BleLocalValueAt
     }
 }
 exports.BleCharacteristic = BleCharacteristic;
+//# sourceMappingURL=bleCharacteristic.js.map

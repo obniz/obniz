@@ -171,3 +171,4 @@ Logtta.CompanyID = {
     Connectable: null,
     Beacon: [0x10, 0x05],
 };
+//# sourceMappingURL=Logtta.js.map

@@ -300,3 +300,4 @@ class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
     }
 }
 exports.ObnizSystemMethods = ObnizSystemMethods;
+//# sourceMappingURL=ObnizSystemMethods.js.map

@@ -94,3 +94,4 @@ class ObnizMeasure extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.ObnizMeasure = ObnizMeasure;
+//# sourceMappingURL=measure.js.map

@@ -16,3 +16,4 @@ class iBS03T extends iBS_1.BaseiBS {
 exports.default = iBS03T;
 iBS03T.PartsName = 'iBS03T';
 iBS03T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, moving: iBS_1.BaseiBS.Config.moving, hall_sensor: iBS_1.BaseiBS.Config.event, temperature: iBS_1.BaseiBS.Config.temperature }, iBS_1.BaseiBS.getUniqueData(3, 0x15));
+//# sourceMappingURL=index.js.map

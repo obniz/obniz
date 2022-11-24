@@ -249,3 +249,4 @@ class JsonBinaryConverter {
     }
 }
 exports.JsonBinaryConverter = JsonBinaryConverter;
+//# sourceMappingURL=jsonBinaryConverter.js.map

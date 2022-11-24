@@ -8,3 +8,4 @@ const isObnizId = (arg) => {
     return false;
 };
 exports.isObnizId = isObnizId;
+//# sourceMappingURL=ObnizTypes.js.map

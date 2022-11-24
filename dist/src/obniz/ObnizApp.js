@@ -66,3 +66,4 @@ class ObnizApp {
     }
 }
 exports.ObnizApp = ObnizApp;
+//# sourceMappingURL=ObnizApp.js.map

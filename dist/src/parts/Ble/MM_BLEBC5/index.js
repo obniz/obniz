@@ -35,3 +35,4 @@ MM_BLEBC5.ServiceDataStruct = MINEW_1.default.getServiceDataStruct(9, 3, {
         round: 2,
     },
 });
+//# sourceMappingURL=index.js.map

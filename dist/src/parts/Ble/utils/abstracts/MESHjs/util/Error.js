@@ -51,3 +51,4 @@ class MESHJsTimeOutError extends MESHJsError {
     }
 }
 exports.MESHJsTimeOutError = MESHJsTimeOutError;
+//# sourceMappingURL=Error.js.map

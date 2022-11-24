@@ -305,3 +305,4 @@ RS_BTEVS1.BeaconDataStruct = {
         },
     },
 };
+//# sourceMappingURL=index.js.map

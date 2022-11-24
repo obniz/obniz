@@ -108,3 +108,4 @@ class WSCommandSPI extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandSPI = WSCommandSPI;
+//# sourceMappingURL=WSCommandSPI.js.map

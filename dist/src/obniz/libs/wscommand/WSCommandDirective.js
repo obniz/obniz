@@ -182,3 +182,4 @@ class WSCommandDirective extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandDirective = WSCommandDirective;
+//# sourceMappingURL=WSCommandDirective.js.map

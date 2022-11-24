@@ -743,3 +743,4 @@ class BleRemotePeripheral {
     }
 }
 exports.BleRemotePeripheral = BleRemotePeripheral;
+//# sourceMappingURL=bleRemotePeripheral.js.map

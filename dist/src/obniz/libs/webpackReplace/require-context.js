@@ -60,3 +60,4 @@ const setBaseDir = (base) => {
     baseDir = base;
 };
 exports.setBaseDir = setBaseDir;
+//# sourceMappingURL=require-context.js.map

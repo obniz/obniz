@@ -17,3 +17,4 @@ exports.default = iBS05G;
 iBS05G.PartsName = 'iBS05G';
 iBS05G.CompanyID = [0x2c, 0x08];
 iBS05G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, moving: iBS_1.BaseiBS.Config.moving }, iBS_1.BaseiBS.getUniqueData(5, 0x33));
+//# sourceMappingURL=index.js.map

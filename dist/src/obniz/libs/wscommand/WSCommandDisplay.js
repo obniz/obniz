@@ -141,3 +141,4 @@ class WSCommandDisplay extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandDisplay = WSCommandDisplay;
+//# sourceMappingURL=WSCommandDisplay.js.map

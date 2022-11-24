@@ -39,7 +39,7 @@ export default class MESH_100AC extends MESH<MESH_100AC_Data> {
      */
     getDataWait(): Promise<{
         name: string;
-        address: string;
+        address: import("../../../obniz/libs/embeds/bleHci/bleTypes").BleDeviceAddress;
     }>;
     protected prepareConnect(): void;
     protected beforeOnDisconnectWait(reason: unknown): Promise<void>;

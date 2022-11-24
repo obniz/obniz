@@ -52,3 +52,4 @@ class ObnizPartsBleInterface {
     }
 }
 exports.ObnizPartsBleInterface = ObnizPartsBleInterface;
+//# sourceMappingURL=ObnizPartsBleInterface.js.map

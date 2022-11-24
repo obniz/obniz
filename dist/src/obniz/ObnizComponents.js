@@ -321,3 +321,4 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
     }
 }
 exports.ObnizComponents = ObnizComponents;
+//# sourceMappingURL=ObnizComponents.js.map

@@ -180,3 +180,4 @@ class WSCommandManager {
     }
 }
 exports.WSCommandManager = WSCommandManager;
+//# sourceMappingURL=WSCommandManager.js.map

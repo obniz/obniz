@@ -176,3 +176,4 @@ class BlePeripheral {
     }
 }
 exports.BlePeripheral = BlePeripheral;
+//# sourceMappingURL=blePeripheral.js.map

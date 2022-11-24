@@ -45,3 +45,4 @@ const createCommandManager = () => {
 };
 exports.createCommandManager = createCommandManager;
 exports.WSCommandManagerInstance = (0, exports.createCommandManager)();
+//# sourceMappingURL=index.js.map

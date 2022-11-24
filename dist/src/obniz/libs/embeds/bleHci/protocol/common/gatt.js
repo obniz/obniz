@@ -188,3 +188,4 @@ class GattCommon {
     }
 }
 exports.GattCommon = GattCommon;
+//# sourceMappingURL=gatt.js.map

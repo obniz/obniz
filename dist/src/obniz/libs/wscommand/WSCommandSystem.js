@@ -156,3 +156,4 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandSystem = WSCommandSystem;
+//# sourceMappingURL=WSCommandSystem.js.map

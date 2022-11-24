@@ -8,3 +8,4 @@ exports.ObnizPartsInterface = void 0;
 class ObnizPartsInterface {
 }
 exports.ObnizPartsInterface = ObnizPartsInterface;
+//# sourceMappingURL=ObnizPartsInterface.js.map

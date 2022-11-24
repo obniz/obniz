@@ -240,3 +240,4 @@ class BleExtendedAdvertisement extends bleAdvertisement_1.BleAdvertisement {
     }
 }
 exports.BleExtendedAdvertisement = BleExtendedAdvertisement;
+//# sourceMappingURL=bleExtendedAdvertisement.js.map

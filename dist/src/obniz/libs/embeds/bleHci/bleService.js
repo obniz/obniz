@@ -104,3 +104,4 @@ class BleService extends bleLocalAttributeAbstract_1.BleLocalAttributeAbstract {
     }
 }
 exports.BleService = BleService;
+//# sourceMappingURL=bleService.js.map

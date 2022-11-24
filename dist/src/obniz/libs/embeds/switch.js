@@ -75,3 +75,4 @@ class ObnizSwitch extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.ObnizSwitch = ObnizSwitch;
+//# sourceMappingURL=switch.js.map

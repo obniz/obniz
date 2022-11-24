@@ -64,3 +64,4 @@ VitalBand.BeaconDataStruct = {
     battery: VitalBand.Config.battery,
     steps: VitalBand.Config.steps,
 };
+//# sourceMappingURL=index.js.map

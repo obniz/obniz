@@ -92,3 +92,4 @@ class Move extends Base_1.Base {
     }
 }
 exports.Move = Move;
+//# sourceMappingURL=Move.js.map

@@ -1840,3 +1840,4 @@ class Hci extends eventemitter3_1.default {
 }
 exports.Hci = Hci;
 Hci.STATUS_MAPPER = hci_status_json_1.default;
+//# sourceMappingURL=hci.js.map

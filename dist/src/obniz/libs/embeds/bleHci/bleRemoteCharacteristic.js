@@ -461,3 +461,4 @@ class BleRemoteCharacteristic extends bleRemoteValueAttributeAbstract_1.BleRemot
     }
 }
 exports.BleRemoteCharacteristic = BleRemoteCharacteristic;
+//# sourceMappingURL=bleRemoteCharacteristic.js.map

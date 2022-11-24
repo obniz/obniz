@@ -1028,3 +1028,4 @@ class ObnizConnection extends eventemitter3_1.default {
     }
 }
 exports.ObnizConnection = ObnizConnection;
+//# sourceMappingURL=ObnizConnection.js.map

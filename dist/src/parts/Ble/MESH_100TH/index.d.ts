@@ -55,7 +55,7 @@ export default class MESH_100TH extends MESH<MESH_100TH_Data> {
         temperature: number;
         humidity: number;
         name: string;
-        address: string;
+        address: import("../../../obniz/libs/embeds/bleHci/bleTypes").BleDeviceAddress;
     }>;
     /**
      * getSensorDataWait

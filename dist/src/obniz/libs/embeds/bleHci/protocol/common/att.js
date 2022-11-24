@@ -101,3 +101,4 @@ exports.ATT_ECODE_READABLES = {
     0x10: 'ECODE_UNSUPP_GRP_TYPE',
     0x11: 'ECODE_INSUFF_RESOURCES',
 };
+//# sourceMappingURL=att.js.map

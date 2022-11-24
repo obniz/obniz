@@ -152,3 +152,4 @@ Logtta_AD.BeaconDataStruct = {
         } */
     },
 };
+//# sourceMappingURL=index.js.map

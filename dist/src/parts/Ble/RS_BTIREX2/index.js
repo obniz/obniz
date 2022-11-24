@@ -113,3 +113,4 @@ class RS_BTIREX2 {
     }
 }
 exports.default = RS_BTIREX2;
+//# sourceMappingURL=index.js.map

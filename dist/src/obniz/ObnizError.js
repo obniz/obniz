@@ -275,3 +275,4 @@ class ObnizBleInvalidParameterError extends ObnizError {
     }
 }
 exports.ObnizBleInvalidParameterError = ObnizBleInvalidParameterError;
+//# sourceMappingURL=ObnizError.js.map

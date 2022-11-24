@@ -104,3 +104,4 @@ Tr4A._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .addTarget('measureData2', [-1, -1])
     .addTargetByLength('reserved', 6) // from datasheet length=14, but device send length=13
     .groupEnd();
+//# sourceMappingURL=index.js.map

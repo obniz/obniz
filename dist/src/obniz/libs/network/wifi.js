@@ -66,3 +66,4 @@ class WiFi {
     }
 }
 exports.WiFi = WiFi;
+//# sourceMappingURL=wifi.js.map

@@ -92,3 +92,4 @@ class WSCommandWiFi extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandWiFi = WSCommandWiFi;
+//# sourceMappingURL=WSCommandWiFi.js.map

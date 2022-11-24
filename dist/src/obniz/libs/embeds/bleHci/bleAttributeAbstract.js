@@ -228,3 +228,4 @@ class BleAttributeAbstract {
     }
 }
 exports.BleAttributeAbstract = BleAttributeAbstract;
+//# sourceMappingURL=bleAttributeAbstract.js.map

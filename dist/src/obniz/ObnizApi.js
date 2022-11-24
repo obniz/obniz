@@ -110,3 +110,4 @@ class ObnizApi {
     }
 }
 exports.ObnizApi = ObnizApi;
+//# sourceMappingURL=ObnizApi.js.map

@@ -28,3 +28,4 @@ function default_1(source) {
     }
 }
 exports.default = default_1;
+//# sourceMappingURL=packagejson-loader.js.map

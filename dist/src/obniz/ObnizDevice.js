@@ -166,3 +166,4 @@ class ObnizDevice extends ObnizUIs_1.ObnizUIs {
     }
 }
 exports.ObnizDevice = ObnizDevice;
+//# sourceMappingURL=ObnizDevice.js.map

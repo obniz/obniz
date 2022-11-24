@@ -56,3 +56,4 @@ class BleRemoteValueAttributeAbstract extends bleRemoteAttributeAbstract_1.BleRe
     }
 }
 exports.BleRemoteValueAttributeAbstract = BleRemoteValueAttributeAbstract;
+//# sourceMappingURL=bleRemoteValueAttributeAbstract.js.map

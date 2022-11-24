@@ -68,3 +68,4 @@ class BleDescriptor extends bleLocalValueAttributeAbstract_1.BleLocalValueAttrib
     }
 }
 exports.BleDescriptor = BleDescriptor;
+//# sourceMappingURL=bleDescriptor.js.map

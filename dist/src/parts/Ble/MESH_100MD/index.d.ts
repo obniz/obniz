@@ -49,7 +49,7 @@ export default class MESH_100MD extends MESH<MESH_100MD_Data> {
      */
     getDataWait(): Promise<{
         name: string;
-        address: string;
+        address: import("../../../obniz/libs/embeds/bleHci/bleTypes").BleDeviceAddress;
         motionState: number;
     }>;
     /**

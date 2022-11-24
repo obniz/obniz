@@ -594,3 +594,4 @@ class BleScan {
     }
 }
 exports.BleScan = BleScan;
+//# sourceMappingURL=bleScan.js.map

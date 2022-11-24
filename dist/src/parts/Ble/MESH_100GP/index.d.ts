@@ -81,7 +81,7 @@ export default class MESH_100GP extends MESH<MESH_100GP_Data> {
      */
     getDataWait(): Promise<{
         name: string;
-        address: string;
+        address: import("../../../obniz/libs/embeds/bleHci/bleTypes").BleDeviceAddress;
     }>;
     /**
      * getDigitalInputDataWait

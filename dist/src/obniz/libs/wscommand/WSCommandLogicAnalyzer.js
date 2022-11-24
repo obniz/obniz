@@ -80,3 +80,4 @@ class WSCommandLogicAnalyzer extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandLogicAnalyzer = WSCommandLogicAnalyzer;
+//# sourceMappingURL=WSCommandLogicAnalyzer.js.map

@@ -194,3 +194,4 @@ exports.WSCommandAbstract = WSCommandAbstract;
 /* eslint max-classes-per-file: 0 */
 class WSCommandNotFoundError extends Error {
 }
+//# sourceMappingURL=WSCommandAbstract.js.map

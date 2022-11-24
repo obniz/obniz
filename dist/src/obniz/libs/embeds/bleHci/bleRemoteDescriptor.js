@@ -91,3 +91,4 @@ class BleRemoteDescriptor extends bleRemoteValueAttributeAbstract_1.BleRemoteVal
     }
 }
 exports.BleRemoteDescriptor = BleRemoteDescriptor;
+//# sourceMappingURL=bleRemoteDescriptor.js.map

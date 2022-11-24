@@ -112,3 +112,4 @@ EXVital.DefaultAdvData = [
 const unsigned16 = (value) => {
     return (value[0] << 8) | value[1];
 };
+//# sourceMappingURL=index.js.map

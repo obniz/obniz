@@ -567,3 +567,4 @@ exports.iBeaconData =
         func: (d, p) => { var _a; return (_a = p.rssi) !== null && _a !== void 0 ? _a : 0; },
     },
 };
+//# sourceMappingURL=ObnizPartsBleAbstract.js.map

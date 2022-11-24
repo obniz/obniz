@@ -215,3 +215,4 @@ MCP23S08.MCP23S08_REGISTER = {
     GPIO: 0x09,
     OLAT: 0x0a,
 };
+//# sourceMappingURL=index.js.map

@@ -36,7 +36,7 @@ export default class MESH_100LE extends MESH<MESH_100LE_Data> {
      */
     getDataWait(): Promise<{
         name: string;
-        address: string;
+        address: import("../../../obniz/libs/embeds/bleHci/bleTypes").BleDeviceAddress;
     }>;
     /**
      * setLed

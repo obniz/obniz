@@ -45,7 +45,7 @@ export default class MESH_100PA extends MESH<MESH_100PA_Data> {
         proximity: number;
         brightness: number;
         name: string;
-        address: string;
+        address: import("../../../obniz/libs/embeds/bleHci/bleTypes").BleDeviceAddress;
     }>;
     /**
      * getSensorDataWait

@@ -21,3 +21,4 @@ class BleBatteryService {
     }
 }
 exports.BleBatteryService = BleBatteryService;
+//# sourceMappingURL=batteryService.js.map

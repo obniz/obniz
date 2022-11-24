@@ -96,3 +96,4 @@ class BaseiBS01 extends BaseiBS {
 exports.BaseiBS01 = BaseiBS01;
 BaseiBS01.CompanyID = [0x59, 0x00];
 exports.default = BaseiBS;
+//# sourceMappingURL=iBS.js.map

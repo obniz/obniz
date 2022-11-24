@@ -115,3 +115,4 @@ class Hx711 {
     }
 }
 exports.default = Hx711;
+//# sourceMappingURL=index.js.map

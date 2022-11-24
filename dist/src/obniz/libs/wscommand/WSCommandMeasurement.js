@@ -81,3 +81,4 @@ class WSCommandMeasurement extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandMeasurement = WSCommandMeasurement;
+//# sourceMappingURL=WSCommandMeasurement.js.map

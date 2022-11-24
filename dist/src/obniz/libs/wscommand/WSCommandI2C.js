@@ -171,3 +171,4 @@ class WSCommandI2C extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandI2C = WSCommandI2C;
+//# sourceMappingURL=WSCommandI2C.js.map

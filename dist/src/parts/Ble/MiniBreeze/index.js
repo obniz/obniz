@@ -124,3 +124,4 @@ class MiniBreeze {
     }
 }
 exports.default = MiniBreeze;
+//# sourceMappingURL=index.js.map

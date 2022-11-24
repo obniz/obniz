@@ -142,3 +142,4 @@ class ObnizParts extends ObnizConnection_1.ObnizConnection {
     }
 }
 exports.ObnizParts = ObnizParts;
+//# sourceMappingURL=ObnizParts.js.map

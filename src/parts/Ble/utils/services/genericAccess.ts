@@ -4,6 +4,7 @@
  */
 
 import { BleRemoteService } from '../../../../obniz/libs/embeds/bleHci/bleRemoteService';
+import { UUID16 } from '../../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export class BleGenericAccess {
   private _service: BleRemoteService;
@@ -13,7 +14,7 @@ export class BleGenericAccess {
   }
 
   public async getDeviceNameWait(): Promise<string | null> {
-    const char = this._service.getCharacteristic('2A00');
+    const char = this._service.getCharacteristic('2A00' as UUID16);
     if (!char) {
       return null;
     }

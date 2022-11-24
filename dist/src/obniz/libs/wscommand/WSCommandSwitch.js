@@ -52,3 +52,4 @@ class WSCommandSwitch extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandSwitch = WSCommandSwitch;
+//# sourceMappingURL=WSCommandSwitch.js.map

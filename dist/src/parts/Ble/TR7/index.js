@@ -88,3 +88,4 @@ TR7._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .addTargetByLength('spare', 4)
     .addTargetByLength('unused', 2)
     .groupEnd();
+//# sourceMappingURL=index.js.map

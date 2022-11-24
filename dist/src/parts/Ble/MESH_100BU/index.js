@@ -69,3 +69,4 @@ class MESH_100BU extends MESH_1.MESH {
 exports.default = MESH_100BU;
 MESH_100BU.PartsName = 'MESH_100BU';
 MESH_100BU.LocalName = /^MESH-100BU/;
+//# sourceMappingURL=index.js.map

@@ -50,3 +50,4 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
     }
 }
 exports.WSCommandPlugin = WSCommandPlugin;
+//# sourceMappingURL=WSCommandPlugin.js.map

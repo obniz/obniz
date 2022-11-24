@@ -200,3 +200,4 @@ class BleRemoteService extends bleRemoteAttributeAbstract_1.BleRemoteAttributeAb
     }
 }
 exports.BleRemoteService = BleRemoteService;
+//# sourceMappingURL=bleRemoteService.js.map

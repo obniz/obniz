@@ -24,3 +24,4 @@ class M5StackBasic extends ObnizDevice_1.ObnizDevice {
     }
 }
 exports.M5StackBasic = M5StackBasic;
+//# sourceMappingURL=m5stack_basic.js.map

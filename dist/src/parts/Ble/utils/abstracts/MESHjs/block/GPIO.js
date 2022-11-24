@@ -279,3 +279,4 @@ GPIO.VccState = {
     OFF: 0,
     ON: 1,
 };
+//# sourceMappingURL=GPIO.js.map

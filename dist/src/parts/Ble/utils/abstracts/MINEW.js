@@ -43,3 +43,4 @@ MINEW.getServiceDataStruct = (macAddressIndex, versionNumber, additonalData) => 
         length: 6,
         type: 'check',
     } }, additonalData));
+//# sourceMappingURL=MINEW.js.map

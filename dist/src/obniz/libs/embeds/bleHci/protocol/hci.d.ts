@@ -121,10 +121,10 @@ export declare class Hci extends EventEmitter<HciEventTypes> {
     setExtendedScanEnabledWait(enabled: boolean, filterDuplicates: boolean): Promise<number>;
     createLeExtendedConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, timeout: number | undefined, onConnectCallback: any, pyh1m?: boolean, pyh2m?: boolean, pyhCoded?: boolean): Promise<{
         status: any;
-        handle: number;
+        handle: Handle;
         role: number;
         addressType: BleDeviceAddressType;
-        address: string;
+        address: BleDeviceAddress;
         interval: number;
         latency: number;
         supervisionTimeout: number;
@@ -148,10 +148,10 @@ export declare class Hci extends EventEmitter<HciEventTypes> {
     setScanEnabledWait(enabled: boolean, filterDuplicates: boolean): Promise<number>;
     createLeConnWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, timeout: number | undefined, onConnectCallback: any, parameterType?: 'obnizjs<3_18_0' | 'esp32'): Promise<{
         status: any;
-        handle: number;
+        handle: Handle;
         role: number;
         addressType: BleDeviceAddressType;
-        address: string;
+        address: BleDeviceAddress;
         interval: number;
         latency: number;
         supervisionTimeout: number;
@@ -160,14 +160,14 @@ export declare class Hci extends EventEmitter<HciEventTypes> {
     createLeConnCancelWait(): Promise<void>;
     connUpdateLeWait(handle: Handle, minInterval: number, maxInterval: number, latency: number, supervisionTimeout: number): Promise<{
         status: any;
-        handle: number;
+        handle: Handle;
         interval: number;
         latency: any;
         supervisionTimeout: number;
     }>;
     processLeConnUpdateComplete(status: any, data: any): {
         status: any;
-        handle: number;
+        handle: Handle;
         interval: number;
         latency: any;
         supervisionTimeout: number;
@@ -197,10 +197,10 @@ export declare class Hci extends EventEmitter<HciEventTypes> {
     private parseLeConnectionCompleteEventData;
     processLeConnComplete(status: any, data: ReturnType<Hci['parseConnectionCompleteEventData']> | ReturnType<Hci['parseLeConnectionCompleteEventData']>, onConnectCallback: any): {
         status: any;
-        handle: number;
+        handle: Handle;
         role: number;
         addressType: BleDeviceAddressType;
-        address: string;
+        address: BleDeviceAddress;
         interval: number;
         latency: number;
         supervisionTimeout: number;

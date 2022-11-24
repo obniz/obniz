@@ -135,3 +135,4 @@ MINEW_S1.ServiceDataStruct = MINEW_1.default.getServiceDataStruct(7, 1, {
         scanResponse: true, // for ignored by check
     },
 });
+//# sourceMappingURL=index.js.map

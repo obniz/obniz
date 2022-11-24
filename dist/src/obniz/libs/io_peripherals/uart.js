@@ -310,3 +310,4 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.PeripheralUART = PeripheralUART;
+//# sourceMappingURL=uart.js.map

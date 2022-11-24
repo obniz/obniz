@@ -85,3 +85,4 @@ class M5StickC extends ObnizDevice_1.ObnizDevice {
     }
 }
 exports.M5StickC = M5StickC;
+//# sourceMappingURL=m5stickc.js.map

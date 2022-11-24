@@ -91,3 +91,4 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.PeripheralAD = PeripheralAD;
+//# sourceMappingURL=ad.js.map
