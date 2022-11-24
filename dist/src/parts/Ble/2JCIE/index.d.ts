@@ -330,7 +330,7 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
      *
      * OMRON 環境センサ 2JCIEシリーズかどうか
      */
-    static isDevice(peripheral: BleRemotePeripheral): boolean | "" | null;
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
     /**
      * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON
      *
