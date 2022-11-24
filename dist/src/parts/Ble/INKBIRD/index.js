@@ -28,9 +28,8 @@ class INKBIRD {
      * INKBIRDかどうか
      */
     static isDevice(peripheral) {
-        if (peripheral.adv_data && peripheral.scan_resp) {
-            return (INKBIRD._deviceAdvAnalyzer.validate(peripheral.adv_data) &&
-                INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp));
+        if (peripheral.scan_resp) {
+            return INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp);
         }
         else {
             return false;
@@ -77,13 +76,6 @@ class INKBIRD {
     }
 }
 exports.default = INKBIRD;
-INKBIRD._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
-    .addTarget('flag', [0x02, 0x01, 0x06])
-    .groupStart('manufacture')
-    .addTarget('length', [0x03])
-    .addTarget('type', [0x02])
-    .addTargetByLength('uuid', 2)
-    .groupEnd();
 INKBIRD._deviceScanResponseAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .groupStart('scanData')
     .addTarget('length2', [0x04])
