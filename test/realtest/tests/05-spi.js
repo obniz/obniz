@@ -7,7 +7,7 @@ let checkBoard;
 let check_io;
 
 describe('5-spi', function () {
-  this.timeout(30000);
+  this.timeout(30000 * (config.json.long_timeout || 1));
 
   before(async function () {
     await config.waitForConenct();

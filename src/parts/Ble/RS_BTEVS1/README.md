@@ -28,7 +28,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
         };
 
         const dataResult = await device.getDataWait();
-        console.log(dataReulst);
+        console.log(dataResult);
     }
 };
 await obniz.ble.scan.startWait();

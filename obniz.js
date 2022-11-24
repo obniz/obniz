@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.24.0",
+  "version": "3.25.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -5857,9 +5857,9 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      *
      * @deprecated replaced by {@link #directConnectWait()}
      */
-    directConnect(address, addressType) {
+    directConnect(address, addressType, connectionSetting) {
         // noinspection JSIgnoredPromiseFromCall
-        this.directConnectWait(address, addressType).catch((e) => {
+        this.directConnectWait(address, addressType, connectionSetting).catch((e) => {
             // background
             this.Obniz.error(e);
         });
@@ -5886,14 +5886,14 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
      * @param address peripheral device address
      * @param addressType "random" or "public"
      */
-    async directConnectWait(address, addressType) {
+    async directConnectWait(address, addressType, connectionSetting) {
         let peripheral = this.findPeripheral(address);
         if (!peripheral) {
             peripheral = new bleRemotePeripheral_1.BleRemotePeripheral(this, address);
             this.remotePeripherals.push(peripheral);
         }
         this.centralBindings.addPeripheralData(address, addressType);
-        await peripheral.connectWait();
+        await peripheral.connectWait(connectionSetting);
         return peripheral;
     }
     /**
@@ -26168,10 +26168,12 @@ var map = {
 	"./Accessory/USB/index.js": "./dist/src/parts/Accessory/USB/index.js",
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2JCIE/index.js": "./dist/src/parts/Ble/2JCIE/index.js",
+	"./Ble/DR_MARK/index.js": "./dist/src/parts/Ble/DR_MARK/index.js",
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
 	"./Ble/EXTxx/index.js": "./dist/src/parts/Ble/EXTxx/index.js",
 	"./Ble/EXVital/index.js": "./dist/src/parts/Ble/EXVital/index.js",
 	"./Ble/GT_7510/index.js": "./dist/src/parts/Ble/GT_7510/index.js",
+	"./Ble/GX_3R_Pro/index.js": "./dist/src/parts/Ble/GX_3R_Pro/index.js",
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
 	"./Ble/HN_300T2/index.js": "./dist/src/parts/Ble/HN_300T2/index.js",
@@ -26708,9 +26710,11 @@ class OMRON_2JCIE {
      * OMRON 環境センサ 2JCIEシリーズかどうか
      */
     static isDevice(peripheral) {
-        return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
+        if (peripheral.localName === null)
+            return false;
+        return (peripheral.localName.indexOf('Env') >= 0 ||
+            peripheral.localName.indexOf('IM') >= 0 ||
+            peripheral.localName.indexOf('Rbt') >= 0);
     }
     /**
      * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON
@@ -26966,6 +26970,566 @@ exports.default = OMRON_2JCIE;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/DR_MARK/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.DR_MARK
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+/** DR MARK management class DR MARKを管理するクラス */
+class DR_MARK {
+    constructor(peripheral) {
+        this.keys = [];
+        this.requiredKeys = [];
+        this._peripheral = null;
+        this._uuids = {
+            deviceInfoSystem: '180a',
+            systemId: '2a23',
+            firmwareVersion: '2a26',
+            customService: 'fff0',
+            requestChar: 'fff3',
+            notifyChar: 'fff4',
+        };
+        this._deviceInfoSystem = null;
+        this._requestChar = null;
+        if (peripheral && !DR_MARK.isDevice(peripheral)) {
+            throw new Error('peripheral is not DR_MARK');
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'DR_MARK',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the DR MARK
+     *
+     * 受け取ったperipheralがDR MARKのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the DR MARK
+     *
+     * DR MARKかどうか
+     */
+    static isDevice(peripheral) {
+        return !!(peripheral.localName && peripheral.localName.startsWith('DR Mark BLE'));
+    }
+    /**
+     * Connect the sensor
+     *
+     * Throw an error if the device is not found
+     *
+     * センサへ接続
+     *
+     * デバイスが見つからなかった場合はエラーをthrow
+     */
+    async connectWait() {
+        if (!this._peripheral) {
+            throw new Error('DR_MARK is not find.');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        await this._peripheral.connectWait({ autoDiscovery: false });
+        await this._peripheral.discoverAllServicesWait();
+        const customService = this._peripheral.getService(this._uuids.customService);
+        if (!customService) {
+            await this._peripheral.disconnectWait();
+            throw new Error('service is not find.');
+        }
+        await customService.discoverAllCharacteristicsWait();
+        this._requestChar = customService.getCharacteristic(this._uuids.requestChar);
+        const notifyChar = customService.getCharacteristic(this._uuids.notifyChar);
+        if (notifyChar) {
+            await notifyChar.registerNotifyWait(this.notifyCallback);
+        }
+    }
+    /**
+     * Disconnect from the sensor
+     *
+     * センサから切断
+     */
+    async disconnectWait() {
+        var _a;
+        await ((_a = this._peripheral) === null || _a === void 0 ? void 0 : _a.disconnectWait());
+    }
+    /**
+     * Get the System ID from the sensor
+     *
+     * 8 バイトの固有ID
+     * 6 バイトの BD アドレスを逆順にし、真中に 0000 を追加
+     * 例)BD アドレスが< 18:04:ED:3B:7B:18 >の場合
+     * System ID は、< 187B3B0000ED0418 >になる
+     *
+     * @returns value System ID
+     *
+     */
+    async getSystemIdWait() {
+        if (!this._deviceInfoSystem) {
+            if (this._peripheral) {
+                this._deviceInfoSystem = this._peripheral.getService(this._uuids.deviceInfoSystem);
+                if (!this._deviceInfoSystem) {
+                    await this._peripheral.disconnectWait();
+                    throw new Error('device info service is not find.');
+                }
+                await this._deviceInfoSystem.discoverAllCharacteristicsWait();
+            }
+            else {
+                throw new Error('device is not connected');
+            }
+        }
+        const char = await this._deviceInfoSystem.getCharacteristic(this._uuids.systemId);
+        if (!char) {
+            return null;
+        }
+        const data = await char.readWait();
+        return data.reduce((previousValue, currentValue) => previousValue +
+            ('00' + currentValue.toString(16).toUpperCase()).slice(-2), '');
+    }
+    /**
+     * Get the FirmwareVersion from the sensor
+     *
+     * FW バージョン
+     * 例) “0.04(2020/09/04)”
+     *
+     * @returns value FW バージョン
+     *
+     */
+    async getFirmwareVersionWait() {
+        if (!this._deviceInfoSystem) {
+            if (this._peripheral) {
+                this._deviceInfoSystem = this._peripheral.getService(this._uuids.deviceInfoSystem);
+                if (!this._deviceInfoSystem) {
+                    await this._peripheral.disconnectWait();
+                    throw new Error('device info service is not find.');
+                }
+                await this._deviceInfoSystem.discoverAllCharacteristicsWait();
+            }
+            else {
+                throw new Error('device is not connected');
+            }
+        }
+        const char = await this._deviceInfoSystem.getCharacteristic(this._uuids.firmwareVersion);
+        if (!char) {
+            return null;
+        }
+        return char.readTextWait();
+    }
+    /**
+     * DR MARKにコマンドを送る
+     *
+     * @param commandId REQUESTコマンド(00h ～ 7Fh)
+     * @param data 送信データ(詳細は下記)
+     *
+     * 17 Bytes 固定
+     * 使われない領域は、00h にクリア
+     * 2Bytes 以上のデータ(WORD, DWORD 等)は、LITTLE-ENDIAN
+     */
+    async writeCommandWait(commandId, data) {
+        if (!this._requestChar) {
+            throw new Error('device is not connected');
+        }
+        if (commandId < 0 || commandId > 255) {
+            throw new Error('commandId range 0 <= commandId <= 255');
+        }
+        let array;
+        if (data) {
+            console.log('writeCommandWait data', data);
+            if (data.length === 17) {
+                array = data;
+            }
+            else {
+                array = new Uint8Array(17).fill(0);
+                data.forEach((value, index) => (array[index] = value));
+            }
+        }
+        else {
+            array = new Uint8Array(17).fill(0);
+        }
+        console.log('writeCommandWait array', array);
+        await this._requestChar.writeWait(new Uint8Array([commandId, ...array]));
+    }
+    /**
+     * 動作モード取得
+     */
+    async getActionModeWait() {
+        const data = await this.getCommandResultWait(0x00);
+        console.log('data.data[0]', data.data[0]);
+        let res = 'stop';
+        switch (data.data[0]) {
+            case 1:
+                res = 'stop';
+                break;
+            case 2:
+                res = 'adjust';
+                break;
+            case 3:
+                res = 'monitor';
+                break;
+            case 4:
+                res = 'suspend';
+                break;
+            case 5:
+                res = 'finish';
+                break;
+            case 6:
+                res = 'log';
+                break;
+        }
+        return res;
+    }
+    /**
+     * 動作モード設定
+     *
+     * @param mode 動作モード
+     */
+    async setActionModeWait(mode) {
+        switch (mode) {
+            case 'start':
+                await this.getCommandResultWait(0x01);
+                break;
+            case 'stop':
+                await this.getCommandResultWait(0x02);
+                break;
+            case 'adjust':
+                await this.getCommandResultWait(0x03);
+                break;
+            case 'monitor':
+                await this.getCommandResultWait(0x04);
+                break;
+            case 'pause':
+                await this.getCommandResultWait(0x05);
+                break;
+            case 'log':
+                await this.getCommandResultWait(0x06);
+                break;
+        }
+    }
+    /**
+     * RTC set
+     *
+     * @param timeOffsetMinute 時差を入れる
+     */
+    async setRtcWait(timeOffsetMinute) {
+        const date = new Date();
+        date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
+        const buf = Buffer.alloc(8);
+        buf.writeUInt32LE(date.getUTCFullYear() * 10000 +
+            (date.getUTCMonth() + 1) * 100 +
+            date.getUTCDate(), 0);
+        buf.writeUInt32LE(date.getUTCHours() * 10000 +
+            date.getUTCMinutes() * 100 +
+            date.getUTCSeconds(), 4);
+        await this.getCommandResultWait(0x10, Uint8Array.from(buf));
+    }
+    /**
+     * RTC get
+     *
+     * @param timeOffsetMinute 時差を入れる
+     */
+    async getRtcWait(timeOffsetMinute) {
+        const data = await this.getCommandResultWait(0x11);
+        const buffer = Buffer.from(data.data);
+        const d = String('00000000' + buffer.readUInt32LE(0))
+            .slice(-8)
+            .match(/.{2}/g);
+        const t = String('00000000' + buffer.readUInt32LE(4))
+            .slice(-8)
+            .match(/.{2}/g);
+        if (d === null || t === null) {
+            throw new Error('rtc error');
+        }
+        const date = new Date(`${d[0]}${d[1]}/${d[2]}/${d[3]} ${t[1]}:${t[2]}:${t[3]}`);
+        date.setTime(date.getTime() + 1000 * 60 * timeOffsetMinute);
+        return date;
+    }
+    /**
+     * 接続確認
+     */
+    async checkConnectWait() {
+        await this.getCommandResultWait(0x12);
+    }
+    /**
+     * 計測データ送信リクエスト
+     */
+    async requestPulseDataWait(enable) {
+        await this.getCommandResultWait(0x21, new Uint8Array([enable ? 1 : 0]));
+    }
+    /**
+     * 計測条件設定
+     *
+     * @param infusionDropCount 輸液セットタイプ default 20滴
+     * @param targetSumFlowRate 設定量 (ml) default 500ml
+     * @param targetFlowRate 目標流量(ml/h) default 250ml/h
+     * @param correctionFactor 流量を補正する(-20% ～ 20%) default 0%
+     */
+    async setConditionSettingWait(infusionDropCount, targetSumFlowRate, targetFlowRate, correctionFactor) {
+        const buf = Buffer.alloc(8);
+        buf.writeUInt16LE(infusionDropCount, 0);
+        buf.writeUInt16LE(targetSumFlowRate, 2);
+        buf.writeUInt16LE(targetFlowRate, 4);
+        buf.writeUInt16LE(correctionFactor, 6);
+        await this.getCommandResultWait(0x22, Uint8Array.from(buf));
+    }
+    /**
+     * 基本設定
+     *
+     * @param effectiveInstantFlowRate 有効瞬時流量(%) 瞬時流量判定に使用 目標流量に対する瞬時流量の差分 default 30%
+     * @param finishJudgmentSec 輸液終了判定時間(秒後) 輸液終了判定（センサ信号無応答時間） default 60秒後
+     * @param effectiveIntegratedFlowRate 有効積算流量(%) 総積算流量を判定する ※計測中の流量異常判定無効区間を算出 default 10%
+     * @param powerOffSec 自動電源断時間(秒後) default 60秒後
+     */
+    async setBaseSettingWait(effectiveInstantFlowRate, finishJudgmentSec, effectiveIntegratedFlowRate, powerOffSec) {
+        const buf = Buffer.alloc(4);
+        buf.writeUInt8(effectiveInstantFlowRate, 0);
+        buf.writeUInt8(finishJudgmentSec, 1);
+        buf.writeUInt8(effectiveIntegratedFlowRate, 2);
+        buf.writeUInt8(powerOffSec, 3);
+        await this.getCommandResultWait(0x23, Uint8Array.from(buf));
+    }
+    /**
+     * エンジニア設定
+     *
+     * @param movingAverage 移動平均回数(回) 最大30回 default 30回
+     * @param lowVoltage Lowバッテリ判定レベル(mv) この電圧値以下で黄色LED ハーフ点灯 default 3400mv
+     * @param shutdownVoltage バッテリ電源断レベル(mv) この電圧値以下で電源断実行 default 3300mv
+     * @param offsetSec 時刻補正(秒) 時刻設定時の遅延時間補正 default 0秒
+     */
+    async setEngineerSettingWait(movingAverage, lowVoltage, shutdownVoltage, offsetSec) {
+        if (movingAverage > 30 || movingAverage < 0) {
+            throw new Error('movingAverage 0 <= movingAverage <= 30');
+        }
+        const buf = Buffer.alloc(8);
+        buf.writeUInt16LE(movingAverage, 0);
+        buf.writeUInt16LE(lowVoltage, 2);
+        buf.writeUInt16LE(shutdownVoltage, 4);
+        buf.writeUInt16LE(offsetSec, 6);
+        await this.getCommandResultWait(0x24, Uint8Array.from(buf));
+    }
+    /**
+     * LED設定
+     *
+     * @param bright LED 調光(trueの時明るい)
+     */
+    async setLedSettingWait(bright) {
+        const buf = Buffer.alloc(1);
+        buf.writeUInt8(bright ? 1 : 0, 0);
+        await this.getCommandResultWait(0x25, Uint8Array.from(buf));
+    }
+    /**
+     * 計測条件取得
+     *
+     * @return ConditionSettingData
+     */
+    async getConditionSettingWait() {
+        const data = await this.getCommandResultWait(0x28);
+        const buffer = Buffer.from(data.data);
+        return {
+            infusionDropCount: buffer.readUInt16LE(0),
+            targetSumFlowRate: buffer.readUInt16LE(2),
+            targetFlowRate: buffer.readUInt16LE(4),
+            correctionFactor: buffer.readUInt16LE(6),
+        };
+    }
+    /**
+     * 基本設定取得
+     *
+     * @return BaseSettingData
+     */
+    async getBaseSettingWait() {
+        const data = await this.getCommandResultWait(0x29);
+        const buffer = Buffer.from(data.data);
+        return {
+            effectiveInstantFlowRate: buffer.readUInt8(0),
+            finishJudgmentSec: buffer.readUInt8(1),
+            effectiveIntegratedFlowRate: buffer.readUInt8(2),
+            powerOffSec: buffer.readUInt8(3),
+        };
+    }
+    /**
+     * エンジニア設定
+     *
+     * @return EngineerSettingData
+     */
+    async getEngineerSettingWait() {
+        const data = await this.getCommandResultWait(0x2a);
+        const buffer = Buffer.from(data.data);
+        return {
+            movingAverage: buffer.readUInt16LE(0),
+            lowVoltage: buffer.readUInt16LE(2),
+            shutdownVoltage: buffer.readUInt16LE(4),
+            offsetSec: buffer.readUInt16LE(6),
+        };
+    }
+    /**
+     * LED設定
+     *
+     * @return true:bright mode
+     */
+    async isBrightLedWait() {
+        const data = await this.getCommandResultWait(0x2b);
+        const buffer = Buffer.from(data.data);
+        return Boolean(buffer.readUInt8(0));
+    }
+    /**
+     * 電圧値読出し
+     *
+     * @return バッテリ電圧（mV）
+     */
+    async getBatteryVoltageWait() {
+        const data = await this.getCommandResultWait(0x2c);
+        const buffer = Buffer.from(data.data);
+        return buffer.readUInt16LE(0);
+    }
+    /**
+     * Pulseデータをの取得を開始
+     */
+    async startPulseDataWait() {
+        DR_MARK.pulseDataArray = [];
+        await this.requestPulseDataWait(true);
+    }
+    /**
+     * Pulseデータの取得を停止かつ、開始時からのパルスデータの配列を返却
+     */
+    async stopPulseDataWait() {
+        await this.requestPulseDataWait(false);
+        return DR_MARK.pulseDataArray;
+    }
+    /**
+     * Pulseデータを1件取得する
+     */
+    async getPulseDataWait(timeoutMs) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => reject(new Error('timeout')), timeoutMs ? timeoutMs : 5000);
+            DR_MARK.onsystempulse = (data) => {
+                DR_MARK.onsystempulse = null;
+                this.requestPulseDataWait(false).then(() => resolve(data));
+            };
+            this.requestPulseDataWait(true);
+        });
+    }
+    async getCommandResultWait(commandId, data, timeoutMs) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => reject(new Error(`timeout command:${commandId}`)), timeoutMs ? timeoutMs : 5000);
+            // callbackは0x80を加算する
+            this.setCommandCallback(commandId + 0x80, (notifyData) => {
+                this.removeCommandCallback(commandId + 0x80);
+                if (notifyData.result !== 'ok') {
+                    reject(new Error(`id:${notifyData.commandId},error:${notifyData.result}`));
+                }
+                resolve(notifyData);
+            });
+            this.writeCommandWait(commandId, data);
+        });
+    }
+    setCommandCallback(commandId, callback) {
+        DR_MARK.callbackArray = [
+            ...DR_MARK.callbackArray,
+            { commandId, function: callback },
+        ];
+    }
+    removeCommandCallback(commandId) {
+        DR_MARK.callbackArray = DR_MARK.callbackArray.filter((value) => value.commandId !== commandId);
+    }
+    notifyCallback(data) {
+        let result = 'errorId';
+        switch (data[1]) {
+            case 0:
+                result = 'ok';
+                break;
+            case 0xf0:
+                result = 'errorId';
+                break;
+            case 0xf1:
+                result = 'errorMode';
+                break;
+            case 0xf2:
+                result = 'errorExecution';
+                break;
+            case 0xf3:
+                result = 'errorParams';
+                break;
+            case 0xf4:
+                result = 'errorFrom';
+                break;
+            case 0xf5:
+                result = 'errorTimeout';
+                break;
+            case 0xf6:
+                result = 'errorObject';
+                break;
+        }
+        const notifyData = {
+            commandId: data[0],
+            result,
+            data: data.slice(2),
+        };
+        console.log('notifyData', notifyData);
+        if (DR_MARK.onnotify && typeof DR_MARK.onnotify === 'function') {
+            DR_MARK.onnotify(notifyData);
+        }
+        if (DR_MARK.onfinish &&
+            typeof DR_MARK.onfinish === 'function' &&
+            notifyData.commandId === 0x88) {
+            DR_MARK.onfinish();
+        }
+        const callback = DR_MARK.callbackArray.filter((value) => value.commandId === notifyData.commandId);
+        callback.forEach((value) => value.function(notifyData));
+        if (notifyData.commandId === 0xa0) {
+            const buffer = Buffer.from(notifyData.data);
+            const status = buffer.readUInt8(7);
+            const scanData = {
+                sequenceNumber: buffer.readUInt32LE(0),
+                pulse: buffer.readUInt32LE(4) & 0x0fff,
+                status,
+                error: {
+                    outRange: Boolean(status & 0b01000000),
+                    changeSetting: Boolean(status & 0b00100000),
+                    overSumFlow: Boolean(status & 0b00010000),
+                    lowInstantFlow: Boolean(status & 0b00001000),
+                    highInstantFlow: Boolean(status & 0b00000100),
+                    shutdownBattery: Boolean(status & 0b00000010),
+                    lowBattery: Boolean(status & 0b00000001),
+                    isError: Boolean(status),
+                },
+                instantFlowRate: buffer.readUInt16LE(8),
+                sumFlowRate: buffer.readUInt16LE(10),
+                averageFlowRate: buffer.readUInt16LE(12),
+                batteryVoltage: buffer.readUInt16LE(14),
+            };
+            DR_MARK.pulseDataArray.push(scanData);
+            if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
+                DR_MARK.onpulse(scanData);
+            }
+            if (DR_MARK.onsystempulse &&
+                typeof DR_MARK.onsystempulse === 'function') {
+                DR_MARK.onsystempulse(scanData);
+            }
+            console.log('Pulse Data', JSON.stringify(scanData));
+        }
+    }
+}
+exports.default = DR_MARK;
+DR_MARK.onnotify = null;
+DR_MARK.onfinish = null;
+DR_MARK.onpulse = null;
+DR_MARK.onsystempulse = null;
+DR_MARK.callbackArray = [];
+DR_MARK.pulseDataArray = [];
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/node-libs-browser/node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/ENERTALK/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26976,11 +27540,8 @@ exports.default = OMRON_2JCIE;
  * @module Parts.ENERTALK_TOUCH
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
+const batteryService_1 = __webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js");
 /** ENERTALK TOUCH management class ENERTALK TOUCHを管理するクラス */
 class ENERTALK_TOUCH {
     constructor(peripheral) {
@@ -27056,7 +27617,7 @@ class ENERTALK_TOUCH {
         this._accelerometerChar = this._service.getCharacteristic(this._uuids.accelerometerChar);
         const service180F = this._peripheral.getService('180F');
         if (service180F) {
-            this.batteryService = new batteryService_1.default(service180F);
+            this.batteryService = new batteryService_1.BleBatteryService(service180F);
         }
     }
     /**
@@ -27656,6 +28217,199 @@ class GT_7510 {
     }
 }
 exports.default = GT_7510;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/node-libs-browser/node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/GX_3R_Pro/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.GX_3R_Pro
+ */
+/* eslint rulesdir/non-ascii: 0 */
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+const serial_executor_1 = __webpack_require__("./node_modules/@9wick/serial-executor/dist/index.js");
+/** GX_3R_Pro management class GX_3R_Proを管理するクラス */
+class GX_3R_Pro extends ObnizPartsBleInterface_1.ObnizPartsBleInterface {
+    constructor(peripheral) {
+        super();
+        this.code = {
+            STX: 0x02,
+            ETX: 0x03,
+            ACK: 0x06,
+            NAK: 0x15,
+            ETB: 0x17,
+            EOT: 0x04,
+            CR: 0x0d,
+            SUB: 0x1a,
+        };
+        this.event = new eventemitter3_1.default();
+        this.serialExecutor = (0, serial_executor_1.createSerialExecutor)();
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'GX_3R_Pro',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the GX_3R_Pro
+     *
+     * 受け取ったperipheralがGX_3R_Proのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the GX_3R_Pro
+     *
+     * GX_3R_Proかどうか
+     */
+    static isDevice(peripheral) {
+        var _a;
+        return !!((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('GX3RPro-'));
+    }
+    async connectWait() {
+        if (!this._peripheral.connected) {
+            await this._peripheral.connectWait();
+        }
+        const gasService = this._peripheral.getService('5699d362-0c53-11e7-93ae-92361f002671');
+        this.gasCharRx = gasService.getCharacteristic('5699d646-0c53-11e7-93ae-92361f002671');
+        this.gasCharTx = gasService.getCharacteristic('5699d772-0c53-11e7-93ae-92361f002671');
+        let gasCharRxReceives = [];
+        await this.gasCharRx.registerNotifyWait((data) => {
+            gasCharRxReceives.push(...data);
+            // console.log(`gasCharRx: ${Buffer.from(data).toString('hex')}`);
+            const tryParse = this.parseCommand(gasCharRxReceives);
+            if (!tryParse) {
+                return;
+            }
+            // console.log('parsed', tryParse);
+            gasCharRxReceives = [];
+            this.event.emit('data', tryParse);
+        });
+        this.settingCharRx = gasService.getCharacteristic('5699d647-0c53-11e7-93ae-92361f002671');
+        this.settingCharTx = gasService.getCharacteristic('5699d773-0c53-11e7-93ae-92361f002671');
+    }
+    async sendCommandWait(command, subCommand, data) {
+        const address = '00';
+        const channel = '00';
+        const payload = [
+            this.code.STX,
+            ...Array.from(Buffer.from(address.toUpperCase())),
+            ...Array.from(Buffer.from(channel.toUpperCase())),
+            ...Array.from(Buffer.from(command.toUpperCase())),
+            ...Array.from(Buffer.from(',')),
+            ...Array.from(Buffer.from(subCommand.toUpperCase())),
+            ...Array.from(Buffer.from(',')),
+            ...data,
+            this.code.ETX,
+        ];
+        const packet = [...payload, ...this.calcChecksum(payload), this.code.EOT];
+        return await this.serialExecutor.execute(async () => {
+            if (!this._peripheral.connected || !this.gasCharTx) {
+                throw new Error('peripheral is not connected');
+            }
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const responsePromise = new Promise((resolve, reject) => {
+                this.event.once('data', resolve);
+            });
+            await this.gasCharTx.writeWait(packet);
+            // console.log(`send ${Buffer.from(packet).toString('hex')}`);
+            const response = await responsePromise;
+            return response;
+        });
+    }
+    calcChecksum(buf) {
+        const sum = buf.reduce((a, b) => a + b);
+        // console.log(`sum: 0x${sum.toString(16)}`);
+        const checksum = Buffer.alloc(2);
+        checksum.writeInt16BE(-sum, 0);
+        // console.log(`rsum: 0x${checksum.toString('hex')}`);
+        return Buffer.from(Buffer.from([checksum.readUInt8(1)])
+            .toString('hex')
+            .toUpperCase());
+    }
+    parseCommand(data) {
+        const analyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+            .addTarget('STX', [0x02])
+            .addTarget('address', [-1, -1])
+            .addTarget('channel', [-1, -1])
+            .addTarget('command', [-1, -1])
+            .addTarget('comma1', [...Buffer.from(',')])
+            .addTarget('subCommand', [-1])
+            .addTarget('comma2', [...Buffer.from(',')])
+            .addTargetByLength('data', data.length - 14)
+            .addTarget('EXT', [this.code.ETX])
+            .addTargetByLength('checkSum', 2)
+            .addTarget('EOT', [this.code.EOT]);
+        const parsed = analyzer.getAllData(data);
+        if (!parsed) {
+            return null;
+        }
+        return {
+            address: Buffer.from(parsed.address).toString('utf8'),
+            channel: Buffer.from(parsed.channel).toString('utf8'),
+            command: Buffer.from(parsed.command).toString('utf8'),
+            subCommand: Buffer.from(parsed.subCommand).toString('utf8'),
+            data: parsed.data,
+            dataString: Buffer.from(parsed.data).toString('utf8'),
+        };
+    }
+    async getGasSettingsWait() {
+        const gj = await this.sendCommandWait('GJ', 'R', []);
+        const gjc = gj === null || gj === void 0 ? void 0 : gj.dataString.split(',');
+        const results = [];
+        if (gjc) {
+            for (const one of gjc) {
+                if (one.length !== 33) {
+                    continue;
+                }
+                const displayName = one.slice(0, 3).trim();
+                const gasName = one.slice(3, 13).trim();
+                const fullScale = one.slice(13, 21).trim();
+                const digit = one.slice(21, 29).trim();
+                const unit = one.slice(29, 33).trim();
+                results.push({
+                    displayName,
+                    gasName,
+                    fullScale,
+                    digit,
+                    unit,
+                });
+            }
+        }
+        return results;
+    }
+    async getDataWait() {
+        const gasSettings = await this.getGasSettingsWait();
+        // console.log(gasSettings);
+        const dh = await this.sendCommandWait('DH', 'R', []);
+        const dhc = dh === null || dh === void 0 ? void 0 : dh.dataString.split(',');
+        if (!dhc) {
+            return null;
+        }
+        const gas = [];
+        for (let i = 0; i < 5; i++) {
+            if (gasSettings.length > i && dhc.length > 5 + i) {
+                gas.push(Object.assign(Object.assign({}, gasSettings[i]), { value: Number(dhc[5 + i].split(' ').join('')) }));
+            }
+        }
+        return { battery: Number(dhc[3]), gas };
+    }
+}
+exports.default = GX_3R_Pro;
+GX_3R_Pro.partsName = 'GX_3R_Pro';
+GX_3R_Pro.availableBleMode = 'Connectable';
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/node-libs-browser/node_modules/buffer/index.js").Buffer))
 
@@ -28322,9 +29076,8 @@ class INKBIRD {
      * INKBIRDかどうか
      */
     static isDevice(peripheral) {
-        if (peripheral.adv_data && peripheral.scan_resp) {
-            return (INKBIRD._deviceAdvAnalyzer.validate(peripheral.adv_data) &&
-                INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp));
+        if (peripheral.scan_resp) {
+            return INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp);
         }
         else {
             return false;
@@ -28371,13 +29124,6 @@ class INKBIRD {
     }
 }
 exports.default = INKBIRD;
-INKBIRD._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
-    .addTarget('flag', [0x02, 0x01, 0x06])
-    .groupStart('manufacture')
-    .addTarget('length', [0x03])
-    .addTarget('type', [0x02])
-    .addTargetByLength('uuid', 2)
-    .groupEnd();
 INKBIRD._deviceScanResponseAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
     .groupStart('scanData')
     .addTarget('length2', [0x04])
@@ -31011,11 +31757,11 @@ class PLS_01BT {
          * 計測結果を受け取ったときにコールバック
          */
         this.onmeasured = null;
+        this._peripheral = null;
         this._uuids = {
             service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
             rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
         };
-        this._peripheral = null;
         this._rxCharacteristic = null;
         this._txCharacteristic = null;
         if (peripheral && !PLS_01BT.isDevice(peripheral)) {
@@ -41136,13 +41882,10 @@ exports.default = uPRISM;
  * @module Parts.Logtta
  */
 /* eslint rulesdir/non-ascii: 0 */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
-const batteryService_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js"));
-const genericAccess_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js"));
+const batteryService_1 = __webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js");
+const genericAccess_1 = __webpack_require__("./dist/src/parts/Ble/utils/services/genericAccess.js");
 const PinCodeFlag = {
     Authentication: 0x00,
     Rewrite: 0x01,
@@ -41169,11 +41912,11 @@ class Logtta extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await super.connectWait(keys);
         const service1800 = this.peripheral.getService('1800');
         if (service1800) {
-            this.genericAccess = new genericAccess_1.default(service1800);
+            this.genericAccess = new genericAccess_1.BleGenericAccess(service1800);
         }
         const service180F = this.peripheral.getService('180F');
         if (service180F) {
-            this.batteryService = new batteryService_1.default(service180F);
+            this.batteryService = new batteryService_1.BleBatteryService(service180F);
         }
     }
     async beforeOnDisconnectWait() {
@@ -42997,6 +43740,7 @@ exports.BleAdvBinaryAnalyzer = BleAdvBinaryAnalyzer;
  * @module Parts.utils.services
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleBatteryService = void 0;
 class BleBatteryService {
     constructor(service) {
         this._service = service;
@@ -43012,7 +43756,7 @@ class BleBatteryService {
         return this.getBatteryLevelWait();
     }
 }
-exports.default = BleBatteryService;
+exports.BleBatteryService = BleBatteryService;
 
 
 /***/ }),
@@ -43027,6 +43771,7 @@ exports.default = BleBatteryService;
  * @module Parts.utils.services
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleGenericAccess = void 0;
 class BleGenericAccess {
     constructor(service) {
         this._service = service;
@@ -43039,7 +43784,7 @@ class BleGenericAccess {
         return await char.readTextWait();
     }
 }
-exports.default = BleGenericAccess;
+exports.BleGenericAccess = BleGenericAccess;
 
 
 /***/ }),
@@ -83495,7 +84240,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 

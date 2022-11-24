@@ -21,3 +21,6 @@ log
 /test/test*.ts
 .vscode
 /.run/
+/.env.realtest
+/.env.realtest
+

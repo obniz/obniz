@@ -7,7 +7,7 @@ let checkBoard;
 let check_io;
 
 describe('6-i2c-exchange', function () {
-  this.timeout(10000);
+  this.timeout(10000 * (config.json.long_timeout || 1));
 
   before(async function () {
     config.waitForConenct();

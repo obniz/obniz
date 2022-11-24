@@ -4,4 +4,8 @@
     "sourceMap": true,
     "moduleSuffixes": [".debug", ""]
   },
+  "include": [
+    "./src/obniz/**/*.ts",
+    "./package.json"
+  ]
 }

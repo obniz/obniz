@@ -10,7 +10,7 @@ import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemote
 import { BleRemoteService } from '../../../obniz/libs/embeds/bleHci/bleRemoteService';
 import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
-import BleBatteryService from '../utils/services/batteryService';
+import { BleBatteryService } from '../utils/services/batteryService';
 
 export interface ENERTALK_TOUCHOptions {}
 

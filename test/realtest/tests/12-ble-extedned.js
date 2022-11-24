@@ -7,7 +7,7 @@ let obnizA;
 let checkBoard;
 
 describe('8-ble', function () {
-  this.timeout(120000);
+  this.timeout(120000 * (config.json.long_timeout || 1));
   before(async function () {
     await config.waitForConenct();
     obnizA = config.obnizA;

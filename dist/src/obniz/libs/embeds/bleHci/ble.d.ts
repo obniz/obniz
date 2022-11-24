@@ -17,7 +17,7 @@ import { BleAdvertisement } from './bleAdvertisement';
 import { BleCharacteristic } from './bleCharacteristic';
 import { BleDescriptor } from './bleDescriptor';
 import { BlePeripheral } from './blePeripheral';
-import { BleRemotePeripheral } from './bleRemotePeripheral';
+import { BleConnectSetting, BleRemotePeripheral } from './bleRemotePeripheral';
 import { BleScan } from './bleScan';
 import { BleService } from './bleService';
 import { BleDeviceAddress, BleDeviceAddressType, BleSupportType, UUID } from './bleTypes';
@@ -145,7 +145,7 @@ export declare class ObnizBLE extends ComponentAbstract {
      *
      * @deprecated replaced by {@link #directConnectWait()}
      */
-    directConnect(address: BleDeviceAddress, addressType: BleDeviceAddressType): BleRemotePeripheral | null;
+    directConnect(address: BleDeviceAddress, addressType: BleDeviceAddressType, connectionSetting?: BleConnectSetting): BleRemotePeripheral | null;
     /**
      * Connect to peripheral without scanning, and wait to finish connecting.
      *
@@ -166,7 +166,7 @@ export declare class ObnizBLE extends ComponentAbstract {
      * @param address peripheral device address
      * @param addressType "random" or "public"
      */
-    directConnectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType): Promise<BleRemotePeripheral>;
+    directConnectWait(address: BleDeviceAddress, addressType: BleDeviceAddressType, connectionSetting?: BleConnectSetting): Promise<BleRemotePeripheral>;
     /**
      * Return connected peripherals.
      *

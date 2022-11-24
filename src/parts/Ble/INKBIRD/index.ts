@@ -40,11 +40,8 @@ export default class INKBIRD implements ObnizPartsBleInterface {
    * INKBIRDかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    if (peripheral.adv_data && peripheral.scan_resp) {
-      return (
-        INKBIRD._deviceAdvAnalyzer.validate(peripheral.adv_data) &&
-        INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp)
-      );
+    if (peripheral.scan_resp) {
+      return INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp);
     } else {
       return false;
     }
@@ -103,14 +100,6 @@ export default class INKBIRD implements ObnizPartsBleInterface {
       humidity: humidityRaw / 100,
     };
   }
-
-  private static _deviceAdvAnalyzer = new BleAdvBinaryAnalyzer()
-    .addTarget('flag', [0x02, 0x01, 0x06])
-    .groupStart('manufacture')
-    .addTarget('length', [0x03])
-    .addTarget('type', [0x02])
-    .addTargetByLength('uuid', 2)
-    .groupEnd();
 
   private static _deviceScanResponseAnalyzer = new BleAdvBinaryAnalyzer()
     .groupStart('scanData')

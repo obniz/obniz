@@ -37,9 +37,11 @@ class OMRON_2JCIE {
      * OMRON 環境センサ 2JCIEシリーズかどうか
      */
     static isDevice(peripheral) {
-        return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
+        if (peripheral.localName === null)
+            return false;
+        return (peripheral.localName.indexOf('Env') >= 0 ||
+            peripheral.localName.indexOf('IM') >= 0 ||
+            peripheral.localName.indexOf('Rbt') >= 0);
     }
     /**
      * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON

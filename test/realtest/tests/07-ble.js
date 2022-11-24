@@ -4,7 +4,7 @@ let obnizA;
 let checkBoard;
 
 describe('7-ble', function () {
-  this.timeout(30000);
+  this.timeout(40000 * (config.json.long_timeout || 1));
 
   before(async () => {
     await config.waitForConenct();

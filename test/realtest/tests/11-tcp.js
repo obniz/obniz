@@ -16,7 +16,7 @@ const MAX_TCP_CONNECTION = 8;
 const tcpArray = [];
 
 describe('11-tcp', function () {
-  this.timeout(30000);
+  this.timeout(30000 * (config.json.long_timeout || 1));
 
   before(async function () {
     if (process.env.IGNORE_TCP_TEST === 'true') {
