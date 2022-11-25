@@ -299,9 +299,9 @@ import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
 import TT_MSK1508, { TT_MSK1508Options } from '../parts/Ble/TT-MSK1508';
 import INKBIRD, { INKBIRDOptions } from '../parts/Ble/INKBIRD';
 import DR_MARK, { DR_MARKOptions } from '../parts/Ble/DR_MARK';
-import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
 import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
 import GX_3R_Pro, { GX_3R_Pro_Options } from '../parts/Ble/GX_3R_Pro';
+import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
 
 export type PartsType = keyof PartsList;
 
@@ -742,4 +742,5 @@ export interface PartsList {
   GT_7510: PartsInterface<GT_7510, GT_7510Options, typeof GT_7510>;
   DR_MARK: PartsInterface<DR_MARK, DR_MARKOptions, typeof DR_MARK>;
   GX_3R_Pro: PartsInterface<GX_3R_Pro, GX_3R_Pro_Options, typeof GX_3R_Pro>;
+  Tr4A: PartsInterface<Tr4A, Tr4AOptions, typeof Tr4A>;
 }
