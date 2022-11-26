@@ -18,6 +18,7 @@ import {
 import { Triaxial } from './ObnizParts';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
+import { UUID } from './libs/embeds/bleHci/bleTypes';
 
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'] as const;
 
@@ -740,8 +741,8 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * @returns Instance of BleRemoteCharacteristic
    */
   protected getChar(
-    serviceUuid: string,
-    characteristicUuid: string
+    serviceUuid: UUID,
+    characteristicUuid: UUID
   ): BleRemoteCharacteristic {
     const service = this.peripheral.getService(serviceUuid);
     if (!service)
@@ -769,8 +770,8 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * @returns Data read result データ読み取り結果
    */
   protected async readCharWait(
-    serviceUuid: string,
-    characteristicUuid: string
+    serviceUuid: UUID,
+    characteristicUuid: UUID
   ): Promise<number[]> {
     const char = this.getChar(serviceUuid, characteristicUuid);
     return await char.readWait();
@@ -787,8 +788,8 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * @returns Data write result
    */
   protected async writeCharWait(
-    serviceUuid: string,
-    characteristicUuid: string,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
     data?: number[],
     needResponse?: boolean
   ): Promise<boolean> {
@@ -806,8 +807,8 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * @param callback It is called when data comes
    */
   protected async subscribeWait(
-    serviceUuid: string,
-    characteristicUuid: string,
+    serviceUuid: UUID,
+    characteristicUuid: UUID,
     callback?: (data: number[]) => void | Promise<void>
   ): Promise<void> {
     const characteristic = this.getChar(serviceUuid, characteristicUuid);
@@ -828,8 +829,8 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * @param characteristicUuid Characteristic UUID
    */
   protected async unsubscribeWait(
-    serviceUuid: string,
-    characteristicUuid: string
+    serviceUuid: UUID,
+    characteristicUuid: UUID
   ): Promise<void> {
     const characteristic = this.getChar(serviceUuid, characteristicUuid);
     await characteristic.unregisterNotifyWait();

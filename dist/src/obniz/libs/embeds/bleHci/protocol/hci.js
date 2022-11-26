@@ -836,7 +836,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt8(0x00, 4); // Initiating_Filter_Policy ホワイトリストは使用しません
         cmd.writeUInt8(0x00, 5); // Own_Address_Type 公開端末アドレス
         cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 6); // peer address type
-        bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 7); // peer address
+        bleHelper_1.default.hex2reversedBuffer(address).copy(cmd, 7); // peer address
         cmd.writeUInt8(booleanToNumber(pyh1m) +
             booleanToNumber(pyh2m) * 2 +
             booleanToNumber(pyhCoded) * 4, 13); // Initiating_PHY
@@ -899,7 +899,7 @@ class Hci extends eventemitter3_1.default {
     async readBdAddrWait() {
         const data = await this.writeNoParamCommandWait(COMMANDS.READ_BD_ADDR_CMD, 'read bd addr');
         this.addressType = 'public';
-        this.address = bleHelper_1.default.buffer2reversedHex(data.result, ':');
+        this.address = bleHelper_1.default.addColon(bleHelper_1.default.buffer2reversedHex(data.result));
         this.debug('address = ' + this.address);
         return this.address;
     }
@@ -1016,7 +1016,7 @@ class Hci extends eventemitter3_1.default {
         cmd.writeUInt16LE(parameter.window, 6); // window
         cmd.writeUInt8(parameter.initiatorFilter, 8); // initiator filter
         cmd.writeUInt8(addressType === 'random' ? 0x01 : 0x00, 9); // peer address type
-        bleHelper_1.default.hex2reversedBuffer(address, ':').copy(cmd, 10); // peer address
+        bleHelper_1.default.hex2reversedBuffer(address).copy(cmd, 10); // peer address
         cmd.writeUInt8(0x00, 16); // own address type
         cmd.writeUInt16LE(parameter.minInterval, 17); // min interval 9 * 1.25 msec => 7.5msec (close to android)
         cmd.writeUInt16LE(parameter.maxInterval, 19); // max interval 24 * 1.25 msec => 30msec (close to ios)
@@ -1397,7 +1397,7 @@ class Hci extends eventemitter3_1.default {
             addressType: (data.readUInt8(3) === 0x01
                 ? 'random'
                 : 'public'),
-            address: bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ':'),
+            address: bleHelper_1.default.addColon(bleHelper_1.default.buffer2reversedHex(data.slice(4, 10))),
             interval: data.readUInt16LE(10) * 1.25,
             latency: data.readUInt16LE(12),
             supervisionTimeout: data.readUInt16LE(14) * 10,
@@ -1416,9 +1416,9 @@ class Hci extends eventemitter3_1.default {
             handle: data.readUInt16LE(0),
             role: data.readUInt8(2),
             addressType: (_a = addressTypeList[data.readUInt8(3)]) !== null && _a !== void 0 ? _a : 'undefined',
-            address: bleHelper_1.default.buffer2reversedHex(data.slice(4, 10), ':'),
-            localResolvablePrivateAddress: bleHelper_1.default.buffer2reversedHex(data.slice(10, 16), ':'),
-            peerResolvablePrivateAddress: bleHelper_1.default.buffer2reversedHex(data.slice(16, 22), ':'),
+            address: bleHelper_1.default.addColon(bleHelper_1.default.buffer2reversedHex(data.slice(4, 10))),
+            localResolvablePrivateAddress: bleHelper_1.default.addColon(bleHelper_1.default.buffer2reversedHex(data.slice(10, 16))),
+            peerResolvablePrivateAddress: bleHelper_1.default.addColon(bleHelper_1.default.buffer2reversedHex(data.slice(16, 22))),
             interval: data.readUInt16LE(22) * 1.25,
             latency: data.readUInt16LE(24),
             supervisionTimeout: data.readUInt16LE(26) * 10,
@@ -1481,7 +1481,7 @@ class Hci extends eventemitter3_1.default {
         for (let i = 0; i < count; i++) {
             const type = data.readUInt16LE(0);
             const addressType = data.readUInt8(2) === 0x01 ? 'random' : 'public';
-            const address = bleHelper_1.default.buffer2reversedHex(data.slice(3, 9), ':');
+            const address = bleHelper_1.default.addColon(bleHelper_1.default.buffer2reversedHex(data.slice(3, 9)));
             const primaryPhy = this.phyToStr(data.readUInt8(9));
             const secondaryPhy = this.phyToStr(data.readUInt8(10));
             const sid = data.readUInt8(11);
@@ -1489,7 +1489,7 @@ class Hci extends eventemitter3_1.default {
             const rssi = data.readInt8(13);
             const periodicAdvertisingInterval = data.readUInt16LE(14);
             const directAddressType = data.readUInt8(16) === 0x01 ? 'random' : 'public';
-            const directAddress = bleHelper_1.default.buffer2reversedHex(data.slice(17, 23), ':');
+            const directAddress = bleHelper_1.default.addColon(bleHelper_1.default.buffer2reversedHex(data.slice(17, 23)));
             const eirLength = data.readUInt8(23);
             let eir = data.slice(24, eirLength + 24);
             this.debug('\t\t\ttype = ' + type);
@@ -1553,7 +1553,7 @@ class Hci extends eventemitter3_1.default {
         for (let i = 0; i < count; i++) {
             const type = data.readUInt8(0);
             const addressType = data.readUInt8(1) === 0x01 ? 'random' : 'public';
-            const address = bleHelper_1.default.buffer2reversedHex(data.slice(2, 8), ':');
+            const address = bleHelper_1.default.addColon(bleHelper_1.default.buffer2reversedHex(data.slice(2, 8)));
             const eirLength = data.readUInt8(8);
             const eir = data.slice(9, eirLength + 9);
             const rssi = data.readInt8(eirLength + 9);

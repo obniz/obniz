@@ -11,6 +11,7 @@ module.exports = {
   },
   parserOptions: {
     ecmaVersion: 2017,
+    project: path.join(__dirname, 'tsconfig.debug.json'),
   },
   extends: ['eslint:recommended', 'plugin:prettier/recommended'],
   plugins: ['rulesdir', 'eslint-plugin-jsdoc', 'eslint-plugin-prefer-arrow'],

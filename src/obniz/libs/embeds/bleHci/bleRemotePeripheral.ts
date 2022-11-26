@@ -1205,7 +1205,7 @@ export class BleRemotePeripheral {
     const power = Buffer.from([data[24]]).readInt8(0);
 
     this.iBeacon = {
-      uuid,
+      uuid: uuid as UUID,
       major,
       minor,
       power,

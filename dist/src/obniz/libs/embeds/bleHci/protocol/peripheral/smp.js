@@ -23,9 +23,9 @@ class Smp extends eventemitter3_1.default {
         this._aclStream = aclStream;
         this._mgmt = new mgmt_1.Mgmt(hciProtocol);
         this._iat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
-        this._ia = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ':');
+        this._ia = bleHelper_1.default.hex2reversedBuffer(remoteAddress);
         this._rat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
-        this._ra = bleHelper_1.default.hex2reversedBuffer(localAddress, ':');
+        this._ra = bleHelper_1.default.hex2reversedBuffer(localAddress);
         this._stk = null;
         this._random = null;
         this._diversifier = null;

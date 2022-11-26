@@ -12,7 +12,7 @@ import {
   ObnizBleUnSupportedPeripheralError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import { BleDeviceAddress, BleDeviceAddressType } from '../../bleTypes';
+import {BleDeviceAddress, BleDeviceAddressReversedBuffer, BleDeviceAddressType} from '../../bleTypes';
 import { AclStream } from './acl-stream';
 import crypto from '../common/crypto';
 import {
@@ -58,9 +58,9 @@ export interface SmpEncryptOptions {
 export class Smp extends EventEmitter<SmpEventTypes> {
   private _aclStream: AclStream;
   private _iat: Buffer;
-  private _ia: Buffer;
+  private _ia: BleDeviceAddressReversedBuffer;
   private _rat: Buffer;
-  private _ra: Buffer;
+  private _ra: BleDeviceAddressReversedBuffer;
   private onAclStreamDataBinded: (cid: number, data: Buffer) => void;
   private onAclStreamEndBinded: () => void;
   private _preq: Buffer | null = null; // pairing Request buffer
@@ -91,9 +91,9 @@ export class Smp extends EventEmitter<SmpEventTypes> {
     this._aclStream = aclStream;
 
     this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
-    this._ia = BleHelper.hex2reversedBuffer(localAddress, ':');
+    this._ia = BleHelper.hex2reversedBuffer(localAddress);
     this._rat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
-    this._ra = BleHelper.hex2reversedBuffer(remoteAddress, ':');
+    this._ra = BleHelper.hex2reversedBuffer(remoteAddress);
 
     this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
     this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);

@@ -6,7 +6,7 @@
 /// <reference types="node" />
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
-import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from '../../bleTypes';
+import { BleDeviceAddress, BleDeviceAddressType, BleDeviceAddressUUID, Handle, UUID } from '../../bleTypes';
 import { HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
 import { SmpEncryptOptions } from './smp';
@@ -15,9 +15,7 @@ declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' 
  * @ignore
  */
 export declare class NobleBindings extends EventEmitter<NobleBindingsEventType> {
-    _connectable: {
-        [key: string]: boolean;
-    };
+    _connectable: Record<BleDeviceAddressUUID, boolean>;
     private _state;
     private _addresses;
     private _addresseTypes;
@@ -36,7 +34,7 @@ export declare class NobleBindings extends EventEmitter<NobleBindingsEventType> 
      */
     _reset(): void;
     debugHandler: any;
-    addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType): void;
+    addPeripheralData(uuid: BleDeviceAddressUUID, addressType: BleDeviceAddressType): void;
     startExtendedScanningWait(serviceUuids: UUID[], allowDuplicates: boolean, activeScan: boolean, usePhy1m: boolean, usePhyCoded: boolean): Promise<void>;
     startScanningWait(serviceUuids: UUID[], allowDuplicates: boolean, activeScan: boolean): Promise<void>;
     stopScanningWait(): Promise<void>;
@@ -59,8 +57,8 @@ export declare class NobleBindings extends EventEmitter<NobleBindingsEventType> 
     onLeConnComplete(status: any, handle: any, role: any, addressType: any, address: BleDeviceAddress, interval: any, latency: any, supervisionTimeout: any, masterClockAccuracy: any): void;
     onDisconnComplete(handle: any, reason: number): void;
     onAclDataPkt(handle: any, cid?: any, data?: any): void;
-    discoverServicesWait(peripheralUuid: any, uuids?: any): Promise<string[]>;
-    discoverIncludedServicesWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, serviceUuids: UUID[]): Promise<string[] | undefined>;
+    discoverServicesWait(peripheralUuid: any, uuids?: any): Promise<UUID[]>;
+    discoverIncludedServicesWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, serviceUuids: UUID[]): Promise<any[] | undefined>;
     discoverCharacteristicsWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuids?: UUID[]): Promise<any[]>;
     readWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID): Promise<Buffer>;
     writeWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID, data: Buffer, withoutResponse: boolean): Promise<void>;

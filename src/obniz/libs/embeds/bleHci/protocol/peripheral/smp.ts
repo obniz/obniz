@@ -48,9 +48,9 @@ export class Smp extends EventEmitter<SmpEventTypes> {
     this._mgmt = new Mgmt(hciProtocol);
 
     this._iat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
-    this._ia = BleHelper.hex2reversedBuffer(remoteAddress, ':');
+    this._ia = BleHelper.hex2reversedBuffer(remoteAddress);
     this._rat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
-    this._ra = BleHelper.hex2reversedBuffer(localAddress, ':');
+    this._ra = BleHelper.hex2reversedBuffer(localAddress);
 
     this._stk = null;
     this._random = null;

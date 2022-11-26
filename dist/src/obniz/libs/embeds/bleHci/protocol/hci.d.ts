@@ -124,7 +124,7 @@ export declare class Hci extends EventEmitter<HciEventTypes> {
         handle: Handle;
         role: number;
         addressType: BleDeviceAddressType;
-        address: BleDeviceAddress;
+        address: import("../bleTypes").BleDeviceColonSeparatedAddress;
         interval: number;
         latency: number;
         supervisionTimeout: number;
@@ -151,7 +151,7 @@ export declare class Hci extends EventEmitter<HciEventTypes> {
         handle: Handle;
         role: number;
         addressType: BleDeviceAddressType;
-        address: BleDeviceAddress;
+        address: import("../bleTypes").BleDeviceColonSeparatedAddress;
         interval: number;
         latency: number;
         supervisionTimeout: number;
@@ -200,7 +200,7 @@ export declare class Hci extends EventEmitter<HciEventTypes> {
         handle: Handle;
         role: number;
         addressType: BleDeviceAddressType;
-        address: BleDeviceAddress;
+        address: import("../bleTypes").BleDeviceColonSeparatedAddress;
         interval: number;
         latency: number;
         supervisionTimeout: number;

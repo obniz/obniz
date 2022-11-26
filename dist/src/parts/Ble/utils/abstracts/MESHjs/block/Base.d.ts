@@ -1,3 +1,4 @@
+import { UUID128 } from '../../../../../../obniz/libs/embeds/bleHci/bleTypes';
 export declare class Base {
     /**
      * Battery level event
@@ -8,12 +9,12 @@ export declare class Base {
      */
     onStatusButtonPressed: (() => void) | null;
     readonly UUIDS: {
-        readonly SERVICE_ID: string;
+        readonly SERVICE_ID: UUID128;
         readonly CHARACTERISTICS: {
-            readonly INDICATE: string;
-            readonly NOTIFY: string;
-            readonly WRITE: string;
-            readonly WRITE_WO_RESPONSE: string;
+            readonly INDICATE: UUID128;
+            readonly NOTIFY: UUID128;
+            readonly WRITE: UUID128;
+            readonly WRITE_WO_RESPONSE: UUID128;
         };
     };
     protected readonly MESSAGE_TYPE_ID_INDEX: 0;

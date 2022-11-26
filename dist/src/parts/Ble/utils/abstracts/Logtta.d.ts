@@ -16,7 +16,7 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<S, T
     };
     static readonly BeaconDataLength: ObnizPartsBleCompare<number | null>;
     static readonly CompanyID: ObnizPartsBleCompare<number[] | null>;
-    protected serviceUuid: string;
+    protected serviceUuid: any;
     protected authenticated: boolean;
     onNotify?: (data: T) => void;
     genericAccess?: BleGenericAccess;

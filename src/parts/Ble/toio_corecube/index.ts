@@ -11,6 +11,7 @@ import {
   ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
+import {UUID128} from "../../../obniz/libs/embeds/bleHci/bleTypes";
 
 export interface Toio_CoreCubeOptions {}
 
@@ -54,12 +55,12 @@ export default class Toio_CoreCube implements ObnizPartsInterface {
   public params: any;
 
   private _uuids = {
-    serviceID: '10B20100-5B3B-4571-9508-CF3EFCD7BBAE',
-    characteristicIDMotor: '10B20102-5B3B-4571-9508-CF3EFCD7BBAE',
-    characteristicIDPos: '10B20101-5B3B-4571-9508-CF3EFCD7BBAE',
-    characteristicIDMotion: '10B20106-5B3B-4571-9508-CF3EFCD7BBAE',
-    characteristicIDButton: '10B20107-5B3B-4571-9508-CF3EFCD7BBAE',
-    characteristicIDBattery: '10B20108-5B3B-4571-9508-CF3EFCD7BBAE',
+    serviceID: '10B20100-5B3B-4571-9508-CF3EFCD7BBAE' as UUID128,
+    characteristicIDMotor: '10B20102-5B3B-4571-9508-CF3EFCD7BBAE' as UUID128,
+    characteristicIDPos: '10B20101-5B3B-4571-9508-CF3EFCD7BBAE' as UUID128,
+    characteristicIDMotion: '10B20106-5B3B-4571-9508-CF3EFCD7BBAE' as UUID128,
+    characteristicIDButton: '10B20107-5B3B-4571-9508-CF3EFCD7BBAE' as UUID128,
+    characteristicIDBattery: '10B20108-5B3B-4571-9508-CF3EFCD7BBAE' as UUID128,
   };
 
   private timeout = 100;

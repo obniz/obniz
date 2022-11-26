@@ -3,10 +3,11 @@
  * @module Parts.Linking
  */
 import { BleRemotePeripheral, BleConnectSetting } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { UUID128 } from '../../../../obniz/libs/embeds/bleHci/bleTypes';
 export default class LinkingDevice {
-    PRIMARY_SERVICE_UUID: string;
-    WRITE_CHARACTERRISTIC_UUID: string;
-    INDICATE_CHARACTERRISTIC_UUID: string;
+    PRIMARY_SERVICE_UUID: UUID128;
+    WRITE_CHARACTERRISTIC_UUID: UUID128;
+    INDICATE_CHARACTERRISTIC_UUID: UUID128;
     info: any;
     advertisement: any;
     connected: boolean;

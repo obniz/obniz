@@ -5,6 +5,8 @@
 import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import Obniz from '../../../obniz';
+import UUID = Obniz.UUID;
 export interface HEM_6233TOptions {
 }
 export declare type HEM_6233TMeasurementStatus = 'BodyMovementDetection' | 'CuffFitDetection' | 'IrregularPulseDetection' | 'PulseRateRangeDetection' | 'MeasurementPositionDetection';
@@ -118,7 +120,7 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
      * @param callback callback function when received data
      * データを受け取ったときのコールバック関数
      */
-    subscribeWait(service: string, char: string, callback?: any): Promise<void>;
+    subscribeWait(service: UUID, char: UUID, callback?: any): Promise<void>;
     /**
      * Set the current time
      *

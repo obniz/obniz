@@ -11,6 +11,7 @@ import {
   ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
+import {UUID128} from "../../../obniz/libs/embeds/bleHci/bleTypes";
 
 export interface RS_BTIREX2Options {}
 
@@ -52,9 +53,9 @@ export default class RS_BTIREX2 implements ObnizPartsInterface {
   public onbuttonpressed: ((pressed: boolean) => void) | null = null;
 
   private _uuids = {
-    service: '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
-    rxChar: '6e400002-b5a3-f393-e0a9-e50e24dcca9e',
-    txChar: '6e400003-b5a3-f393-e0a9-e50e24dcca9e',
+    service: '6e400001-b5a3-f393-e0a9-e50e24dcca9e' as UUID128,
+    rxChar: '6e400002-b5a3-f393-e0a9-e50e24dcca9e' as UUID128,
+    txChar: '6e400003-b5a3-f393-e0a9-e50e24dcca9e' as UUID128,
   };
   private _peripheral: BleRemotePeripheral | null = null;
   private _rxCharacteristic: BleRemoteCharacteristic | null = null;

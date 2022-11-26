@@ -10,6 +10,8 @@ import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemote
 import { BleRemoteService } from '../../../obniz/libs/embeds/bleHci/bleRemoteService';
 import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import UUID = Obniz.UUID;
+import {UUID16} from "../../../obniz/libs/embeds/bleHci/bleTypes";
 
 export type HEM_9200TMeasurementStatus =
   | 'BodyMovementDetection'
@@ -178,12 +180,16 @@ export default class HEM_9200T implements ObnizPartsBleInterface {
       this._peripheral!.ondisconnect = (reason: any) => {
         resolve(results);
       };
-      await this.subscribeWait('1805', '2A2B'); // current time
-      await this.subscribeWait('180F', '2A19'); // battery level
-      await this.subscribeWait('1810', '2A35', async (data: any) => {
-        // console.log(data);
-        results.push(this._analyzeData(data));
-      }); // blood pressure
+      await this.subscribeWait('1805' as UUID16, '2A2B' as UUID16); // current time
+      await this.subscribeWait('180F' as UUID16, '2A19' as UUID16); // battery level
+      await this.subscribeWait(
+        '1810' as UUID16,
+        '2A35' as UUID16,
+        async (data: any) => {
+          // console.log(data);
+          results.push(this._analyzeData(data));
+        }
+      ); // blood pressure
     });
     /* const waitDisconnect = new Promise<HEM_9200TResult[]>((resolve, reject) => {
       this._peripheral!.ondisconnect = (reason: any) => {
@@ -211,7 +217,7 @@ export default class HEM_9200T implements ObnizPartsBleInterface {
    * @param callback callback function when received data
    * データを受け取ったときのコールバック関数
    */
-  public async subscribeWait(service: string, char: string, callback?: any) {
+  public async subscribeWait(service: UUID, char: UUID, callback?: any) {
     if (!this._peripheral) {
       throw new Error('HEM_9200T is not find.');
     }

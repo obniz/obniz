@@ -10,6 +10,7 @@ import { BleRemoteService } from '../../../obniz/libs/embeds/bleHci/bleRemoteSer
 import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import { BleBatteryService } from '../utils/services/batteryService';
+import {UUID16} from "../../../obniz/libs/embeds/bleHci/bleTypes";
 
 export type CommandResultType =
   | 'ok'
@@ -129,12 +130,12 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   public batteryService?: BleBatteryService;
 
   private _uuids = {
-    deviceInfoSystem: '180a',
-    systemId: '2a23',
-    firmwareVersion: '2a26',
-    customService: 'fff0',
-    requestChar: 'fff3',
-    notifyChar: 'fff4',
+    deviceInfoSystem: '180a' as UUID16,
+    systemId: '2a23' as UUID16,
+    firmwareVersion: '2a26' as UUID16,
+    customService: 'fff0' as UUID16,
+    requestChar: 'fff3' as UUID16,
+    notifyChar: 'fff4' as UUID16,
   };
   private _deviceInfoSystem: BleRemoteService | null = null;
   private _requestChar: BleRemoteCharacteristic | null = null;

@@ -35,7 +35,7 @@ export declare class GattCentral extends EventEmitter<GattEventTypes> {
     discoverServicesWait(uuids: UUID[]): Promise<UUID[]>;
     discoverPrimaryServicesWait(uuids: UUID[]): Promise<UUID[]>;
     discoverSecondaryServicesWait(uuids: UUID[]): Promise<UUID[]>;
-    discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]): Promise<string[] | undefined>;
+    discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]): Promise<any[] | undefined>;
     discoverCharacteristicsWait(serviceUuid: UUID, characteristicUuids: UUID[]): Promise<any[]>;
     readWait(serviceUuid: UUID, characteristicUuid: UUID): Promise<Buffer>;
     writeWait(serviceUuid: UUID, characteristicUuid: UUID, data: Buffer, withoutResponse: boolean): Promise<void>;

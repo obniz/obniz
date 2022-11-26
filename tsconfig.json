@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "sourceMap": false,
     "resolveJsonModule": true,
+    "moduleSuffixes": [".debug", ""]
   },
   "include": [
     "./src/**/*.ts",

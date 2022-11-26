@@ -7,6 +7,9 @@
 import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import Obniz from '../../../obniz';
+import UUID = Obniz.UUID;
+import {UUID16} from "../../../obniz/libs/embeds/bleHci/bleTypes";
 
 export interface HEM_6233TOptions {}
 
@@ -158,8 +161,8 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
         resolve(results);
       };
     });
-    await this.subscribeWait('1805', '2A2B'); // current time
-    await this.subscribeWait('180F', '2A19', async () => {
+    await this.subscribeWait('1805' as UUID16, '2A2B' as UUID16); // current time
+    await this.subscribeWait('180F' as UUID16, '2A19' as UUID16, async () => {
       // send command (unknown meaning)
       // In the command meaning, it should send to central from peripheral, but send to peripheral...?
       this._peripheral!.obnizBle.hci.write([
@@ -189,7 +192,7 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
 
       await this._writeTimeCharWait(this._timezoneOffsetMinute);
     }); // battery Level
-    await this.subscribeWait('1810', '2A35', async (data: number[]) => {
+    await this.subscribeWait('1810'as UUID16, '2A35'as UUID16, async (data: number[]) => {
       // console.log('SUCCESS', data);
       results.push(this._analyzeData(data));
     }); // blood pressure
@@ -208,7 +211,7 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
    * @param callback callback function when received data
    * データを受け取ったときのコールバック関数
    */
-  public async subscribeWait(service: string, char: string, callback?: any) {
+  public async subscribeWait(service: UUID, char: UUID, callback?: any) {
     if (!this._peripheral) {
       throw new Error('HEM_6233T is not find.');
     }
@@ -235,8 +238,8 @@ export default class HEM_6233T implements ObnizPartsBleInterface {
     }
 
     const timeChar = this._peripheral
-      .getService('1805')!
-      .getCharacteristic('2A2B')!;
+      .getService('1805' as UUID16)!
+      .getCharacteristic('2A2B' as UUID16)!;
     const date = new Date();
     date.setTime(Date.now() + 1000 * 60 * timeOffsetMinute);
 

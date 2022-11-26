@@ -15,6 +15,7 @@ import {
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 import { BleGenericAccess } from '../utils/services/genericAccess';
+import { UUID128 } from '../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export interface MT_500BTOptions {}
 
@@ -91,9 +92,9 @@ export default class MT_500BT implements ObnizPartsInterface {
   private _emitter: EventEmitter;
 
   private _uuids = {
-    MSDPService: '1ef19620a8034af0ae954b4b0aa26f29',
-    rxChar: '1ef19621a8034af0ae954b4b0aa26f29',
-    txChar: '1ef19622a8034af0ae954b4b0aa26f29',
+    MSDPService: '1ef19620a8034af0ae954b4b0aa26f29' as UUID128,
+    rxChar: '1ef19621a8034af0ae954b4b0aa26f29' as UUID128,
+    txChar: '1ef19622a8034af0ae954b4b0aa26f29' as UUID128,
   };
   private _peripheral: BleRemotePeripheral;
 

@@ -11,6 +11,7 @@ import {
   ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
+import {UUID128} from "../../../obniz/libs/embeds/bleHci/bleTypes";
 
 /**
  * data from PLS_01BT
@@ -81,8 +82,8 @@ export default class PLS_01BT implements ObnizPartsInterface {
   public ondisconnect?: (reason: any) => void;
 
   private _uuids = {
-    service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
-    rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
+    service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D'  as UUID128,
+    rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D' as UUID128,
   };
   private _peripheral: BleRemotePeripheral | null = null;
   private _rxCharacteristic: BleRemoteCharacteristic | null = null;

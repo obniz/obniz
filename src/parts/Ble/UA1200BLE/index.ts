@@ -12,6 +12,7 @@ import {
 } from '../../../obniz/ObnizPartsBleInterface';
 import { BleBatteryService } from '../utils/services/batteryService';
 import { BleGenericAccess } from '../utils/services/genericAccess';
+import {UUID128, UUID16} from '../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export interface UA1200BLEOptions {}
 
@@ -330,11 +331,11 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     }
 
     const bloodPressureMeasurementChar: BleRemoteCharacteristic = this._peripheral
-      .getService('1810')!
-      .getCharacteristic('2A35')!;
+      .getService('1810'as UUID16)!
+      .getCharacteristic('2A35'as UUID16)!;
     const customServiceChar = this._peripheral
-      .getService('233bf0005a341b6d975c000d5690abe4')! // Primary Service Custom Service(pp.26)
-      .getCharacteristic('233bf0015a341b6d975c000d5690abe4')!; // Custom Characteristic(pp.27)
+      .getService('233bf0005a341b6d975c000d5690abe4' as UUID128)! // Primary Service Custom Service(pp.26)
+      .getCharacteristic('233bf0015a341b6d975c000d5690abe4'as UUID128)!; // Custom Characteristic(pp.27)
 
     return {
       bloodPressureMeasurementChar,
@@ -348,11 +349,11 @@ export default class UA1200BLE implements ObnizPartsBleInterface {
     }
 
     const bloodPressureMeasurementChar: BleRemoteCharacteristic = this._peripheral
-      .getService('1810')!
-      .getCharacteristic('2A35')!;
+      .getService('1810' as UUID16)!
+      .getCharacteristic('2A35' as UUID16)!;
     const timeChar = this._peripheral
-      .getService('1805')!
-      .getCharacteristic('2A2B')!;
+      .getService('1805' as UUID16)!
+      .getCharacteristic('2A2B' as UUID16)!;
     // const CCCDChar = this._peripheral.getService("1810")!.getCharacteristic("2902")!;
 
     return {

@@ -11,6 +11,7 @@ import { BleRemoteService } from '../../../obniz/libs/embeds/bleHci/bleRemoteSer
 import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
 import { BleBatteryService } from '../utils/services/batteryService';
+import { UUID128, UUID16 } from '../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export interface ENERTALK_TOUCHOptions {}
 
@@ -48,11 +49,11 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
   public batteryService?: BleBatteryService;
 
   private _uuids = {
-    service: '3526797e-448b-4bbb-9145-c5083e0e09dc',
-    temperatureChar: '2A6E',
-    humidityChar: '2A6F',
-    illuminanceChar: '74c3fe9d-25b2-4903-8dcd-680e5ef0a6b3',
-    accelerometerChar: '71ef0979-0e2c-4a55-8d3c-78083869fae6',
+    service: '3526797e-448b-4bbb-9145-c5083e0e09dc' as UUID128,
+    temperatureChar: '2A6E' as UUID16,
+    humidityChar: '2A6F' as UUID16,
+    illuminanceChar: '74c3fe9d-25b2-4903-8dcd-680e5ef0a6b3' as UUID128,
+    accelerometerChar: '71ef0979-0e2c-4a55-8d3c-78083869fae6' as UUID128,
   };
   private _service: BleRemoteService | null = null;
   private _temperatureChar: BleRemoteCharacteristic | null = null;
@@ -103,7 +104,7 @@ export default class ENERTALK_TOUCH implements ObnizPartsBleInterface {
     this._accelerometerChar = this._service.getCharacteristic(
       this._uuids.accelerometerChar
     );
-    const service180F = this._peripheral.getService('180F');
+    const service180F = this._peripheral.getService('180F' as UUID16);
     if (service180F) {
       this.batteryService = new BleBatteryService(service180F);
     }

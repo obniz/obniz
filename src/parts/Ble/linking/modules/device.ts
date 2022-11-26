@@ -18,11 +18,12 @@ import {
 } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import LinkingAdvertising from './advertising';
 import LinkingService from './service';
+import { UUID128 } from '../../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export default class LinkingDevice {
-  public PRIMARY_SERVICE_UUID = 'b3b3690150d34044808d50835b13a6cd';
-  public WRITE_CHARACTERRISTIC_UUID = 'b3b3910150d34044808d50835b13a6cd';
-  public INDICATE_CHARACTERRISTIC_UUID = 'b3b3910250d34044808d50835b13a6cd';
+  public PRIMARY_SERVICE_UUID = 'b3b3690150d34044808d50835b13a6cd' as UUID128;
+  public WRITE_CHARACTERRISTIC_UUID = 'b3b3910150d34044808d50835b13a6cd' as UUID128;
+  public INDICATE_CHARACTERRISTIC_UUID = 'b3b3910250d34044808d50835b13a6cd' as UUID128;
   public info: any = {};
   public advertisement: any;
   public connected = false;

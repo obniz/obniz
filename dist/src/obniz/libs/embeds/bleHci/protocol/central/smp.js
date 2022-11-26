@@ -40,9 +40,9 @@ class Smp extends eventemitter3_1.default {
         };
         this._aclStream = aclStream;
         this._iat = Buffer.from([localAddressType === 'random' ? 0x01 : 0x00]);
-        this._ia = bleHelper_1.default.hex2reversedBuffer(localAddress, ':');
+        this._ia = bleHelper_1.default.hex2reversedBuffer(localAddress);
         this._rat = Buffer.from([remoteAddressType === 'random' ? 0x01 : 0x00]);
-        this._ra = bleHelper_1.default.hex2reversedBuffer(remoteAddress, ':');
+        this._ra = bleHelper_1.default.hex2reversedBuffer(remoteAddress);
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
         this.onAclStreamEndBinded = this.onAclStreamEnd.bind(this);
         this._aclStream.on('data', this.onAclStreamDataBinded);

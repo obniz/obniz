@@ -11,6 +11,7 @@ import {
   ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
+import { UUID128 } from '../../../obniz/libs/embeds/bleHci/bleTypes';
 
 /**
  * settings to be set at instantiation
@@ -228,16 +229,16 @@ export default class RS_BTWATTCH2 implements ObnizPartsInterface {
       }
     };
     const service = this._peripheral.getService(
-      '6e400001b5a3f393e0a9e50e24dcca9e'
+      '6e400001b5a3f393e0a9e50e24dcca9e' as UUID128
     );
     if (!service) {
       throw new Error(`no service found`);
     }
     this._rxFromTargetCharacteristic = service.getCharacteristic(
-      '6e400003b5a3f393e0a9e50e24dcca9e'
+      '6e400003b5a3f393e0a9e50e24dcca9e' as UUID128
     )!;
     this._txToTargetCharacteristic = service.getCharacteristic(
-      '6e400002b5a3f393e0a9e50e24dcca9e'
+      '6e400002b5a3f393e0a9e50e24dcca9e' as UUID128
     )!;
 
     try {

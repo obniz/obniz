@@ -11,6 +11,7 @@ import {
   ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
+import {UUID128} from "../../../obniz/libs/embeds/bleHci/bleTypes";
 
 export interface REX_BTPM25VOptions {}
 
@@ -54,11 +55,11 @@ export default class REX_BTPM25V implements ObnizPartsInterface {
   public ondisconnect?: (reason: any) => void;
 
   private _uuids = {
-    service: '00001523-1212-EFDE-1523-785FEABCD123',
-    buttonChar: '000000A1-1212-EFDE-1523-785FEABCD123',
-    continuousMeasurementChar: '000000A5-1212-EFDE-1523-785FEABCD123',
-    oneShotMeasurementChar: '000000A8-1212-EFDE-1523-785FEABCD123',
-    ledChar: '000000A9-1212-EFDE-1523-785FEABCD123',
+    service: '00001523-1212-EFDE-1523-785FEABCD123' as UUID128,
+    buttonChar: '000000A1-1212-EFDE-1523-785FEABCD123' as UUID128,
+    continuousMeasurementChar: '000000A5-1212-EFDE-1523-785FEABCD123' as UUID128,
+    oneShotMeasurementChar: '000000A8-1212-EFDE-1523-785FEABCD123' as UUID128,
+    ledChar: '000000A9-1212-EFDE-1523-785FEABCD123' as UUID128,
   };
   private _oneShotMeasurementCharacteristic: BleRemoteCharacteristic | null = null;
   private _continuousMeasurementCharacteristic: BleRemoteCharacteristic | null = null;

@@ -12,6 +12,7 @@ import {
   ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
+import {UUID128} from "../../../obniz/libs/embeds/bleHci/bleTypes";
 
 export interface RS_Seek3Options {}
 
@@ -54,9 +55,9 @@ export default class RS_Seek3 implements ObnizPartsBleInterface {
   public ondisconnect?: (reason: any) => void;
 
   private _uuids = {
-    service: '0EE71523-981A-46B8-BA64-019261C88478',
-    buttonChar: '0EE71524-981A-46B8-BA64-019261C88478',
-    tempHumidChar: '0EE7152C-981A-46B8-BA64-019261C88478',
+    service: '0EE71523-981A-46B8-BA64-019261C88478'  as UUID128,
+    buttonChar: '0EE71524-981A-46B8-BA64-019261C88478' as UUID128,
+    tempHumidChar: '0EE7152C-981A-46B8-BA64-019261C88478' as UUID128,
   };
   private _buttonCharacteristic: BleRemoteCharacteristic | null = null;
   private _tempHumidCharacteristic: BleRemoteCharacteristic | null = null;

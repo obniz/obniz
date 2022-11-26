@@ -2,9 +2,11 @@
  * @packageDocumentation
  * @module Parts.HEM-9200T
  */
+import Obniz from '../../../obniz';
 import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
 import { ObnizPartsInfo } from '../../../obniz/ObnizPartsInterface';
+import UUID = Obniz.UUID;
 export declare type HEM_9200TMeasurementStatus = 'BodyMovementDetection' | 'CuffFitDetection' | 'IrregularPulseDetection' | 'PulseRateRangeDetection' | 'MeasurementPositionDetection';
 /**
  * data from HEM_9200T
@@ -119,7 +121,7 @@ export default class HEM_9200T implements ObnizPartsBleInterface {
      * @param callback callback function when received data
      * データを受け取ったときのコールバック関数
      */
-    subscribeWait(service: string, char: string, callback?: any): Promise<void>;
+    subscribeWait(service: UUID, char: UUID, callback?: any): Promise<void>;
     private _analyzeData;
     private _readSFloat;
 }

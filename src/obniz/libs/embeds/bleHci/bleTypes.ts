@@ -35,22 +35,48 @@ type HexDecimal4 = `${HexDecimal1}${HexDecimal1}${HexDecimal1}${HexDecimal1}`;
 type HexDecimal8 = string; // `${HexDecimal4}${HexDecimal4}`;
 type HexDecimal12 = string; // `${HexDecimal4}${HexDecimal4}${HexDecimal4}`;
 
-export type UUID16 = `${HexDecimal4}`;
+export type UUID16 = Brand<`${HexDecimal4}`, 'UUID16'>;
 export type UUID32 = Brand<string, 'UUID32'>;
 
 // 11127000-B364-11E4-AB27-0800200C9A66
-export type UUID128 = string; // `${HexDecimal8}${HyphenOrNone}${HexDecimal4}${HyphenOrNone}${HexDecimal4}${HyphenOrNone}${HexDecimal12}`;
+export type UUID128 = Brand<string, 'UUID128'>; // `${HexDecimal8}${HyphenOrNone}${HexDecimal4}${HyphenOrNone}${HexDecimal4}${HyphenOrNone}${HexDecimal12}`;
 export type UUID = UUID16 | UUID32 | UUID128;
+
+export type BleUUIDBuffer = Brand<Buffer, 'BleUUIDBuffer'>;
+
+/**
+ * 人間がみるデバイスアドレス
+ * 00112233445566
+ */
 export type BleDeviceAddress = Brand<string, 'BleDeviceAddress'>;
+
+/**
+ * 00:11:22:33:44:55:66
+ */
+export type BleDeviceColonSeparatedAddress = Brand<
+  `${string}:${string}:${string}:${string}:${string}:${string}`,
+  'BleDeviceColonSeparatedAddress'
+>;
+
+/**
+ * 機械が見るデバイスアドレス
+ * 66554433221100
+ */
 export type BleDeviceAddressReversed = Brand<
   string,
   'BleDeviceAddressReversed'
 >;
 
-export type BleDeviceColonSeparatedAddress = Brand<
-  `${string}:${string}:${string}:${string}:${string}:${string}`,
-  'BleDeviceColonSeparatedAddress'
+/**
+ * 機械が見るデバイスアドレスのバッファ
+ * 66554433221100
+ */
+export type BleDeviceAddressReversedBuffer = Brand<
+  Buffer,
+  'BleDeviceAddressReversedBuffer'
 >;
+
+export type BleDeviceAddressUUID = BleDeviceAddressReversed;
 
 export type Handle = Brand<number, 'BleHandle'>;
 

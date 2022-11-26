@@ -1407,27 +1407,29 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   // services
 
   private async _getCurrentTimeServiceWait(): Promise<BleRemoteService> {
-    const currentTimeService = this._peripheral!.getService('1805');
+    const currentTimeService = this._peripheral!.getService('1805' as UUID16);
     if (!currentTimeService)
       throw new Error('Failed to get CurrentTimeService.');
     return currentTimeService;
   }
 
   private async _getUserDataServiceWait(): Promise<BleRemoteService> {
-    const userDataService = this._peripheral!.getService('181C');
+    const userDataService = this._peripheral!.getService('181C' as UUID16);
     if (!userDataService) throw new Error('Failed to get UserDataService.');
     return userDataService;
   }
 
   private async _getWeightScaleServiceWait(): Promise<BleRemoteService> {
-    const weightScaleService = this._peripheral!.getService('181D');
+    const weightScaleService = this._peripheral!.getService('181D' as UUID16);
     if (!weightScaleService)
       throw new Error('Failed to get WeightScaleService.');
     return weightScaleService;
   }
 
   private async _getBodyCompositionServiceWait(): Promise<BleRemoteService> {
-    const bodyCompositionService = this._peripheral!.getService('181B');
+    const bodyCompositionService = this._peripheral!.getService(
+      '181B' as UUID16
+    );
     if (!bodyCompositionService)
       throw new Error('Failed to get BodyCompositionService.');
     return bodyCompositionService;
@@ -1466,7 +1468,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
   private async _getFirstNameCharWait(): Promise<BleRemoteCharacteristic> {
     const userDataService = await this._getUserDataServiceWait();
-    const fistNameChar = userDataService.getCharacteristic('2A8A');
+    const fistNameChar = userDataService.getCharacteristic('2A8A' as UUID16);
     if (!fistNameChar)
       throw new Error('Failed to get FirstName charactaristic.');
     return fistNameChar;

@@ -6,6 +6,7 @@ import { BleRemoteCharacteristic } from './libs/embeds/bleHci/bleRemoteCharacter
 import { BleRemotePeripheral, IBeacon } from './libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
+import { UUID } from './libs/embeds/bleHci/bleTypes';
 declare const ObnizPartsBleModeList: readonly ["Beacon", "Connectable", "Pairing"];
 export declare type ObnizPartsBleMode = typeof ObnizPartsBleModeList[number];
 export declare type ObnizPartsBleCompare<S> = ObnizPartsBleCompareWithMode<S> | S;
@@ -266,7 +267,7 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      * @param characteristicUuid Characteristic UUID
      * @returns Instance of BleRemoteCharacteristic
      */
-    protected getChar(serviceUuid: string, characteristicUuid: string): BleRemoteCharacteristic;
+    protected getChar(serviceUuid: UUID, characteristicUuid: UUID): BleRemoteCharacteristic;
     /**
      * Read data from any characteristic of any service.
      *
@@ -276,7 +277,7 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      * @param characteristicUuid Characteristic UUID
      * @returns Data read result データ読み取り結果
      */
-    protected readCharWait(serviceUuid: string, characteristicUuid: string): Promise<number[]>;
+    protected readCharWait(serviceUuid: UUID, characteristicUuid: UUID): Promise<number[]>;
     /**
      * Write data to any characteristic of any service.
      *
@@ -287,7 +288,7 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      * @param data Write data
      * @returns Data write result
      */
-    protected writeCharWait(serviceUuid: string, characteristicUuid: string, data?: number[], needResponse?: boolean): Promise<boolean>;
+    protected writeCharWait(serviceUuid: UUID, characteristicUuid: UUID, data?: number[], needResponse?: boolean): Promise<boolean>;
     /**
      * Register notification to any characteristic of any service.
      *
@@ -297,7 +298,7 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      * @param characteristicUuid Characteristic UUID
      * @param callback It is called when data comes
      */
-    protected subscribeWait(serviceUuid: string, characteristicUuid: string, callback?: (data: number[]) => void | Promise<void>): Promise<void>;
+    protected subscribeWait(serviceUuid: UUID, characteristicUuid: UUID, callback?: (data: number[]) => void | Promise<void>): Promise<void>;
     /**
      * Unregister notification to any characteristic of any service.
      *
@@ -306,7 +307,7 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      * @param serviceUuid Service UUID
      * @param characteristicUuid Characteristic UUID
      */
-    protected unsubscribeWait(serviceUuid: string, characteristicUuid: string): Promise<void>;
+    protected unsubscribeWait(serviceUuid: UUID, characteristicUuid: UUID): Promise<void>;
 }
 export declare const iBeaconCompanyID: number[];
 export declare const iBeaconData: ObnizBleBeaconStruct<IBeacon>;

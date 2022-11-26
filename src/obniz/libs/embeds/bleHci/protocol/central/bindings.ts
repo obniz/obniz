@@ -16,6 +16,7 @@ import BleHelper from '../../bleHelper';
 import {
   BleDeviceAddress,
   BleDeviceAddressType,
+  BleDeviceAddressUUID, BleDeviceColonSeparatedAddress,
   Handle,
   UUID,
 } from '../../bleTypes';
@@ -40,11 +41,13 @@ type NobleBindingsEventType =
  * @ignore
  */
 export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
-  public _connectable: { [key: string]: boolean };
-
+  public _connectable: Record<BleDeviceAddressUUID, boolean> = {};
   private _state: HciState | null;
-  private _addresses: { [uuid: string]: BleDeviceAddress };
-  private _addresseTypes: { [uuid: string]: BleDeviceAddressType };
+  private _addresses: Record<BleDeviceAddressUUID, BleDeviceColonSeparatedAddress> = {};
+  private _addresseTypes: Record<
+    BleDeviceAddressUUID,
+    BleDeviceAddressType
+  > = {};
   private _handles: any;
   private _gatts: { [handle: string]: GattCentral };
   private _aclStreams: { [key: string]: AclStream };
@@ -61,8 +64,6 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
     this._state = null;
 
-    this._addresses = {};
-    this._addresseTypes = {};
     this._connectable = {};
 
     this._handles = {};
@@ -104,9 +105,12 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     // do nothing.
   };
 
-  public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
+  public addPeripheralData(
+    uuid: BleDeviceAddressUUID,
+    addressType: BleDeviceAddressType
+  ) {
     if (!this._addresses[uuid]) {
-      const address: any = BleHelper.reverseHexString(uuid, ':');
+      const address = BleHelper.addColon(BleHelper.reverseHexString(uuid));
       this._addresses[uuid] = address;
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = true;
