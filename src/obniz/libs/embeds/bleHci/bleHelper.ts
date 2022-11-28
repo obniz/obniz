@@ -64,6 +64,14 @@ export class BleHelper {
     }
     return result;
   }
+
+  addColon(str: BleDeviceAddress): string {
+    const parts = [];
+    for (let i = 0; i < str.length; i += 2) {
+      parts.push(str.slice(i, i + 2));
+    }
+    return parts.join(':');
+  }
 }
 
 export default new BleHelper();
