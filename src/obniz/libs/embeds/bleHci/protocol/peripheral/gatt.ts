@@ -10,7 +10,12 @@ import {
   ObnizError,
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import { UUID } from '../../bleTypes';
+import {
+  BleDeviceAddressReversedBuffer,
+  BleUUIDReversedBuffer,
+  UUID,
+  UUID16,
+} from '../../bleTypes';
 import { ATT } from '../common/att';
 import { GattCommon } from '../common/gatt';
 import { AclStream } from './acl-stream';
@@ -91,6 +96,7 @@ type GattHandle =
   | GattDescriptorHandle;
 
 type GattEventTypes = 'mtuChange';
+
 /**
  * @ignore
  */
@@ -232,7 +238,7 @@ export class GattPeripheral extends EventEmitter<GattEventTypes> {
           this._handles[clientCharacteristicConfigurationDescriptorHandle] = {
             type: 'descriptor',
             handle: clientCharacteristicConfigurationDescriptorHandle,
-            uuid: '2902',
+            uuid: '2902' as UUID16,
             attribute: characteristic,
             properties: 0x02 | 0x04 | 0x08, // read/write
             secure: secure & 0x10 ? 0x02 | 0x04 | 0x08 : 0,
@@ -443,11 +449,11 @@ export class GattPeripheral extends EventEmitter<GattEventTypes> {
       uuid = null;
 
       if ('service' === handle.type) {
-        uuid = '2800';
+        uuid = '2800' as UUID16;
       } else if ('includedService' === handle.type) {
-        uuid = '2802';
+        uuid = '2802' as UUID16;
       } else if ('characteristic' === handle.type) {
-        uuid = '2803';
+        uuid = '2803' as UUID16;
       } else if ('characteristicValue' === handle.type) {
         const targetHandle = this._handles[i - 1];
         if (!targetHandle || targetHandle.type !== 'characteristic') {
@@ -655,7 +661,9 @@ export class GattPeripheral extends EventEmitter<GattEventTypes> {
 
     const startHandle = request.readUInt16LE(1);
     const endHandle = request.readUInt16LE(3);
-    const uuid = BleHelper.buffer2reversedHex(request.slice(5));
+    const uuid = BleHelper.buffer2reversedHex(
+      request.slice(5) as BleUUIDReversedBuffer
+    );
 
     debug(
       'read by type: startHandle = 0x' +

@@ -2,14 +2,14 @@
  * @packageDocumentation
  * @ignore
  */
-import { BleDeviceAddress, BleDeviceAddressReversed, BleDeviceAddressReversedBuffer, BleDeviceColonSeparatedAddress, BleUUIDBuffer, UUID } from './bleTypes';
+import { BleDeviceAddress, BleDeviceAddressReversed, BleDeviceAddressReversedBuffer, BleDeviceColonSeparatedAddress, BleUUIDReversedBuffer, UUID } from './bleTypes';
 export declare class BleHelper {
     uuidFilter(uuid: string | UUID): UUID;
     deviceAddressFilter(deviceAddress: string | BleDeviceAddress): BleDeviceAddress;
     toCamelCase(str: string): string;
     toSnakeCase(str: string): string;
-    buffer2reversedHex(buf: BleDeviceAddressReversedBuffer): BleDeviceAddress;
-    hex2reversedBuffer<T extends BleDeviceColonSeparatedAddress | BleDeviceAddress | UUID>(address: T): T extends UUID ? BleUUIDBuffer : BleDeviceAddressReversedBuffer;
+    buffer2reversedHex<T extends BleDeviceAddressReversedBuffer | BleUUIDReversedBuffer>(buf: T): T extends BleDeviceAddressReversedBuffer ? BleDeviceAddress : UUID;
+    hex2reversedBuffer<T extends BleDeviceColonSeparatedAddress | BleDeviceAddress | UUID>(address: T): T extends UUID ? BleUUIDReversedBuffer : BleDeviceAddressReversedBuffer;
     /**
      * hex stringをreverseする。
      *

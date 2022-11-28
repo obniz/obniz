@@ -16,7 +16,8 @@ import BleHelper from '../../bleHelper';
 import {
   BleDeviceAddress,
   BleDeviceAddressType,
-  BleDeviceAddressUUID, BleDeviceColonSeparatedAddress,
+  BleDeviceAddressUUID,
+  BleDeviceColonSeparatedAddress,
   Handle,
   UUID,
 } from '../../bleTypes';
@@ -43,7 +44,10 @@ type NobleBindingsEventType =
 export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public _connectable: Record<BleDeviceAddressUUID, boolean> = {};
   private _state: HciState | null;
-  private _addresses: Record<BleDeviceAddressUUID, BleDeviceColonSeparatedAddress> = {};
+  private _addresses: Record<
+    BleDeviceAddressUUID,
+    BleDeviceColonSeparatedAddress
+  > = {};
   private _addresseTypes: Record<
     BleDeviceAddressUUID,
     BleDeviceAddressType
@@ -110,7 +114,7 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     addressType: BleDeviceAddressType
   ) {
     if (!this._addresses[uuid]) {
-      const address = BleHelper.addColon(BleHelper.reverseHexString(uuid));
+      const address = BleHelper.addColon(uuid);
       this._addresses[uuid] = address;
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = true;
@@ -294,7 +298,7 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
       );
     }
     const address = this._addresses[peripheralUuid];
-    const addressType: any = this._addresseTypes[peripheralUuid];
+    const addressType = this._addresseTypes[peripheralUuid];
     if (!address) {
       throw new ObnizBleUnknownPeripheralError(peripheralUuid);
     }

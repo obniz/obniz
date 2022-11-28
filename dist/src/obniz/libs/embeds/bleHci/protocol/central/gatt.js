@@ -143,7 +143,9 @@ class GattCentral extends eventemitter3_1.default {
                         endHandle: data.readUInt16LE(2 + i * type + 2),
                         uuid: type === 6
                             ? data.readUInt16LE(2 + i * type + 4).toString(16)
-                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 4).slice(0, 16)),
+                            : bleHelper_1.default.buffer2reversedHex(data
+                                .slice(2 + i * type + 4)
+                                .slice(0, 16)),
                     });
                 }
             }
@@ -178,7 +180,9 @@ class GattCentral extends eventemitter3_1.default {
                         endHandle: data.readUInt16LE(2 + i * type + 2),
                         uuid: type === 6
                             ? data.readUInt16LE(2 + i * type + 4).toString(16)
-                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 4).slice(0, 16)),
+                            : bleHelper_1.default.buffer2reversedHex(data
+                                .slice(2 + i * type + 4)
+                                .slice(0, 16)),
                     });
                 }
             }
@@ -214,7 +218,9 @@ class GattCentral extends eventemitter3_1.default {
                         startHandle: data.readUInt16LE(2 + i * type + 2),
                         uuid: type === 8
                             ? data.readUInt16LE(2 + i * type + 6).toString(16)
-                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 6).slice(0, 16)),
+                            : bleHelper_1.default.buffer2reversedHex(data
+                                .slice(2 + i * type + 6)
+                                .slice(0, 16)),
                     });
                 }
             }
@@ -255,7 +261,9 @@ class GattCentral extends eventemitter3_1.default {
                         valueHandle: data.readUInt16LE(2 + i * type + 3),
                         uuid: type === 7
                             ? data.readUInt16LE(2 + i * type + 5).toString(16)
-                            : bleHelper_1.default.buffer2reversedHex(data.slice(2 + i * type + 5).slice(0, 16)),
+                            : bleHelper_1.default.buffer2reversedHex(data
+                                .slice(2 + i * type + 5)
+                                .slice(0, 16)),
                     });
                 }
             }
@@ -529,8 +537,10 @@ class GattCentral extends eventemitter3_1.default {
                     this.emit('handleConfirmation', this._address, valueHandle);
                 });
             }
-            for (const serviceUuid in this._services) {
-                for (const characteristicUuid in this._characteristics[serviceUuid]) {
+            for (const _serviceUuid in this._services) {
+                const serviceUuid = _serviceUuid;
+                for (const _characteristicUuid in this._characteristics[serviceUuid]) {
+                    const characteristicUuid = _characteristicUuid;
                     if (this._characteristics[serviceUuid][characteristicUuid]
                         .valueHandle === valueHandle) {
                         this.emit('notification', this._address, serviceUuid, characteristicUuid, valueData);

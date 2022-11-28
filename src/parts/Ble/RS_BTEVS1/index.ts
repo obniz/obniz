@@ -22,6 +22,11 @@ import {
   uint,
 } from '../../../obniz/ObnizPartsBleAbstract';
 import semver from 'semver';
+import {
+  UUID,
+  UUID128,
+  UUID16,
+} from '../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export interface RS_BTEVS1Options {}
 
@@ -216,7 +221,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   /** Event handler for PM2.5 sensor PM2.5センサーのイベントハンドラー */
   public onPm2_5Measured: ((pm2_5: RS_BTEVS1_Pm2_5) => void) | null = null;
 
-  protected readonly serviceUuid = 'F9CC15234E0A49E58CF30007E819EA1E';
+  protected readonly serviceUuid = 'F9CC15234E0A49E58CF30007E819EA1E' as UUID128;
   public firmwareRevision = '';
 
   private firmwareSemRevision: semver.SemVer | null = null;
@@ -230,7 +235,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
     await super.connectWait();
 
     this.firmwareRevision = Buffer.from(
-      await this.readCharWait('180A', '2A26')
+      await this.readCharWait('180A' as UUID16, '2A26' as UUID16)
     ).toString();
     this.firmwareSemRevision = semver.parse(
       this.firmwareRevision.replace('Ver.', '')
@@ -477,10 +482,10 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
     );
   }
 
-  protected getCharUuid(code: number): string {
+  protected getCharUuid(code: number): UUID {
     return `${this.serviceUuid.slice(0, 4)}${code.toString(
       16
-    )}${this.serviceUuid.slice(8)}`;
+    )}${this.serviceUuid.slice(8)}` as UUID;
   }
 
   private checkVersion(version: string) {

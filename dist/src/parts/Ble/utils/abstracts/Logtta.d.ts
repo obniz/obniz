@@ -72,7 +72,7 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<S, T
      */
     setBeaconModeWait(enable: boolean): Promise<boolean>;
     protected getName(): string;
-    protected getCharUuid(code: number): string;
+    protected getCharUuid(code: number): any;
     protected abstract parseData(data: number[]): T;
 }
 export {};

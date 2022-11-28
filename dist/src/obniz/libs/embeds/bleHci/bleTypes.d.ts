@@ -7,16 +7,11 @@
 import { BleCharacteristic } from './bleCharacteristic';
 import { BleDescriptor } from './bleDescriptor';
 import { Brand } from '../../utils/brand';
-/**
- * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
- */
-declare type HexDecimal1 = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
-declare type HexDecimal4 = `${HexDecimal1}${HexDecimal1}${HexDecimal1}${HexDecimal1}`;
-export declare type UUID16 = Brand<`${HexDecimal4}`, 'UUID16'>;
+export declare type UUID16 = Brand<string, 'UUID16'>;
 export declare type UUID32 = Brand<string, 'UUID32'>;
 export declare type UUID128 = Brand<string, 'UUID128'>;
 export declare type UUID = UUID16 | UUID32 | UUID128;
-export declare type BleUUIDBuffer = Brand<Buffer, 'BleUUIDBuffer'>;
+export declare type BleUUIDReversedBuffer = Brand<Buffer, 'BleUUIDBuffer'>;
 /**
  * 人間がみるデバイスアドレス
  * 00112233445566
@@ -133,4 +128,3 @@ export interface BleSupportType {
      */
     extended?: boolean;
 }
-export {};

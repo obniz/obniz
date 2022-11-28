@@ -47,7 +47,7 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
     Beacon: [0x10, 0x05],
   };
 
-  protected serviceUuid:any = '';
+  protected serviceUuid: any = '';
   protected authenticated = false;
   public onNotify?: (data: T) => void;
   public genericAccess?: BleGenericAccess;
@@ -213,7 +213,7 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
       .join('');
   }
 
-  protected getCharUuid(code: number): string {
+  protected getCharUuid(code: number): any {
     return `${this.serviceUuid.slice(0, 6)}${code.toString(
       16
     )}${this.serviceUuid.slice(8)}`;

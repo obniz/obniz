@@ -64,7 +64,7 @@ class NobleBindings extends eventemitter3_1.default {
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
-            const address = bleHelper_1.default.addColon(bleHelper_1.default.reverseHexString(uuid));
+            const address = bleHelper_1.default.addColon(uuid);
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = true;

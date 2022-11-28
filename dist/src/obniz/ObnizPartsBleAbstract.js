@@ -149,8 +149,7 @@ class ObnizPartsBle {
                 if (defaultServiceUuids !== null && uuids.length === 0)
                     return false;
                 if (defaultServiceUuids !== null &&
-                    defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase()))
-                        .length !== 0)
+                    defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase())).length !== 0)
                     return false;
             }
         }

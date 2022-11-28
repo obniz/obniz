@@ -354,8 +354,9 @@ export abstract class ObnizPartsBle<S> {
         if (defaultServiceUuids !== null && uuids.length === 0) return false;
         if (
           defaultServiceUuids !== null &&
-          defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase()))
-            .length !== 0
+          defaultServiceUuids.filter(
+            (u) => !uuids.includes(u.toLowerCase() as UUID)
+          ).length !== 0
         )
           return false;
       }
@@ -859,7 +860,7 @@ export const iBeaconData: ObnizBleBeaconStruct<IBeacon> =
               ([2, 3, 4, 5].includes(i / 2) ? '-' : '') +
               ('00' + d.toString(16)).slice(-2)
           )
-          .join(''),
+          .join('') as UUID,
     },
     major: {
       index: 18,

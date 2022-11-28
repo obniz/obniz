@@ -8,13 +8,13 @@ import {
   BleDeviceAddressReversedBuffer,
   BleDeviceAddressUUID,
   BleDeviceColonSeparatedAddress,
-  BleUUIDBuffer,
+  BleUUIDReversedBuffer,
   UUID,
 } from './bleTypes';
 
 export class BleHelper {
   uuidFilter(uuid: string | UUID): UUID {
-    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
+    return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '') as UUID;
   }
 
   deviceAddressFilter(
@@ -39,18 +39,22 @@ export class BleHelper {
     });
   }
 
-  buffer2reversedHex(buf: BleDeviceAddressReversedBuffer): BleDeviceAddress {
-    const deviceAddress = this.reverseHexString(
-      buf.toString('hex') as BleDeviceAddressReversed
-    );
-    return deviceAddress;
+  buffer2reversedHex<
+    T extends BleDeviceAddressReversedBuffer | BleUUIDReversedBuffer
+  >(
+    buf: T
+  ): T extends BleDeviceAddressReversedBuffer ? BleDeviceAddress : UUID {
+    const deviceAddress = this.reverseHexString(buf.toString('hex') as any);
+    return deviceAddress as T extends BleDeviceAddressReversedBuffer
+      ? BleDeviceAddress
+      : UUID;
   }
 
   hex2reversedBuffer<
     T extends BleDeviceColonSeparatedAddress | BleDeviceAddress | UUID
   >(
     address: T
-  ): T extends UUID ? BleUUIDBuffer : BleDeviceAddressReversedBuffer {
+  ): T extends UUID ? BleUUIDReversedBuffer : BleDeviceAddressReversedBuffer {
     if (!address.includes(':')) {
       //  T extends  BleDeviceAddress | UUID
       const dAddress = address as BleDeviceAddress;

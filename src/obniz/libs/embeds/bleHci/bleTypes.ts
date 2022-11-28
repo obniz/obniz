@@ -35,14 +35,15 @@ type HexDecimal4 = `${HexDecimal1}${HexDecimal1}${HexDecimal1}${HexDecimal1}`;
 type HexDecimal8 = string; // `${HexDecimal4}${HexDecimal4}`;
 type HexDecimal12 = string; // `${HexDecimal4}${HexDecimal4}${HexDecimal4}`;
 
-export type UUID16 = Brand<`${HexDecimal4}`, 'UUID16'>;
+// export type UUID16 = Brand<`${HexDecimal4}`, 'UUID16'>;
+export type UUID16 = Brand<string, 'UUID16'>;
 export type UUID32 = Brand<string, 'UUID32'>;
 
 // 11127000-B364-11E4-AB27-0800200C9A66
 export type UUID128 = Brand<string, 'UUID128'>; // `${HexDecimal8}${HyphenOrNone}${HexDecimal4}${HyphenOrNone}${HexDecimal4}${HyphenOrNone}${HexDecimal12}`;
 export type UUID = UUID16 | UUID32 | UUID128;
 
-export type BleUUIDBuffer = Brand<Buffer, 'BleUUIDBuffer'>;
+export type BleUUIDReversedBuffer = Brand<Buffer, 'BleUUIDBuffer'>;
 
 /**
  * 人間がみるデバイスアドレス

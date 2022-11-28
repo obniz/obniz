@@ -29,7 +29,12 @@ import {
 } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
 import { BleRemoteService } from '../../bleRemoteService';
-import { BleDeviceAddress, BleUUIDBuffer, UUID } from '../../bleTypes';
+import {
+  BleDeviceAddress,
+  BleUUIDReversedBuffer,
+  UUID,
+  UUID16,
+} from '../../bleTypes';
 import { SmpEncryptOptions } from './smp';
 
 interface GattService {
@@ -241,9 +246,11 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
             endHandle: data.readUInt16LE(2 + i * type + 2),
             uuid:
               type === 6
-                ? data.readUInt16LE(2 + i * type + 4).toString(16)
+                ? (data.readUInt16LE(2 + i * type + 4).toString(16) as UUID)
                 : BleHelper.buffer2reversedHex(
-                    data.slice(2 + i * type + 4).slice(0, 16) as BleUUIDBuffer
+                    data
+                      .slice(2 + i * type + 4)
+                      .slice(0, 16) as BleUUIDReversedBuffer
                   ),
           });
         }
@@ -253,7 +260,7 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
         opcode !== ATT.OP_READ_BY_GROUP_RESP ||
         services[services.length - 1].endHandle === 0xffff
       ) {
-        const serviceUuids: string[] = [];
+        const serviceUuids: UUID[] = [];
         for (i = 0; i < services.length; i++) {
           if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
             serviceUuids.push(services[i].uuid);
@@ -293,9 +300,11 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
             endHandle: data.readUInt16LE(2 + i * type + 2),
             uuid:
               type === 6
-                ? data.readUInt16LE(2 + i * type + 4).toString(16)
+                ? (data.readUInt16LE(2 + i * type + 4).toString(16) as UUID)
                 : BleHelper.buffer2reversedHex(
-                    data.slice(2 + i * type + 4).slice(0, 16) as BleUUIDBuffer
+                    data
+                      .slice(2 + i * type + 4)
+                      .slice(0, 16) as BleUUIDReversedBuffer
                   ),
           });
         }
@@ -305,7 +314,7 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
         opcode !== ATT.OP_READ_BY_GROUP_RESP ||
         services[services.length - 1].endHandle === 0xffff
       ) {
-        const serviceUuids: string[] = [];
+        const serviceUuids: UUID[] = [];
         for (i = 0; i < services.length; i++) {
           if (uuids.length === 0 || uuids.indexOf(services[i].uuid) !== -1) {
             serviceUuids.push(services[i].uuid);
@@ -346,9 +355,11 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
             startHandle: data.readUInt16LE(2 + i * type + 2),
             uuid:
               type === 8
-                ? data.readUInt16LE(2 + i * type + 6).toString(16)
+                ? (data.readUInt16LE(2 + i * type + 6).toString(16) as UUID)
                 : BleHelper.buffer2reversedHex(
-                    data.slice(2 + i * type + 6).slice(0, 16) as BleUUIDBuffer
+                    data
+                      .slice(2 + i * type + 6)
+                      .slice(0, 16) as BleUUIDReversedBuffer
                   ),
           });
         }
@@ -413,9 +424,11 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
             valueHandle: data.readUInt16LE(2 + i * type + 3),
             uuid:
               type === 7
-                ? data.readUInt16LE(2 + i * type + 5).toString(16)
+                ? (data.readUInt16LE(2 + i * type + 5).toString(16) as UUID16)
                 : BleHelper.buffer2reversedHex(
-                    data.slice(2 + i * type + 5).slice(0, 16) as BleUUIDBuffer
+                    data
+                      .slice(2 + i * type + 5)
+                      .slice(0, 16) as BleUUIDReversedBuffer
                   ),
           });
         }
@@ -619,7 +632,7 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
       const descriptor: any = this.getDescriptor(
         serviceUuid,
         characteristicUuid,
-        '2902'
+        '2902' as UUID16
       );
       return await this.notifyByDescriptorWait(
         serviceUuid,
@@ -679,7 +692,7 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
     _data = await this.writeValueWait(
       serviceUuid,
       characteristicUuid,
-      '2902',
+      '2902' as UUID16,
       valueBuffer
     );
     // }
@@ -702,7 +715,11 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
     let value: any = null;
     let handle: any = null;
     try {
-      value = await this.readValueWait(serviceUuid, characteristicUuid, '2902');
+      value = await this.readValueWait(
+        serviceUuid,
+        characteristicUuid,
+        '2902' as UUID16
+      );
     } catch (e) {
       // retry
       const data = await this._execCommandWait(
@@ -751,7 +768,7 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
       _data = await this.writeValueWait(
         serviceUuid,
         characteristicUuid,
-        '2902',
+        '2902' as UUID16,
         valueBuffer
       );
     }
@@ -787,7 +804,7 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
         for (i = 0; i < num; i++) {
           descriptors.push({
             handle: data.readUInt16LE(2 + i * 4 + 0),
-            uuid: data.readUInt16LE(2 + i * 4 + 2).toString(16),
+            uuid: data.readUInt16LE(2 + i * 4 + 2).toString(16) as UUID16,
           });
         }
       }
@@ -902,8 +919,10 @@ export class GattCentral extends EventEmitter<GattEventTypes> {
         );
       }
 
-      for (const serviceUuid in this._services) {
-        for (const characteristicUuid in this._characteristics[serviceUuid]) {
+      for (const _serviceUuid in this._services) {
+        const serviceUuid = _serviceUuid as UUID;
+        for (const _characteristicUuid in this._characteristics[serviceUuid]) {
+          const characteristicUuid = _characteristicUuid as UUID;
           if (
             this._characteristics[serviceUuid][characteristicUuid]
               .valueHandle === valueHandle

@@ -3,6 +3,7 @@
  * @module Parts.RS_BTEVS1
  */
 import { ObnizPartsBleConnectable, ObnizPartsBleCompare, ObnizBleBeaconStruct, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
+import { UUID, UUID128 } from '../../../obniz/libs/embeds/bleHci/bleTypes';
 export interface RS_BTEVS1Options {
 }
 /** RS-BTEVS1 advertising data RS-BTEVS1のアドバタイジングデータ */
@@ -123,7 +124,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
     onCo2Measured: ((co2: number) => void) | null;
     /** Event handler for PM2.5 sensor PM2.5センサーのイベントハンドラー */
     onPm2_5Measured: ((pm2_5: RS_BTEVS1_Pm2_5) => void) | null;
-    protected readonly serviceUuid = "F9CC15234E0A49E58CF30007E819EA1E";
+    protected readonly serviceUuid: UUID128;
     firmwareRevision: string;
     private firmwareSemRevision;
     /**
@@ -199,7 +200,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
      * バージョン1.1より上のバージョンはサポートされません
      */
     pm2_5MeasureStartWait(): Promise<void>;
-    protected getCharUuid(code: number): string;
+    protected getCharUuid(code: number): UUID;
     private checkVersion;
     private checkLessVersion;
 }

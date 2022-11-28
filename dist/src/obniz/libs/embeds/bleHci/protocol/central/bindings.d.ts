@@ -58,7 +58,7 @@ export declare class NobleBindings extends EventEmitter<NobleBindingsEventType> 
     onDisconnComplete(handle: any, reason: number): void;
     onAclDataPkt(handle: any, cid?: any, data?: any): void;
     discoverServicesWait(peripheralUuid: any, uuids?: any): Promise<UUID[]>;
-    discoverIncludedServicesWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, serviceUuids: UUID[]): Promise<any[] | undefined>;
+    discoverIncludedServicesWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, serviceUuids: UUID[]): Promise<(import("../../bleTypes").UUID16 | import("../../bleTypes").UUID32 | import("../../bleTypes").UUID128)[] | undefined>;
     discoverCharacteristicsWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuids?: UUID[]): Promise<any[]>;
     readWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID): Promise<Buffer>;
     writeWait(peripheralUuid: BleDeviceAddress, serviceUuid: UUID, characteristicUuid: UUID, data: Buffer, withoutResponse: boolean): Promise<void>;

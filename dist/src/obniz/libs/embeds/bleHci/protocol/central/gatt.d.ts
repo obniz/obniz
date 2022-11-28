@@ -3,7 +3,7 @@
 import { HandleIndex } from '../peripheral/gatt';
 import { AclStream } from './acl-stream';
 import EventEmitter from 'eventemitter3';
-import { BleDeviceAddress, UUID } from '../../bleTypes';
+import { BleDeviceAddress, UUID, UUID16 } from '../../bleTypes';
 import { SmpEncryptOptions } from './smp';
 declare type GattEventTypes = 'notification' | 'handleConfirmation' | 'handleNotify' | 'end';
 /**
@@ -35,7 +35,7 @@ export declare class GattCentral extends EventEmitter<GattEventTypes> {
     discoverServicesWait(uuids: UUID[]): Promise<UUID[]>;
     discoverPrimaryServicesWait(uuids: UUID[]): Promise<UUID[]>;
     discoverSecondaryServicesWait(uuids: UUID[]): Promise<UUID[]>;
-    discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]): Promise<any[] | undefined>;
+    discoverIncludedServicesWait(serviceUuid: UUID, uuids: UUID[]): Promise<(UUID16 | import("../../bleTypes").UUID32 | import("../../bleTypes").UUID128)[] | undefined>;
     discoverCharacteristicsWait(serviceUuid: UUID, characteristicUuids: UUID[]): Promise<any[]>;
     readWait(serviceUuid: UUID, characteristicUuid: UUID): Promise<Buffer>;
     writeWait(serviceUuid: UUID, characteristicUuid: UUID, data: Buffer, withoutResponse: boolean): Promise<void>;
