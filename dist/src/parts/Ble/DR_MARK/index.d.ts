@@ -15,7 +15,7 @@ export interface CommandNotifyData {
     result: CommandResultType;
     data: number[];
 }
-interface PulseData {
+export interface PulseData {
     sequenceNumber: number;
     pulse: number;
     status: number;
@@ -244,4 +244,3 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     private removeCommandCallback;
     private notifyCallback;
 }
-export {};

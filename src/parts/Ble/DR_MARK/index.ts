@@ -49,7 +49,7 @@ interface CommandNotifyCallback {
   function: CallbackFunctionType;
 }
 
-interface PulseData {
+export interface PulseData {
   sequenceNumber: number; // シーケンス番号(1~0xFFFFFFFF)
   pulse: number; // 0.1ms 単位の周期データ(24bits)
   status: number; // 測定中のステータスデータ（8bits）
