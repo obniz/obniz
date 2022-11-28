@@ -288,7 +288,6 @@ export default class DR_MARK implements ObnizPartsBleInterface {
 
     let array;
     if (data) {
-      console.log('writeCommandWait data', data);
       if (data.length === 17) {
         array = data;
       } else {
@@ -298,7 +297,6 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     } else {
       array = new Uint8Array(17).fill(0);
     }
-    console.log('writeCommandWait array', array);
     await this._requestChar.writeWait(new Uint8Array([commandId, ...array]));
   }
 
@@ -307,7 +305,6 @@ export default class DR_MARK implements ObnizPartsBleInterface {
    */
   public async getActionModeWait(): Promise<ActionModeType> {
     const data = await this.getCommandResultWait(0x00);
-    console.log('data.data[0]', data.data[0]);
     let res: ActionModeType = 'stop';
     switch (data.data[0]) {
       case 1:
@@ -678,7 +675,6 @@ export default class DR_MARK implements ObnizPartsBleInterface {
       result,
       data: data.slice(2),
     };
-    console.log('notifyData', notifyData);
     if (DR_MARK.onnotify && typeof DR_MARK.onnotify === 'function') {
       DR_MARK.onnotify(notifyData);
     }
@@ -725,7 +721,6 @@ export default class DR_MARK implements ObnizPartsBleInterface {
       ) {
         DR_MARK.onsystempulse(scanData);
       }
-      console.log('Pulse Data', JSON.stringify(scanData));
     }
   }
 }
