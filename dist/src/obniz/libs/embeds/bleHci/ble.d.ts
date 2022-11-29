@@ -65,7 +65,7 @@ export declare class ObnizBLE extends ComponentAbstract {
      */
     advertisement: BleAdvertisement;
     extendedAdvertisement?: BleExtendedAdvertisement;
-    protected hciProtocol: HciProtocol;
+    hciProtocol: HciProtocol;
     protected _initializeWarning: boolean;
     protected remotePeripherals: BleRemotePeripheral[];
     /**

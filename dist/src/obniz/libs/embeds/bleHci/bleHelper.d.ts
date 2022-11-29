@@ -13,6 +13,7 @@ export declare class BleHelper {
     buffer2reversedHex(buf: Buffer, sepalator?: string): string;
     hex2reversedBuffer(address: string, sepalator?: string): Buffer;
     reverseHexString(str: string, separator?: string): string;
+    addColon(str: BleDeviceAddress): string;
 }
 declare const _default: BleHelper;
 export default _default;

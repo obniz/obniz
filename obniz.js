@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.25.0-beta.0",
+  "version": "3.25.0-beta.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -7235,6 +7235,13 @@ class BleHelper {
         }
         return result;
     }
+    addColon(str) {
+        const parts = [];
+        for (let i = 0; i < str.length; i += 2) {
+            parts.push(str.slice(i, i + 2));
+        }
+        return parts.join(':');
+    }
 }
 exports.BleHelper = BleHelper;
 exports.default = new BleHelper();
@@ -10393,7 +10400,7 @@ class NobleBindings extends eventemitter3_1.default {
     }
     addPeripheralData(uuid, addressType) {
         if (!this._addresses[uuid]) {
-            const address = bleHelper_1.default.reverseHexString(uuid, ':');
+            const address = bleHelper_1.default.addColon(uuid);
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = true;

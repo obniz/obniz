@@ -52,6 +52,13 @@ class BleHelper {
         }
         return result;
     }
+    addColon(str) {
+        const parts = [];
+        for (let i = 0; i < str.length; i += 2) {
+            parts.push(str.slice(i, i + 2));
+        }
+        return parts.join(':');
+    }
 }
 exports.BleHelper = BleHelper;
 exports.default = new BleHelper();
