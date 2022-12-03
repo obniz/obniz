@@ -110,7 +110,7 @@ export class ObnizBLE extends ComponentAbstract {
    */
   public advertisement!: BleAdvertisement;
   public extendedAdvertisement?: BleExtendedAdvertisement;
-  protected hciProtocol!: HciProtocol;
+  public hciProtocol!: HciProtocol;
   protected _initializeWarning!: boolean;
   protected remotePeripherals: BleRemotePeripheral[] = [];
 
