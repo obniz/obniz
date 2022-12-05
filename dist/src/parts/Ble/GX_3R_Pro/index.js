@@ -176,7 +176,7 @@ class GX_3R_Pro extends ObnizPartsBleInterface_1.ObnizPartsBleInterface {
                 gas.push(Object.assign(Object.assign({}, gasSettings[i]), { value: Number(dhc[5 + i].split(' ').join('')) }));
             }
         }
-        return { battery: Number(dhc[3]), gas };
+        return { batteryVolt: Number(dhc[3]), battery: Number(dhc[4]), gas };
     }
 }
 exports.default = GX_3R_Pro;
