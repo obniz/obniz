@@ -14,6 +14,16 @@ export interface GX_3R_Pro_Gas_Data {
     value: number;
 }
 export interface GX_3R_Pro_Data {
+    batteryVolt: number;
+    /**
+     * Level of remaining battery.
+     * 5: 'full'
+     * 4: 'half'
+     * 3: 'charging required'
+     * 2: 'waring'
+     * 1: 'critical'
+     * 0: 'power is off'
+     */
     battery: number;
     gas: GX_3R_Pro_Gas_Data[];
 }

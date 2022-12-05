@@ -23,6 +23,16 @@ export interface GX_3R_Pro_Gas_Data {
 }
 
 export interface GX_3R_Pro_Data {
+  batteryVolt: number;
+  /**
+   * Level of remaining battery.
+   * 5: 'full'
+   * 4: 'half'
+   * 3: 'charging required'
+   * 2: 'waring'
+   * 1: 'critical'
+   * 0: 'power is off'
+   */
   battery: number;
   gas: GX_3R_Pro_Gas_Data[];
 }
@@ -234,6 +244,6 @@ export default class GX_3R_Pro extends ObnizPartsBleInterface {
         });
       }
     }
-    return { battery: Number(dhc[3]), gas };
+    return { batteryVolt: Number(dhc[3]), battery: Number(dhc[4]), gas };
   }
 }
