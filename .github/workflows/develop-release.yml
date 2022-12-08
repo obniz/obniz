@@ -22,8 +22,8 @@ jobs:
       - name: Switch release brunch
         run: git switch develop-release
 
-      - name: Merge from main
-        run: git merge main --no-commit
+      - name: Merge from develop
+        run: git merge develop --no-commit
 
       - uses: actions/setup-node@v3
         with:
