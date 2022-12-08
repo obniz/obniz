@@ -20,7 +20,7 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: Switch release brunch
-        run: git switch release
+        run: git switch develop-release
 
       - name: Merge from main
         run: git merge main --no-commit
