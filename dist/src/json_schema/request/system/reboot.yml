@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/reboot"
+
+type: object
+required: [reboot]
+properties:
+  reboot:
+    type: boolean
+    enum: [true]

@@ -1,0 +1,54 @@
+{
+    "rev": "2",
+    "hw": "blewifi_gw2",
+    "peripherals": {
+      "io": {
+        "units": {}
+      },
+      "ad": {
+        "units": {}
+      },
+      "pwm": {
+        "units": {}
+      },
+      "spi": {
+        "units": {}
+      },
+      "i2c": {
+        "units": {}
+      }
+    },
+    "embeds": {
+      "ble": {
+        "extended": true
+      },
+      "display": {
+        "paper_white": true,
+        "raw_alternate": true,
+        "width": 200,
+        "height": 200,
+        "color_depth": [
+          1
+        ]
+      },
+      "storage": {}
+    },
+    "protocol": {
+      "tcp": {
+        "units": {
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {}
+        }
+      }
+    },
+    "network": {
+      "wifi": {}
+    },
+    "extraInterface": {}
+  }

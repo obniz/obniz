@@ -1,0 +1,17 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/central/characteristic_get"
+related:  "/response/ble/central/characteristic_get"
+deprecated: 3.0.0
+
+type: object
+required: [get_characteristics]
+properties:
+  get_characteristics:
+    type: object
+    required: [address,service_uuid]
+    additionalProperties: false
+    properties:
+      address: {$ref: "/deviceAddress"}
+      service_uuid: {$ref: "/uuid"}

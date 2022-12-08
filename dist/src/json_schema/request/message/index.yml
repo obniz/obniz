@@ -1,0 +1,9 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/message"
+basePath: "message"
+description: "send/receive with other obniz Board or WebHook"
+
+"anyOf":
+  - {$ref: "/request/message/send"}

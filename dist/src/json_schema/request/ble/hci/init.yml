@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/ble/hci/init"
+
+type: object
+required: [hci]
+properties:
+  hci:
+    type: object
+    required: [initialize]
+    properties:
+      initialize:
+        type: boolean
