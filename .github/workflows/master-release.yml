@@ -1,9 +1,9 @@
-name: Release from develop brunch
+name: Release from master brunch
 
 on:
   push:
     branches:
-      - develop
+      - master
 
 jobs:
   release:
@@ -20,10 +20,10 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: Switch release brunch
-        run: git switch develop-release
+        run: git switch master-release
 
-      - name: Merge from develop
-        run: git merge develop --no-commit
+      - name: Merge from master
+        run: git merge master --no-commit
 
       - uses: actions/setup-node@v3
         with:
@@ -54,7 +54,7 @@ jobs:
         run: git commit -m "update builds" -n
 
       - name: Push commits
-        run: git push origin develop-release
+        run: git push origin master-release
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
