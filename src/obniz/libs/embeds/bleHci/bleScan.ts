@@ -2,10 +2,8 @@
  * @packageDocumentation
  * @module ObnizCore.Components.Ble.Hci
  */
-import { rejects } from 'assert';
 import EventEmitter from 'eventemitter3';
 import semver from 'semver';
-import { Result } from 'typedoc/dist/lib/utils';
 import {
   ObnizBleInvalidParameterError,
   ObnizBleScanStartError,
@@ -441,7 +439,7 @@ export class BleScan {
         'onfinish',
         (peripherals: BleRemotePeripheral[], error: any) => {
           if (error) {
-            rejects(error);
+            reject(error);
             return;
           }
           resolve(null);
