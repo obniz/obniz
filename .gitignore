@@ -24,3 +24,4 @@ log
 /.env.realtest
 /.env.realtest
 
+dist

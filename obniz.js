@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.25.0-beta.0",
+  "version": "3.25.0-beta.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -124,7 +124,7 @@ module.exports = {
     "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule --quiet",
     "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
-    "precommit": "lint-staged && npm run build && git add dist && git add obniz.js",
+    "precommit": "lint-staged && npm run build && git add obniz.js",
     "prepublishOnly": "npm run build",
     "code-quality": "docker run --rm -it -v $PWD:/data/project/ -p 8080:8080 jetbrains/qodana-js:2022.2-eap --show-report",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts",
@@ -7217,6 +7217,13 @@ class BleHelper {
             return result.slice(0, -1 * separator.length);
         }
         return result;
+    }
+    addColon(str) {
+        const parts = [];
+        for (let i = 0; i < str.length; i += 2) {
+            parts.push(str.slice(i, i + 2));
+        }
+        return parts.join(':');
     }
 }
 exports.BleHelper = BleHelper;
@@ -26220,9 +26227,11 @@ class OMRON_2JCIE {
      * OMRON 環境センサ 2JCIEシリーズかどうか
      */
     static isDevice(peripheral) {
-        return ((peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
-            (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0));
+        if (peripheral.localName === null)
+            return false;
+        return (peripheral.localName.indexOf('Env') >= 0 ||
+            peripheral.localName.indexOf('IM') >= 0 ||
+            peripheral.localName.indexOf('Rbt') >= 0);
     }
     /**
      * Get a data from advertisement mode of the 2JCIE Environmental Sensor series of OMRON
@@ -26651,7 +26660,6 @@ class DR_MARK {
         }
         let array;
         if (data) {
-            console.log('writeCommandWait data', data);
             if (data.length === 17) {
                 array = data;
             }
@@ -26663,7 +26671,6 @@ class DR_MARK {
         else {
             array = new Uint8Array(17).fill(0);
         }
-        console.log('writeCommandWait array', array);
         await this._requestChar.writeWait(new Uint8Array([commandId, ...array]));
     }
     /**
@@ -26671,7 +26678,6 @@ class DR_MARK {
      */
     async getActionModeWait() {
         const data = await this.getCommandResultWait(0x00);
-        console.log('data.data[0]', data.data[0]);
         let res = 'stop';
         switch (data.data[0]) {
             case 1:
@@ -26981,7 +26987,6 @@ class DR_MARK {
             result,
             data: data.slice(2),
         };
-        console.log('notifyData', notifyData);
         if (DR_MARK.onnotify && typeof DR_MARK.onnotify === 'function') {
             DR_MARK.onnotify(notifyData);
         }
@@ -27022,7 +27027,6 @@ class DR_MARK {
                 typeof DR_MARK.onsystempulse === 'function') {
                 DR_MARK.onsystempulse(scanData);
             }
-            console.log('Pulse Data', JSON.stringify(scanData));
         }
     }
 }

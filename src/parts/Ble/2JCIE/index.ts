@@ -346,11 +346,13 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
    *
    * OMRON 環境センサ 2JCIEシリーズかどうか
    */
-  public static isDevice(peripheral: BleRemotePeripheral) {
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    if (peripheral.localName === null) return false;
+
     return (
-      (peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
-      (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
-      (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0)
+      peripheral.localName.indexOf('Env') >= 0 ||
+      peripheral.localName.indexOf('IM') >= 0 ||
+      peripheral.localName.indexOf('Rbt') >= 0
     );
   }
 
