@@ -26466,6 +26466,7 @@ class DR_MARK {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        this.onsystempulse = null;
         this._peripheral = null;
         this._uuids = {
             deviceInfoSystem: '180a',
@@ -26886,9 +26887,12 @@ class DR_MARK {
      */
     async getPulseDataWait(timeoutMs) {
         return new Promise((resolve, reject) => {
-            setTimeout(() => reject(new Error('timeout')), timeoutMs ? timeoutMs : 5000);
-            DR_MARK.onsystempulse = (data) => {
-                DR_MARK.onsystempulse = null;
+            setTimeout(() => {
+                this.onsystempulse = null;
+                reject(new Error('timeout'));
+            }, timeoutMs ? timeoutMs : 5000);
+            this.onsystempulse = (data) => {
+                this.onsystempulse = null;
                 this.requestPulseDataWait(false).then(() => resolve(data));
             };
             this.requestPulseDataWait(true);
@@ -26986,9 +26990,8 @@ class DR_MARK {
             if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
                 DR_MARK.onpulse(scanData);
             }
-            if (DR_MARK.onsystempulse &&
-                typeof DR_MARK.onsystempulse === 'function') {
-                DR_MARK.onsystempulse(scanData);
+            if (this.onsystempulse && typeof this.onsystempulse === 'function') {
+                this.onsystempulse(scanData);
             }
         }
     }
@@ -26997,7 +27000,6 @@ exports.default = DR_MARK;
 DR_MARK.onnotify = null;
 DR_MARK.onfinish = null;
 DR_MARK.onpulse = null;
-DR_MARK.onsystempulse = null;
 DR_MARK.callbackArray = [];
 DR_MARK.pulseDataArray = [];
 
@@ -81581,7 +81583,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
