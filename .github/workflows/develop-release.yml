@@ -54,6 +54,7 @@ jobs:
         run: git commit -m "update builds" -n
 
       - name: Push commits
+        shell: bash
         run: git push origin develop-release
 
 concurrency:
