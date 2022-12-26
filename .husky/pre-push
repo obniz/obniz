@@ -7,7 +7,7 @@ url="$2"
 echo "checking remote url... $url"
 
 
-if [[ "$url" =~ ^.*obnizjs-for-admin.*$ ]]; then
+if [ "$url" =~ ^.*obnizjs-for-admin.*$ ]; then
 
     # プッシュする
     exit 0
