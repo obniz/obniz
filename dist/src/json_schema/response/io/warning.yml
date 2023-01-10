@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/io/warning"
+
+type: object
+required: [warning]
+properties:
+  warning:
+    type: object
+    required: [message]
+    properties:
+      message:
+        type: string
+        description: "io warning"
+        example: "Heavy output"

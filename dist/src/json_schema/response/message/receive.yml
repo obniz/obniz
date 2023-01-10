@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/message/receive"
+related: "/request/message/send"
+
+type: object
+required: [data, from]
+properties:
+  data:
+    example: "button pressed"
+    description: "All type of data is pass."
+  from:
+    type: [string, "null"]
+    example: "1234-5678"
+    description: "From obniz id. Null is used when WebHook message."

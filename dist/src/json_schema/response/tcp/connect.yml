@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/tcp/connect"
+
+
+
+type: object
+required: [connect]
+properties:
+  connect:
+    type: object
+    required: [message,code]
+    properties:
+      message:
+        type: string
+        enum:
+          - "ok"
+          - "Port Used"
+          - "Port Area Error"
+          - "Lookup Error"
+          - "Error"
+      code:
+        type: number
+

@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/display/clear"
+
+
+type: object
+required: [clear]
+properties:
+  clear:
+    type: boolean
+    enum: [true]

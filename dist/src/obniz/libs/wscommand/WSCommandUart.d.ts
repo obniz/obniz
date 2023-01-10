@@ -1,0 +1,17 @@
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+import { WSCommandAbstract } from './WSCommandAbstract';
+export declare class WSCommandUart extends WSCommandAbstract {
+    module: number;
+    _CommandInit: number;
+    _CommandDeinit: number;
+    _CommandSend: number;
+    _CommandRecv: number;
+    init(params: any, module: any): void;
+    deinit(params: any, module: any): void;
+    send(params: any, module: any): void;
+    parseFromJson(json: any): void;
+    notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
+}
