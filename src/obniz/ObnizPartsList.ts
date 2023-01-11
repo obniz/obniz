@@ -302,6 +302,8 @@ import DR_MARK, { DR_MARKOptions } from '../parts/Ble/DR_MARK';
 import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
 import GX_3R_Pro, { GX_3R_Pro_Options } from '../parts/Ble/GX_3R_Pro';
 import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
+import HPO_300T, { HPO_300TOptions } from '../parts/Ble/HPO_300T';
+import MC_6810T2, { MC_6810T2Options } from '../parts/Ble/MC_6810T2';
 
 export type PartsType = keyof PartsList;
 
@@ -743,4 +745,6 @@ export interface PartsList {
   DR_MARK: PartsInterface<DR_MARK, DR_MARKOptions, typeof DR_MARK>;
   GX_3R_Pro: PartsInterface<GX_3R_Pro, GX_3R_Pro_Options, typeof GX_3R_Pro>;
   Tr4A: PartsInterface<Tr4A, Tr4AOptions, typeof Tr4A>;
+  HPO_300T: PartsInterface<HPO_300T, HPO_300TOptions, typeof HPO_300T>;
+  MC_6810T2: PartsInterface<MC_6810T2, MC_6810T2Options, typeof MC_6810T2>;
 }
