@@ -56,7 +56,8 @@ export default class HN_300T2 implements ObnizPartsBleInterface {
 
   public static isDevice(peripheral: BleRemotePeripheral) {
     return (
-      peripheral.localName && peripheral.localName.startsWith('BLESmart_0001')
+      peripheral.localName &&
+      peripheral.localName.startsWith('BLESmart_0001001')
     );
   }
 
