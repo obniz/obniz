@@ -23,7 +23,8 @@ class HN_300T2 {
         };
     }
     static isDevice(peripheral) {
-        return (peripheral.localName && peripheral.localName.startsWith('BLESmart_0001'));
+        return (peripheral.localName &&
+            peripheral.localName.startsWith('BLESmart_0001001'));
     }
     isPairingMode() {
         if (!this._peripheral) {
