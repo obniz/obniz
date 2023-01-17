@@ -75,14 +75,14 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     static onnotify: ((data: CommandNotifyData) => void) | null;
     static onfinish: (() => void) | null;
     static onpulse: ((pulseData: PulseData) => void) | null;
-    private static onsystempulse;
+    private onsystempulse;
     _peripheral: BleRemotePeripheral | null;
     ondisconnect?: (reason: any) => void;
     batteryService?: BleBatteryService;
     private _uuids;
     private _deviceInfoSystem;
     private _requestChar;
-    private static callbackArray;
+    private callbackArray;
     private static pulseDataArray;
     constructor(peripheral: BleRemotePeripheral | null);
     /**
@@ -242,5 +242,5 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     private getCommandResultWait;
     private setCommandCallback;
     private removeCommandCallback;
-    private notifyCallback;
+    notifyCallback: (data: number[]) => void;
 }

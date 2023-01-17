@@ -10,6 +10,7 @@ class DR_MARK {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        this.onsystempulse = null;
         this._peripheral = null;
         this._uuids = {
             deviceInfoSystem: '180a',
@@ -21,6 +22,81 @@ class DR_MARK {
         };
         this._deviceInfoSystem = null;
         this._requestChar = null;
+        this.callbackArray = [];
+        this.notifyCallback = (data) => {
+            let result = 'errorId';
+            switch (data[1]) {
+                case 0:
+                    result = 'ok';
+                    break;
+                case 0xf0:
+                    result = 'errorId';
+                    break;
+                case 0xf1:
+                    result = 'errorMode';
+                    break;
+                case 0xf2:
+                    result = 'errorExecution';
+                    break;
+                case 0xf3:
+                    result = 'errorParams';
+                    break;
+                case 0xf4:
+                    result = 'errorFrom';
+                    break;
+                case 0xf5:
+                    result = 'errorTimeout';
+                    break;
+                case 0xf6:
+                    result = 'errorObject';
+                    break;
+            }
+            const notifyData = {
+                commandId: data[0],
+                result,
+                data: data.slice(2),
+            };
+            if (DR_MARK.onnotify && typeof DR_MARK.onnotify === 'function') {
+                DR_MARK.onnotify(notifyData);
+            }
+            if (DR_MARK.onfinish &&
+                typeof DR_MARK.onfinish === 'function' &&
+                notifyData.commandId === 0x88) {
+                DR_MARK.onfinish();
+            }
+            const callback = this.callbackArray.filter((value) => value.commandId === notifyData.commandId);
+            callback.forEach((value) => value.function(notifyData));
+            if (notifyData.commandId === 0xa0) {
+                const buffer = Buffer.from(notifyData.data);
+                const status = buffer.readUInt8(7);
+                const scanData = {
+                    sequenceNumber: buffer.readUInt32LE(0),
+                    pulse: buffer.readUInt32LE(4) & 0x0fff,
+                    status,
+                    error: {
+                        outRange: Boolean(status & 0b01000000),
+                        changeSetting: Boolean(status & 0b00100000),
+                        overSumFlow: Boolean(status & 0b00010000),
+                        lowInstantFlow: Boolean(status & 0b00001000),
+                        highInstantFlow: Boolean(status & 0b00000100),
+                        shutdownBattery: Boolean(status & 0b00000010),
+                        lowBattery: Boolean(status & 0b00000001),
+                        isError: Boolean(status),
+                    },
+                    instantFlowRate: buffer.readUInt16LE(8),
+                    sumFlowRate: buffer.readUInt16LE(10),
+                    averageFlowRate: buffer.readUInt16LE(12),
+                    batteryVoltage: buffer.readUInt16LE(14),
+                };
+                DR_MARK.pulseDataArray.push(scanData);
+                if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
+                    DR_MARK.onpulse(scanData);
+                }
+                if (this.onsystempulse && typeof this.onsystempulse === 'function') {
+                    this.onsystempulse(scanData);
+                }
+            }
+        };
         if (peripheral && !DR_MARK.isDevice(peripheral)) {
             throw new Error('peripheral is not DR_MARK');
         }
@@ -430,9 +506,12 @@ class DR_MARK {
      */
     async getPulseDataWait(timeoutMs) {
         return new Promise((resolve, reject) => {
-            setTimeout(() => reject(new Error('timeout')), timeoutMs ? timeoutMs : 5000);
-            DR_MARK.onsystempulse = (data) => {
-                DR_MARK.onsystempulse = null;
+            setTimeout(() => {
+                this.onsystempulse = null;
+                reject(new Error('timeout'));
+            }, timeoutMs ? timeoutMs : 5000);
+            this.onsystempulse = (data) => {
+                this.onsystempulse = null;
                 this.requestPulseDataWait(false).then(() => resolve(data));
             };
             this.requestPulseDataWait(true);
@@ -453,94 +532,17 @@ class DR_MARK {
         });
     }
     setCommandCallback(commandId, callback) {
-        DR_MARK.callbackArray = [
-            ...DR_MARK.callbackArray,
+        this.callbackArray = [
+            ...this.callbackArray,
             { commandId, function: callback },
         ];
     }
     removeCommandCallback(commandId) {
-        DR_MARK.callbackArray = DR_MARK.callbackArray.filter((value) => value.commandId !== commandId);
-    }
-    notifyCallback(data) {
-        let result = 'errorId';
-        switch (data[1]) {
-            case 0:
-                result = 'ok';
-                break;
-            case 0xf0:
-                result = 'errorId';
-                break;
-            case 0xf1:
-                result = 'errorMode';
-                break;
-            case 0xf2:
-                result = 'errorExecution';
-                break;
-            case 0xf3:
-                result = 'errorParams';
-                break;
-            case 0xf4:
-                result = 'errorFrom';
-                break;
-            case 0xf5:
-                result = 'errorTimeout';
-                break;
-            case 0xf6:
-                result = 'errorObject';
-                break;
-        }
-        const notifyData = {
-            commandId: data[0],
-            result,
-            data: data.slice(2),
-        };
-        if (DR_MARK.onnotify && typeof DR_MARK.onnotify === 'function') {
-            DR_MARK.onnotify(notifyData);
-        }
-        if (DR_MARK.onfinish &&
-            typeof DR_MARK.onfinish === 'function' &&
-            notifyData.commandId === 0x88) {
-            DR_MARK.onfinish();
-        }
-        const callback = DR_MARK.callbackArray.filter((value) => value.commandId === notifyData.commandId);
-        callback.forEach((value) => value.function(notifyData));
-        if (notifyData.commandId === 0xa0) {
-            const buffer = Buffer.from(notifyData.data);
-            const status = buffer.readUInt8(7);
-            const scanData = {
-                sequenceNumber: buffer.readUInt32LE(0),
-                pulse: buffer.readUInt32LE(4) & 0x0fff,
-                status,
-                error: {
-                    outRange: Boolean(status & 0b01000000),
-                    changeSetting: Boolean(status & 0b00100000),
-                    overSumFlow: Boolean(status & 0b00010000),
-                    lowInstantFlow: Boolean(status & 0b00001000),
-                    highInstantFlow: Boolean(status & 0b00000100),
-                    shutdownBattery: Boolean(status & 0b00000010),
-                    lowBattery: Boolean(status & 0b00000001),
-                    isError: Boolean(status),
-                },
-                instantFlowRate: buffer.readUInt16LE(8),
-                sumFlowRate: buffer.readUInt16LE(10),
-                averageFlowRate: buffer.readUInt16LE(12),
-                batteryVoltage: buffer.readUInt16LE(14),
-            };
-            DR_MARK.pulseDataArray.push(scanData);
-            if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
-                DR_MARK.onpulse(scanData);
-            }
-            if (DR_MARK.onsystempulse &&
-                typeof DR_MARK.onsystempulse === 'function') {
-                DR_MARK.onsystempulse(scanData);
-            }
-        }
+        this.callbackArray = this.callbackArray.filter((value) => value.commandId !== commandId);
     }
 }
 exports.default = DR_MARK;
 DR_MARK.onnotify = null;
 DR_MARK.onfinish = null;
 DR_MARK.onpulse = null;
-DR_MARK.onsystempulse = null;
-DR_MARK.callbackArray = [];
 DR_MARK.pulseDataArray = [];
