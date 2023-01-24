@@ -1,9 +1,14 @@
 # DCMotor
 タミヤモーターやマブチモーターのような、<br>電池を繋いで回すような一般的なモーターです。プラスとマイナスはありませんが逆にすると逆に回転します。
 
+
+⚠obnizBoard/obnizBoard1YにDCMotorをつなぐときは、obnizBoard/obnizBoard1Y電源供給はPCなどには繋がないでください。ノイズ等によりPCが破損する恐れがあります。<br>
+obnizBoard1Yの場合は、11番ピンの右側にある電源ピンより安定した電源を供給ください。
+
+
 ![](image.jpg)
 
-## wire({forward, back})
+## wired({forward, back})
 モーターから出ている２本の線をobniz Boardにつなぎます。どちらをどこにつないでもOKですが、プログラムで「前」と書いて後ろに動いたらあとで配線を逆にすると良いです。モーターをobniz Boardの0と1番に繋いだ場合は以下のようにします
 
 ![photo of DCMotor](wired.png)
