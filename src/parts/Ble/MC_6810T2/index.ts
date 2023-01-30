@@ -49,7 +49,7 @@ export default class MC_6810T2 implements ObnizPartsBleInterface {
       throw new Error('MC_6810T2 not found');
     }
 
-    return this._peripheral.adv_data[15] & 8;
+    return !!(this._peripheral.adv_data[15] & 8);
   }
 
   /**
