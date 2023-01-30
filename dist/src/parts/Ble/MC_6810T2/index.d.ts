@@ -21,7 +21,7 @@ export default class MC_6810T2 implements ObnizPartsBleInterface {
     _timezoneOffset: number;
     constructor(peripheral: BleRemotePeripheral, timezoneOffset: number);
     static isDevice(peripheral: BleRemotePeripheral): boolean;
-    isPairingMode(): number;
+    isPairingMode(): boolean;
     /**
      * Pair with the device
      *

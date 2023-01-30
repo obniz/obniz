@@ -22,7 +22,7 @@ class MC_6810T2 {
         if (!this._peripheral) {
             throw new Error('MC_6810T2 not found');
         }
-        return this._peripheral.adv_data[15] & 8;
+        return !!(this._peripheral.adv_data[15] & 8);
     }
     /**
      * Pair with the device
