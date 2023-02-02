@@ -61,7 +61,7 @@ export default class Talia implements ObnizPartsBleInterface {
       secondary_count: ad[9],
       flow_enter: ad[10],
       flow_exit: ad[11],
-      // battery: ad[12],
+      // battery: ad[12], // 現在のファームウェアでは未対応で常に100が返ってくる
     };
     return data;
   }
