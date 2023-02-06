@@ -143,7 +143,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   //   number | null
   // > = 0x0c;
 
-  public static readonly C: ObnizPartsBleCompare<number[] | null> = [
+  public static readonly CompanyID: ObnizPartsBleCompare<number[] | null> = [
     0x00,
     0xff,
   ];

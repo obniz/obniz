@@ -31219,7 +31219,7 @@ RS_BTEVS1.LocalName = /^(BT)?EVS[-_][0-9A-F]{4}/;
 // public static readonly BeaconDataLength: ObnizPartsBleCompare<
 //   number | null
 // > = 0x0c;
-RS_BTEVS1.C = [
+RS_BTEVS1.CompanyID = [
     0x00,
     0xff,
 ];
