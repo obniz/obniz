@@ -30940,6 +30940,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
 /** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
@@ -30959,6 +30960,13 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.firmwareRevision = '';
         this.firmwareSemRevision = null;
     }
+    static isDevice(peripheral) {
+        var _a;
+        if (!((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.match(this.LocalName))) {
+            return false;
+        }
+        return true;
+    }
     /**
      * Connect to the services of a device
      *
@@ -30968,6 +30976,35 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await super.connectWait();
         this.firmwareRevision = Buffer.from(await this.readCharWait('180A', '2A26')).toString();
         this.firmwareSemRevision = semver_1.default.parse(this.firmwareRevision.replace('Ver.', ''));
+    }
+    static getData(peripheral) {
+        var _a;
+        if (!RS_BTEVS1.isDevice(peripheral)) {
+            return null;
+        }
+        const measureData = RS_BTEVS1._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'data');
+        if (!measureData)
+            return null;
+        if ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('BT')) {
+            return {
+                co2: Buffer.from(measureData).readUInt16LE(0),
+                pm1_0: Buffer.from(measureData).readUInt8(2),
+                pm2_5: Buffer.from(measureData).readUInt8(3),
+                pm4_0: Buffer.from(measureData).readUInt8(4),
+                pm10_0: Buffer.from(measureData).readUInt8(5),
+                temp: Buffer.from(measureData).readUInt8(6),
+                humid: Buffer.from(measureData).readUInt8(7),
+            };
+        }
+        return {
+            co2: Buffer.from(measureData).readUInt16LE(0),
+            pm1_0: Buffer.from(measureData).readUInt8(2),
+            pm2_5: Buffer.from(measureData).readUInt8(3),
+            pm4_0: Buffer.from(measureData).readUInt8(4),
+            pm10_0: Buffer.from(measureData).readUInt8(5),
+            temp: Buffer.from(measureData).readInt16LE(6) / 10,
+            humid: Buffer.from(measureData).readUInt8(8),
+        };
     }
     /**
      * Get device all data
@@ -31000,6 +31037,9 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
     }
     async beforeOnDisconnectWait() {
+        if (!this.firmwareSemRevision) {
+            return;
+        }
         if (semver_1.default.gte(this.firmwareSemRevision, '1.1.2')) {
             await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
             // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
@@ -31173,12 +31213,13 @@ RS_BTEVS1.PartsName = 'RS_BTEVS1';
 /**
  * BTEVS-1234: ~1.0.2
  * EVS-1234: 1.1.2~
+ * EVS_1234 1.2~
  */
-RS_BTEVS1.LocalName = /^(BT)?EVS-[0-9A-F]{4}/;
+RS_BTEVS1.LocalName = /^(BT)?EVS[-_][0-9A-F]{4}/;
 // public static readonly BeaconDataLength: ObnizPartsBleCompare<
 //   number | null
 // > = 0x0c;
-RS_BTEVS1.CompanyID = [
+RS_BTEVS1.C = [
     0x00,
     0xff,
 ];
@@ -31235,6 +31276,14 @@ RS_BTEVS1.BeaconDataStruct = {
         },
     },
 };
+RS_BTEVS1._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x03, 0x19, 0x40, 0x05, 0x02, 0x01, 0x05])
+    .groupStart('manufacture')
+    .addTarget('length', [0x0c])
+    .addTarget('type', [0xff])
+    .addTargetByLength('companyId', 2)
+    .addTargetByLength('data', 9)
+    .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -81583,7 +81632,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
+module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
 
 /***/ }),
 
