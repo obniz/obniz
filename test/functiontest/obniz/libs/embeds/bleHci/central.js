@@ -393,7 +393,163 @@ describe('ble-hci-central', function () {
   });
 
 
-  async function _initWaitTestWait(obniz) {
+  it("device connect  terminated", async function () {
+    const accept = false;
+
+    await _initWaitTestWait(this.obniz, [0x3e, 0x8d, 0x36, 0xa8, 0x91, 0x10]);
+
+    //non filter
+    await _scanStartTestWait(this.obniz, {});
+
+    //LE Advertising Report
+    await _receiveAdvertisementTest(
+      this.obniz,
+      false,
+      "4 3e 23 2 1 4 0 46 0 ff b2 ff 28 17 16 9 47 54 2d 37 35 31 30 28 32 30 30 31 37 38 37 29 0 0 0 0 0 dc"
+        .split(" ")
+        .map((e) => parseInt(e, 16))
+    );
+    const peripheral = await _receiveAdvertisementTest(
+      this.obniz,
+      true,
+      "4 3e 1a 2 1 0 0 46 0 ff b2 ff 28 e 2 1 4 3 2 8 18 6 ff 26 7 27 0 1 dc"
+    );
+
+    const connectStub = sinon.stub();
+    const disconnectStub = sinon.stub();
+    peripheral.onconnect = connectStub;
+    peripheral.ondisconnect = disconnectStub;
+
+    peripheral.connectWait({
+      autoDiscovery: true,
+      pairingOption: {
+        keys:
+          "eyJzdGsiOiJiYjYyNzViZjIxNTIyYWMwZjNmMGZjMGEwNmY3Zjk4NiIsInByZXEiOiIwMTAyMDAwNTEwMDAwMSIsInByZXMiOiIwMjAwMDAwZDEwMDAwMSIsInRrIjoiODJmNDBhMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJyIjoiMDEyYTFkM2Y5ZTcwMmZmZDM1MWUxNzBmODc2YzRiMmUiLCJwY25mIjoiMDNiNTY1YWRiMDNiNGE5ODc4NmZiOGRiM2ZjMjdmMTA2NSIsImx0ayI6IjZmNzllMGQ1ZjNhN2MzZDNmNTY1OGU0ODUzYThlODJhIiwiZWRpdiI6IjYwZmYiLCJyYW5kIjoiZTlkY2ZlMzAwYTI5NzFiZSJ9",
+      },
+      connectionParameterUpdateAccept: accept
+    });
+    await wait(0);
+
+    // scan stop
+    sendHciCommands(this.obniz, [1, 12, 32, 2, 0, 1]);
+    await receiveHciCommandsWait(this.obniz, [4, 14, 4, 5, 12, 32, 12]);
+
+    sendHciCommands(
+      this.obniz,
+      "1 d 20 19 10 0 10 0 0 0 46 0 ff b2 ff 28 0 9 0 18 0 1 0 90 1 0 0 0 0"
+    ); //LE Create Connection
+    await receiveHciCommandsWait(this.obniz, "4 f 4 0 5 d 20"); //
+    await receiveHciCommandsWait(
+      this.obniz,
+      "4 3e 1f a 0 1 0 0 0 46 0 ff b2 ff 28 0 0 0 0 0 0 0 0 0 0 0 0 18 0 1 0 90 1 0"
+    ); //
+
+    await receiveHciCommandsWait(this.obniz, "2 1 20 6 0 2 0 6 0 b d"); //
+
+
+
+    sendHciCommands(this.obniz, "2 1 0 7 0 3 0 4 0 2 0 1"); // pairing request
+    sendHciCommands(
+      this.obniz,
+      "1 19 20 1c 1 0 e9 dc fe 30 a 29 71 be 60 ff 6f 79 e0 d5 f3 a7 c3 d3 f5 65 8e 48 53 a8 e8 2a"
+    );
+    await receiveHciCommandsWait(this.obniz, "4 f 4 0 5 19 20"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(this.obniz, "4 8 4 0 1 0 1"); //
+    await receiveHciCommandsWait(this.obniz, "2 1 20 7 0 3 0 4 0 3 17 0");
+
+
+    //ここからdiscovery
+
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 10 1 0 ff ff 0 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 18 0 14 0 4 0 11 6 1 0 7 0 0 18 8 0 16 0 a 18 17 0 22 0 8 18"
+    ); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 10 23 0 ff ff 0 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 1a 0 16 0 4 0 11 14 23 0 2c 0 d7 81 a f3 31 b2 94 88 28 46 f6 53 1 0 e4 7a"
+    ); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 10 2d 0 ff ff 0 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(this.obniz, "2 1 20 9 0 5 0 4 0 1 10 2d 0 a"); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 10 1 0 ff ff 1 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(this.obniz, "2 1 20 9 0 5 0 4 0 1 10 1 0 a"); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 8 1 0 7 0 3 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 1b 0 17 0 4 0 9 7 2 0 a 3 0 0 2a 4 0 2 5 0 1 2a 6 0 2 7 0 4 2a"
+    ); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 8 8 0 16 0 3 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 1b 0 17 0 4 0 9 7 9 0 2 a 0 24 2a b 0 2 c 0 25 2a d 0 2 e 0 26 2a"
+    ); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 8 17 0 22 0 3 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 1b 0 17 0 4 0 9 7 18 0 10 19 0 18 2a 1b 0 10 1c 0 34 2a 1e 0 2 1f 0 51 2a"
+    ); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 8 23 0 2c 0 3 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 1b 0 17 0 4 0 9 15 24 0 28 25 0 d7 81 a f3 31 b2 94 88 28 46 f6 53 1 10 e4 7a"
+    ); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 8 f 0 16 0 3 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 1b 0 17 0 4 0 9 7 f 0 2 10 0 28 2a 11 0 2 12 0 29 2a 13 0 2 14 0 50 2a"
+    ); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 8 20 0 22 0 3 28"); //
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 d 0 9 0 4 0 9 7 20 0 28 21 0 52 2a"
+    ); //
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 8 26 0 2c 0 3 28"); //
+
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 10 0 c 0 5 0 12 1 8 0 10 0 20 0 2 0 64 0"
+    ); //ACL_START / SIGNALING
+
+    if(accept){
+      sendHciCommands(this.obniz, "2 1 0 a 0 6 0 5 0 13 1 2 0 0 0"); //ACL_START_NO_FLUSH / SIGNALING
+      sendHciCommands(this.obniz, "1 13 20 e 1 0 10 0 20 0 2 0 64 0 0 0 0 0");
+
+    }else {
+      sendHciCommands(this.obniz, "2 1 0 a 0 6 0 5 0 13 1 2 0 1 0"); //ACL_START_NO_FLUSH / SIGNALING
+    }
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(
+      this.obniz,
+      "2 1 20 1b 0 17 0 4 0 9 15 27 0 28 28 0 d7 81 a f3 31 b2 94 88 28 46 f6 53 1 20 e4 7a"
+    ); //ATT / Read By Type Response
+    sendHciCommands(this.obniz, "2 1 0 b 0 7 0 4 0 8 15 0 16 0 3 28"); //ATT / Read By Type Request
+    await receiveHciCommandsWait(this.obniz, "4 f 4 0 5 13 20"); //Command Status
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(this.obniz, "4 13 5 1 1 0 1 0"); //Number Of Completed Packets
+    await receiveHciCommandsWait(this.obniz, "4 3e a 3 1e 1 0 18 0 1 0 90 1"); //LE Connection Update Complete
+    await receiveHciCommandsWait(this.obniz, "4 5 4 0 1 0 1e"); //Disconnection Complete
+
+
+    await wait(0);
+    sinon.assert.callCount(connectStub, 0);
+    sinon.assert.callCount(disconnectStub, 1);
+  });
+
+
+  async function _initWaitTestWait(obniz, bdAddr) {
     const p = obniz.ble.initWait();
 
     expect(obniz).send([
@@ -481,8 +637,9 @@ describe('ble-hci-central', function () {
       [0x01, 0x09, 0x10, 0x00], //readBdAddr
     ]);
     expect(obniz).to.be.finished;
+    const _bdAddr = bdAddr ? bdAddr : [214, 24, 141, 227, 80, 204];
     await receiveMultiCommandsWait(obniz, [
-      [4, 14, 10, 5, 0x09, 0x10, 0, 214, 24, 141, 227, 80, 204], //readBdAddr
+      [4, 14,  10,  5, 0x09, 0x10, 0, ..._bdAddr], //readBdAddr
     ]);
 
     sendMultiCommands(obniz, [
@@ -552,6 +709,9 @@ describe('ble-hci-central', function () {
   }
 
   async function _receiveAdvertisementTest(obniz, detect, hci, receiveTwice = true) {
+    if (typeof hci === "string") {
+      hci = hci.split(" ").map((e) => parseInt(e, 16));
+    }
     let stub = sinon.stub();
     if(typeof detect === "function"){
       obniz.ble.scan.onfind = (p) =>{
@@ -595,6 +755,9 @@ describe('ble-hci-central', function () {
 });
 
 function sendHciCommands(obniz, command) {
+  if (typeof command === "string") {
+    command = command.split(" ").map((e) => parseInt(e, 16));
+  }
 
   expect(obniz).send([
     {
@@ -623,6 +786,9 @@ function sendMultiCommands(obniz, secondCommands) {
 }
 
 async function receiveHciCommandsWait(obniz, command) {
+  if (typeof command === "string") {
+    command = command.split(" ").map((e) => parseInt(e, 16));
+  }
   testUtil.receiveJson(obniz, [
     { "ble": { "hci": { "read": { "data": command } } } }
     ,

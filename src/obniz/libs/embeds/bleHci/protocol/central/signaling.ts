@@ -35,6 +35,7 @@ export class Signaling extends EventEmitter<SignalingEventTypes> {
   public _aclStream: any;
   public onAclStreamDataBinded: any;
   public onAclStreamEndBinded: any;
+  public connectionParameterUpdateAccept = true;
 
   constructor(handle: any, aclStream: any) {
     super();
@@ -90,17 +91,23 @@ export class Signaling extends EventEmitter<SignalingEventTypes> {
     response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
     response.writeUInt8(identifier, 1); // identifier
     response.writeUInt16LE(2, 2); // length
-    response.writeUInt16LE(0, 4);
+    if (this.connectionParameterUpdateAccept) {
+      response.writeUInt16LE(0, 4); // accept
+    } else {
+      response.writeUInt16LE(1, 4); // reject
+    }
 
     this._aclStream.write(SIGNALING_CID, response);
 
-    this.emit(
-      'connectionParameterUpdateRequest',
-      this._handle,
-      minInterval,
-      maxInterval,
-      latency,
-      supervisionTimeout
-    );
+    if (this.connectionParameterUpdateAccept) {
+      this.emit(
+        'connectionParameterUpdateRequest',
+        this._handle,
+        minInterval,
+        maxInterval,
+        latency,
+        supervisionTimeout
+      );
+    }
   }
 }

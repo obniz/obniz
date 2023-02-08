@@ -147,6 +147,7 @@ export default class GT_7510 implements ObnizPartsBleInterface {
       pairingOption: {
         keys: key,
       },
+      connectionParameterUpdateAccept: false,
     });
 
     const customService = this._peripheral.getService(
