@@ -8,6 +8,7 @@ export declare class Signaling extends EventEmitter<SignalingEventTypes> {
     _aclStream: any;
     onAclStreamDataBinded: any;
     onAclStreamEndBinded: any;
+    connectionParameterUpdateAccept: boolean;
     constructor(handle: any, aclStream: any);
     onAclStreamData(cid: any, data?: any): void;
     onAclStreamEnd(): void;

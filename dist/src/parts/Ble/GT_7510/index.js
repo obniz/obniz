@@ -101,6 +101,7 @@ class GT_7510 {
             pairingOption: {
                 keys: key,
             },
+            connectionParameterUpdateAccept: false,
         });
         const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
         const commandChara = customService.getCharacteristic('7ae4100153f646288894b231f30a81d7');

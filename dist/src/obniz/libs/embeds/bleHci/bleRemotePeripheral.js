@@ -240,6 +240,9 @@ class BleRemotePeripheral {
             this.connected = true;
             this.connected_at = new Date();
             try {
+                if (this._connectSetting.connectionParameterUpdateAccept === false) {
+                    this.obnizBle.centralBindings._signalings[this.address].connectionParameterUpdateAccept = false;
+                }
                 if (this._connectSetting.waitUntilPairing &&
                     !(await this.isPairingFinishedWait())) {
                     // console.log('waitUntilPairing');

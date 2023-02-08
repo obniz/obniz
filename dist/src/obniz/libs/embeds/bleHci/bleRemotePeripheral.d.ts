@@ -112,6 +112,7 @@ export interface BleConnectSetting {
      */
     usePyhCoded?: boolean;
     retry?: number;
+    connectionParameterUpdateAccept?: boolean;
 }
 /**
  * Pairing options

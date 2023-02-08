@@ -9,6 +9,7 @@ import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from '../../bleTypes';
 import { HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
+import { Signaling } from './signaling';
 import { SmpEncryptOptions } from './smp';
 declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' | 'notification' | 'handleNotify' | 'updatePhy';
 /**
@@ -24,7 +25,7 @@ export declare class NobleBindings extends EventEmitter<NobleBindingsEventType> 
     private _handles;
     private _gatts;
     private _aclStreams;
-    private _signalings;
+    _signalings: Record<string, Signaling>;
     private _hci;
     private _gap;
     private _scanServiceUuids;
