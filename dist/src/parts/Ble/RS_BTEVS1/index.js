@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = require("../../../obniz/ObnizPartsBleAbstract");
 const semver_1 = __importDefault(require("semver"));
+const advertismentAnalyzer_1 = require("../utils/advertisement/advertismentAnalyzer");
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
 /** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
@@ -29,6 +30,13 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.firmwareRevision = '';
         this.firmwareSemRevision = null;
     }
+    static isDevice(peripheral) {
+        var _a;
+        if (!((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.match(this.LocalName))) {
+            return false;
+        }
+        return true;
+    }
     /**
      * Connect to the services of a device
      *
@@ -38,6 +46,35 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await super.connectWait();
         this.firmwareRevision = Buffer.from(await this.readCharWait('180A', '2A26')).toString();
         this.firmwareSemRevision = semver_1.default.parse(this.firmwareRevision.replace('Ver.', ''));
+    }
+    static getData(peripheral) {
+        var _a;
+        if (!RS_BTEVS1.isDevice(peripheral)) {
+            return null;
+        }
+        const measureData = RS_BTEVS1._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'data');
+        if (!measureData)
+            return null;
+        if ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('BT')) {
+            return {
+                co2: Buffer.from(measureData).readUInt16LE(0),
+                pm1_0: Buffer.from(measureData).readUInt8(2),
+                pm2_5: Buffer.from(measureData).readUInt8(3),
+                pm4_0: Buffer.from(measureData).readUInt8(4),
+                pm10_0: Buffer.from(measureData).readUInt8(5),
+                temp: Buffer.from(measureData).readUInt8(6),
+                humid: Buffer.from(measureData).readUInt8(7),
+            };
+        }
+        return {
+            co2: Buffer.from(measureData).readUInt16LE(0),
+            pm1_0: Buffer.from(measureData).readUInt8(2),
+            pm2_5: Buffer.from(measureData).readUInt8(3),
+            pm4_0: Buffer.from(measureData).readUInt8(4),
+            pm10_0: Buffer.from(measureData).readUInt8(5),
+            temp: Buffer.from(measureData).readInt16LE(6) / 10,
+            humid: Buffer.from(measureData).readUInt8(8),
+        };
     }
     /**
      * Get device all data
@@ -70,6 +107,9 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
     }
     async beforeOnDisconnectWait() {
+        if (!this.firmwareSemRevision) {
+            return;
+        }
         if (semver_1.default.gte(this.firmwareSemRevision, '1.1.2')) {
             await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
             // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
@@ -243,8 +283,9 @@ RS_BTEVS1.PartsName = 'RS_BTEVS1';
 /**
  * BTEVS-1234: ~1.0.2
  * EVS-1234: 1.1.2~
+ * EVS_1234 1.2~
  */
-RS_BTEVS1.LocalName = /^(BT)?EVS-[0-9A-F]{4}/;
+RS_BTEVS1.LocalName = /^(BT)?EVS[-_][0-9A-F]{4}/;
 // public static readonly BeaconDataLength: ObnizPartsBleCompare<
 //   number | null
 // > = 0x0c;
@@ -305,3 +346,11 @@ RS_BTEVS1.BeaconDataStruct = {
         },
     },
 };
+RS_BTEVS1._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x03, 0x19, 0x40, 0x05, 0x02, 0x01, 0x05])
+    .groupStart('manufacture')
+    .addTarget('length', [0x0c])
+    .addTarget('type', [0xff])
+    .addTargetByLength('companyId', 2)
+    .addTargetByLength('data', 9)
+    .groupEnd();

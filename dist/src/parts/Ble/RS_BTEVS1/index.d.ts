@@ -2,7 +2,8 @@
  * @packageDocumentation
  * @module Parts.RS_BTEVS1
  */
-import { ObnizPartsBleConnectable, ObnizPartsBleCompare, ObnizBleBeaconStruct, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
+import { BleRemotePeripheral } from '../../../obniz';
+import { ObnizBleBeaconStruct, ObnizPartsBleCompare, ObnizPartsBleConnectable, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
 export interface RS_BTEVS1Options {
 }
 /** RS-BTEVS1 advertising data RS-BTEVS1のアドバタイジングデータ */
@@ -110,6 +111,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
     /**
      * BTEVS-1234: ~1.0.2
      * EVS-1234: 1.1.2~
+     * EVS_1234 1.2~
      */
     static readonly LocalName: RegExp;
     static readonly CompanyID: ObnizPartsBleCompare<number[] | null>;
@@ -126,12 +128,15 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
     protected readonly serviceUuid = "F9CC15234E0A49E58CF30007E819EA1E";
     firmwareRevision: string;
     private firmwareSemRevision;
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
     /**
      * Connect to the services of a device
      *
      * デバイスのサービスに接続
      */
     connectWait(): Promise<void>;
+    private static _deviceAdvAnalyzer;
+    static getData(peripheral: BleRemotePeripheral): RS_BTEVS1_Data | null;
     /**
      * Get device all data
      * Version 1.0.x is not supported
