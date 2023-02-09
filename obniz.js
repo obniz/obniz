@@ -30144,7 +30144,7 @@ class MT_500BT {
      * 通信開始コマンドを送信
      */
     async startCommunicationCommandWait() {
-        const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
+        const cnkey = ('' + MT_500BT.getCNKey(this._peripheral)).padStart(4, '0'); // to string
         const CNKeyBuf = Buffer.from(cnkey, 'utf8');
         const startCommand = this._createCommand(0xfd, Array.from(CNKeyBuf));
         // console.log("sendDataReplyWait");
