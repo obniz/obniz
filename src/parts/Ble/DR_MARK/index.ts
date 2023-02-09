@@ -123,7 +123,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   public static onnotify: ((data: CommandNotifyData) => void) | null = null;
   public static onfinish: (() => void) | null = null;
   public static onpulse: ((pulseData: PulseData) => void) | null = null;
-  private static onsystempulse: ((pulseData: PulseData) => void) | null = null;
+  private onsystempulse: ((pulseData: PulseData) => void) | null = null;
   public _peripheral: BleRemotePeripheral | null = null;
   public ondisconnect?: (reason: any) => void;
   public batteryService?: BleBatteryService;
@@ -139,7 +139,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   private _deviceInfoSystem: BleRemoteService | null = null;
   private _requestChar: BleRemoteCharacteristic | null = null;
 
-  private static callbackArray: CommandNotifyCallback[] = [];
+  private callbackArray: CommandNotifyCallback[] = [];
   private static pulseDataArray: PulseData[] = [];
   constructor(peripheral: BleRemotePeripheral | null) {
     if (peripheral && !DR_MARK.isDevice(peripheral)) {
@@ -591,11 +591,14 @@ export default class DR_MARK implements ObnizPartsBleInterface {
   public async getPulseDataWait(timeoutMs?: number): Promise<PulseData> {
     return new Promise((resolve, reject) => {
       setTimeout(
-        () => reject(new Error('timeout')),
+        () => {
+          this.onsystempulse = null;
+          reject(new Error('timeout'));
+        },
         timeoutMs ? timeoutMs : 5000
       );
-      DR_MARK.onsystempulse = (data) => {
-        DR_MARK.onsystempulse = null;
+      this.onsystempulse = (data) => {
+        this.onsystempulse = null;
         this.requestPulseDataWait(false).then(() => resolve(data));
       };
       this.requestPulseDataWait(true);
@@ -630,19 +633,19 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     commandId: number,
     callback: CallbackFunctionType
   ) {
-    DR_MARK.callbackArray = [
-      ...DR_MARK.callbackArray,
+    this.callbackArray = [
+      ...this.callbackArray,
       { commandId, function: callback },
     ];
   }
 
   private removeCommandCallback(commandId: number) {
-    DR_MARK.callbackArray = DR_MARK.callbackArray.filter(
+    this.callbackArray = this.callbackArray.filter(
       (value) => value.commandId !== commandId
     );
   }
 
-  private notifyCallback(data: number[]) {
+  notifyCallback = (data: number[]) => {
     let result: CommandResultType = 'errorId';
     switch (data[1]) {
       case 0:
@@ -685,7 +688,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     ) {
       DR_MARK.onfinish();
     }
-    const callback = DR_MARK.callbackArray.filter(
+    const callback = this.callbackArray.filter(
       (value) => value.commandId === notifyData.commandId
     );
     callback.forEach((value) => value.function(notifyData));
@@ -715,12 +718,9 @@ export default class DR_MARK implements ObnizPartsBleInterface {
       if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
         DR_MARK.onpulse(scanData);
       }
-      if (
-        DR_MARK.onsystempulse &&
-        typeof DR_MARK.onsystempulse === 'function'
-      ) {
-        DR_MARK.onsystempulse(scanData);
+      if (this.onsystempulse && typeof this.onsystempulse === 'function') {
+        this.onsystempulse(scanData);
       }
     }
-  }
+  };
 }
