@@ -4,7 +4,7 @@
  */
 import { BleDeviceAddress, UUID } from './bleTypes';
 
-class BleHelper {
+export class BleHelper {
   uuidFilter(uuid: string | UUID): UUID {
     return uuid.toLowerCase().replace(/[^0-9abcdef]/g, '');
   }
@@ -63,6 +63,14 @@ class BleHelper {
       return result.slice(0, -1 * separator.length);
     }
     return result;
+  }
+
+  addColon(str: BleDeviceAddress): string {
+    const parts = [];
+    for (let i = 0; i < str.length; i += 2) {
+      parts.push(str.slice(i, i + 2));
+    }
+    return parts.join(':');
   }
 }
 

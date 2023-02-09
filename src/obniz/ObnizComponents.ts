@@ -3,35 +3,35 @@
  * @module ObnizCore
  */
 
-import ObnizHciBLE from './libs/embeds/bleHci/ble';
-import Display from './libs/embeds/display';
-import ObnizSwitch from './libs/embeds/switch';
+import { ObnizBLE as ObnizHciBLE } from './libs/embeds/bleHci/ble';
+import { Display } from './libs/embeds/display';
+import { ObnizSwitch } from './libs/embeds/switch';
 
-import PeripheralAD from './libs/io_peripherals/ad';
+import { PeripheralAD } from './libs/io_peripherals/ad';
 import { DriveType } from './libs/io_peripherals/common';
-import PeripheralDirective from './libs/io_peripherals/directive';
-import PeripheralI2C from './libs/io_peripherals/i2c';
-import PeripheralIO from './libs/io_peripherals/io';
-import PeripheralPWM from './libs/io_peripherals/pwm';
-import PeripheralSPI from './libs/io_peripherals/spi';
-import PeripheralUART from './libs/io_peripherals/uart';
-import LogicAnalyzer from './libs/measurements/logicanalyzer';
-import ObnizMeasure from './libs/measurements/measure';
-import WiFi from './libs/network/wifi';
-import Plugin from './libs/plugin/plugin';
+import { Directive as PeripheralDirective } from './libs/io_peripherals/directive';
+import { PeripheralI2C } from './libs/io_peripherals/i2c';
+import { PeripheralIO } from './libs/io_peripherals/io';
+import { PeripheralPWM } from './libs/io_peripherals/pwm';
+import { PeripheralSPI } from './libs/io_peripherals/spi';
+import { PeripheralUART } from './libs/io_peripherals/uart';
+import { LogicAnalyzer } from './libs/measurements/logicanalyzer';
+import { ObnizMeasure } from './libs/measurements/measure';
+import { WiFi } from './libs/network/wifi';
+import { Plugin } from './libs/plugin/plugin';
 
-import TCP from './libs/protocol/tcp';
+import { Tcp } from './libs/protocol/tcp';
 
-import ObnizParts from './ObnizParts';
+import { ObnizParts } from './ObnizParts';
 
 import { ComponentAbstract } from './libs/ComponentAbstact';
-import HW from './libs/hw';
-import PeripheralGrove from './libs/io_peripherals/grove';
+import { HW } from './libs/hw';
+import { PeripheralGrove as PeripheralGrove } from './libs/io_peripherals/grove';
 import { ObnizOptions } from './ObnizOptions';
 
 export type PeripheralName = 'pwm' | 'uart' | 'spi' | 'i2c' | 'tcp';
 
-export default abstract class ObnizComponents extends ObnizParts {
+export abstract class ObnizComponents extends ObnizParts {
   /* board peripherals */
 
   /**
@@ -454,7 +454,7 @@ export default abstract class ObnizComponents extends ObnizParts {
     };
 
     const protocol_map: any = {
-      tcp: TCP,
+      tcp: Tcp,
     };
 
     const network_map: any = {

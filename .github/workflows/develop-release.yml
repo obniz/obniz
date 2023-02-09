@@ -1,0 +1,61 @@
+name: Release from develop brunch
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup git config
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+      - name: Switch release brunch
+        run: git switch develop-release
+
+      - name: Merge from develop
+        run: git merge develop --no-commit
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.15.0
+          cache: 'npm'
+
+      - name: Check version of package-lock.json
+        run: node -e "if(require('./package-lock.json').lockfileVersion !== 2){console.log('package-lock ver is not 2');process.exit(1);}"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Edit .gitignore
+        run: sed -i -z 's/\ndist\n//' .gitignore
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Add files
+        run: |
+          git add .
+          git reset .gitignore
+
+      - name: Commit builds
+        run: git commit -m "update builds" -n
+
+      - name: Push commits
+        run: git push origin develop-release
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

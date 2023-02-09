@@ -23,7 +23,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -42,7 +42,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -61,7 +61,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -80,7 +80,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -99,7 +99,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -118,7 +118,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -137,7 +137,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -156,7 +156,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;
@@ -173,10 +173,7 @@ describe('switch', function () {
     const isValidCommand = testUtil.isValidCommandRequestJson(requestJson);
     expect(isValidCommand.valid).to.be.true;
 
-    const compress = this.obniz.constructor.WSCommand.compress(
-      this.obniz.wscommands,
-      requestJson[0]
-    );
+    const compress = this.obniz.wsCommandManager.compress(requestJson[0]);
 
     const binaryArray = expecteBinaryStrings
       .join(' ')
@@ -201,7 +198,7 @@ describe('switch', function () {
       });
     const binary = new Uint8Array(binaryArray);
 
-    const json = this.obniz._binary2Json(binary);
+    const json = this.obniz.wsCommandManager.binary2Json(binary);
 
     const isValidCommand = testUtil.isValidCommandResponseJson(json);
     expect(isValidCommand.valid).to.be.true;

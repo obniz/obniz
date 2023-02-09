@@ -5,11 +5,10 @@
 /* eslint rulesdir/non-ascii: 0 */
 
 import Obniz from '../../../obniz';
-import bleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import JsonBinaryConverter from '../../../obniz/libs/wscommand/jsonBinaryConverter';
-import ObnizPartsBleInterface from '../../../obniz/ObnizPartsBleInterface';
-import ObnizPartsInterface, {
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInterface } from '../../../obniz/ObnizPartsBleInterface';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 
@@ -347,11 +346,13 @@ export default class OMRON_2JCIE implements ObnizPartsBleInterface {
    *
    * OMRON 環境センサ 2JCIEシリーズかどうか
    */
-  public static isDevice(peripheral: BleRemotePeripheral) {
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    if (peripheral.localName === null) return false;
+
     return (
-      (peripheral.localName && peripheral.localName.indexOf('Env') >= 0) ||
-      (peripheral.localName && peripheral.localName.indexOf('IM') >= 0) ||
-      (peripheral.localName && peripheral.localName.indexOf('Rbt') >= 0)
+      peripheral.localName.indexOf('Env') >= 0 ||
+      peripheral.localName.indexOf('IM') >= 0 ||
+      peripheral.localName.indexOf('Rbt') >= 0
     );
   }
 

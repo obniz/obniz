@@ -3,10 +3,10 @@
  * @module ObnizCore
  */
 
-import ObnizUtil from './libs/utils/util';
+import { ObnizUtil } from './libs/utils/util';
 import { ObnizErrorMessage } from './ObnizConnection';
 import { ObnizOptions } from './ObnizOptions';
-import ObnizUIs from './ObnizUIs';
+import { ObnizUIs } from './ObnizUIs';
 
 /**
  * @ignore
@@ -24,7 +24,7 @@ declare global {
   }
 }
 
-export default class ObnizDevice extends ObnizUIs {
+export class ObnizDevice extends ObnizUIs {
   /**
    * @ignore
    */

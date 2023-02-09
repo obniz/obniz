@@ -8,6 +8,10 @@ The following sensors are built-in.
 - CO2 sensor (SENSIRION SCD40)
 - PM2.5(0.5/1.0/4.0/10.0) sensor (SENSIRION SPS30)
 
+Versions confirmed to work
+- 1.0.2
+- 1.2.2
+
 ## How to use
 
 ```javascript
@@ -28,7 +32,7 @@ obniz.ble.scan.onfind = async (peripheral) => {
         };
 
         const dataResult = await device.getDataWait();
-        console.log(dataReulst);
+        console.log(dataResult);
     }
 };
 await obniz.ble.scan.startWait();

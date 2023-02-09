@@ -17,7 +17,6 @@ describe('3-pwm', function () {
     if (check_io.length === 0) {
       this.skip();
     }
-
   });
 
   const pwms = new Array(6);

@@ -6,14 +6,15 @@
 
 import EventEmitter from 'eventemitter3';
 import Obniz from '../../../obniz';
-import BleRemoteCharacteristic from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import BleRemoteService from '../../../obniz/libs/embeds/bleHci/bleRemoteService';
-import ObnizUtil from '../../../obniz/libs/utils/util';
-import ObnizPartsInterface, {
+import { BleRemoteCharacteristic } from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemoteService } from '../../../obniz/libs/embeds/bleHci/bleRemoteService';
+import { ObnizUtil } from '../../../obniz/libs/utils/util';
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
-import BleGenericAccess from '../utils/services/genericAccess';
+import { BleGenericAccess } from '../utils/services/genericAccess';
 
 export interface MT_500BTOptions {}
 
@@ -162,7 +163,7 @@ export default class MT_500BT implements ObnizPartsInterface {
    * 通信開始コマンドを送信
    */
   public async startCommunicationCommandWait() {
-    const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
+    const cnkey = ('' + MT_500BT.getCNKey(this._peripheral)).padStart(4, '0'); // to string
     const CNKeyBuf = Buffer.from(cnkey, 'utf8');
     const startCommand = this._createCommand(0xfd, Array.from(CNKeyBuf));
     // console.log("sendDataReplyWait");

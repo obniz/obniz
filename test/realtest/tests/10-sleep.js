@@ -1,6 +1,6 @@
-const chai = require("chai");
+const chai = require('chai');
 const expect = chai.expect;
-const config = require("../config.js");
+const config = require('../config.js');
 /*
 Sleep test
 
@@ -26,7 +26,7 @@ describe('10-sleep', function () {
   });
 
   // step1
-  it("setup", async () => {
+  it('setup', async () => {
     checkBoard.getIO(0).output(true);
     await checkBoard.pingWait();
     const valB = await obnizA.getIO(0).inputWait();
@@ -34,10 +34,10 @@ describe('10-sleep', function () {
   });
 
   // step2
-  it("sleep", async () => {
+  it('sleep', async () => {
     checkBoard.sleepSeconds(5);
-    obnizA.getIO(0).pull("0v");
-    obnizA.getIO(0).drive("open-drain");
+    obnizA.getIO(0).pull('0v');
+    obnizA.getIO(0).drive('open-drain');
     await wait(3000); // sleep = Wait 3 seconds because we can't verify if the command was executed offline
     config.close(checkBoard);
     const voltage = await obnizA.getAD(0).getWait();
@@ -45,7 +45,7 @@ describe('10-sleep', function () {
   });
 
   // step3
-  it("wakeup", async () => {
+  it('wakeup', async () => {
     await reconnect();
     await wait(1000);
     await checkBoard.pingWait();
@@ -57,7 +57,7 @@ describe('10-sleep', function () {
   });
 
   // step4
-  it("sleepIO sleep", async () => {
+  it('sleepIO sleep', async () => {
     checkBoard.sleepIoTrigger(true);
     config.close(checkBoard);
     await wait(3000); // sleep = Wait 3 seconds because we can't verify if the command was executed offline

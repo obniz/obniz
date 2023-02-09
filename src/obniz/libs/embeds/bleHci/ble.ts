@@ -7,10 +7,10 @@
  * @module ObnizCore.Components.Ble.Hci
  */
 
-import ObnizBLEHci from './hci';
-import CentralBindings from './protocol/central/bindings';
-import HciProtocol from './protocol/hci';
-import PeripheralBindings from './protocol/peripheral/bindings';
+import { ObnizBLEHci } from './hci';
+import { NobleBindings as CentralBindings } from './protocol/central/bindings';
+import { Hci as HciProtocol } from './protocol/hci';
+import { BlenoBindings as PeripheralBindings } from './protocol/peripheral/bindings';
 
 import semver from 'semver';
 import Obniz from '../../../index';
@@ -21,26 +21,26 @@ import {
   ObnizOfflineError,
 } from '../../../ObnizError';
 import { ComponentAbstract } from '../../ComponentAbstact';
-import BleAdvertisement from './bleAdvertisement';
-import BleCharacteristic from './bleCharacteristic';
-import BleDescriptor from './bleDescriptor';
-import BlePeripheral from './blePeripheral';
-import BleRemotePeripheral from './bleRemotePeripheral';
-import BleScan from './bleScan';
-import BleService from './bleService';
+import { BleAdvertisement } from './bleAdvertisement';
+import { BleCharacteristic } from './bleCharacteristic';
+import { BleDescriptor } from './bleDescriptor';
+import { BlePeripheral } from './blePeripheral';
+import { BleConnectSetting, BleRemotePeripheral } from './bleRemotePeripheral';
+import { BleScan } from './bleScan';
+import { BleService } from './bleService';
 import {
   BleDeviceAddress,
   BleDeviceAddressType,
   BleSupportType,
   UUID,
 } from './bleTypes';
-import BleExtendedAdvertisement from './bleExtendedAdvertisement';
+import { BleExtendedAdvertisement } from './bleExtendedAdvertisement';
 
 /**
  * Use a obniz device as a BLE device.
  * Peripheral and Central mode are supported
  */
-export default class ObnizBLE extends ComponentAbstract {
+export class ObnizBLE extends ComponentAbstract {
   // public security!: BleSecurity;
 
   /**
@@ -110,7 +110,7 @@ export default class ObnizBLE extends ComponentAbstract {
    */
   public advertisement!: BleAdvertisement;
   public extendedAdvertisement?: BleExtendedAdvertisement;
-  protected hciProtocol!: HciProtocol;
+  public hciProtocol!: HciProtocol;
   protected _initializeWarning!: boolean;
   protected remotePeripherals: BleRemotePeripheral[] = [];
 
@@ -419,13 +419,16 @@ export default class ObnizBLE extends ComponentAbstract {
    */
   public directConnect(
     address: BleDeviceAddress,
-    addressType: BleDeviceAddressType
+    addressType: BleDeviceAddressType,
+    connectionSetting?: BleConnectSetting
   ) {
     // noinspection JSIgnoredPromiseFromCall
-    this.directConnectWait(address, addressType).catch((e) => {
-      // background
-      this.Obniz.error(e);
-    });
+    this.directConnectWait(address, addressType, connectionSetting).catch(
+      (e) => {
+        // background
+        this.Obniz.error(e);
+      }
+    );
     const peripheral = this.findPeripheral(address);
     return peripheral;
   }
@@ -452,7 +455,8 @@ export default class ObnizBLE extends ComponentAbstract {
    */
   public async directConnectWait(
     address: BleDeviceAddress,
-    addressType: BleDeviceAddressType
+    addressType: BleDeviceAddressType,
+    connectionSetting?: BleConnectSetting
   ) {
     let peripheral = this.findPeripheral(address);
     if (!peripheral) {
@@ -460,7 +464,7 @@ export default class ObnizBLE extends ComponentAbstract {
       this.remotePeripherals.push(peripheral);
     }
     this.centralBindings.addPeripheralData(address, addressType);
-    await peripheral.connectWait();
+    await peripheral.connectWait(connectionSetting);
     return peripheral;
   }
 

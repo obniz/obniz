@@ -19,12 +19,12 @@ import {
   Handle,
   UUID,
 } from '../../bleTypes';
-import Hci, { HciState } from '../hci';
+import { Hci, HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
-import AclStream from './acl-stream';
-import Gap from './gap';
-import GattCentral from './gatt';
-import Signaling from './signaling';
+import { AclStream } from './acl-stream';
+import { Gap } from './gap';
+import { GattCentral } from './gatt';
+import { Signaling } from './signaling';
 import { SmpEncryptOptions } from './smp';
 
 type NobleBindingsEventType =
@@ -39,7 +39,7 @@ type NobleBindingsEventType =
 /**
  * @ignore
  */
-class NobleBindings extends EventEmitter<NobleBindingsEventType> {
+export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   public _connectable: { [key: string]: boolean };
 
   private _state: HciState | null;
@@ -106,7 +106,7 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
 
   public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
     if (!this._addresses[uuid]) {
-      const address: any = BleHelper.reverseHexString(uuid, ':');
+      const address: any = BleHelper.addColon(uuid);
       this._addresses[uuid] = address;
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = true;
@@ -743,5 +743,3 @@ class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     this.debugHandler(`${text}`);
   }
 }
-
-export default NobleBindings;

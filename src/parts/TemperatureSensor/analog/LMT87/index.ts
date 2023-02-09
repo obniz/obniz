@@ -2,7 +2,8 @@
  * @packageDocumentation
  * @module Parts.LMT87
  */
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../../obniz/ObnizPartsInterface';
 import AnalogTemperatureSensor, {

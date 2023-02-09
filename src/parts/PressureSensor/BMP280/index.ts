@@ -4,10 +4,11 @@
  */
 
 import Obniz from '../../../obniz';
-import PeripheralI2C from '../../../obniz/libs/io_peripherals/i2c';
-import PeripheralIO from '../../../obniz/libs/io_peripherals/io';
+import { PeripheralI2C } from '../../../obniz/libs/io_peripherals/i2c';
+import { PeripheralIO } from '../../../obniz/libs/io_peripherals/io';
 
-import ObnizPartsInterface, {
+import {
+  ObnizPartsInterface,
   ObnizPartsInfo,
 } from '../../../obniz/ObnizPartsInterface';
 

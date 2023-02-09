@@ -4,7 +4,7 @@
  */
 import EventEmitter from 'eventemitter3';
 import { ObnizDeprecatedFunctionError } from '../../../ObnizError';
-import ObnizUtil from '../../utils/util';
+import { ObnizUtil } from '../../utils/util';
 import BleHelper from './bleHelper';
 import { BleDeviceAddress, UUID } from './bleTypes';
 
@@ -18,7 +18,7 @@ export type BleAttributeChildrenName =
   | 'characteristics'
   | 'descriptors';
 
-export default abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
+export abstract class BleAttributeAbstract<ParentClass, ChildrenClass> {
   /**
    * @ignore
    */

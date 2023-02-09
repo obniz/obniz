@@ -7,7 +7,7 @@
 import { MESH } from '../utils/abstracts/MESH';
 import { Motion } from '../utils/abstracts/MESHjs/block/Motion';
 import { MESHJsTimeOutError } from '../utils/abstracts/MESHjs/util/Error';
-import BleRemotePeripheral from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MESH_100MDOptions {}
 
