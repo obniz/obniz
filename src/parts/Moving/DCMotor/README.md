@@ -2,6 +2,9 @@
 
 Common Brushed DC Motor which moves when connected to +/- and reverse when connected to other side.
 
+⚠When connecting the DCMotor to the obnizBoard/obnizBoard1Y, do not connect the obnizBoard/obnizBoard1Y power supply to a PC or similar. The PC may be damaged by noise, etc.
+For obnizBoard1Y, supply a stable power source from the power supply pin on the right side of pin 11.
+
 ![](image.jpg)
 
 ## wire({forward, back})
