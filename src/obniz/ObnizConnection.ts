@@ -561,20 +561,22 @@ export abstract class ObnizConnection extends EventEmitter<
         return;
       }
 
-      let sendData = JSON.stringify([obj]);
+      let sendData: string | Uint8Array = JSON.stringify([obj]);
       if (this.debugprint) {
         this._print_debug('send: ' + sendData);
       }
 
       /* compress */
       if (this.options.binary && options.local_connect) {
-        let compressed: any;
+        let compressed: Uint8Array | null;
         try {
           compressed = this.wsCommandManager.compress(JSON.parse(sendData)[0]);
           if (compressed) {
             sendData = compressed;
             if (this.debugprintBinary) {
-              this.log('binalized: ' + new Uint8Array(compressed).toString());
+              this.log(
+                'binalized(send): ' + new Uint8Array(compressed).toString()
+              );
             }
           }
         } catch (e) {
@@ -584,7 +586,7 @@ export abstract class ObnizConnection extends EventEmitter<
           });
           this.error({
             alert: 'error',
-            message: sendData,
+            message: sendData as string,
           });
           throw e;
         }

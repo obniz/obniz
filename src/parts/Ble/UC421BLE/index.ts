@@ -13,6 +13,7 @@ import {
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 import roundTo from 'round-to';
+import { UUID128, UUID16 } from '../../../obniz/libs/embeds/bleHci/bleTypes';
 
 /**
  * Options of UC421BLE.
@@ -1440,7 +1441,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
   private async _getAAndDCustomServiceWait(): Promise<BleRemoteService> {
     const aAndDCustomService = this._peripheral!.getService(
-      '11127000-B364-11E4-AB27-0800200C9A66'
+      '11127000-B364-11E4-AB27-0800200C9A66' as UUID128
     );
     if (!aAndDCustomService)
       throw new Error('Failed to get AAndDCustomService.');
@@ -1451,7 +1452,9 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
   private async _getCurrentTimeCharWait(): Promise<BleRemoteCharacteristic> {
     const currentTimeService = await this._getCurrentTimeServiceWait();
-    const currentTimeChar = currentTimeService.getCharacteristic('2A2B');
+    const currentTimeChar = currentTimeService.getCharacteristic(
+      '2A2B' as UUID16
+    );
     if (!currentTimeChar)
       throw new Error('Failed to get CurrentTime charactaristic.');
     return currentTimeChar;
@@ -1459,7 +1462,9 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
   private async _getUserControlPointCharWait(): Promise<BleRemoteCharacteristic> {
     const userDataService = await this._getUserDataServiceWait();
-    const userControlPointChar = userDataService.getCharacteristic('2A9F');
+    const userControlPointChar = userDataService.getCharacteristic(
+      '2A9F' as UUID16
+    );
     if (!userControlPointChar)
       throw new Error('Failed to get UserControlPoint charactaristic.');
     return userControlPointChar;
@@ -1475,7 +1480,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
   private async _getLastNameCharWait(): Promise<BleRemoteCharacteristic> {
     const userDataService = await this._getUserDataServiceWait();
-    const lastNameChar = userDataService.getCharacteristic('2A90');
+    const lastNameChar = userDataService.getCharacteristic('2A90' as UUID16);
     if (!lastNameChar)
       throw new Error('Failed to get LastName charactaristic.');
     return lastNameChar;
@@ -1483,28 +1488,28 @@ export default class UC421BLE implements ObnizPartsBleInterface {
 
   private async _getEmailCharWait(): Promise<BleRemoteCharacteristic> {
     const userDataService = await this._getUserDataServiceWait();
-    const emailChar = userDataService.getCharacteristic('2A87');
+    const emailChar = userDataService.getCharacteristic('2A87' as UUID16);
     if (!emailChar) throw new Error('Failed to get Email charactaristic.');
     return emailChar;
   }
 
   private async _getBirthCharWait(): Promise<BleRemoteCharacteristic> {
     const userDataService = await this._getUserDataServiceWait();
-    const birthChar = userDataService.getCharacteristic('2A85');
+    const birthChar = userDataService.getCharacteristic('2A85' as UUID16);
     if (!birthChar) throw new Error('Failed to get Birth charactaristic.');
     return birthChar;
   }
 
   private async _getGenderCharWait(): Promise<BleRemoteCharacteristic> {
     const userDataService = await this._getUserDataServiceWait();
-    const genderChar = userDataService.getCharacteristic('2A8C');
+    const genderChar = userDataService.getCharacteristic('2A8C' as UUID16);
     if (!genderChar) throw new Error('Failed to get Gender charactaristic.');
     return genderChar;
   }
 
   private async _getHeightCharWait(): Promise<BleRemoteCharacteristic> {
     const userDataService = await this._getUserDataServiceWait();
-    const heightChar = userDataService.getCharacteristic('2A8E');
+    const heightChar = userDataService.getCharacteristic('2A8E' as UUID16);
     if (!heightChar) throw new Error('Failed to get Height charactaristic.');
     return heightChar;
   }
@@ -1512,7 +1517,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   private async _getWeightScaleMeasurementCharWait(): Promise<BleRemoteCharacteristic> {
     const weightScaleService = await this._getWeightScaleServiceWait();
     const weightScaleMeasurementChar = weightScaleService.getCharacteristic(
-      '2A9D'
+      '2A9D' as UUID16
     );
     if (!weightScaleMeasurementChar)
       throw new Error('Failed to get Weight Measurement charactaristic.');
@@ -1522,7 +1527,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   private async _getBodyCompositionMeasurementCharWait(): Promise<BleRemoteCharacteristic> {
     const bodyCompositionService = await this._getBodyCompositionServiceWait();
     const bodyCompositionMeasurementChar = bodyCompositionService.getCharacteristic(
-      '2A9C'
+      '2A9C' as UUID16
     );
     if (!bodyCompositionMeasurementChar)
       throw new Error(
@@ -1534,7 +1539,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   private async _getAAndDCustomWriteReadCharWait(): Promise<BleRemoteCharacteristic> {
     const aAndDCustomService = await this._getAAndDCustomServiceWait();
     const aAndDCustomWriteReadChar = aAndDCustomService.getCharacteristic(
-      '11127001-B364-11E4-AB27-0800200C9A66'
+      '11127001-B364-11E4-AB27-0800200C9A66' as UUID128
     );
     if (!aAndDCustomWriteReadChar)
       throw new Error('Failed to get A&D Custom Read Write charactaristic.');
@@ -1544,7 +1549,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
   private async _getAAndDCustomNotificationCharWait(): Promise<BleRemoteCharacteristic> {
     const aAndDCustomService = await this._getAAndDCustomServiceWait();
     const aAndDCustomNotificationChar = aAndDCustomService.getCharacteristic(
-      '11127002-B364-11E4-AB27-0800200C9A66'
+      '11127002-B364-11E4-AB27-0800200C9A66' as UUID128
     );
     if (!aAndDCustomNotificationChar)
       throw new Error('Failed to get A&D Custom Notification charactaristic.');

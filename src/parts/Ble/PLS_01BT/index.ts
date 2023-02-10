@@ -79,12 +79,12 @@ export default class PLS_01BT implements ObnizPartsInterface {
    */
   public onmeasured: ((result: PLS_01BTResult) => void) | null = null;
   public ondisconnect?: (reason: any) => void;
+  public _peripheral: BleRemotePeripheral | null = null;
 
   private _uuids = {
     service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
     rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
   };
-  private _peripheral: BleRemotePeripheral | null = null;
   private _rxCharacteristic: BleRemoteCharacteristic | null = null;
   private _txCharacteristic: BleRemoteCharacteristic | null = null;
 

@@ -28,6 +28,7 @@ import { ComponentAbstract } from './libs/ComponentAbstact';
 import { HW } from './libs/hw';
 import { PeripheralGrove as PeripheralGrove } from './libs/io_peripherals/grove';
 import { ObnizOptions } from './ObnizOptions';
+import { Storage } from './libs/embeds/storage';
 
 export type PeripheralName = 'pwm' | 'uart' | 'spi' | 'i2c' | 'tcp';
 
@@ -233,6 +234,11 @@ export abstract class ObnizComponents extends ObnizParts {
    * @category Embeds
    */
   public switch?: ObnizSwitch;
+
+  /**
+   * @category Embeds
+   */
+  public storage?: Storage;
 
   /**
    * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
@@ -451,6 +457,7 @@ export abstract class ObnizComponents extends ObnizParts {
       display: Display,
       switch: ObnizSwitch,
       ble,
+      storage: Storage,
     };
 
     const protocol_map: any = {
@@ -489,6 +496,7 @@ export abstract class ObnizComponents extends ObnizParts {
       for (const key in embeds_map) {
         if (hw_embeds[key]) {
           const Class = embeds_map[key];
+          // 'this' must be an instance of Obniz class since it's the only class that gets instantiated by user.
           (this as any)[key] = new Class(this, hw_embeds[key]);
           this._allComponentKeys.push(key);
           if (typeof (this as any)[key].debugHandler === 'function') {

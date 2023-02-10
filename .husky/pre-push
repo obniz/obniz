@@ -1,0 +1,27 @@
+#!/bin/bash
+. "$(dirname -- "$0")/_/husky.sh"
+
+[ -n "$CI" ] && exit 0
+
+remote="$1"
+url="$2"
+
+echo "checking remote url... $url"
+
+
+if [[ "$url" =~ ^.*obnizjs-for-admin.*$ ]]; then
+
+    # プッシュする
+    exit 0
+fi
+cat <<-EOS
+    --------------------------------------------------
+
+    DO NOT PUSH TO $url. It's maybe obnizjs-for-admin script.
+
+    --------------------------------------------------
+EOS
+
+# 異常終了（プッシュはされない）
+exit 1
+

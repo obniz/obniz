@@ -22,12 +22,15 @@ import IBS02IR, { iBS02IROptions } from '../parts/Ble/iBS02IR';
 import IBS02PIR, { iBS02PIROptions } from '../parts/Ble/iBS02PIR';
 import IBS03, { iBS03Options } from '../parts/Ble/iBS03';
 import IBS03G, { iBS03GOptions } from '../parts/Ble/iBS03G';
+import iBS03H, { iBS03HOptions } from '../parts/Ble/iBS03H';
 import IBS03R, { IBS03ROptions } from '../parts/Ble/iBS03R';
 import IBS03T, { iBS03TOptions } from '../parts/Ble/iBS03T';
 import IBS03TP, { iBS03TPOptions } from '../parts/Ble/iBS03TP';
 import IBS04, { iBS04Options } from '../parts/Ble/iBS04';
 import IBS04I, { iBS04iOptions } from '../parts/Ble/iBS04i';
 import IBS05G, { iBS05GOptions } from '../parts/Ble/iBS05G';
+import IBS05T, { iBS05TOptions } from '../parts/Ble/iBS05T';
+import IBS_TH, { IBS_THOptions } from '../parts/Ble/IBS_TH';
 import KankiAirMier, { KankiAirMierOptions } from '../parts/Ble/KankiAirMier';
 import Linking, { LinkingOptions } from '../parts/Ble/linking';
 import Logtta_Accel, { Logtta_AccelOptions } from '../parts/Ble/LogttaAccel';
@@ -43,6 +46,7 @@ import RS_BTEVS1, { RS_BTEVS1Options } from '../parts/Ble/RS_BTEVS1';
 import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
 import RS_Seek3, { RS_Seek3Options } from '../parts/Ble/RS_SEEK3';
 import SCBTGAAAC, { SCBTGAAACOptions } from '../parts/Ble/scbtgaaac';
+import SCBTGABBI, { SCBTGABBIOptions } from '../parts/Ble/scbtgabbi';
 import STM550B, { STM550B_Options } from '../parts/Ble/STM550B';
 import TM530, { TM530Options } from '../parts/Ble/tm530';
 import TM511, { TM511Options } from '../parts/Ble/tm511';
@@ -281,6 +285,8 @@ import EXVital, { EXVital_Options } from '../parts/Ble/EXVital';
 import iBS03T_RH, { iBS03T_RHOptions } from '../parts/Ble/iBS03T_RH';
 import iBS05H, { iBS05HOptions } from '../parts/Ble/iBS05H';
 import UC421BLE, { UC421BLEOptions } from '../parts/Ble/UC421BLE';
+import UC352BLE, { UC352BLEOptions } from '../parts/Ble/UC352BLE';
+
 import TR7, { TR7Options } from '../parts/Ble/TR7';
 import MM_BLEBC5, { MM_BLEBC5_Options } from '../parts/Ble/MM_BLEBC5';
 import MESH_100BU, { MESH_100BUOptions } from '../parts/Ble/MESH_100BU';
@@ -290,9 +296,17 @@ import MESH_100MD, { MESH_100MDOptions } from '../parts/Ble/MESH_100MD';
 import MESH_100PA, { MESH_100PAOptions } from '../parts/Ble/MESH_100PA';
 import MESH_100TH, { MESH_100THOptions } from '../parts/Ble/MESH_100TH';
 import MESH_100GP, { MESH_100GPOptions } from '../parts/Ble/MESH_100GP';
+import HN_300T2, { HN_300T2Options } from '../parts/Ble/HN_300T2';
+import GT_7510, { GT_7510Options } from '../parts/Ble/GT_7510';
+import TT_MSK1508, { TT_MSK1508Options } from '../parts/Ble/TT-MSK1508';
+import INKBIRD, { INKBIRDOptions } from '../parts/Ble/INKBIRD';
 import DR_MARK, { DR_MARKOptions } from '../parts/Ble/DR_MARK';
-import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
 import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
+import GX_3R_Pro, { GX_3R_Pro_Options } from '../parts/Ble/GX_3R_Pro';
+import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
+import HPO_300T, { HPO_300TOptions } from '../parts/Ble/HPO_300T';
+import MC_6810T2, { MC_6810T2Options } from '../parts/Ble/MC_6810T2';
+import Talia, { TaliaOptions } from '../parts/Ble/Talia';
 
 export type PartsType = keyof PartsList;
 
@@ -451,6 +465,7 @@ export interface PartsList {
   LMT87: PartsInterface<LMT87, LMT87Options, typeof LMT87>;
   MCP9700: PartsInterface<MCP9700, MCP9700Options, typeof MCP9700>;
   MCP9701: PartsInterface<MCP9701, MCP9701Options, typeof MCP9701>;
+  INKBIRD: PartsInterface<INKBIRD, INKBIRDOptions, typeof INKBIRD>;
   // 'S8100B':{instance: S8100B,options: S8100BOptions},
   // 'S8120C':{instance: S8120C,options: S8120COptions},
   // 'ADT7410':{instance: ADT7410,options: ADT7410Options},
@@ -626,6 +641,7 @@ export interface PartsList {
   Linking: PartsInterface<Linking, LinkingOptions, typeof Linking>;
   uPRISM: PartsInterface<uPRISM, uPRISMOptions, typeof uPRISM>;
   SCBTGAAAC: PartsInterface<SCBTGAAAC, SCBTGAAACOptions, typeof SCBTGAAAC>;
+  SCBTGABBI: PartsInterface<SCBTGABBI, SCBTGABBIOptions, typeof SCBTGABBI>;
   iBS01: PartsInterface<IBS01, iBS01Options, typeof IBS01>;
   iBS01G: PartsInterface<IBS01G, iBS01GOptions, typeof IBS01G>;
   iBS01H: PartsInterface<IBS01H, iBS01HOptions, typeof IBS01H>;
@@ -635,6 +651,7 @@ export interface PartsList {
   iBS02PIR: PartsInterface<IBS02PIR, iBS02PIROptions, typeof IBS02PIR>;
   iBS03: PartsInterface<IBS03, iBS03Options, typeof IBS03>;
   iBS03G: PartsInterface<IBS03G, iBS03GOptions, typeof IBS03G>;
+  iBS03H: PartsInterface<iBS03H, iBS03HOptions, typeof iBS03H>;
   iBS03T: PartsInterface<IBS03T, iBS03TOptions, typeof IBS03T>;
   iBS03T_RH: PartsInterface<iBS03T_RH, iBS03T_RHOptions, typeof iBS03T_RH>;
   iBS03TP: PartsInterface<IBS03TP, iBS03TPOptions, typeof IBS03TP>;
@@ -643,10 +660,13 @@ export interface PartsList {
   iBS03R: PartsInterface<IBS03R, IBS03ROptions, typeof IBS03R>;
   iBS05H: PartsInterface<iBS05H, iBS05HOptions, typeof iBS05H>;
   iBS05G: PartsInterface<IBS05G, iBS05GOptions, typeof IBS05G>;
+  iBS05T: PartsInterface<IBS05T, iBS05TOptions, typeof IBS05T>;
+  IBS_TH: PartsInterface<IBS_TH, IBS_THOptions, typeof IBS_TH>;
   TR4: PartsInterface<Tr4, Tr4Options, typeof Tr4>;
   TR4A: PartsInterface<Tr4A, Tr4AOptions, typeof Tr4A>;
   RTR500B: PartsInterface<RTR500B, RTR500BOptions, typeof Tr4A>;
   TR7: PartsInterface<TR7, TR7Options, typeof TR7>;
+  TT_MSK1508: PartsInterface<TT_MSK1508, TT_MSK1508Options, typeof TT_MSK1508>;
   KankiAirMier: PartsInterface<
     KankiAirMier,
     KankiAirMierOptions,
@@ -716,6 +736,7 @@ export interface PartsList {
   EXVital: PartsInterface<EXVital, EXVital_Options, typeof EXVital>;
   STM550B: PartsInterface<STM550B, STM550B_Options, typeof STM550B>;
   UC421BLE: PartsInterface<UC421BLE, UC421BLEOptions, typeof UC421BLE>;
+  UC352BLE: PartsInterface<UC352BLE, UC352BLEOptions, typeof UC352BLE>;
   MESH_100BU: PartsInterface<MESH_100BU, MESH_100BUOptions, typeof MESH_100BU>;
   MESH_100LE: PartsInterface<MESH_100LE, MESH_100LEOptions, typeof MESH_100LE>;
   MESH_100AC: PartsInterface<MESH_100AC, MESH_100ACOptions, typeof MESH_100AC>;
@@ -724,5 +745,12 @@ export interface PartsList {
   MESH_100TH: PartsInterface<MESH_100TH, MESH_100THOptions, typeof MESH_100TH>;
   MESH_100GP: PartsInterface<MESH_100GP, MESH_100GPOptions, typeof MESH_100GP>;
   MM_BLEBC5: PartsInterface<MM_BLEBC5, MM_BLEBC5_Options, typeof MM_BLEBC5>;
+  HN_300T2: PartsInterface<HN_300T2, HN_300T2Options, typeof HN_300T2>;
+  GT_7510: PartsInterface<GT_7510, GT_7510Options, typeof GT_7510>;
   DR_MARK: PartsInterface<DR_MARK, DR_MARKOptions, typeof DR_MARK>;
+  GX_3R_Pro: PartsInterface<GX_3R_Pro, GX_3R_Pro_Options, typeof GX_3R_Pro>;
+  Tr4A: PartsInterface<Tr4A, Tr4AOptions, typeof Tr4A>;
+  HPO_300T: PartsInterface<HPO_300T, HPO_300TOptions, typeof HPO_300T>;
+  MC_6810T2: PartsInterface<MC_6810T2, MC_6810T2Options, typeof MC_6810T2>;
+  Talia: PartsInterface<Talia, TaliaOptions, typeof Talia>;
 }

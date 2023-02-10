@@ -19,6 +19,8 @@ import { WSCommandSystem } from './WSCommandSystem';
 import { WSCommandTcp } from './WSCommandTcp';
 import { WSCommandUart } from './WSCommandUart';
 import { WSCommandWiFi } from './WSCommandWiFi';
+import { WSCommandStorage } from './WSCommandStorage';
+import { WSCommandSubnet } from './WSCommandSubnet';
 
 export const createCommandManager = () => {
   const instance = new WSCommandManager();
@@ -40,6 +42,10 @@ export const createCommandManager = () => {
   instance.addCommandClass("WSCommandTcp", WSCommandTcp);
   instance.addCommandClass("WSCommandWiFi", WSCommandWiFi);
   instance.addCommandClass("WSCommandPlugin", WSCommandPlugin);
+
+  //for admin
+  instance.addCommandClass("WSCommandStorage", WSCommandStorage);
+  instance.addCommandClass("WSCommandSubnet", WSCommandSubnet);
 
   return instance;
 };

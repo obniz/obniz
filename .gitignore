@@ -25,3 +25,4 @@ log
 /.env.realtest
 
 dist
+obniz.js
