@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.25.0-beta.1",
+  "version": "3.25.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -31709,7 +31709,7 @@ class MT_500BT {
      * 通信開始コマンドを送信
      */
     async startCommunicationCommandWait() {
-        const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
+        const cnkey = ('' + MT_500BT.getCNKey(this._peripheral)).padStart(4, '0'); // to string
         const CNKeyBuf = Buffer.from(cnkey, 'utf8');
         const startCommand = this._createCommand(0xfd, Array.from(CNKeyBuf));
         // console.log("sendDataReplyWait");
@@ -36285,7 +36285,7 @@ class UT201BLE {
         });
         const { timeChar, customServiceChar } = this._getChars();
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
-        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        // await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
     /**
