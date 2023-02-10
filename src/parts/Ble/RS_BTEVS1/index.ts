@@ -180,6 +180,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
       length: 2,
       type: 'custom', // 'numLE',
       multiple: 0.1,
+      round: 1,
       func: (data, p) =>
         (p.manufacturerSpecificData?.length ?? 0) + 1 === 0x0b &&
         (p.localName ?? '').startsWith('BT')
