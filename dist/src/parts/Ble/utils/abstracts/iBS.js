@@ -45,6 +45,7 @@ BaseiBS.Config = {
         length: 2,
         type: 'unsignedNumLE',
         multiple: 0.01,
+        round: 2,
     },
     button: {
         index: 4,
@@ -73,6 +74,7 @@ BaseiBS.Config = {
         length: 2,
         type: 'numLE',
         multiple: 0.01,
+        round: 2,
     },
     humidity: {
         index: 7,

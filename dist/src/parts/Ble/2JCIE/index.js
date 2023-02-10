@@ -4,8 +4,12 @@
  * @module Parts.OMRON_2JCIE
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = require("../../../obniz/ObnizPartsBleInterface");
+const round_to_1 = __importDefault(require("round-to"));
 /** 2JCIE management class 2JCIEを管理するクラス */
 class OMRON_2JCIE {
     constructor(peripheral) {
@@ -67,11 +71,11 @@ class OMRON_2JCIE {
             return {
                 temperature: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[9], adv_data[8]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
+                relative_humidity: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01, 2),
                 light: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
-                uv_index: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
-                barometric_pressure: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
-                sound_noise: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
+                uv_index: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01, 2),
+                barometric_pressure: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1, 1),
+                sound_noise: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01, 2),
                 acceleration_x: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[21], adv_data[20]),
                 acceleration_y: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[23], adv_data[22]),
                 acceleration_z: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[25], adv_data[24]),
@@ -86,10 +90,10 @@ class OMRON_2JCIE {
             return {
                 temperature: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[9]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
+                relative_humidity: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01, 2),
                 light: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
-                barometric_pressure: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
-                sound_noise: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+                barometric_pressure: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001, 3),
+                sound_noise: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01, 2),
                 etvoc: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[21]),
                 eco2: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[23]),
             };
@@ -215,15 +219,15 @@ class OMRON_2JCIE {
         const data = await c.readWait();
         const json = {
             row_number: data[0],
-            temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
-            relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+            temperature: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(1, 3)) * 0.01, 2),
+            relative_humidity: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(3, 5)) * 0.01, 2),
             light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
-            uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
-            barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
-            sound_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
-            discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
-            heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
-            battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+            uv_index: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(7, 9)) * 0.01, 2),
+            barometric_pressure: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(9, 11)) * 0.1, 1),
+            sound_noise: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(11, 13)) * 0.01, 2),
+            discomfort_index: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(13, 15)) * 0.01, 2),
+            heatstroke_risk_factor: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(15, 17)) * 0.01, 2),
+            battery_voltage: (0, round_to_1.default)(this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001, 3),
         };
         return json;
     }
@@ -248,11 +252,11 @@ class OMRON_2JCIE {
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],
-            temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
-            relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+            temperature: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(1, 3)) * 0.01, 2),
+            relative_humidity: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(3, 5)) * 0.01, 2),
             light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
-            barometric_pressure: this.signedNumberFromBinary(data.slice(7, 11)) * 0.001,
-            sound_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+            barometric_pressure: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(7, 11)) * 0.001, 3),
+            sound_noise: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(11, 13)) * 0.01, 2),
             etvoc: this.signedNumberFromBinary(data.slice(13, 15)) * 1,
             eco2: this.signedNumberFromBinary(data.slice(15, 17)) * 1,
         };
@@ -279,12 +283,12 @@ class OMRON_2JCIE {
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],
-            discomfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
-            heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+            discomfort_index: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(1, 3)) * 0.01, 2),
+            heatstroke_risk_factor: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(3, 5)) * 0.01, 2),
             vibration_information: this.vibrationState[data[5]],
-            si_value: this.unsignedNumberFromBinary(data.slice(6, 8)) * 0.1,
-            pga: this.unsignedNumberFromBinary(data.slice(8, 10)) * 0.1,
-            seismic_intensity: this.unsignedNumberFromBinary(data.slice(10, 12)) * 0.001,
+            si_value: (0, round_to_1.default)(this.unsignedNumberFromBinary(data.slice(6, 8)) * 0.1, 1),
+            pga: (0, round_to_1.default)(this.unsignedNumberFromBinary(data.slice(8, 10)) * 0.1, 1),
+            seismic_intensity: (0, round_to_1.default)(this.unsignedNumberFromBinary(data.slice(10, 12)) * 0.001, 3),
             acceleration_x: this.signedNumberFromBinary(data.slice(12, 14)) * 1,
             acceleration_y: this.signedNumberFromBinary(data.slice(14, 16)) * 1,
             acceleration_z: this.signedNumberFromBinary(data.slice(16, 18)) * 1,

@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = require("eventemitter3");
 const moment_1 = __importDefault(require("moment"));
+const round_to_1 = __importDefault(require("round-to"));
 const arrUserNoType = [1, 2, 3, 4, 5];
 const arrGuestUserNoType = [99];
 /**
@@ -438,7 +439,7 @@ class UC421BLE {
                     result.weight = null;
                 }
                 else {
-                    const weightFloat = weightInt * resolutionWeight;
+                    const weightFloat = (0, round_to_1.default)(weightInt * resolutionWeight, 3);
                     result.weight = { unit: measurementUnit, value: weightFloat };
                 }
                 const byteLenWeight = 2;
@@ -481,12 +482,12 @@ class UC421BLE {
                 if (bmiAndHeightPresent) {
                     const resolutionBmi = 0.1;
                     const bmiMass = buf.readUInt16LE(offset);
-                    const bmi = bmiMass * resolutionBmi;
+                    const bmi = (0, round_to_1.default)(bmiMass * resolutionBmi, 1);
                     const byteLenBmi = 2;
                     offset += byteLenBmi;
                     const resolutionHeight = 0.1;
                     const heightMass = buf.readUInt16LE(offset);
-                    const height = heightMass * resolutionHeight;
+                    const height = (0, round_to_1.default)(heightMass * resolutionHeight, 1);
                     const byteLenHeight = 2;
                     offset += byteLenHeight;
                     result.bmi = bmi;
@@ -628,7 +629,7 @@ class UC421BLE {
                         result.muscleMass = null;
                     }
                     else {
-                        const mascleMassFloat = mascleMassInt * resolutionMascleMass;
+                        const mascleMassFloat = (0, round_to_1.default)(mascleMassInt * resolutionMascleMass, 3);
                         result.muscleMass = {
                             unit: measurementUnit,
                             value: mascleMassFloat,
@@ -645,7 +646,7 @@ class UC421BLE {
                         result.bodyWaterMass = null;
                     }
                     else {
-                        const bodyWaterMassFloat = bodyWaterMassInt * resolutionBodyWaterMass;
+                        const bodyWaterMassFloat = (0, round_to_1.default)(bodyWaterMassInt * resolutionBodyWaterMass, 3);
                         result.bodyWaterMass = {
                             unit: measurementUnit,
                             value: bodyWaterMassFloat,
