@@ -81,6 +81,7 @@ export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
       length: 2,
       type: 'unsignedNumLE',
       multiple: 0.01,
+      round: 2,
     },
     button: {
       index: 4,
@@ -109,6 +110,7 @@ export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
       length: 2,
       type: 'numLE',
       multiple: 0.01,
+      round: 2,
     },
     humidity: {
       index: 7,

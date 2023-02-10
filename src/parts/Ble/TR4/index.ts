@@ -12,6 +12,7 @@ import {
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 import { BleAdvBinaryAnalyzer } from '../utils/advertisement/advertismentAnalyzer';
+import roundTo from 'round-to';
 
 export interface Tr4Options {}
 
@@ -79,7 +80,7 @@ export default class Tr4 implements ObnizPartsBleInterface {
     const temperatureRaw = Buffer.from(measureData).readInt16LE(0);
 
     return {
-      temperature: (temperatureRaw - 1000) / 10,
+      temperature: roundTo((temperatureRaw - 1000) / 10, 1),
     };
   }
 
