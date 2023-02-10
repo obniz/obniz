@@ -34412,7 +34412,7 @@ class UT201BLE {
         });
         const { timeChar, customServiceChar } = this._getChars();
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
-        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        // await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
     /**

@@ -146,7 +146,7 @@ export default class UT201BLE implements ObnizPartsBleInterface {
 
     await this._writeTimeCharWait(this._timezoneOffsetMinute);
 
-    await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+    // await customServiceChar.writeWait([2, 1, 3]); // disconnect req
     return key;
   }
 
