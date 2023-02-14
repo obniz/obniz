@@ -124,7 +124,7 @@ module.exports = {
     "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule --quiet",
     "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
-    "precommit": "lint-staged && npm run build && git add obniz.js",
+    "precommit": "lint-staged",
     "prepublishOnly": "npm run build",
     "code-quality": "docker run --rm -it -v $PWD:/data/project/ -p 8080:8080 jetbrains/qodana-js:2022.2-eap --show-report",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts",
@@ -230,6 +230,7 @@ module.exports = {
     "@9wick/serial-executor": "^1.0.0",
     "@types/tv4": "^1.2.29",
     "@types/ws": "^6.0.4",
+    "easy-crc": "^1.1.0",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "moment": "^2.29.3",
@@ -345,10 +346,15 @@ var map = {
 	"./request/spi/index.yml": "./dist/src/json_schema/request/spi/index.yml",
 	"./request/spi/init_master.yml": "./dist/src/json_schema/request/spi/init_master.yml",
 	"./request/spi/write.yml": "./dist/src/json_schema/request/spi/write.yml",
+	"./request/storage/index.yml": "./dist/src/json_schema/request/storage/index.yml",
+	"./request/storage/read.yml": "./dist/src/json_schema/request/storage/read.yml",
+	"./request/storage/save.yml": "./dist/src/json_schema/request/storage/save.yml",
 	"./request/switch/get.yml": "./dist/src/json_schema/request/switch/get.yml",
 	"./request/switch/index.yml": "./dist/src/json_schema/request/switch/index.yml",
 	"./request/system/index.yml": "./dist/src/json_schema/request/system/index.yml",
 	"./request/system/keep_working_at_offline.yml": "./dist/src/json_schema/request/system/keep_working_at_offline.yml",
+	"./request/system/network_get.yml": "./dist/src/json_schema/request/system/network_get.yml",
+	"./request/system/network_value.yml": "./dist/src/json_schema/request/system/network_value.yml",
 	"./request/system/ping.yml": "./dist/src/json_schema/request/system/ping.yml",
 	"./request/system/reboot.yml": "./dist/src/json_schema/request/system/reboot.yml",
 	"./request/system/reset.yml": "./dist/src/json_schema/request/system/reset.yml",
@@ -427,6 +433,8 @@ var map = {
 	"./response/plugin/receive.yml": "./dist/src/json_schema/response/plugin/receive.yml",
 	"./response/spi/index.yml": "./dist/src/json_schema/response/spi/index.yml",
 	"./response/spi/read.yml": "./dist/src/json_schema/response/spi/read.yml",
+	"./response/storage/index.yml": "./dist/src/json_schema/response/storage/index.yml",
+	"./response/storage/read.yml": "./dist/src/json_schema/response/storage/read.yml",
 	"./response/switch/change.yml": "./dist/src/json_schema/response/switch/change.yml",
 	"./response/switch/index.yml": "./dist/src/json_schema/response/switch/index.yml",
 	"./response/system/index.yml": "./dist/src/json_schema/response/system/index.yml",
@@ -841,7 +849,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"},"storage":{"$ref":"/request/storage"}}}}
 
 /***/ }),
 
@@ -1055,6 +1063,27 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/storage/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage","basePath":"storage","anyOf":[{"$ref":"/request/storage/save"},{"$ref":"/request/storage/read"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/storage/read.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage/read","related":"/response/storage/read","desription":"Read file data by file name from obniz storage.","type":"object","required":["read"],"properties":{"read":{"type":"object","required":["fileName"],"properties":{"fileName":{"type":"string"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/storage/save.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage/save","type":"object","required":["save"],"properties":{"save":{"type":"object","required":["fileName","data"],"properties":{"fileName":{"type":"string"},"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/switch/get.yml":
 /***/ (function(module, exports) {
 
@@ -1080,6 +1109,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/keepWorkingAtOffline","type":"object","required":["keep_working_at_offline"],"properties":{"keep_working_at_offline":{"type":"boolean"}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/system/network_get.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/network_get","type":"object","required":["network"],"properties":{"network":{"type":"string","enum":["get"]}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/system/network_value.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/network_value","type":"object","required":["network"],"properties":{"network":{"type":"object","required":["value"],"properties":{"value":"string"}}}}
 
 /***/ }),
 
@@ -1513,7 +1556,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"},"plugin":{"$ref":"/response/plugin"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"},"plugin":{"$ref":"/response/plugin"},"storage":{"$ref":"/response/storage"}}}}
 
 /***/ }),
 
@@ -1626,6 +1669,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/spi/read","type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/storage/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/storage","basePath":"storage","anyOf":[{"$ref":"/response/storage/read"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/storage/read.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/storage/read","type":"object","required":["read"],"properties":{"read":{"$ref":"/dataArray"}}}
 
 /***/ }),
 
@@ -2045,6 +2102,7 @@ const ObnizParts_1 = __webpack_require__("./dist/src/obniz/ObnizParts.js");
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const hw_1 = __webpack_require__("./dist/src/obniz/libs/hw/index.js");
 const grove_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js");
+const storage_1 = __webpack_require__("./dist/src/obniz/libs/embeds/storage.js");
 class ObnizComponents extends ObnizParts_1.ObnizParts {
     constructor(id, options) {
         super(id, options);
@@ -2211,6 +2269,7 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
             display: display_1.Display,
             switch: switch_1.ObnizSwitch,
             ble,
+            storage: storage_1.Storage,
         };
         const protocol_map = {
             tcp: tcp_1.Tcp,
@@ -2240,6 +2299,7 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
+                    // 'this' must be an instance of Obniz class since it's the only class that gets instantiated by user.
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                     if (typeof this[key].debugHandler === 'function') {
@@ -2643,7 +2703,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            this.log('binalized: ' + new Uint8Array(compressed).toString());
+                            this.log('binalized(send): ' + new Uint8Array(compressed).toString());
                         }
                     }
                 }
@@ -8500,6 +8560,9 @@ class BleRemotePeripheral {
             this.connected = true;
             this.connected_at = new Date();
             try {
+                if (this._connectSetting.connectionParameterUpdateAccept === false) {
+                    this.obnizBle.centralBindings._signalings[this.address].connectionParameterUpdateAccept = false;
+                }
                 if (this._connectSetting.waitUntilPairing &&
                     !(await this.isPairingFinishedWait())) {
                     // console.log('waitUntilPairing');
@@ -11901,6 +11964,7 @@ const SIGNALING_CID = 0x0005;
 class Signaling extends eventemitter3_1.default {
     constructor(handle, aclStream) {
         super();
+        this.connectionParameterUpdateAccept = true;
         this._handle = handle;
         this._aclStream = aclStream;
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
@@ -11941,9 +12005,16 @@ class Signaling extends eventemitter3_1.default {
         response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
         response.writeUInt8(identifier, 1); // identifier
         response.writeUInt16LE(2, 2); // length
-        response.writeUInt16LE(0, 4);
+        if (this.connectionParameterUpdateAccept) {
+            response.writeUInt16LE(0, 4); // accept
+        }
+        else {
+            response.writeUInt16LE(1, 4); // reject
+        }
         this._aclStream.write(SIGNALING_CID, response);
-        this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
+        if (this.connectionParameterUpdateAccept) {
+            this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
+        }
     }
 }
 exports.Signaling = Signaling;
@@ -17066,6 +17137,52 @@ exports.Display = Display;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/storage.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Storage = void 0;
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
+class Storage extends ComponentAbstact_1.ComponentAbstract {
+    schemaBasePath() {
+        return 'storage';
+    }
+    _reset() {
+        // What should I do?
+    }
+    constructor(obniz, info) {
+        super(obniz);
+    }
+    save(fileName, data) {
+        const obj = {
+            storage: {
+                save: {
+                    fileName,
+                    data,
+                },
+            },
+        };
+        this.Obniz.send(obj);
+    }
+    async readWait(fileName) {
+        const obj = {
+            storage: {
+                read: {
+                    fileName,
+                },
+            },
+        };
+        const json = await this.sendAndReceiveJsonWait(obj, '/response/storage/read');
+        return json.read;
+    }
+}
+exports.Storage = Storage;
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/switch.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -21819,6 +21936,7 @@ class WSCommandAbstract {
     setHw(obj) {
         this._hw = obj;
     }
+    // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
     sendCommand(func, payload) {
         if (this.parsed) {
             this.parsed(this.module, func, payload);
@@ -21982,6 +22100,9 @@ class WSCommandAbstract {
             return results;
         }
         throw Error('unknown json schema type');
+    }
+    isWSRoomOnlyCommand(func, payload) {
+        return false;
     }
 }
 exports.WSCommandAbstract = WSCommandAbstract;
@@ -24673,6 +24794,229 @@ exports.WSCommandSPI = WSCommandSPI;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandStorage.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandStorage = void 0;
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandStorage extends WSCommandAbstract_1.WSCommandAbstract {
+    constructor() {
+        super(...arguments);
+        this.module = 17;
+        this._CommandSave = 0;
+        this._CommandRead = 1;
+    }
+    // public _CommandErase = 2; // TODO: Implement this in the future.
+    save(json) {
+        // request payload format
+        // length of filename | filename | data
+        const { fileName, data } = json.save;
+        const buf = Buffer.from(fileName);
+        const fileNameUintArr = new Uint8Array(buf);
+        const joined = new Uint8Array(1 /* this 1 byte indicates length of filename */ +
+            fileNameUintArr.length +
+            data.length);
+        const iLenFileName = 0;
+        const iFileName = iLenFileName + 1;
+        const iData = iFileName + fileNameUintArr.length;
+        joined.set(new Uint8Array([fileNameUintArr.length]), iLenFileName);
+        joined.set(fileNameUintArr, iFileName);
+        joined.set(data, iData);
+        this.sendCommand(this._CommandSave, joined);
+    }
+    read(json) {
+        // request payload format
+        // length of filename | filename
+        const { fileName } = json.read;
+        const buf = Buffer.from(fileName);
+        const fileNameUintArr = new Uint8Array(buf);
+        const joined = new Uint8Array(1 /* this 1 byte indicates length of filename */ + fileNameUintArr.length);
+        const iLenFileName = 0;
+        const iFileName = iLenFileName + 1;
+        joined.set(new Uint8Array([fileNameUintArr.length]), iLenFileName);
+        joined.set(fileNameUintArr, iFileName);
+        this.sendCommand(this._CommandRead, joined);
+    }
+    parseFromJson(json) {
+        const module = json.storage;
+        if (!module)
+            return;
+        const schemaData = [
+            { uri: '/request/storage/save', onValid: this.save },
+            { uri: '/request/storage/read', onValid: this.read },
+        ];
+        const res = this.validateCommandSchema(schemaData, module, 'storage');
+        if (res.valid === 0) {
+            if (res.invalidButLike.length > 0) {
+                throw new Error(res.invalidButLike[0].message);
+            }
+            else {
+                throw new this.WSCommandNotFoundError('[storage]unknown commnad');
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        switch (func) {
+            case this._CommandSave: {
+                super.notifyFromBinary(objToSend, func, payload);
+                break;
+            }
+            case this._CommandRead: {
+                // parse binary and build up json out of it
+                // binary format: lenFileName | bytesFileName | bytesData
+                const lenFileName = payload[0];
+                const bytesFileName = payload.slice(1, lenFileName + 1);
+                const uBytesData = payload.slice(1 + bytesFileName.length);
+                objToSend.storage = {
+                    read: Array.from(uBytesData),
+                };
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+}
+exports.WSCommandStorage = WSCommandStorage;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandSubnet.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandSubnet = void 0;
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+const WSCommandManager_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandManager.js");
+class WSCommandSubnet extends WSCommandAbstract_1.WSCommandAbstract {
+    constructor() {
+        super(...arguments);
+        this.module = 16;
+        this._CommandRequestAllSubnet = 0;
+        this._CommandSendAddr = 1;
+        this._CommandSend = 2;
+        this._CommandFromAddr = 3;
+        this._CommandRecv = 4;
+        this._CommandRequestJoin = 5;
+        this.currentFromAddr = null;
+        this.commandManager = new WSCommandManager_1.WSCommandManager();
+    }
+    // Commands
+    requestAllSubnet() {
+        const buf = new Uint8Array([]);
+        this.sendCommand(this._CommandRequestAllSubnet, buf);
+    }
+    sendToNode(targetMacAddr, data) {
+        let addr;
+        try {
+            addr = Buffer.from(targetMacAddr, 'hex');
+        }
+        catch (e) {
+            console.error(e);
+            return;
+        }
+        this.sendCommand(this._CommandSendAddr, new Uint8Array(addr));
+        this.sendCommand(this._CommandSend, new Uint8Array(data));
+    }
+    sendToNodeBufAddr(bufAddr, data) {
+        this.sendCommand(this._CommandSendAddr, new Uint8Array(bufAddr));
+        this.sendCommand(this._CommandSend, new Uint8Array(data));
+    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    parseFromJson() { }
+    notifyFromBinary(objToSend, func, payload) {
+        var _a, _b;
+        switch (func) {
+            case this._CommandRequestAllSubnet: {
+                const subnetNodes = [];
+                for (let i = 0; i < payload.length; i += 6) {
+                    subnetNodes.push(Buffer.from(payload.slice(i, i + 6)).toString('hex'));
+                }
+                (_a = this.delegate) === null || _a === void 0 ? void 0 : _a.onSubnetTableReceived(subnetNodes);
+                break;
+            }
+            case this._CommandFromAddr:
+                this.currentFromAddr = Buffer.from(payload).toString('hex');
+                break;
+            case this._CommandRecv:
+                if (this.currentFromAddr) {
+                    (_b = this.delegate) === null || _b === void 0 ? void 0 : _b.onDataReceivedFromSubnet(this.currentFromAddr, payload);
+                }
+                break;
+            case this._CommandRequestJoin: {
+                const requestObj = Buffer.from(payload).toString();
+                console.log(requestObj);
+                break;
+            }
+            default:
+                super.notifyFromBinary(objToSend, func, payload);
+                break;
+        }
+    }
+    /**
+     * 参加要求フレームを送るように指示
+     *
+     */
+    sendRequestConnectToNode(targetMacAddr) {
+        this.sendToNode(targetMacAddr, this.commandManager.framed(this.module, this._CommandRequestJoin, new Uint8Array([]))); // send request
+    }
+    /**
+     * Onlineになったことを通知。authorizeとは関係なく、http request を読みその返り値として返す
+     *
+     */
+    sendOnline(targetMacAddr) {
+        // system commandの16を送信。OSはwebsocket handshakeが終わったとして次の処理に進む
+        this.sendToNode(targetMacAddr, this.commandManager.framed(0, 16, new Uint8Array([1]))); // make target online recognized
+    }
+    // 再起動を指示
+    sendRebootToNode(targetMacAddr) {
+        const framed = this.commandManager.framed(0, 0, new Uint8Array([]));
+        this.sendToNode(targetMacAddr, framed);
+    }
+    parsedRequestString(reqHeader) {
+        const lines = reqHeader.split('\r\n');
+        const ret = {
+            obniz_id: null,
+            headers: {},
+        };
+        if (lines.length < 2) {
+            throw new Error('invalid format');
+        }
+        let pathinfo = lines.shift();
+        pathinfo = pathinfo === null || pathinfo === void 0 ? void 0 : pathinfo.replace('GET /endpoints/', '');
+        pathinfo = pathinfo === null || pathinfo === void 0 ? void 0 : pathinfo.replace('/ws HTTP/1.1', '');
+        ret.obniz_id = pathinfo !== null && pathinfo !== void 0 ? pathinfo : null;
+        for (const line of lines) {
+            const splitted = line.split(': ');
+            if (splitted.length !== 2) {
+                break;
+            }
+            ret.headers[splitted[0].toLowerCase()] = splitted[1];
+        }
+        return ret;
+    }
+    isWSRoomOnlyCommand() {
+        return true;
+    }
+}
+exports.WSCommandSubnet = WSCommandSubnet;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandSwitch.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24752,24 +25096,34 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         super(...arguments);
         this.module = 0;
         this._CommandReboot = 0;
+        this._CommandUpdateFirmware = 1; // for only admin
         this._CommandReset = 2;
         this._CommandSelfCheck = 3;
         this._CommandWait = 4;
         this._CommandResetOnDisconnect = 5;
+        this._CommandSign = 6; // for only admin
+        this._CommandCoreDump = 7; // for only admin
         this._CommandPingPong = 8;
         this._CommandVCC = 9;
         this._CommandSleepSeconds = 10;
         this._CommandSleepMinute = 11;
         this._CommandSleepIoTrigger = 12;
+        this._CommandApInfo = 13; // for only admin
+        this._CommandGetNetworkSetting = 14; // for only admin
+        this._CommandSetNetworkSetting = 15; // for only admin
+        this._CommandUpdateNetworkStatus = 16; // for only admin
+        this._CommandUpdateFirmwareFromUrl = 17; // for only admin
+        this._CommandUpdatePingCheckInterval = 18; // for only admin
+        this._CommandUpdateLocalConnect = 19; // for only admin
     }
     // Commands
-    reboot(params) {
+    reboot() {
         this.sendCommand(this._CommandReboot, null);
     }
-    reset(params) {
+    reset() {
         this.sendCommand(this._CommandReset, null);
     }
-    selfCheck(params) {
+    selfCheck() {
         this.sendCommand(this._CommandSelfCheck, null);
     }
     wait(params) {
@@ -24802,6 +25156,85 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         const buf = new Uint8Array([mustReset ? 1 : 0]);
         this.sendCommand(this._CommandResetOnDisconnect, buf);
     }
+    // Commands
+    /**
+     * ペリフェラルなどのリセットに加えて、ローカルコネクト切断も行います。またOS4.0.0以降はローカルコネクト用のport80のlistenも停止します
+     */
+    hardReset() {
+        const buf = new Uint8Array([1]);
+        this.sendCommand(this._CommandReset, buf);
+    }
+    /**
+     * firmareのbinaryを使ってupdateします
+     *
+     * @param {Buffer} firmware
+     */
+    update_firmware(firmware) {
+        this.sendCommand(this._CommandUpdateFirmware, firmware);
+    }
+    /**
+     * CC3235用。URLを送ることでDownlaod->更新を行います。
+     * obniz.comである必要があります。また、CC3235は署名チェックをするため適当なビルドでは動作しません。
+     *
+     * @param {string} urlFirmware
+     */
+    updateFirmwareFromUrl(urlFirmware) {
+        const bufUrl = Buffer.from(urlFirmware);
+        const bufNull = Buffer.from([0x00]);
+        const buf = Buffer.concat([bufUrl, bufNull]);
+        const uint8array = new Uint8Array(buf);
+        this.sendCommand(this._CommandUpdateFirmwareFromUrl, uint8array);
+    }
+    /**
+     * デバイスのpingの間隔を更新します。これはクラウドから一度切り離されると再度もとに戻ります。
+     *
+     * @param {number} intervalMilliSec
+     */
+    updatePingCheckInterval(intervalMilliSec) {
+        const buf = new Uint8Array(4);
+        buf[0] = intervalMilliSec >> (8 * 3);
+        buf[1] = intervalMilliSec >> (8 * 2);
+        buf[2] = intervalMilliSec >> (8 * 1);
+        buf[3] = intervalMilliSec >> (8 * 0);
+        this.sendCommand(this._CommandUpdatePingCheckInterval, buf);
+    }
+    /**
+     * ローカルコネクトを開始する・停止する。これは一時的なものでマイコンが再起動したら元の状態に戻る
+     *
+     * @param {boolean} isOn
+     */
+    updateLocalConnect(isOn) {
+        const buf = new Uint8Array(1);
+        buf[0] = isOn ? 1 : 0;
+        this.sendCommand(this._CommandUpdateLocalConnect, buf);
+    }
+    /**
+     * 署名リクエストを送ります。
+     *
+     * @param {Buffer} message
+     */
+    sign(message) {
+        this.sendCommand(this._CommandSign, message);
+    }
+    /**
+     * 現在のネットワーク情報を送るようにリクエストを送ります。
+     */
+    getApInfo() {
+        this.sendCommand(this._CommandApInfo, null);
+    }
+    /**
+     * 現在のflash内に保存されている設定を送るようにリクエストを送ります。
+     */
+    getNetworkSetting() {
+        this.sendCommand(this._CommandGetNetworkSetting, null);
+    }
+    /**
+     * flash内に設定を保存します。
+     *
+     */
+    setNetworkSetting(params) {
+        this.sendCommand(this._CommandSetNetworkSetting, Buffer.from(params.network.value, 'utf8'));
+    }
     parseFromJson(json) {
         const module = json.system;
         if (module === undefined) {
@@ -24820,6 +25253,9 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
             { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
             { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
             { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
+            // for admin
+            { uri: '/request/system/network_value', onValid: this.setNetworkSetting },
+            { uri: '/request/system/network_get', onValid: this.getNetworkSetting },
         ];
         const res = this.validateCommandSchema(schemaData, module, 'system');
         if (res.valid === 0) {
@@ -24835,12 +25271,12 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         objToSend.system = objToSend.system || {};
         const pongServerTime = new Date().getTime();
         if (payload.length >= 16) {
-            payload = Buffer.from(payload);
-            const obnizTime = payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
-            const pingServerTime = payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
+            const buf = Buffer.from(payload);
+            const obnizTime = buf.readUIntBE(0, 4) * Math.pow(2, 32) + buf.readUIntBE(4, 4);
+            const pingServerTime = buf.readUIntBE(8, 4) * Math.pow(2, 32) + buf.readUIntBE(12, 4);
             const key = [];
-            for (let i = 16; i < payload.length; i++) {
-                key.push(payload[i]);
+            for (let i = 16; i < buf.length; i++) {
+                key.push(buf.readUInt8(i));
             }
             objToSend.system.pong = {
                 key,
@@ -24856,6 +25292,7 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         }
     }
     notifyFromBinary(objToSend, func, payload) {
+        var _a, _b, _c, _d;
         switch (func) {
             case this._CommandVCC:
                 if (payload.byteLength === 3) {
@@ -24868,6 +25305,24 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
                 break;
             case this._CommandPingPong:
                 this.pong(objToSend, payload);
+                break;
+            case this._CommandSign: {
+                const hashLength = payload[0];
+                const hash = payload.slice(1, 1 + hashLength);
+                const signature = payload.slice(1 + hashLength);
+                (_a = this.delegate) === null || _a === void 0 ? void 0 : _a.onSignatureReceived(hash, signature);
+                break;
+            }
+            case this._CommandCoreDump:
+                (_b = this.delegate) === null || _b === void 0 ? void 0 : _b.onCoreDumpReceived(payload);
+                break;
+            case this._CommandApInfo: {
+                const wifis = this.decodeWiFiInfo(payload);
+                (_c = this.delegate) === null || _c === void 0 ? void 0 : _c.onApInfoReceived(wifis);
+                break;
+            }
+            case this._CommandGetNetworkSetting:
+                (_d = this.delegate) === null || _d === void 0 ? void 0 : _d.onNetworkSettingReceived(payload);
                 break;
             default:
                 super.notifyFromBinary(objToSend, func, payload);
@@ -24885,15 +25340,85 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         this.sendCommand(this._CommandSleepMinute, buf);
     }
     sleepIoTrigger(params) {
-        let trigger = params.sleep_io_trigger;
-        if (trigger === true) {
-            trigger = 1;
-        }
-        else {
-            trigger = 0;
-        }
-        const buf = new Uint8Array([trigger]);
+        const trigger = params.sleep_io_trigger;
+        const triggerNum = trigger === true ? 1 : 0;
+        const buf = new Uint8Array([triggerNum]);
         this.sendCommand(this._CommandSleepIoTrigger, buf);
+    }
+    isWSRoomOnlyCommand(func) {
+        return (func === this._CommandSign ||
+            func === this._CommandCoreDump ||
+            func === this._CommandApInfo ||
+            func === this._CommandGetNetworkSetting ||
+            func === this._CommandSetNetworkSetting ||
+            func === this._CommandUpdateLocalConnect);
+    }
+    decodeWiFiInfo(payload) {
+        const ScanState = {
+            SCAN_SSID_LEN: 0,
+            SCAN_SSID: 1,
+            SCAN_MAC: 2,
+            SCAN_RSSI: 3,
+        };
+        let mode = ScanState.SCAN_SSID_LEN;
+        let tmpIndex = 0;
+        let ssid = '';
+        let macAddress = '';
+        let rssi = 0;
+        const scanArray = [];
+        try {
+            for (let i = 0; i < payload.length; i++) {
+                switch (mode) {
+                    case ScanState.SCAN_SSID_LEN:
+                        tmpIndex = payload[i];
+                        mode = ScanState.SCAN_SSID;
+                        break;
+                    case ScanState.SCAN_SSID:
+                        ssid += String.fromCharCode(payload[i]);
+                        tmpIndex--;
+                        if (tmpIndex === 0) {
+                            mode = ScanState.SCAN_MAC;
+                            tmpIndex = 0;
+                        }
+                        break;
+                    case ScanState.SCAN_MAC:
+                        macAddress += String.fromCharCode(payload[i]);
+                        tmpIndex++;
+                        if (tmpIndex === 12) {
+                            mode = ScanState.SCAN_RSSI;
+                            macAddress = macAddress.toLowerCase();
+                        }
+                        break;
+                    case ScanState.SCAN_RSSI:
+                        rssi = this._signedNumberFromBinary([payload[i]]);
+                        mode = ScanState.SCAN_SSID_LEN;
+                        scanArray.push({
+                            ssid,
+                            macAddress,
+                            rssi,
+                        });
+                        ssid = '';
+                        macAddress = '';
+                        rssi = 0;
+                        break;
+                }
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+        return scanArray;
+    }
+    _signedNumberFromBinary(data) {
+        // big adian
+        let val = data[0] & 0x7f;
+        for (let i = 1; i < data.length; i++) {
+            val = val * 256 + data[i];
+        }
+        if ((data[0] & 0x80) !== 0) {
+            val = val - Math.pow(2, data.length * 8 - 1);
+        }
+        return val;
     }
 }
 exports.WSCommandSystem = WSCommandSystem;
@@ -25361,6 +25886,8 @@ const WSCommandSystem_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/W
 const WSCommandTcp_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandTcp.js");
 const WSCommandUart_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandUart.js");
 const WSCommandWiFi_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandWiFi.js");
+const WSCommandStorage_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandStorage.js");
+const WSCommandSubnet_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandSubnet.js");
 const createCommandManager = () => {
     const instance = new WSCommandManager_1.WSCommandManager();
     /* eslint-disable */
@@ -25380,6 +25907,9 @@ const createCommandManager = () => {
     instance.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
     instance.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
     instance.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
+    //for admin
+    instance.addCommandClass("WSCommandStorage", WSCommandStorage_1.WSCommandStorage);
+    instance.addCommandClass("WSCommandSubnet", WSCommandSubnet_1.WSCommandSubnet);
     return instance;
 };
 exports.createCommandManager = createCommandManager;
@@ -25660,13 +26190,20 @@ var map = {
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
 	"./Ble/EXTxx/index.js": "./dist/src/parts/Ble/EXTxx/index.js",
 	"./Ble/EXVital/index.js": "./dist/src/parts/Ble/EXVital/index.js",
+	"./Ble/GT_7510/index.js": "./dist/src/parts/Ble/GT_7510/index.js",
+	"./Ble/GX_3R_Pro/index.js": "./dist/src/parts/Ble/GX_3R_Pro/index.js",
 	"./Ble/HEM_6233T/index.js": "./dist/src/parts/Ble/HEM_6233T/index.js",
 	"./Ble/HEM_9200T/index.js": "./dist/src/parts/Ble/HEM_9200T/index.js",
+	"./Ble/HN_300T2/index.js": "./dist/src/parts/Ble/HN_300T2/index.js",
+	"./Ble/HPO_300T/index.js": "./dist/src/parts/Ble/HPO_300T/index.js",
+	"./Ble/IBS_TH/index.js": "./dist/src/parts/Ble/IBS_TH/index.js",
+	"./Ble/INKBIRD/index.js": "./dist/src/parts/Ble/INKBIRD/index.js",
 	"./Ble/KankiAirMier/index.js": "./dist/src/parts/Ble/KankiAirMier/index.js",
 	"./Ble/LogttaAD/index.js": "./dist/src/parts/Ble/LogttaAD/index.js",
 	"./Ble/LogttaAccel/index.js": "./dist/src/parts/Ble/LogttaAccel/index.js",
 	"./Ble/LogttaCO2/index.js": "./dist/src/parts/Ble/LogttaCO2/index.js",
 	"./Ble/LogttaTemp/index.js": "./dist/src/parts/Ble/LogttaTemp/index.js",
+	"./Ble/MC_6810T2/index.js": "./dist/src/parts/Ble/MC_6810T2/index.js",
 	"./Ble/MESH_100AC/index.js": "./dist/src/parts/Ble/MESH_100AC/index.js",
 	"./Ble/MESH_100BU/index.js": "./dist/src/parts/Ble/MESH_100BU/index.js",
 	"./Ble/MESH_100GP/index.js": "./dist/src/parts/Ble/MESH_100GP/index.js",
@@ -25689,8 +26226,11 @@ var map = {
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
 	"./Ble/TR4A/index.js": "./dist/src/parts/Ble/TR4A/index.js",
 	"./Ble/TR7/index.js": "./dist/src/parts/Ble/TR7/index.js",
+	"./Ble/TT-MSK1508/index.js": "./dist/src/parts/Ble/TT-MSK1508/index.js",
+	"./Ble/Talia/index.js": "./dist/src/parts/Ble/Talia/index.js",
 	"./Ble/UA1200BLE/index.js": "./dist/src/parts/Ble/UA1200BLE/index.js",
 	"./Ble/UA651BLE/index.js": "./dist/src/parts/Ble/UA651BLE/index.js",
+	"./Ble/UC352BLE/index.js": "./dist/src/parts/Ble/UC352BLE/index.js",
 	"./Ble/UC421BLE/index.js": "./dist/src/parts/Ble/UC421BLE/index.js",
 	"./Ble/UT201BLE/index.js": "./dist/src/parts/Ble/UT201BLE/index.js",
 	"./Ble/VitalBand/index.js": "./dist/src/parts/Ble/VitalBand/index.js",
@@ -25703,6 +26243,7 @@ var map = {
 	"./Ble/iBS02PIR/index.js": "./dist/src/parts/Ble/iBS02PIR/index.js",
 	"./Ble/iBS03/index.js": "./dist/src/parts/Ble/iBS03/index.js",
 	"./Ble/iBS03G/index.js": "./dist/src/parts/Ble/iBS03G/index.js",
+	"./Ble/iBS03H/index.js": "./dist/src/parts/Ble/iBS03H/index.js",
 	"./Ble/iBS03R/index.js": "./dist/src/parts/Ble/iBS03R/index.js",
 	"./Ble/iBS03T/index.js": "./dist/src/parts/Ble/iBS03T/index.js",
 	"./Ble/iBS03TP/index.js": "./dist/src/parts/Ble/iBS03TP/index.js",
@@ -25711,6 +26252,7 @@ var map = {
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
 	"./Ble/iBS05G/index.js": "./dist/src/parts/Ble/iBS05G/index.js",
 	"./Ble/iBS05H/index.js": "./dist/src/parts/Ble/iBS05H/index.js",
+	"./Ble/iBS05T/index.js": "./dist/src/parts/Ble/iBS05T/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
 	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
@@ -25722,6 +26264,7 @@ var map = {
 	"./Ble/linking/modules/service-setting.js": "./dist/src/parts/Ble/linking/modules/service-setting.js",
 	"./Ble/linking/modules/service.js": "./dist/src/parts/Ble/linking/modules/service.js",
 	"./Ble/scbtgaaac/index.js": "./dist/src/parts/Ble/scbtgaaac/index.js",
+	"./Ble/scbtgabbi/index.js": "./dist/src/parts/Ble/scbtgabbi/index.js",
 	"./Ble/tm511/index.js": "./dist/src/parts/Ble/tm511/index.js",
 	"./Ble/tm530/index.js": "./dist/src/parts/Ble/tm530/index.js",
 	"./Ble/toio_corecube/index.js": "./dist/src/parts/Ble/toio_corecube/index.js",
@@ -27440,6 +27983,479 @@ const unsigned16 = (value) => {
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/GT_7510/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.GT_7510
+ */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = __importDefault(__webpack_require__("./node_modules/crypto-browserify/index.js"));
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+class GT_7510 {
+    constructor(peripheral) {
+        this._emitter = new eventemitter3_1.default();
+        this._buffer = [];
+        this.STX = 0x02;
+        this.ETX = 0x03;
+        this.EOT = 0x04;
+        this.ENQ = 0x05;
+        this.ACK = 0x06;
+        this.NAK = 0x15;
+        this.ETB = 0x17;
+        this.SYN = 0x16;
+        if (!peripheral || !GT_7510.isDevice(peripheral)) {
+            throw new Error('peripheral is not GT_7510');
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'GT_7510',
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName && peripheral.localName.indexOf('GT-7510') >= 0;
+    }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('GT_7510 not found');
+        }
+        if (this._peripheral.adv_data[13] === 3) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    async pairingWait(passkeyCallback, option = {}) {
+        var _a;
+        const name = (_a = option.name) !== null && _a !== void 0 ? _a : `obniz${this._peripheral.obnizBle.Obniz.id}`;
+        if (!this.isPairingMode()) {
+            throw new Error('GT_7510 is not pairing mode.');
+        }
+        await new Promise((resolve, reject) => {
+            this._peripheral
+                .connectWait({
+                pairingOption: {
+                    passkeyCallback,
+                    onPairingFailed: (e) => {
+                        reject(e);
+                    },
+                },
+                waitUntilPairing: true,
+            })
+                .then(resolve)
+                .catch(reject);
+        });
+        const key = await this._peripheral.getPairingKeysWait();
+        if (!key) {
+            throw new Error('GT_7510 pairing failed');
+        }
+        const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
+        const meterChara = customService.getCharacteristic('7ae4200253f646288894b231f30a81d7');
+        await meterChara.registerNotifyWait(async (data) => {
+            try {
+                // 向こうから切断される
+                await meterChara.writeWait([0x90]);
+                return;
+            }
+            catch (e) {
+                // do nothing
+            }
+        });
+        await meterChara.writeWait([
+            0xa2,
+            ...Array.from(Buffer.from(name.slice(0, 16), 'utf8')),
+        ]);
+        return key;
+    }
+    async connectWait(key) {
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: key,
+            },
+        });
+    }
+    async getDataWait(key) {
+        const results = [];
+        await this._peripheral.connectWait({
+            pairingOption: {
+                keys: key,
+            },
+            connectionParameterUpdateAccept: false,
+        });
+        const customService = this._peripheral.getService('7ae4000153f646288894b231f30a81d7');
+        const commandChara = customService.getCharacteristic('7ae4100153f646288894b231f30a81d7');
+        const securityChara = customService.getCharacteristic('7ae4200153f646288894b231f30a81d7');
+        let charengeArr;
+        await securityChara.registerNotifyWait((data) => {
+            charengeArr = data.slice(2);
+            if (data[1] === 82) {
+                if (data[2] !== 0) {
+                    throw new Error('Authentication error');
+                }
+            }
+        });
+        await securityChara.writeWait([0x50]);
+        const deviceName = '373531302D';
+        const serialHex = this.toHex(this._peripheral.scan_resp.slice(10, 17));
+        const masterKey = '7AFCE720C798F4F46C98B0B8D87D242E13CD2056B3458D4EC58F4455DA2C89A0';
+        const str = deviceName + serialHex + masterKey;
+        const deviceKey = await this.digestMessageWait(str);
+        for (let i = 0; i < 10; i++) {
+            if (!charengeArr) {
+                await this.wait(1);
+            }
+            else {
+                break;
+            }
+        }
+        if (!charengeArr) {
+            throw new Error('Failed to get challenge');
+        }
+        const charengeCode = this.toHex(charengeArr);
+        const message = deviceName + serialHex + charengeCode;
+        const deviceKeyBuf = Buffer.from(deviceKey, 'hex');
+        const messageBuf = Buffer.from(message, 'hex');
+        const hmac = crypto_1.default.createHmac('sha256', deviceKeyBuf);
+        hmac.update(messageBuf);
+        const authKey = hmac.digest('hex');
+        const buf = Buffer.from(authKey, 'hex');
+        const arr = [0x52];
+        arr.push(...buf);
+        await securityChara.writeWait(arr);
+        let meterInfoData = [];
+        // let mode = 0;
+        await commandChara.registerNotifyWait(async (data) => {
+            // console.log(`${new Date()} receive ${Buffer.from(data).toString('hex')}`);
+            this._buffer.push(Buffer.from(data));
+            this._emitter.emit('data');
+        });
+        await commandChara.writeWait([this.SYN]);
+        let mode = 0;
+        for (let i = 0; i < 100; i++) {
+            // 無限ループ対策
+            const data = await this._getCommandDataWait();
+            if (data.readUInt8(0) === 68 || mode === 1) {
+                mode = 1;
+                meterInfoData = [...meterInfoData, ...Array.from(data)];
+            }
+            const last3Data = data.slice(-3);
+            if (last3Data.toString('hex') === '0d0a06' /* '13,10,6'*/) {
+                mode = 0;
+                break;
+            }
+        }
+        const result = this.analyzeData(meterInfoData);
+        const d1 = await this._sendCommandDataReplyWait(commandChara, 
+        // Buffer.from([this.SYN])
+        // Buffer.from([this.ACK])
+        // Buffer.from([this.NAK])
+        Buffer.from([0xa1]));
+        try {
+            const d2 = await this._sendCommandDataReplyWait(commandChara, Buffer.from([0xa1]));
+        }
+        catch (e) {
+            // d1で既にdisconnectされてるかもしれない。ただ、05 = ENQ がきてるので再送も入れとく。
+        }
+        return [result];
+    }
+    _sendCommandDataReplyWait(commandChara, sendData) {
+        return new Promise((resolve, reject) => {
+            if (this._buffer.length > 0) {
+                throw new Error('Not empty buffer');
+            }
+            this._getCommandDataWait().then(resolve).catch(reject);
+            commandChara.writeWait(Array.from(sendData)).catch(reject);
+        });
+    }
+    _getCommandDataWait() {
+        if (this._buffer.length > 0) {
+            const b = this._buffer.shift();
+            return Promise.resolve(b);
+        }
+        return new Promise((resolve) => {
+            this._emitter.once('data', () => {
+                if (this._buffer.length > 0) {
+                    resolve(this._buffer.shift());
+                }
+            });
+        });
+    }
+    async digestMessageWait(message) {
+        const buffer = Buffer.from(message, 'hex');
+        return crypto_1.default.createHash('sha256').update(buffer).digest('hex');
+    }
+    toHex(arr) {
+        return arr.map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+    analyzeData(data) {
+        const _data = [];
+        let pos = 0;
+        for (let i = 0; i < data.length; i++) {
+            if (data[i] === 124) {
+                _data.push(data.slice(pos, i));
+                pos = i + 1;
+            }
+        }
+        data = _data[4];
+        const r = String.fromCharCode(data[4], data[5]);
+        const l = String.fromCharCode(data[6], data[7]);
+        const min = String.fromCharCode(data[8], data[9]);
+        const hour = String.fromCharCode(data[10], data[11]);
+        const day = String.fromCharCode(data[12], data[13]);
+        const month = String.fromCharCode(data[14], data[15]);
+        const year = String.fromCharCode(data[16], data[17]);
+        let range = String.fromCharCode(data[18], data[19]);
+        let timing = String.fromCharCode(data[20]);
+        let _range = parseInt(range, 16);
+        _range = _range & 96; // 96 = flag up(bit5,bit6)
+        if (_range === 0) {
+            // 00
+            range = '通常';
+        }
+        else if (_range === 64) {
+            // 10
+            range = '高値';
+        }
+        else if (_range === 32) {
+            // 01
+            range = '低値';
+        }
+        const timngArr = [
+            '未指定',
+            '朝食前',
+            '朝食後',
+            '昼食前',
+            '昼食後',
+            '夕食前',
+            '夕食後',
+            '就寝前',
+            '夜間',
+            '食後マーク',
+        ];
+        timing = timngArr[parseInt(timing, 16)];
+        const result = {
+            glucose: (parseInt(l, 16) << 8) | parseInt(r, 16),
+            date: `${year}/${month}/${day} ${hour}:${min}`,
+            range,
+            timing,
+        };
+        return result;
+    }
+    wait(sec) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, sec * 1000);
+        });
+    }
+}
+exports.default = GT_7510;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/GX_3R_Pro/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.GX_3R_Pro
+ */
+/* eslint rulesdir/non-ascii: 0 */
+const eventemitter3_1 = __importDefault(__webpack_require__("./node_modules/eventemitter3/index.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+const serial_executor_1 = __webpack_require__("./node_modules/@9wick/serial-executor/dist/index.js");
+/** GX_3R_Pro management class GX_3R_Proを管理するクラス */
+class GX_3R_Pro extends ObnizPartsBleInterface_1.ObnizPartsBleInterface {
+    constructor(peripheral) {
+        super();
+        this.code = {
+            STX: 0x02,
+            ETX: 0x03,
+            ACK: 0x06,
+            NAK: 0x15,
+            ETB: 0x17,
+            EOT: 0x04,
+            CR: 0x0d,
+            SUB: 0x1a,
+        };
+        this.event = new eventemitter3_1.default();
+        this.serialExecutor = (0, serial_executor_1.createSerialExecutor)();
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'GX_3R_Pro',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the GX_3R_Pro
+     *
+     * 受け取ったperipheralがGX_3R_Proのものかどうか確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the GX_3R_Pro
+     *
+     * GX_3R_Proかどうか
+     */
+    static isDevice(peripheral) {
+        var _a;
+        return !!((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('GX3RPro-'));
+    }
+    async connectWait() {
+        if (!this._peripheral.connected) {
+            await this._peripheral.connectWait();
+        }
+        const gasService = this._peripheral.getService('5699d362-0c53-11e7-93ae-92361f002671');
+        this.gasCharRx = gasService.getCharacteristic('5699d646-0c53-11e7-93ae-92361f002671');
+        this.gasCharTx = gasService.getCharacteristic('5699d772-0c53-11e7-93ae-92361f002671');
+        let gasCharRxReceives = [];
+        await this.gasCharRx.registerNotifyWait((data) => {
+            gasCharRxReceives.push(...data);
+            // console.log(`gasCharRx: ${Buffer.from(data).toString('hex')}`);
+            const tryParse = this.parseCommand(gasCharRxReceives);
+            if (!tryParse) {
+                return;
+            }
+            // console.log('parsed', tryParse);
+            gasCharRxReceives = [];
+            this.event.emit('data', tryParse);
+        });
+        this.settingCharRx = gasService.getCharacteristic('5699d647-0c53-11e7-93ae-92361f002671');
+        this.settingCharTx = gasService.getCharacteristic('5699d773-0c53-11e7-93ae-92361f002671');
+    }
+    async sendCommandWait(command, subCommand, data) {
+        const address = '00';
+        const channel = '00';
+        const payload = [
+            this.code.STX,
+            ...Array.from(Buffer.from(address.toUpperCase())),
+            ...Array.from(Buffer.from(channel.toUpperCase())),
+            ...Array.from(Buffer.from(command.toUpperCase())),
+            ...Array.from(Buffer.from(',')),
+            ...Array.from(Buffer.from(subCommand.toUpperCase())),
+            ...Array.from(Buffer.from(',')),
+            ...data,
+            this.code.ETX,
+        ];
+        const packet = [...payload, ...this.calcChecksum(payload), this.code.EOT];
+        return await this.serialExecutor.execute(async () => {
+            if (!this._peripheral.connected || !this.gasCharTx) {
+                throw new Error('peripheral is not connected');
+            }
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const responsePromise = new Promise((resolve, reject) => {
+                this.event.once('data', resolve);
+            });
+            await this.gasCharTx.writeWait(packet);
+            // console.log(`send ${Buffer.from(packet).toString('hex')}`);
+            const response = await responsePromise;
+            return response;
+        });
+    }
+    calcChecksum(buf) {
+        const sum = buf.reduce((a, b) => a + b);
+        // console.log(`sum: 0x${sum.toString(16)}`);
+        const checksum = Buffer.alloc(2);
+        checksum.writeInt16BE(-sum, 0);
+        // console.log(`rsum: 0x${checksum.toString('hex')}`);
+        return Buffer.from(Buffer.from([checksum.readUInt8(1)])
+            .toString('hex')
+            .toUpperCase());
+    }
+    parseCommand(data) {
+        const analyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+            .addTarget('STX', [0x02])
+            .addTarget('address', [-1, -1])
+            .addTarget('channel', [-1, -1])
+            .addTarget('command', [-1, -1])
+            .addTarget('comma1', [...Buffer.from(',')])
+            .addTarget('subCommand', [-1])
+            .addTarget('comma2', [...Buffer.from(',')])
+            .addTargetByLength('data', data.length - 14)
+            .addTarget('EXT', [this.code.ETX])
+            .addTargetByLength('checkSum', 2)
+            .addTarget('EOT', [this.code.EOT]);
+        const parsed = analyzer.getAllData(data);
+        if (!parsed) {
+            return null;
+        }
+        return {
+            address: Buffer.from(parsed.address).toString('utf8'),
+            channel: Buffer.from(parsed.channel).toString('utf8'),
+            command: Buffer.from(parsed.command).toString('utf8'),
+            subCommand: Buffer.from(parsed.subCommand).toString('utf8'),
+            data: parsed.data,
+            dataString: Buffer.from(parsed.data).toString('utf8'),
+        };
+    }
+    async getGasSettingsWait() {
+        const gj = await this.sendCommandWait('GJ', 'R', []);
+        const gjc = gj === null || gj === void 0 ? void 0 : gj.dataString.split(',');
+        const results = [];
+        if (gjc) {
+            for (const one of gjc) {
+                if (one.length !== 33) {
+                    continue;
+                }
+                const displayName = one.slice(0, 3).trim();
+                const gasName = one.slice(3, 13).trim();
+                const fullScale = one.slice(13, 21).trim();
+                const digit = one.slice(21, 29).trim();
+                const unit = one.slice(29, 33).trim();
+                results.push({
+                    displayName,
+                    gasName,
+                    fullScale,
+                    digit,
+                    unit,
+                });
+            }
+        }
+        return results;
+    }
+    async getDataWait() {
+        const gasSettings = await this.getGasSettingsWait();
+        // console.log(gasSettings);
+        const dh = await this.sendCommandWait('DH', 'R', []);
+        const dhc = dh === null || dh === void 0 ? void 0 : dh.dataString.split(',');
+        if (!dhc) {
+            return null;
+        }
+        const gas = [];
+        for (let i = 0; i < 5; i++) {
+            if (gasSettings.length > i && dhc.length > 5 + i) {
+                gas.push(Object.assign(Object.assign({}, gasSettings[i]), { value: Number(dhc[5 + i].split(' ').join('')) }));
+            }
+        }
+        return { batteryVolt: Number(dhc[3]), battery: Number(dhc[4]), gas };
+    }
+}
+exports.default = GX_3R_Pro;
+GX_3R_Pro.partsName = 'GX_3R_Pro';
+GX_3R_Pro.availableBleMode = 'Connectable';
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/HEM_6233T/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -27725,8 +28741,8 @@ class HEM_9200T {
      */
     static isDevice(peripheral) {
         if (peripheral.localName &&
-            (peripheral.localName.startsWith('BLESmart_') ||
-                peripheral.localName.startsWith('BLEsmart_'))) {
+            (peripheral.localName.startsWith('BLESmart_00000116') ||
+                peripheral.localName.startsWith('BLEsmart_00000116'))) {
             return true;
         }
         return false;
@@ -27884,6 +28900,422 @@ class HEM_9200T {
     }
 }
 exports.default = HEM_9200T;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/HN_300T2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.HN_300T2
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+class HN_300T2 {
+    /**
+     *
+     * @param timeOffsetMinute difference from UTC (Unit: minutes) 協定世界時との差(単位: 分)
+     */
+    constructor(peripheral, timezoneOffset) {
+        if (!peripheral || !HN_300T2.isDevice(peripheral)) {
+            throw new Error('peripheral is not HN_300TN');
+        }
+        this._peripheral = peripheral;
+        this._timezoneOffset = timezoneOffset ? timezoneOffset : 9 * 60;
+    }
+    static info() {
+        return {
+            name: 'HN_300T2',
+        };
+    }
+    static isDevice(peripheral) {
+        return (peripheral.localName &&
+            peripheral.localName.startsWith('BLESmart_0001001'));
+    }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('HN_300TN not found');
+        }
+        if ((this._peripheral.adv_data[15] & 8) === 8) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    async pairingWait({ disconnect } = { disconnect: true }) {
+        if (!this.isPairingMode()) {
+            throw new Error('HN_300TN is not pairing mode.');
+        }
+        await this._peripheral.connectWait({
+            waitUntilPairing: true,
+        });
+        const keys = await this._peripheral.getPairingKeysWait();
+        if (!keys) {
+            throw new Error('HN_300TN pairing failed');
+        }
+        if (disconnect) {
+            await this._peripheral.disconnectWait();
+        }
+        return keys;
+    }
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error('HN_300T2 not found');
+        }
+        await this._peripheral.connectWait({
+            pairingOption: { keys: pairingKeys },
+        });
+        const results = [];
+        const deviceInfoService = this._peripheral.getService('1805');
+        const currentTimeChara = deviceInfoService.getCharacteristic('2A2B');
+        await this.writeCurrentTimeWait(currentTimeChara);
+        const service = this._peripheral.getService('181D');
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(results);
+            };
+        });
+        const WeightMeasurementChara = service.getCharacteristic('2A9D');
+        await WeightMeasurementChara.registerNotifyWait(async (data) => {
+            results.push(this._analyseWeightMesureData(data));
+            return;
+        });
+        return await waitDisconnect;
+    }
+    _analyseWeightMesureData(data) {
+        const buf = Buffer.from(data);
+        const result = {};
+        result.weight = ((data[2] << 8) | data[1]) * 0.005;
+        result.date = {
+            year: buf.readUInt16LE(3),
+            month: buf.readUInt8(5),
+            day: buf.readUInt8(6),
+            hour: buf.readUInt8(7),
+            minute: buf.readUInt8(8),
+            second: buf.readUInt8(9),
+        };
+        const user = buf.readUInt8(10);
+        return result;
+    }
+    async writeCurrentTimeWait(chara) {
+        const dayFormat = [7, 1, 2, 3, 4, 5, 6];
+        const date = new Date();
+        date.setTime(Date.now() + 1000 * 60 * this._timezoneOffset);
+        const buf = Buffer.alloc(10);
+        buf.writeUInt16LE(date.getUTCFullYear(), 0);
+        buf.writeUInt8(date.getUTCMonth() + 1, 2);
+        buf.writeUInt8(date.getUTCDate(), 3);
+        buf.writeUInt8(date.getUTCHours(), 4);
+        buf.writeUInt8(date.getUTCMinutes(), 5);
+        buf.writeUInt8(date.getUTCSeconds(), 6);
+        buf.writeUInt8(dayFormat[date.getUTCDay()], 7);
+        buf.writeUInt8(Math.trunc(date.getUTCMilliseconds() / (9999 / 256)), 8);
+        buf.writeUInt8(1, 9);
+        const arr = Array.from(buf);
+        await chara.writeWait(arr);
+    }
+}
+exports.default = HN_300T2;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/HPO_300T/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+class HPO_300T {
+    constructor(peripheral, timezoneOffset) {
+        if (!peripheral || !HPO_300T.isDevice(peripheral)) {
+            throw new Error('peripheral is not HPO_300T');
+        }
+        this._peripheral = peripheral;
+        this._timezoneOffset = timezoneOffset ? timezoneOffset : 9 * 60;
+    }
+    static info() {
+        return {
+            name: 'HPO_300T',
+        };
+    }
+    static isDevice(peripheral) {
+        if (!peripheral.localName)
+            return false;
+        return (peripheral.localName.startsWith('BLEsmart_00060002') ||
+            peripheral.localName.startsWith('BLESmart_00060002'));
+    }
+    isPairingMode() {
+        var _a;
+        if (!this._peripheral) {
+            throw new Error('HPO_300T not found');
+        }
+        // BLEsmart -> paring mode
+        // BLESmart -> normal adv
+        if ((_a = this._peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('BLEs')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング 電源ボタンを長押しする
+     *
+     * @returns pairing key ペアリングキー
+     */
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error('HPO_300T not found');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        await this._peripheral.connectWait({
+            waitUntilPairing: true,
+        });
+        const keys = await this._peripheral.getPairingKeysWait();
+        const currentTime = this._peripheral.getService('1805');
+        const current = await (currentTime === null || currentTime === void 0 ? void 0 : currentTime.getCharacteristic('2a2b'));
+        await this.writeCurrentTimeWait(current);
+        await this._peripheral.disconnectWait();
+        return keys;
+    }
+    /**
+     * Get SpO2, PulseRate Data from Device
+     *
+     * デバイスから計測データをとる
+     *
+     * @returns 受け取ったデータ
+     */
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error('HPO_300T not found');
+        }
+        let result = {};
+        await this._peripheral.connectWait({
+            pairingOption: { keys: pairingKeys },
+        });
+        const currentTime = this._peripheral.getService('1805');
+        const current = await (currentTime === null || currentTime === void 0 ? void 0 : currentTime.getCharacteristic('2a2b'));
+        await this.writeCurrentTimeWait(current);
+        const service = this._peripheral.getService('6E400001B5A3F393EFA9E50E24DCCA9E');
+        const chara = await (service === null || service === void 0 ? void 0 : service.getCharacteristic('6E4000F1B5A3F393EFA9E50E24DCCA9E'));
+        await (chara === null || chara === void 0 ? void 0 : chara.registerNotifyWait((data) => {
+            result = this._analyseData(data);
+        }));
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(result);
+            };
+        });
+        return await waitDisconnect;
+    }
+    async writeCurrentTimeWait(chara) {
+        const dayFormat = [7, 1, 2, 3, 4, 5, 6];
+        const date = new Date();
+        date.setTime(Date.now() + 1000 * 60 * this._timezoneOffset);
+        const buf = Buffer.alloc(10);
+        buf.writeUInt16LE(date.getUTCFullYear(), 0);
+        buf.writeUInt8(date.getUTCMonth() + 1, 2);
+        buf.writeUInt8(date.getUTCDate(), 3);
+        buf.writeUInt8(date.getUTCHours(), 4);
+        buf.writeUInt8(date.getUTCMinutes(), 5);
+        buf.writeUInt8(date.getUTCSeconds(), 6);
+        buf.writeUInt8(dayFormat[date.getUTCDay()], 7);
+        buf.writeUInt8(Math.trunc(date.getUTCMilliseconds() / (9999 / 256)), 8);
+        buf.writeUInt8(1, 9);
+        const arr = Array.from(buf);
+        await chara.writeWait(arr);
+    }
+    _analyseData(data) {
+        const buf = Buffer.from(data);
+        const result = {};
+        result.spo2 = (data[2] << 8) | data[1];
+        result.pulseRate = (data[4] << 8) | data[3];
+        result.date = {
+            year: buf.readUInt16LE(5),
+            month: buf.readUInt8(7),
+            day: buf.readUInt8(8),
+            hour: buf.readUInt8(9),
+            minute: buf.readUInt8(10),
+            second: buf.readUInt8(11),
+        };
+        return result;
+    }
+}
+exports.default = HPO_300T;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/IBS_TH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.IBS_TH
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** IBS_TH management class IBS_THを管理するクラス */
+class IBS_TH {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'IBS_TH',
+        };
+    }
+    static isDevice(peripheral) {
+        return peripheral.localName === 'sps' || peripheral.localName === 'tst';
+    }
+    static getData(peripheral) {
+        if (!this.isDevice(peripheral)) {
+            return null;
+        }
+        const allData = this._deviceAdvAnalyzer.getAllData(peripheral.manufacturerSpecificData);
+        const temperatureRaw = Buffer.from(allData.manufacture.temperature).readInt16LE(0);
+        const humidityRaw = Buffer.from(allData.manufacture.humidity).readInt16LE(0);
+        const batteryRaw = Buffer.from(allData.manufacture.battery).readInt8(0);
+        return {
+            temperature: temperatureRaw / 100,
+            humidity: humidityRaw / 100,
+            battery: batteryRaw,
+        };
+    }
+}
+exports.default = IBS_TH;
+IBS_TH._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .groupStart('manufacture')
+    .addTarget('temperature', [-1, -1])
+    .addTarget('humidity', [-1, -1])
+    .addTarget('probeTags', [-1])
+    .addTarget('crc', [-1, -1])
+    .addTarget('battery', [-1])
+    .addTarget('testData', [-1])
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/INKBIRD/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.INKBIRD
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** INKBIRD series management class INKBIRDシリーズを管理するクラス */
+class INKBIRD {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'INKBIRD',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the INKBIRD
+     *
+     * 受け取ったPeripheralがINKBIRDのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the INKBIRD
+     *
+     * INKBIRDかどうか
+     */
+    static isDevice(peripheral) {
+        if (peripheral.scan_resp) {
+            return INKBIRD._deviceScanResponseAnalyzer.validate(peripheral.scan_resp);
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Get a data from the INKBIRD
+     *
+     * INKBIRDからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the INKBIRD INKBIRDから受け取ったデータ
+     *
+     * ```
+     * {
+     *
+     * temperature: temperature 温度 (Unit 単位: 0.1 degC)
+     * humidity?: Humidity 湿度 (Unit 単位: 0.1 percent);
+     * }
+     * ```
+     */
+    static getData(peripheral) {
+        if (!INKBIRD.isDevice(peripheral)) {
+            return null;
+        }
+        if (!peripheral.scan_resp) {
+            return null;
+        }
+        const temperature = INKBIRD._deviceScanResponseAnalyzer.getData(peripheral.scan_resp, 'scanData', 'temperature');
+        if (!temperature) {
+            return null;
+        }
+        const temperatureRaw = Buffer.from(temperature).readInt16LE(0);
+        const humidity = INKBIRD._deviceScanResponseAnalyzer.getData(peripheral.scan_resp, 'scanData', 'humidity');
+        if (!humidity) {
+            return null;
+        }
+        const humidityRaw = Buffer.from(humidity).readInt16LE(0);
+        return {
+            temperature: temperatureRaw / 100,
+            humidity: humidityRaw / 100,
+        };
+    }
+}
+exports.default = INKBIRD;
+INKBIRD._deviceScanResponseAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .groupStart('scanData')
+    .addTarget('length2', [0x04])
+    .addTarget('type2', [0x09])
+    .addTarget('deviceName', [0x73, 0x70, 0x73])
+    .addTarget('dataLength', [0x0a])
+    .addTarget('dataType', [0xff])
+    .addTargetByLength('temperature', 2)
+    .addTargetByLength('humidity', 2)
+    .addTargetByLength('proveType', 1)
+    .addTargetByLength('crc', 2)
+    .addTargetByLength('battery', 1)
+    .addTargetByLength('reserved', 1)
+    .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -28855,6 +30287,155 @@ Logtta_TH.BeaconDataStruct = {
     },
 };
 
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/MC_6810T2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+class MC_6810T2 {
+    constructor(peripheral, timezoneOffset) {
+        if (!peripheral || !MC_6810T2.isDevice(peripheral)) {
+            throw new Error('peripheral is not MC_6810T2');
+        }
+        this._peripheral = peripheral;
+        this._timezoneOffset = timezoneOffset ? timezoneOffset : 9 * 60;
+    }
+    static info() {
+        return {
+            name: 'MC_6810T2',
+        };
+    }
+    static isDevice(peripheral) {
+        if (!peripheral.localName)
+            return false;
+        return peripheral.localName.startsWith('BLESmart_00130003');
+    }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('MC_6810T2 not found');
+        }
+        return !!(this._peripheral.adv_data[15] & 8);
+    }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング 電源ボタンを長押しする
+     *
+     * @returns pairing key ペアリングキー
+     */
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error('MC_6810T2 not found');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        await this._peripheral.connectWait({
+            waitUntilPairing: true,
+        });
+        console.log('paring done');
+        const keys = await this._peripheral.getPairingKeysWait();
+        console.log('write current time');
+        const currentTime = this._peripheral.getService('1805');
+        const current = await (currentTime === null || currentTime === void 0 ? void 0 : currentTime.getCharacteristic('2a2b'));
+        await this.writeCurrentTimeWait(current);
+        console.log('read last data');
+        const service = this._peripheral.getService('1809');
+        const chara = await (service === null || service === void 0 ? void 0 : service.getCharacteristic('2a1c'));
+        await (chara === null || chara === void 0 ? void 0 : chara.registerNotifyWait((data) => {
+            console.log('data');
+        }));
+        console.log('read current time');
+        await (current === null || current === void 0 ? void 0 : current.readWait());
+        // await this._peripheral.disconnectWait();
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(keys);
+            };
+        });
+        return await waitDisconnect;
+    }
+    /**
+     * Get SpO2, PulseRate Data from Device
+     *
+     * デバイスから計測データをとる
+     *
+     * @returns 受け取ったデータ
+     */
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error('MC_6810T2 not found');
+        }
+        let result = {};
+        await this._peripheral.connectWait({
+            pairingOption: { keys: pairingKeys },
+        });
+        const currentTime = this._peripheral.getService('1805');
+        const current = await (currentTime === null || currentTime === void 0 ? void 0 : currentTime.getCharacteristic('2a2b'));
+        await this.writeCurrentTimeWait(current);
+        const service = this._peripheral.getService('1809');
+        const chara = await (service === null || service === void 0 ? void 0 : service.getCharacteristic('2a1c'));
+        await (chara === null || chara === void 0 ? void 0 : chara.registerNotifyWait((data) => {
+            result = this._analyseData(data);
+        }));
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(result);
+            };
+        });
+        return await waitDisconnect;
+    }
+    async writeCurrentTimeWait(chara) {
+        const dayFormat = [7, 1, 2, 3, 4, 5, 6];
+        const date = new Date();
+        date.setTime(Date.now() + 1000 * 60 * this._timezoneOffset);
+        const buf = Buffer.alloc(10);
+        buf.writeUInt16LE(date.getUTCFullYear(), 0);
+        buf.writeUInt8(date.getUTCMonth() + 1, 2);
+        buf.writeUInt8(date.getUTCDate(), 3);
+        buf.writeUInt8(date.getUTCHours(), 4);
+        buf.writeUInt8(date.getUTCMinutes(), 5);
+        buf.writeUInt8(date.getUTCSeconds(), 6);
+        buf.writeUInt8(dayFormat[date.getUTCDay()], 7);
+        buf.writeUInt8(Math.trunc(date.getUTCMilliseconds() / (9999 / 256)), 8);
+        buf.writeUInt8(1, 9);
+        const arr = Array.from(buf);
+        await chara.writeWait(arr);
+    }
+    _analyseData(data) {
+        const buf = Buffer.from(data);
+        const result = {};
+        const tmpData = buf.readUInt32LE(1);
+        let ul = tmpData & 0x00ffffff;
+        if ((ul & 0x00800000) > 0) {
+            ul = -1 * (~(ul - 0x01) & 0x00ffffff);
+        }
+        const exponential = tmpData >> 24;
+        result.temperature = ul * Math.pow(10, exponential);
+        result.date = {
+            year: buf.readUInt16LE(5),
+            month: buf.readUInt8(7),
+            day: buf.readUInt8(8),
+            hour: buf.readUInt8(9),
+            minute: buf.readUInt8(10),
+            second: buf.readUInt8(11),
+        };
+        return result;
+    }
+}
+exports.default = MC_6810T2;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -30503,11 +32084,11 @@ class PLS_01BT {
          * 計測結果を受け取ったときにコールバック
          */
         this.onmeasured = null;
+        this._peripheral = null;
         this._uuids = {
             service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
             rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
         };
-        this._peripheral = null;
         this._rxCharacteristic = null;
         this._txCharacteristic = null;
         if (peripheral && !PLS_01BT.isDevice(peripheral)) {
@@ -32790,6 +34371,216 @@ TR7._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/TT-MSK1508/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.TT_MSK1508
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const easy_crc_1 = __webpack_require__("./node_modules/easy-crc/dist/index.js");
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+/** TT-MSK1508 management class TT-MSK1508を管理するクラス */
+class TT_MSK1508 {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'TT_MSK1508',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the TT-MSK1508
+     *
+     * 受け取ったPeripheralがTT-MSK1508のものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the TT-MSK1508
+     *
+     * TT-MSK1508かどうか
+     */
+    static isDevice(peripheral) {
+        return TT_MSK1508._deviceAdvAnalyzer.validate(peripheral.adv_data);
+    }
+    /**
+     * Get a data from the TT-MSK1508
+     *
+     * TT-MSK1508からデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the TT-MSK1508 TT-MSK1508から受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!TT_MSK1508.isDevice(peripheral)) {
+            return null;
+        }
+        const manufacturerId = TT_MSK1508._deviceAdvAnalyzer.getData(peripheral.adv_data, 'originalData', 'manufacturerId');
+        const sendData = TT_MSK1508._deviceAdvAnalyzer.getData(peripheral.adv_data, 'originalData', 'sendData');
+        const receivedRawCrc = TT_MSK1508._deviceAdvAnalyzer.getData(peripheral.adv_data, 'originalData', 'crc16');
+        if (!manufacturerId || !sendData || !receivedRawCrc) {
+            return null;
+        }
+        const patientId = Number(Buffer.from(sendData.slice(0, 6)).toString('hex'));
+        const operatingMode = sendData[6] & 0x03;
+        const flowRateStatus = (sendData[6] >>> 2) & 0x03;
+        const batteryStatus = (sendData[6] >>> 4) & 0x03;
+        const model = (sendData[6] >>> 6) & 0x03;
+        const totalDoseVolume = Buffer.from(sendData.slice(7, 9)).readUInt16LE(0);
+        const totalDoseTime = Buffer.from(sendData.slice(9, 11)).readUInt16LE(0);
+        const infusionType = sendData[11] & 0xc0;
+        const sensorId = Number(Buffer.from(sendData.slice(12, 14)).toString('hex'));
+        const errors = [];
+        const error = sendData[14];
+        if (error & 0x1)
+            errors.push('drip_detection_error');
+        if ((error >>> 1) & 0x1)
+            errors.push('device_internal_error');
+        const battery = sendData[15];
+        const crcBeforeCalcData = Buffer.from([...manufacturerId, ...sendData]);
+        const crc = (0, easy_crc_1.crc16)('X-25', crcBeforeCalcData);
+        const receivedCrc = Buffer.from(receivedRawCrc).readUInt16LE(0);
+        if (crc !== receivedCrc)
+            return null;
+        return {
+            patientId,
+            operatingMode: this.OperatingMode[operatingMode],
+            flowRateStatus: this.FlowRateStatus[flowRateStatus],
+            batteryStatus: this.BatteryStatus[batteryStatus],
+            model: this.Model[model],
+            totalDoseVolume,
+            totalDoseTime,
+            infusionType: this.InfusionType[infusionType],
+            sensorId,
+            errors,
+            battery,
+        };
+    }
+}
+exports.default = TT_MSK1508;
+TT_MSK1508.OperatingMode = {
+    0: 'initial',
+    2: 'dosing',
+};
+TT_MSK1508.FlowRateStatus = {
+    0: 'standard',
+    1: 'low',
+    2: 'high',
+    3: 'none',
+};
+TT_MSK1508.BatteryStatus = {
+    0: 'standard',
+    1: 'low',
+};
+TT_MSK1508.Model = {
+    0: 'drip_navigation_sensor',
+    1: 'auto_cremme',
+};
+TT_MSK1508.InfusionType = {
+    0: '20drops/m',
+};
+TT_MSK1508.Errors = [
+    'drip_detection_error',
+    'device_internal_error',
+];
+TT_MSK1508._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .groupStart('flag')
+    .addTarget('length', [0x02])
+    .addTarget('adType', [0x01])
+    .addTarget('data', [0x06])
+    .groupEnd()
+    .groupStart('originalData')
+    .addTarget('length', [0x1a])
+    .addTarget('adType', [0xff])
+    .addTarget('companyId', [0x00, 0x4c])
+    .addTarget('beaconType', [0x02, 0x15])
+    .addTarget('manufacturerId', [0x76, 0x37])
+    .addTargetByLength('sendData', 16)
+    .addTargetByLength('crc16', 2)
+    .addTarget('txPower', [0x00])
+    .groupEnd();
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Talia/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Talia {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'Talia',
+        };
+    }
+    /**
+     * UIDフレームとTLMフレームの2種類のadがあり、UIDフレームからしかTaliaかどうか判断できない。
+     * TLMフレームの判断はクライアント側でdevice addressをキャッシュして行う。
+     */
+    static isDeviceFromUid(peripheral) {
+        if (peripheral.adv_data
+            .toString()
+            .includes('69,84,65,84,65,76,73,65,82,69') ||
+            peripheral.adv_data.toString().includes('69,84,65,84,65,76,76,89,82,69') // ETATALIARE or ETATALLYRE
+        ) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * TLMフレームからデータを取得する。
+     * getMode()で先にUIDかTLMか判断した方が良い。
+     */
+    static getData(peripheral) {
+        if (this.getMode(peripheral) !== 'TLM') {
+            return null;
+        }
+        const ad = peripheral.adv_data.slice(11);
+        const data = {
+            address: peripheral.address,
+            primary_count: ad[8],
+            secondary_count: ad[9],
+            flow_enter: ad[10],
+            flow_exit: ad[11],
+            // battery: ad[12], // 現在のファームウェアでは未対応で常に100が返ってくる
+        };
+        return data;
+    }
+    /**
+     * adのモード(UID or TLM)を返す。
+     */
+    static getMode(peripheral) {
+        const ad = peripheral.adv_data.slice(11);
+        if (ad[0] === 0) {
+            return 'UID';
+        }
+        else if (ad[0] === 32) {
+            return 'TLM';
+        }
+        else {
+            return;
+        }
+    }
+}
+exports.default = Talia;
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/UA1200BLE/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -33319,6 +35110,104 @@ class UA651BLE {
 exports.default = UA651BLE;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/UC352BLE/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class UC352BLE {
+    constructor(peripheral) {
+        if (!peripheral || !UC352BLE.isDevice(peripheral)) {
+            throw new Error('peripheral is not UC352BLE');
+        }
+        this._peripheral = peripheral;
+    }
+    static info() {
+        return {
+            name: 'UC352BLE',
+        };
+    }
+    static isDevice(peripheral) {
+        if (!peripheral.localName)
+            return false;
+        return peripheral.localName.startsWith('A&D_UC-352BLE');
+    }
+    isPairingMode() {
+        if (!this._peripheral) {
+            throw new Error('HN_300TN not found');
+        }
+        if (this._peripheral.adv_data[2] === 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Pair with the device
+     *
+     * デバイスとペアリング 裏のボタンを押しながら起動してペアリングする必要あり
+     *
+     * @returns pairing key ペアリングキー
+     */
+    async pairingWait() {
+        if (!this._peripheral) {
+            throw new Error('UC352BLE not found');
+        }
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        let key = null;
+        await this._peripheral.connectWait({
+            pairingOption: {
+                onPairedCallback: (pairingKey) => {
+                    key = pairingKey;
+                },
+            },
+        });
+        return key;
+    }
+    /**
+     * Get Weight Data from Device
+     *
+     * デバイスから計測データをとる
+     *
+     * @returns 受け取ったデータ
+     */
+    async getDataWait(pairingKeys) {
+        if (!this._peripheral) {
+            throw new Error('UC352BLE not found');
+        }
+        let result = { weight: 0 };
+        await this._peripheral.connectWait({
+            pairingOption: { keys: pairingKeys },
+            waitUntilPairing: true,
+        });
+        const service = this._peripheral.getService('181D');
+        const chara = await (service === null || service === void 0 ? void 0 : service.getCharacteristic('2A9D'));
+        const waitDisconnect = new Promise((resolve, reject) => {
+            if (!this._peripheral)
+                return;
+            this._peripheral.ondisconnect = (reason) => {
+                resolve(result);
+            };
+        });
+        await (chara === null || chara === void 0 ? void 0 : chara.registerNotifyWait((data) => {
+            const _result = { weight: 0 };
+            _result.weight = ((data[2] << 8) | data[1]) * 0.005;
+            result = _result;
+        }));
+        return await waitDisconnect;
+    }
+}
+exports.default = UC352BLE;
+
 
 /***/ }),
 
@@ -34900,6 +36789,32 @@ iBS03G.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery,
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/iBS03H/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS03H
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS03H management class iBS03Hを管理するクラス */
+class iBS03H extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS03H;
+    }
+}
+exports.default = iBS03H;
+iBS03H.PartsName = 'iBS03H';
+iBS03H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS01.Config.button, hall_sensor: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(3, 0x10));
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/iBS03R/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -35192,6 +37107,33 @@ exports.default = iBS05H;
 iBS05H.PartsName = 'iBS05H';
 iBS05H.CompanyID = [0x2c, 0x08];
 iBS05H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, hall_sensor: iBS_1.BaseiBS.Config.event, count: iBS_1.BaseiBS.Config.count }, iBS_1.BaseiBS.getUniqueData(5, 0x31));
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS05T/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS05T
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS05T management class iBS05Tを管理するクラス */
+class iBS05T extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS05T;
+    }
+}
+exports.default = iBS05T;
+iBS05T.PartsName = 'iBS05T';
+iBS05T.CompanyID = [0x2c, 0x08];
+iBS05T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, button: iBS_1.BaseiBS.Config.button, temperature: iBS_1.BaseiBS.Config.temperature }, iBS_1.BaseiBS.getUniqueData(5, 0x32));
 
 
 /***/ }),
@@ -39576,6 +41518,102 @@ class SCBTGAAAC {
     }
 }
 exports.default = SCBTGAAAC;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/scbtgabbi/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.SCBTGABBI
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+/** SCBTGABBI management class SCBTGABBI */
+class SCBTGABBI {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'SCBTGABBI',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the SCBTGABBI
+     *
+     * 受け取ったPeripheralがSCBTGABBIのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the SCBTGABBI
+     *
+     * SCBTGABBIかどうか
+     */
+    static isDevice(peripheral) {
+        return SCBTGABBI.getData(peripheral) !== null;
+    }
+    /**
+     * Get leakage data from the SCBTGABBI
+     *
+     * Get advertisement sent out by generating power at the leak
+     *
+     * SCBTGABBIから漏水データを取得する
+     *
+     * 漏水で発電することによって発信されたadvertisementを取得します
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns device name デバイス名
+     */
+    static getData(peripheral) {
+        if (!peripheral.advertise_data_rows) {
+            return null;
+        }
+        const data = SCBTGABBI.searchTypeVal(peripheral.advertise_data_rows, 0xff);
+        if (!data ||
+            data[0] !== 0x31 ||
+            data[1] !== 0x07 ||
+            data[2] !== 0x02 ||
+            data[3] !== 0x15 ||
+            data.length !== 25) {
+            return null;
+        }
+        const uuidData = data.slice(4, 20);
+        let uuid = '';
+        for (let i = 0; i < uuidData.length; i++) {
+            uuid = uuid + ('00' + uuidData[i].toString(16)).slice(-2);
+            if (i === 4 - 1 ||
+                i === 4 + 2 - 1 ||
+                i === 4 + 2 * 2 - 1 ||
+                i === 4 + 2 * 3 - 1) {
+                uuid += '-';
+            }
+        }
+        const major = (data[20] << 8) + data[21];
+        const minor = (data[22] << 8) + data[23];
+        const power = data[24];
+        if (uuid === '5d490d6c-7eb9-474e-8160-45bde999119a' && major === 4) {
+            return `04-${('00000' + minor).slice(-5)}`;
+        }
+        return null;
+    }
+    static searchTypeVal(advertise_data_rows, type) {
+        for (let i = 0; i < advertise_data_rows.length; i++) {
+            if (advertise_data_rows[i][0] === type) {
+                const results = [...advertise_data_rows[i]];
+                results.shift();
+                return results;
+            }
+        }
+        return undefined;
+    }
+}
+exports.default = SCBTGABBI;
 
 
 /***/ }),
@@ -74200,6 +76238,2870 @@ function findPrime(bits, gen) {
 /***/ (function(module) {
 
 module.exports = JSON.parse("{\"modp1\":{\"gen\":\"02\",\"prime\":\"ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a63a3620ffffffffffffffff\"},\"modp2\":{\"gen\":\"02\",\"prime\":\"ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece65381ffffffffffffffff\"},\"modp5\":{\"gen\":\"02\",\"prime\":\"ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca237327ffffffffffffffff\"},\"modp14\":{\"gen\":\"02\",\"prime\":\"ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aacaa68ffffffffffffffff\"},\"modp15\":{\"gen\":\"02\",\"prime\":\"ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a93ad2caffffffffffffffff\"},\"modp16\":{\"gen\":\"02\",\"prime\":\"ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c934063199ffffffffffffffff\"},\"modp17\":{\"gen\":\"02\",\"prime\":\"ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dcc4024ffffffffffffffff\"},\"modp18\":{\"gen\":\"02\",\"prime\":\"ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff\"}}");
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc32 = exports.crc16 = exports.crc8 = void 0;
+const crc8_1 = __webpack_require__("./node_modules/easy-crc/dist/src/lib/crc8.js");
+Object.defineProperty(exports, "crc8", { enumerable: true, get: function () { return crc8_1.crc8; } });
+const crc16_1 = __webpack_require__("./node_modules/easy-crc/dist/src/lib/crc16.js");
+Object.defineProperty(exports, "crc16", { enumerable: true, get: function () { return crc16_1.crc16; } });
+const crc32_1 = __webpack_require__("./node_modules/easy-crc/dist/src/lib/crc32.js");
+Object.defineProperty(exports, "crc32", { enumerable: true, get: function () { return crc32_1.crc32; } });
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/arc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.arc = void 0;
+exports.arc = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0,
+        0x0280, 0xC241, 0xC601, 0x06C0, 0x0780, 0xC741,
+        0x0500, 0xC5C1, 0xC481, 0x0440, 0xCC01, 0x0CC0,
+        0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
+        0x0A00, 0xCAC1, 0xCB81, 0x0B40, 0xC901, 0x09C0,
+        0x0880, 0xC841, 0xD801, 0x18C0, 0x1980, 0xD941,
+        0x1B00, 0xDBC1, 0xDA81, 0x1A40, 0x1E00, 0xDEC1,
+        0xDF81, 0x1F40, 0xDD01, 0x1DC0, 0x1C80, 0xDC41,
+        0x1400, 0xD4C1, 0xD581, 0x1540, 0xD701, 0x17C0,
+        0x1680, 0xD641, 0xD201, 0x12C0, 0x1380, 0xD341,
+        0x1100, 0xD1C1, 0xD081, 0x1040, 0xF001, 0x30C0,
+        0x3180, 0xF141, 0x3300, 0xF3C1, 0xF281, 0x3240,
+        0x3600, 0xF6C1, 0xF781, 0x3740, 0xF501, 0x35C0,
+        0x3480, 0xF441, 0x3C00, 0xFCC1, 0xFD81, 0x3D40,
+        0xFF01, 0x3FC0, 0x3E80, 0xFE41, 0xFA01, 0x3AC0,
+        0x3B80, 0xFB41, 0x3900, 0xF9C1, 0xF881, 0x3840,
+        0x2800, 0xE8C1, 0xE981, 0x2940, 0xEB01, 0x2BC0,
+        0x2A80, 0xEA41, 0xEE01, 0x2EC0, 0x2F80, 0xEF41,
+        0x2D00, 0xEDC1, 0xEC81, 0x2C40, 0xE401, 0x24C0,
+        0x2580, 0xE541, 0x2700, 0xE7C1, 0xE681, 0x2640,
+        0x2200, 0xE2C1, 0xE381, 0x2340, 0xE101, 0x21C0,
+        0x2080, 0xE041, 0xA001, 0x60C0, 0x6180, 0xA141,
+        0x6300, 0xA3C1, 0xA281, 0x6240, 0x6600, 0xA6C1,
+        0xA781, 0x6740, 0xA501, 0x65C0, 0x6480, 0xA441,
+        0x6C00, 0xACC1, 0xAD81, 0x6D40, 0xAF01, 0x6FC0,
+        0x6E80, 0xAE41, 0xAA01, 0x6AC0, 0x6B80, 0xAB41,
+        0x6900, 0xA9C1, 0xA881, 0x6840, 0x7800, 0xB8C1,
+        0xB981, 0x7940, 0xBB01, 0x7BC0, 0x7A80, 0xBA41,
+        0xBE01, 0x7EC0, 0x7F80, 0xBF41, 0x7D00, 0xBDC1,
+        0xBC81, 0x7C40, 0xB401, 0x74C0, 0x7580, 0xB541,
+        0x7700, 0xB7C1, 0xB681, 0x7640, 0x7200, 0xB2C1,
+        0xB381, 0x7340, 0xB101, 0x71C0, 0x7080, 0xB041,
+        0x5000, 0x90C1, 0x9181, 0x5140, 0x9301, 0x53C0,
+        0x5280, 0x9241, 0x9601, 0x56C0, 0x5780, 0x9741,
+        0x5500, 0x95C1, 0x9481, 0x5440, 0x9C01, 0x5CC0,
+        0x5D80, 0x9D41, 0x5F00, 0x9FC1, 0x9E81, 0x5E40,
+        0x5A00, 0x9AC1, 0x9B81, 0x5B40, 0x9901, 0x59C0,
+        0x5880, 0x9841, 0x8801, 0x48C0, 0x4980, 0x8941,
+        0x4B00, 0x8BC1, 0x8A81, 0x4A40, 0x4E00, 0x8EC1,
+        0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
+        0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0,
+        0x4680, 0x8641, 0x8201, 0x42C0, 0x4380, 0x8341,
+        0x4100, 0x81C1, 0x8081, 0x4040
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/aug-ccit.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.aug_ccit = void 0;
+exports.aug_ccit = {
+    init: 0x1D0F,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5,
+        0x60C6, 0x70E7, 0x8108, 0x9129, 0xA14A, 0xB16B,
+        0xC18C, 0xD1AD, 0xE1CE, 0xF1EF, 0x1231, 0x0210,
+        0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
+        0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C,
+        0xF3FF, 0xE3DE, 0x2462, 0x3443, 0x0420, 0x1401,
+        0x64E6, 0x74C7, 0x44A4, 0x5485, 0xA56A, 0xB54B,
+        0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D,
+        0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6,
+        0x5695, 0x46B4, 0xB75B, 0xA77A, 0x9719, 0x8738,
+        0xF7DF, 0xE7FE, 0xD79D, 0xC7BC, 0x48C4, 0x58E5,
+        0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823,
+        0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969,
+        0xA90A, 0xB92B, 0x5AF5, 0x4AD4, 0x7AB7, 0x6A96,
+        0x1A71, 0x0A50, 0x3A33, 0x2A12, 0xDBFD, 0xCBDC,
+        0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A,
+        0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03,
+        0x0C60, 0x1C41, 0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD,
+        0xAD2A, 0xBD0B, 0x8D68, 0x9D49, 0x7E97, 0x6EB6,
+        0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70,
+        0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A,
+        0x9F59, 0x8F78, 0x9188, 0x81A9, 0xB1CA, 0xA1EB,
+        0xD10C, 0xC12D, 0xF14E, 0xE16F, 0x1080, 0x00A1,
+        0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067,
+        0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C,
+        0xE37F, 0xF35E, 0x02B1, 0x1290, 0x22F3, 0x32D2,
+        0x4235, 0x5214, 0x6277, 0x7256, 0xB5EA, 0xA5CB,
+        0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D,
+        0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447,
+        0x5424, 0x4405, 0xA7DB, 0xB7FA, 0x8799, 0x97B8,
+        0xE75F, 0xF77E, 0xC71D, 0xD73C, 0x26D3, 0x36F2,
+        0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634,
+        0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9,
+        0xB98A, 0xA9AB, 0x5844, 0x4865, 0x7806, 0x6827,
+        0x18C0, 0x08E1, 0x3882, 0x28A3, 0xCB7D, 0xDB5C,
+        0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A,
+        0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0,
+        0x2AB3, 0x3A92, 0xFD2E, 0xED0F, 0xDD6C, 0xCD4D,
+        0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9, 0x7C26, 0x6C07,
+        0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
+        0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA,
+        0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74,
+        0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/buypass.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.buypass = void 0;
+exports.buypass = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x8005, 0x800F, 0x000A, 0x801B, 0x001E,
+        0x0014, 0x8011, 0x8033, 0x0036, 0x003C, 0x8039,
+        0x0028, 0x802D, 0x8027, 0x0022, 0x8063, 0x0066,
+        0x006C, 0x8069, 0x0078, 0x807D, 0x8077, 0x0072,
+        0x0050, 0x8055, 0x805F, 0x005A, 0x804B, 0x004E,
+        0x0044, 0x8041, 0x80C3, 0x00C6, 0x00CC, 0x80C9,
+        0x00D8, 0x80DD, 0x80D7, 0x00D2, 0x00F0, 0x80F5,
+        0x80FF, 0x00FA, 0x80EB, 0x00EE, 0x00E4, 0x80E1,
+        0x00A0, 0x80A5, 0x80AF, 0x00AA, 0x80BB, 0x00BE,
+        0x00B4, 0x80B1, 0x8093, 0x0096, 0x009C, 0x8099,
+        0x0088, 0x808D, 0x8087, 0x0082, 0x8183, 0x0186,
+        0x018C, 0x8189, 0x0198, 0x819D, 0x8197, 0x0192,
+        0x01B0, 0x81B5, 0x81BF, 0x01BA, 0x81AB, 0x01AE,
+        0x01A4, 0x81A1, 0x01E0, 0x81E5, 0x81EF, 0x01EA,
+        0x81FB, 0x01FE, 0x01F4, 0x81F1, 0x81D3, 0x01D6,
+        0x01DC, 0x81D9, 0x01C8, 0x81CD, 0x81C7, 0x01C2,
+        0x0140, 0x8145, 0x814F, 0x014A, 0x815B, 0x015E,
+        0x0154, 0x8151, 0x8173, 0x0176, 0x017C, 0x8179,
+        0x0168, 0x816D, 0x8167, 0x0162, 0x8123, 0x0126,
+        0x012C, 0x8129, 0x0138, 0x813D, 0x8137, 0x0132,
+        0x0110, 0x8115, 0x811F, 0x011A, 0x810B, 0x010E,
+        0x0104, 0x8101, 0x8303, 0x0306, 0x030C, 0x8309,
+        0x0318, 0x831D, 0x8317, 0x0312, 0x0330, 0x8335,
+        0x833F, 0x033A, 0x832B, 0x032E, 0x0324, 0x8321,
+        0x0360, 0x8365, 0x836F, 0x036A, 0x837B, 0x037E,
+        0x0374, 0x8371, 0x8353, 0x0356, 0x035C, 0x8359,
+        0x0348, 0x834D, 0x8347, 0x0342, 0x03C0, 0x83C5,
+        0x83CF, 0x03CA, 0x83DB, 0x03DE, 0x03D4, 0x83D1,
+        0x83F3, 0x03F6, 0x03FC, 0x83F9, 0x03E8, 0x83ED,
+        0x83E7, 0x03E2, 0x83A3, 0x03A6, 0x03AC, 0x83A9,
+        0x03B8, 0x83BD, 0x83B7, 0x03B2, 0x0390, 0x8395,
+        0x839F, 0x039A, 0x838B, 0x038E, 0x0384, 0x8381,
+        0x0280, 0x8285, 0x828F, 0x028A, 0x829B, 0x029E,
+        0x0294, 0x8291, 0x82B3, 0x02B6, 0x02BC, 0x82B9,
+        0x02A8, 0x82AD, 0x82A7, 0x02A2, 0x82E3, 0x02E6,
+        0x02EC, 0x82E9, 0x02F8, 0x82FD, 0x82F7, 0x02F2,
+        0x02D0, 0x82D5, 0x82DF, 0x02DA, 0x82CB, 0x02CE,
+        0x02C4, 0x82C1, 0x8243, 0x0246, 0x024C, 0x8249,
+        0x0258, 0x825D, 0x8257, 0x0252, 0x0270, 0x8275,
+        0x827F, 0x027A, 0x826B, 0x026E, 0x0264, 0x8261,
+        0x0220, 0x8225, 0x822F, 0x022A, 0x823B, 0x023E,
+        0x0234, 0x8231, 0x8213, 0x0216, 0x021C, 0x8219,
+        0x0208, 0x820D, 0x8207, 0x0202
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/ccitt-false.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ccitt_false = void 0;
+exports.ccitt_false = {
+    init: 0xFFFF,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5,
+        0x60C6, 0x70E7, 0x8108, 0x9129, 0xA14A, 0xB16B,
+        0xC18C, 0xD1AD, 0xE1CE, 0xF1EF, 0x1231, 0x0210,
+        0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
+        0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C,
+        0xF3FF, 0xE3DE, 0x2462, 0x3443, 0x0420, 0x1401,
+        0x64E6, 0x74C7, 0x44A4, 0x5485, 0xA56A, 0xB54B,
+        0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D,
+        0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6,
+        0x5695, 0x46B4, 0xB75B, 0xA77A, 0x9719, 0x8738,
+        0xF7DF, 0xE7FE, 0xD79D, 0xC7BC, 0x48C4, 0x58E5,
+        0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823,
+        0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969,
+        0xA90A, 0xB92B, 0x5AF5, 0x4AD4, 0x7AB7, 0x6A96,
+        0x1A71, 0x0A50, 0x3A33, 0x2A12, 0xDBFD, 0xCBDC,
+        0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A,
+        0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03,
+        0x0C60, 0x1C41, 0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD,
+        0xAD2A, 0xBD0B, 0x8D68, 0x9D49, 0x7E97, 0x6EB6,
+        0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70,
+        0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A,
+        0x9F59, 0x8F78, 0x9188, 0x81A9, 0xB1CA, 0xA1EB,
+        0xD10C, 0xC12D, 0xF14E, 0xE16F, 0x1080, 0x00A1,
+        0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067,
+        0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C,
+        0xE37F, 0xF35E, 0x02B1, 0x1290, 0x22F3, 0x32D2,
+        0x4235, 0x5214, 0x6277, 0x7256, 0xB5EA, 0xA5CB,
+        0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D,
+        0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447,
+        0x5424, 0x4405, 0xA7DB, 0xB7FA, 0x8799, 0x97B8,
+        0xE75F, 0xF77E, 0xC71D, 0xD73C, 0x26D3, 0x36F2,
+        0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634,
+        0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9,
+        0xB98A, 0xA9AB, 0x5844, 0x4865, 0x7806, 0x6827,
+        0x18C0, 0x08E1, 0x3882, 0x28A3, 0xCB7D, 0xDB5C,
+        0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A,
+        0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0,
+        0x2AB3, 0x3A92, 0xFD2E, 0xED0F, 0xDD6C, 0xCD4D,
+        0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9, 0x7C26, 0x6C07,
+        0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
+        0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA,
+        0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74,
+        0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/cdma2000.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cdma2000 = void 0;
+exports.cdma2000 = {
+    init: 0xFFFF,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0xC867, 0x58A9, 0x90CE, 0xB152, 0x7935,
+        0xE9FB, 0x219C, 0xAAC3, 0x62A4, 0xF26A, 0x3A0D,
+        0x1B91, 0xD3F6, 0x4338, 0x8B5F, 0x9DE1, 0x5586,
+        0xC548, 0x0D2F, 0x2CB3, 0xE4D4, 0x741A, 0xBC7D,
+        0x3722, 0xFF45, 0x6F8B, 0xA7EC, 0x8670, 0x4E17,
+        0xDED9, 0x16BE, 0xF3A5, 0x3BC2, 0xAB0C, 0x636B,
+        0x42F7, 0x8A90, 0x1A5E, 0xD239, 0x5966, 0x9101,
+        0x01CF, 0xC9A8, 0xE834, 0x2053, 0xB09D, 0x78FA,
+        0x6E44, 0xA623, 0x36ED, 0xFE8A, 0xDF16, 0x1771,
+        0x87BF, 0x4FD8, 0xC487, 0x0CE0, 0x9C2E, 0x5449,
+        0x75D5, 0xBDB2, 0x2D7C, 0xE51B, 0x2F2D, 0xE74A,
+        0x7784, 0xBFE3, 0x9E7F, 0x5618, 0xC6D6, 0x0EB1,
+        0x85EE, 0x4D89, 0xDD47, 0x1520, 0x34BC, 0xFCDB,
+        0x6C15, 0xA472, 0xB2CC, 0x7AAB, 0xEA65, 0x2202,
+        0x039E, 0xCBF9, 0x5B37, 0x9350, 0x180F, 0xD068,
+        0x40A6, 0x88C1, 0xA95D, 0x613A, 0xF1F4, 0x3993,
+        0xDC88, 0x14EF, 0x8421, 0x4C46, 0x6DDA, 0xA5BD,
+        0x3573, 0xFD14, 0x764B, 0xBE2C, 0x2EE2, 0xE685,
+        0xC719, 0x0F7E, 0x9FB0, 0x57D7, 0x4169, 0x890E,
+        0x19C0, 0xD1A7, 0xF03B, 0x385C, 0xA892, 0x60F5,
+        0xEBAA, 0x23CD, 0xB303, 0x7B64, 0x5AF8, 0x929F,
+        0x0251, 0xCA36, 0x5E5A, 0x963D, 0x06F3, 0xCE94,
+        0xEF08, 0x276F, 0xB7A1, 0x7FC6, 0xF499, 0x3CFE,
+        0xAC30, 0x6457, 0x45CB, 0x8DAC, 0x1D62, 0xD505,
+        0xC3BB, 0x0BDC, 0x9B12, 0x5375, 0x72E9, 0xBA8E,
+        0x2A40, 0xE227, 0x6978, 0xA11F, 0x31D1, 0xF9B6,
+        0xD82A, 0x104D, 0x8083, 0x48E4, 0xADFF, 0x6598,
+        0xF556, 0x3D31, 0x1CAD, 0xD4CA, 0x4404, 0x8C63,
+        0x073C, 0xCF5B, 0x5F95, 0x97F2, 0xB66E, 0x7E09,
+        0xEEC7, 0x26A0, 0x301E, 0xF879, 0x68B7, 0xA0D0,
+        0x814C, 0x492B, 0xD9E5, 0x1182, 0x9ADD, 0x52BA,
+        0xC274, 0x0A13, 0x2B8F, 0xE3E8, 0x7326, 0xBB41,
+        0x7177, 0xB910, 0x29DE, 0xE1B9, 0xC025, 0x0842,
+        0x988C, 0x50EB, 0xDBB4, 0x13D3, 0x831D, 0x4B7A,
+        0x6AE6, 0xA281, 0x324F, 0xFA28, 0xEC96, 0x24F1,
+        0xB43F, 0x7C58, 0x5DC4, 0x95A3, 0x056D, 0xCD0A,
+        0x4655, 0x8E32, 0x1EFC, 0xD69B, 0xF707, 0x3F60,
+        0xAFAE, 0x67C9, 0x82D2, 0x4AB5, 0xDA7B, 0x121C,
+        0x3380, 0xFBE7, 0x6B29, 0xA34E, 0x2811, 0xE076,
+        0x70B8, 0xB8DF, 0x9943, 0x5124, 0xC1EA, 0x098D,
+        0x1F33, 0xD754, 0x479A, 0x8FFD, 0xAE61, 0x6606,
+        0xF6C8, 0x3EAF, 0xB5F0, 0x7D97, 0xED59, 0x253E,
+        0x04A2, 0xCCC5, 0x5C0B, 0x946C
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/crc-a.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc_a = void 0;
+exports.crc_a = {
+    init: 0xC6C6,
+    invertedInit: 0x6363,
+    xorOut: 0x0000,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0x1189, 0x2312, 0x329B, 0x4624, 0x57AD,
+        0x6536, 0x74BF, 0x8C48, 0x9DC1, 0xAF5A, 0xBED3,
+        0xCA6C, 0xDBE5, 0xE97E, 0xF8F7, 0x1081, 0x0108,
+        0x3393, 0x221A, 0x56A5, 0x472C, 0x75B7, 0x643E,
+        0x9CC9, 0x8D40, 0xBFDB, 0xAE52, 0xDAED, 0xCB64,
+        0xF9FF, 0xE876, 0x2102, 0x308B, 0x0210, 0x1399,
+        0x6726, 0x76AF, 0x4434, 0x55BD, 0xAD4A, 0xBCC3,
+        0x8E58, 0x9FD1, 0xEB6E, 0xFAE7, 0xC87C, 0xD9F5,
+        0x3183, 0x200A, 0x1291, 0x0318, 0x77A7, 0x662E,
+        0x54B5, 0x453C, 0xBDCB, 0xAC42, 0x9ED9, 0x8F50,
+        0xFBEF, 0xEA66, 0xD8FD, 0xC974, 0x4204, 0x538D,
+        0x6116, 0x709F, 0x0420, 0x15A9, 0x2732, 0x36BB,
+        0xCE4C, 0xDFC5, 0xED5E, 0xFCD7, 0x8868, 0x99E1,
+        0xAB7A, 0xBAF3, 0x5285, 0x430C, 0x7197, 0x601E,
+        0x14A1, 0x0528, 0x37B3, 0x263A, 0xDECD, 0xCF44,
+        0xFDDF, 0xEC56, 0x98E9, 0x8960, 0xBBFB, 0xAA72,
+        0x6306, 0x728F, 0x4014, 0x519D, 0x2522, 0x34AB,
+        0x0630, 0x17B9, 0xEF4E, 0xFEC7, 0xCC5C, 0xDDD5,
+        0xA96A, 0xB8E3, 0x8A78, 0x9BF1, 0x7387, 0x620E,
+        0x5095, 0x411C, 0x35A3, 0x242A, 0x16B1, 0x0738,
+        0xFFCF, 0xEE46, 0xDCDD, 0xCD54, 0xB9EB, 0xA862,
+        0x9AF9, 0x8B70, 0x8408, 0x9581, 0xA71A, 0xB693,
+        0xC22C, 0xD3A5, 0xE13E, 0xF0B7, 0x0840, 0x19C9,
+        0x2B52, 0x3ADB, 0x4E64, 0x5FED, 0x6D76, 0x7CFF,
+        0x9489, 0x8500, 0xB79B, 0xA612, 0xD2AD, 0xC324,
+        0xF1BF, 0xE036, 0x18C1, 0x0948, 0x3BD3, 0x2A5A,
+        0x5EE5, 0x4F6C, 0x7DF7, 0x6C7E, 0xA50A, 0xB483,
+        0x8618, 0x9791, 0xE32E, 0xF2A7, 0xC03C, 0xD1B5,
+        0x2942, 0x38CB, 0x0A50, 0x1BD9, 0x6F66, 0x7EEF,
+        0x4C74, 0x5DFD, 0xB58B, 0xA402, 0x9699, 0x8710,
+        0xF3AF, 0xE226, 0xD0BD, 0xC134, 0x39C3, 0x284A,
+        0x1AD1, 0x0B58, 0x7FE7, 0x6E6E, 0x5CF5, 0x4D7C,
+        0xC60C, 0xD785, 0xE51E, 0xF497, 0x8028, 0x91A1,
+        0xA33A, 0xB2B3, 0x4A44, 0x5BCD, 0x6956, 0x78DF,
+        0x0C60, 0x1DE9, 0x2F72, 0x3EFB, 0xD68D, 0xC704,
+        0xF59F, 0xE416, 0x90A9, 0x8120, 0xB3BB, 0xA232,
+        0x5AC5, 0x4B4C, 0x79D7, 0x685E, 0x1CE1, 0x0D68,
+        0x3FF3, 0x2E7A, 0xE70E, 0xF687, 0xC41C, 0xD595,
+        0xA12A, 0xB0A3, 0x8238, 0x93B1, 0x6B46, 0x7ACF,
+        0x4854, 0x59DD, 0x2D62, 0x3CEB, 0x0E70, 0x1FF9,
+        0xF78F, 0xE606, 0xD49D, 0xC514, 0xB1AB, 0xA022,
+        0x92B9, 0x8330, 0x7BC7, 0x6A4E, 0x58D5, 0x495C,
+        0x3DE3, 0x2C6A, 0x1EF1, 0x0F78
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/dds-110.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.dds_110 = void 0;
+exports.dds_110 = {
+    init: 0x800D,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x8005, 0x800F, 0x000A, 0x801B, 0x001E,
+        0x0014, 0x8011, 0x8033, 0x0036, 0x003C, 0x8039,
+        0x0028, 0x802D, 0x8027, 0x0022, 0x8063, 0x0066,
+        0x006C, 0x8069, 0x0078, 0x807D, 0x8077, 0x0072,
+        0x0050, 0x8055, 0x805F, 0x005A, 0x804B, 0x004E,
+        0x0044, 0x8041, 0x80C3, 0x00C6, 0x00CC, 0x80C9,
+        0x00D8, 0x80DD, 0x80D7, 0x00D2, 0x00F0, 0x80F5,
+        0x80FF, 0x00FA, 0x80EB, 0x00EE, 0x00E4, 0x80E1,
+        0x00A0, 0x80A5, 0x80AF, 0x00AA, 0x80BB, 0x00BE,
+        0x00B4, 0x80B1, 0x8093, 0x0096, 0x009C, 0x8099,
+        0x0088, 0x808D, 0x8087, 0x0082, 0x8183, 0x0186,
+        0x018C, 0x8189, 0x0198, 0x819D, 0x8197, 0x0192,
+        0x01B0, 0x81B5, 0x81BF, 0x01BA, 0x81AB, 0x01AE,
+        0x01A4, 0x81A1, 0x01E0, 0x81E5, 0x81EF, 0x01EA,
+        0x81FB, 0x01FE, 0x01F4, 0x81F1, 0x81D3, 0x01D6,
+        0x01DC, 0x81D9, 0x01C8, 0x81CD, 0x81C7, 0x01C2,
+        0x0140, 0x8145, 0x814F, 0x014A, 0x815B, 0x015E,
+        0x0154, 0x8151, 0x8173, 0x0176, 0x017C, 0x8179,
+        0x0168, 0x816D, 0x8167, 0x0162, 0x8123, 0x0126,
+        0x012C, 0x8129, 0x0138, 0x813D, 0x8137, 0x0132,
+        0x0110, 0x8115, 0x811F, 0x011A, 0x810B, 0x010E,
+        0x0104, 0x8101, 0x8303, 0x0306, 0x030C, 0x8309,
+        0x0318, 0x831D, 0x8317, 0x0312, 0x0330, 0x8335,
+        0x833F, 0x033A, 0x832B, 0x032E, 0x0324, 0x8321,
+        0x0360, 0x8365, 0x836F, 0x036A, 0x837B, 0x037E,
+        0x0374, 0x8371, 0x8353, 0x0356, 0x035C, 0x8359,
+        0x0348, 0x834D, 0x8347, 0x0342, 0x03C0, 0x83C5,
+        0x83CF, 0x03CA, 0x83DB, 0x03DE, 0x03D4, 0x83D1,
+        0x83F3, 0x03F6, 0x03FC, 0x83F9, 0x03E8, 0x83ED,
+        0x83E7, 0x03E2, 0x83A3, 0x03A6, 0x03AC, 0x83A9,
+        0x03B8, 0x83BD, 0x83B7, 0x03B2, 0x0390, 0x8395,
+        0x839F, 0x039A, 0x838B, 0x038E, 0x0384, 0x8381,
+        0x0280, 0x8285, 0x828F, 0x028A, 0x829B, 0x029E,
+        0x0294, 0x8291, 0x82B3, 0x02B6, 0x02BC, 0x82B9,
+        0x02A8, 0x82AD, 0x82A7, 0x02A2, 0x82E3, 0x02E6,
+        0x02EC, 0x82E9, 0x02F8, 0x82FD, 0x82F7, 0x02F2,
+        0x02D0, 0x82D5, 0x82DF, 0x02DA, 0x82CB, 0x02CE,
+        0x02C4, 0x82C1, 0x8243, 0x0246, 0x024C, 0x8249,
+        0x0258, 0x825D, 0x8257, 0x0252, 0x0270, 0x8275,
+        0x827F, 0x027A, 0x826B, 0x026E, 0x0264, 0x8261,
+        0x0220, 0x8225, 0x822F, 0x022A, 0x823B, 0x023E,
+        0x0234, 0x8231, 0x8213, 0x0216, 0x021C, 0x8219,
+        0x0208, 0x820D, 0x8207, 0x0202
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/dect-r.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.dect_r = void 0;
+exports.dect_r = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0x1,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x0589, 0x0B12, 0x0E9B, 0x1624, 0x13AD,
+        0x1D36, 0x18BF, 0x2C48, 0x29C1, 0x275A, 0x22D3,
+        0x3A6C, 0x3FE5, 0x317E, 0x34F7, 0x5890, 0x5D19,
+        0x5382, 0x560B, 0x4EB4, 0x4B3D, 0x45A6, 0x402F,
+        0x74D8, 0x7151, 0x7FCA, 0x7A43, 0x62FC, 0x6775,
+        0x69EE, 0x6C67, 0xB120, 0xB4A9, 0xBA32, 0xBFBB,
+        0xA704, 0xA28D, 0xAC16, 0xA99F, 0x9D68, 0x98E1,
+        0x967A, 0x93F3, 0x8B4C, 0x8EC5, 0x805E, 0x85D7,
+        0xE9B0, 0xEC39, 0xE2A2, 0xE72B, 0xFF94, 0xFA1D,
+        0xF486, 0xF10F, 0xC5F8, 0xC071, 0xCEEA, 0xCB63,
+        0xD3DC, 0xD655, 0xD8CE, 0xDD47, 0x67C9, 0x6240,
+        0x6CDB, 0x6952, 0x71ED, 0x7464, 0x7AFF, 0x7F76,
+        0x4B81, 0x4E08, 0x4093, 0x451A, 0x5DA5, 0x582C,
+        0x56B7, 0x533E, 0x3F59, 0x3AD0, 0x344B, 0x31C2,
+        0x297D, 0x2CF4, 0x226F, 0x27E6, 0x1311, 0x1698,
+        0x1803, 0x1D8A, 0x0535, 0x00BC, 0x0E27, 0x0BAE,
+        0xD6E9, 0xD360, 0xDDFB, 0xD872, 0xC0CD, 0xC544,
+        0xCBDF, 0xCE56, 0xFAA1, 0xFF28, 0xF1B3, 0xF43A,
+        0xEC85, 0xE90C, 0xE797, 0xE21E, 0x8E79, 0x8BF0,
+        0x856B, 0x80E2, 0x985D, 0x9DD4, 0x934F, 0x96C6,
+        0xA231, 0xA7B8, 0xA923, 0xACAA, 0xB415, 0xB19C,
+        0xBF07, 0xBA8E, 0xCF92, 0xCA1B, 0xC480, 0xC109,
+        0xD9B6, 0xDC3F, 0xD2A4, 0xD72D, 0xE3DA, 0xE653,
+        0xE8C8, 0xED41, 0xF5FE, 0xF077, 0xFEEC, 0xFB65,
+        0x9702, 0x928B, 0x9C10, 0x9999, 0x8126, 0x84AF,
+        0x8A34, 0x8FBD, 0xBB4A, 0xBEC3, 0xB058, 0xB5D1,
+        0xAD6E, 0xA8E7, 0xA67C, 0xA3F5, 0x7EB2, 0x7B3B,
+        0x75A0, 0x7029, 0x6896, 0x6D1F, 0x6384, 0x660D,
+        0x52FA, 0x5773, 0x59E8, 0x5C61, 0x44DE, 0x4157,
+        0x4FCC, 0x4A45, 0x2622, 0x23AB, 0x2D30, 0x28B9,
+        0x3006, 0x358F, 0x3B14, 0x3E9D, 0x0A6A, 0x0FE3,
+        0x0178, 0x04F1, 0x1C4E, 0x19C7, 0x175C, 0x12D5,
+        0xA85B, 0xADD2, 0xA349, 0xA6C0, 0xBE7F, 0xBBF6,
+        0xB56D, 0xB0E4, 0x8413, 0x819A, 0x8F01, 0x8A88,
+        0x9237, 0x97BE, 0x9925, 0x9CAC, 0xF0CB, 0xF542,
+        0xFBD9, 0xFE50, 0xE6EF, 0xE366, 0xEDFD, 0xE874,
+        0xDC83, 0xD90A, 0xD791, 0xD218, 0xCAA7, 0xCF2E,
+        0xC1B5, 0xC43C, 0x197B, 0x1CF2, 0x1269, 0x17E0,
+        0x0F5F, 0x0AD6, 0x044D, 0x01C4, 0x3533, 0x30BA,
+        0x3E21, 0x3BA8, 0x2317, 0x269E, 0x2805, 0x2D8C,
+        0x41EB, 0x4462, 0x4AF9, 0x4F70, 0x57CF, 0x5246,
+        0x5CDD, 0x5954, 0x6DA3, 0x682A, 0x66B1, 0x6338,
+        0x7B87, 0x7E0E, 0x7095, 0x751C
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/dect-x.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.dect_x = void 0;
+exports.dect_x = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x0589, 0x0B12, 0x0E9B, 0x1624, 0x13AD,
+        0x1D36, 0x18BF, 0x2C48, 0x29C1, 0x275A, 0x22D3,
+        0x3A6C, 0x3FE5, 0x317E, 0x34F7, 0x5890, 0x5D19,
+        0x5382, 0x560B, 0x4EB4, 0x4B3D, 0x45A6, 0x402F,
+        0x74D8, 0x7151, 0x7FCA, 0x7A43, 0x62FC, 0x6775,
+        0x69EE, 0x6C67, 0xB120, 0xB4A9, 0xBA32, 0xBFBB,
+        0xA704, 0xA28D, 0xAC16, 0xA99F, 0x9D68, 0x98E1,
+        0x967A, 0x93F3, 0x8B4C, 0x8EC5, 0x805E, 0x85D7,
+        0xE9B0, 0xEC39, 0xE2A2, 0xE72B, 0xFF94, 0xFA1D,
+        0xF486, 0xF10F, 0xC5F8, 0xC071, 0xCEEA, 0xCB63,
+        0xD3DC, 0xD655, 0xD8CE, 0xDD47, 0x67C9, 0x6240,
+        0x6CDB, 0x6952, 0x71ED, 0x7464, 0x7AFF, 0x7F76,
+        0x4B81, 0x4E08, 0x4093, 0x451A, 0x5DA5, 0x582C,
+        0x56B7, 0x533E, 0x3F59, 0x3AD0, 0x344B, 0x31C2,
+        0x297D, 0x2CF4, 0x226F, 0x27E6, 0x1311, 0x1698,
+        0x1803, 0x1D8A, 0x0535, 0x00BC, 0x0E27, 0x0BAE,
+        0xD6E9, 0xD360, 0xDDFB, 0xD872, 0xC0CD, 0xC544,
+        0xCBDF, 0xCE56, 0xFAA1, 0xFF28, 0xF1B3, 0xF43A,
+        0xEC85, 0xE90C, 0xE797, 0xE21E, 0x8E79, 0x8BF0,
+        0x856B, 0x80E2, 0x985D, 0x9DD4, 0x934F, 0x96C6,
+        0xA231, 0xA7B8, 0xA923, 0xACAA, 0xB415, 0xB19C,
+        0xBF07, 0xBA8E, 0xCF92, 0xCA1B, 0xC480, 0xC109,
+        0xD9B6, 0xDC3F, 0xD2A4, 0xD72D, 0xE3DA, 0xE653,
+        0xE8C8, 0xED41, 0xF5FE, 0xF077, 0xFEEC, 0xFB65,
+        0x9702, 0x928B, 0x9C10, 0x9999, 0x8126, 0x84AF,
+        0x8A34, 0x8FBD, 0xBB4A, 0xBEC3, 0xB058, 0xB5D1,
+        0xAD6E, 0xA8E7, 0xA67C, 0xA3F5, 0x7EB2, 0x7B3B,
+        0x75A0, 0x7029, 0x6896, 0x6D1F, 0x6384, 0x660D,
+        0x52FA, 0x5773, 0x59E8, 0x5C61, 0x44DE, 0x4157,
+        0x4FCC, 0x4A45, 0x2622, 0x23AB, 0x2D30, 0x28B9,
+        0x3006, 0x358F, 0x3B14, 0x3E9D, 0x0A6A, 0x0FE3,
+        0x0178, 0x04F1, 0x1C4E, 0x19C7, 0x175C, 0x12D5,
+        0xA85B, 0xADD2, 0xA349, 0xA6C0, 0xBE7F, 0xBBF6,
+        0xB56D, 0xB0E4, 0x8413, 0x819A, 0x8F01, 0x8A88,
+        0x9237, 0x97BE, 0x9925, 0x9CAC, 0xF0CB, 0xF542,
+        0xFBD9, 0xFE50, 0xE6EF, 0xE366, 0xEDFD, 0xE874,
+        0xDC83, 0xD90A, 0xD791, 0xD218, 0xCAA7, 0xCF2E,
+        0xC1B5, 0xC43C, 0x197B, 0x1CF2, 0x1269, 0x17E0,
+        0x0F5F, 0x0AD6, 0x044D, 0x01C4, 0x3533, 0x30BA,
+        0x3E21, 0x3BA8, 0x2317, 0x269E, 0x2805, 0x2D8C,
+        0x41EB, 0x4462, 0x4AF9, 0x4F70, 0x57CF, 0x5246,
+        0x5CDD, 0x5954, 0x6DA3, 0x682A, 0x66B1, 0x6338,
+        0x7B87, 0x7E0E, 0x7095, 0x751C
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/dnp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.dnp = void 0;
+exports.dnp = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0xFFFF,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0x365E, 0x6CBC, 0x5AE2, 0xD978, 0xEF26,
+        0xB5C4, 0x839A, 0xFF89, 0xC9D7, 0x9335, 0xA56B,
+        0x26F1, 0x10AF, 0x4A4D, 0x7C13, 0xB26B, 0x8435,
+        0xDED7, 0xE889, 0x6B13, 0x5D4D, 0x07AF, 0x31F1,
+        0x4DE2, 0x7BBC, 0x215E, 0x1700, 0x949A, 0xA2C4,
+        0xF826, 0xCE78, 0x29AF, 0x1FF1, 0x4513, 0x734D,
+        0xF0D7, 0xC689, 0x9C6B, 0xAA35, 0xD626, 0xE078,
+        0xBA9A, 0x8CC4, 0x0F5E, 0x3900, 0x63E2, 0x55BC,
+        0x9BC4, 0xAD9A, 0xF778, 0xC126, 0x42BC, 0x74E2,
+        0x2E00, 0x185E, 0x644D, 0x5213, 0x08F1, 0x3EAF,
+        0xBD35, 0x8B6B, 0xD189, 0xE7D7, 0x535E, 0x6500,
+        0x3FE2, 0x09BC, 0x8A26, 0xBC78, 0xE69A, 0xD0C4,
+        0xACD7, 0x9A89, 0xC06B, 0xF635, 0x75AF, 0x43F1,
+        0x1913, 0x2F4D, 0xE135, 0xD76B, 0x8D89, 0xBBD7,
+        0x384D, 0x0E13, 0x54F1, 0x62AF, 0x1EBC, 0x28E2,
+        0x7200, 0x445E, 0xC7C4, 0xF19A, 0xAB78, 0x9D26,
+        0x7AF1, 0x4CAF, 0x164D, 0x2013, 0xA389, 0x95D7,
+        0xCF35, 0xF96B, 0x8578, 0xB326, 0xE9C4, 0xDF9A,
+        0x5C00, 0x6A5E, 0x30BC, 0x06E2, 0xC89A, 0xFEC4,
+        0xA426, 0x9278, 0x11E2, 0x27BC, 0x7D5E, 0x4B00,
+        0x3713, 0x014D, 0x5BAF, 0x6DF1, 0xEE6B, 0xD835,
+        0x82D7, 0xB489, 0xA6BC, 0x90E2, 0xCA00, 0xFC5E,
+        0x7FC4, 0x499A, 0x1378, 0x2526, 0x5935, 0x6F6B,
+        0x3589, 0x03D7, 0x804D, 0xB613, 0xECF1, 0xDAAF,
+        0x14D7, 0x2289, 0x786B, 0x4E35, 0xCDAF, 0xFBF1,
+        0xA113, 0x974D, 0xEB5E, 0xDD00, 0x87E2, 0xB1BC,
+        0x3226, 0x0478, 0x5E9A, 0x68C4, 0x8F13, 0xB94D,
+        0xE3AF, 0xD5F1, 0x566B, 0x6035, 0x3AD7, 0x0C89,
+        0x709A, 0x46C4, 0x1C26, 0x2A78, 0xA9E2, 0x9FBC,
+        0xC55E, 0xF300, 0x3D78, 0x0B26, 0x51C4, 0x679A,
+        0xE400, 0xD25E, 0x88BC, 0xBEE2, 0xC2F1, 0xF4AF,
+        0xAE4D, 0x9813, 0x1B89, 0x2DD7, 0x7735, 0x416B,
+        0xF5E2, 0xC3BC, 0x995E, 0xAF00, 0x2C9A, 0x1AC4,
+        0x4026, 0x7678, 0x0A6B, 0x3C35, 0x66D7, 0x5089,
+        0xD313, 0xE54D, 0xBFAF, 0x89F1, 0x4789, 0x71D7,
+        0x2B35, 0x1D6B, 0x9EF1, 0xA8AF, 0xF24D, 0xC413,
+        0xB800, 0x8E5E, 0xD4BC, 0xE2E2, 0x6178, 0x5726,
+        0x0DC4, 0x3B9A, 0xDC4D, 0xEA13, 0xB0F1, 0x86AF,
+        0x0535, 0x336B, 0x6989, 0x5FD7, 0x23C4, 0x159A,
+        0x4F78, 0x7926, 0xFABC, 0xCCE2, 0x9600, 0xA05E,
+        0x6E26, 0x5878, 0x029A, 0x34C4, 0xB75E, 0x8100,
+        0xDBE2, 0xEDBC, 0x91AF, 0xA7F1, 0xFD13, 0xCB4D,
+        0x48D7, 0x7E89, 0x246B, 0x1235
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/en-13757.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.en_13757 = void 0;
+exports.en_13757 = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0xFFFF,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x3D65, 0x7ACA, 0x47AF, 0xF594, 0xC8F1,
+        0x8F5E, 0xB23B, 0xD64D, 0xEB28, 0xAC87, 0x91E2,
+        0x23D9, 0x1EBC, 0x5913, 0x6476, 0x91FF, 0xAC9A,
+        0xEB35, 0xD650, 0x646B, 0x590E, 0x1EA1, 0x23C4,
+        0x47B2, 0x7AD7, 0x3D78, 0x001D, 0xB226, 0x8F43,
+        0xC8EC, 0xF589, 0x1E9B, 0x23FE, 0x6451, 0x5934,
+        0xEB0F, 0xD66A, 0x91C5, 0xACA0, 0xC8D6, 0xF5B3,
+        0xB21C, 0x8F79, 0x3D42, 0x0027, 0x4788, 0x7AED,
+        0x8F64, 0xB201, 0xF5AE, 0xC8CB, 0x7AF0, 0x4795,
+        0x003A, 0x3D5F, 0x5929, 0x644C, 0x23E3, 0x1E86,
+        0xACBD, 0x91D8, 0xD677, 0xEB12, 0x3D36, 0x0053,
+        0x47FC, 0x7A99, 0xC8A2, 0xF5C7, 0xB268, 0x8F0D,
+        0xEB7B, 0xD61E, 0x91B1, 0xACD4, 0x1EEF, 0x238A,
+        0x6425, 0x5940, 0xACC9, 0x91AC, 0xD603, 0xEB66,
+        0x595D, 0x6438, 0x2397, 0x1EF2, 0x7A84, 0x47E1,
+        0x004E, 0x3D2B, 0x8F10, 0xB275, 0xF5DA, 0xC8BF,
+        0x23AD, 0x1EC8, 0x5967, 0x6402, 0xD639, 0xEB5C,
+        0xACF3, 0x9196, 0xF5E0, 0xC885, 0x8F2A, 0xB24F,
+        0x0074, 0x3D11, 0x7ABE, 0x47DB, 0xB252, 0x8F37,
+        0xC898, 0xF5FD, 0x47C6, 0x7AA3, 0x3D0C, 0x0069,
+        0x641F, 0x597A, 0x1ED5, 0x23B0, 0x918B, 0xACEE,
+        0xEB41, 0xD624, 0x7A6C, 0x4709, 0x00A6, 0x3DC3,
+        0x8FF8, 0xB29D, 0xF532, 0xC857, 0xAC21, 0x9144,
+        0xD6EB, 0xEB8E, 0x59B5, 0x64D0, 0x237F, 0x1E1A,
+        0xEB93, 0xD6F6, 0x9159, 0xAC3C, 0x1E07, 0x2362,
+        0x64CD, 0x59A8, 0x3DDE, 0x00BB, 0x4714, 0x7A71,
+        0xC84A, 0xF52F, 0xB280, 0x8FE5, 0x64F7, 0x5992,
+        0x1E3D, 0x2358, 0x9163, 0xAC06, 0xEBA9, 0xD6CC,
+        0xB2BA, 0x8FDF, 0xC870, 0xF515, 0x472E, 0x7A4B,
+        0x3DE4, 0x0081, 0xF508, 0xC86D, 0x8FC2, 0xB2A7,
+        0x009C, 0x3DF9, 0x7A56, 0x4733, 0x2345, 0x1E20,
+        0x598F, 0x64EA, 0xD6D1, 0xEBB4, 0xAC1B, 0x917E,
+        0x475A, 0x7A3F, 0x3D90, 0x00F5, 0xB2CE, 0x8FAB,
+        0xC804, 0xF561, 0x9117, 0xAC72, 0xEBDD, 0xD6B8,
+        0x6483, 0x59E6, 0x1E49, 0x232C, 0xD6A5, 0xEBC0,
+        0xAC6F, 0x910A, 0x2331, 0x1E54, 0x59FB, 0x649E,
+        0x00E8, 0x3D8D, 0x7A22, 0x4747, 0xF57C, 0xC819,
+        0x8FB6, 0xB2D3, 0x59C1, 0x64A4, 0x230B, 0x1E6E,
+        0xAC55, 0x9130, 0xD69F, 0xEBFA, 0x8F8C, 0xB2E9,
+        0xF546, 0xC823, 0x7A18, 0x477D, 0x00D2, 0x3DB7,
+        0xC83E, 0xF55B, 0xB2F4, 0x8F91, 0x3DAA, 0x00CF,
+        0x4760, 0x7A05, 0x1E73, 0x2316, 0x64B9, 0x59DC,
+        0xEBE7, 0xD682, 0x912D, 0xAC48
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/genibus.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.genibus = void 0;
+exports.genibus = {
+    init: 0xFFFF,
+    invertedInit: null,
+    xorOut: 0xFFFF,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5,
+        0x60C6, 0x70E7, 0x8108, 0x9129, 0xA14A, 0xB16B,
+        0xC18C, 0xD1AD, 0xE1CE, 0xF1EF, 0x1231, 0x0210,
+        0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
+        0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C,
+        0xF3FF, 0xE3DE, 0x2462, 0x3443, 0x0420, 0x1401,
+        0x64E6, 0x74C7, 0x44A4, 0x5485, 0xA56A, 0xB54B,
+        0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D,
+        0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6,
+        0x5695, 0x46B4, 0xB75B, 0xA77A, 0x9719, 0x8738,
+        0xF7DF, 0xE7FE, 0xD79D, 0xC7BC, 0x48C4, 0x58E5,
+        0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823,
+        0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969,
+        0xA90A, 0xB92B, 0x5AF5, 0x4AD4, 0x7AB7, 0x6A96,
+        0x1A71, 0x0A50, 0x3A33, 0x2A12, 0xDBFD, 0xCBDC,
+        0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A,
+        0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03,
+        0x0C60, 0x1C41, 0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD,
+        0xAD2A, 0xBD0B, 0x8D68, 0x9D49, 0x7E97, 0x6EB6,
+        0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70,
+        0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A,
+        0x9F59, 0x8F78, 0x9188, 0x81A9, 0xB1CA, 0xA1EB,
+        0xD10C, 0xC12D, 0xF14E, 0xE16F, 0x1080, 0x00A1,
+        0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067,
+        0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C,
+        0xE37F, 0xF35E, 0x02B1, 0x1290, 0x22F3, 0x32D2,
+        0x4235, 0x5214, 0x6277, 0x7256, 0xB5EA, 0xA5CB,
+        0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D,
+        0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447,
+        0x5424, 0x4405, 0xA7DB, 0xB7FA, 0x8799, 0x97B8,
+        0xE75F, 0xF77E, 0xC71D, 0xD73C, 0x26D3, 0x36F2,
+        0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634,
+        0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9,
+        0xB98A, 0xA9AB, 0x5844, 0x4865, 0x7806, 0x6827,
+        0x18C0, 0x08E1, 0x3882, 0x28A3, 0xCB7D, 0xDB5C,
+        0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A,
+        0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0,
+        0x2AB3, 0x3A92, 0xFD2E, 0xED0F, 0xDD6C, 0xCD4D,
+        0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9, 0x7C26, 0x6C07,
+        0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
+        0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA,
+        0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74,
+        0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/kermit.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.kermit = void 0;
+exports.kermit = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0x1189, 0x2312, 0x329B, 0x4624, 0x57AD,
+        0x6536, 0x74BF, 0x8C48, 0x9DC1, 0xAF5A, 0xBED3,
+        0xCA6C, 0xDBE5, 0xE97E, 0xF8F7, 0x1081, 0x0108,
+        0x3393, 0x221A, 0x56A5, 0x472C, 0x75B7, 0x643E,
+        0x9CC9, 0x8D40, 0xBFDB, 0xAE52, 0xDAED, 0xCB64,
+        0xF9FF, 0xE876, 0x2102, 0x308B, 0x0210, 0x1399,
+        0x6726, 0x76AF, 0x4434, 0x55BD, 0xAD4A, 0xBCC3,
+        0x8E58, 0x9FD1, 0xEB6E, 0xFAE7, 0xC87C, 0xD9F5,
+        0x3183, 0x200A, 0x1291, 0x0318, 0x77A7, 0x662E,
+        0x54B5, 0x453C, 0xBDCB, 0xAC42, 0x9ED9, 0x8F50,
+        0xFBEF, 0xEA66, 0xD8FD, 0xC974, 0x4204, 0x538D,
+        0x6116, 0x709F, 0x0420, 0x15A9, 0x2732, 0x36BB,
+        0xCE4C, 0xDFC5, 0xED5E, 0xFCD7, 0x8868, 0x99E1,
+        0xAB7A, 0xBAF3, 0x5285, 0x430C, 0x7197, 0x601E,
+        0x14A1, 0x0528, 0x37B3, 0x263A, 0xDECD, 0xCF44,
+        0xFDDF, 0xEC56, 0x98E9, 0x8960, 0xBBFB, 0xAA72,
+        0x6306, 0x728F, 0x4014, 0x519D, 0x2522, 0x34AB,
+        0x0630, 0x17B9, 0xEF4E, 0xFEC7, 0xCC5C, 0xDDD5,
+        0xA96A, 0xB8E3, 0x8A78, 0x9BF1, 0x7387, 0x620E,
+        0x5095, 0x411C, 0x35A3, 0x242A, 0x16B1, 0x0738,
+        0xFFCF, 0xEE46, 0xDCDD, 0xCD54, 0xB9EB, 0xA862,
+        0x9AF9, 0x8B70, 0x8408, 0x9581, 0xA71A, 0xB693,
+        0xC22C, 0xD3A5, 0xE13E, 0xF0B7, 0x0840, 0x19C9,
+        0x2B52, 0x3ADB, 0x4E64, 0x5FED, 0x6D76, 0x7CFF,
+        0x9489, 0x8500, 0xB79B, 0xA612, 0xD2AD, 0xC324,
+        0xF1BF, 0xE036, 0x18C1, 0x0948, 0x3BD3, 0x2A5A,
+        0x5EE5, 0x4F6C, 0x7DF7, 0x6C7E, 0xA50A, 0xB483,
+        0x8618, 0x9791, 0xE32E, 0xF2A7, 0xC03C, 0xD1B5,
+        0x2942, 0x38CB, 0x0A50, 0x1BD9, 0x6F66, 0x7EEF,
+        0x4C74, 0x5DFD, 0xB58B, 0xA402, 0x9699, 0x8710,
+        0xF3AF, 0xE226, 0xD0BD, 0xC134, 0x39C3, 0x284A,
+        0x1AD1, 0x0B58, 0x7FE7, 0x6E6E, 0x5CF5, 0x4D7C,
+        0xC60C, 0xD785, 0xE51E, 0xF497, 0x8028, 0x91A1,
+        0xA33A, 0xB2B3, 0x4A44, 0x5BCD, 0x6956, 0x78DF,
+        0x0C60, 0x1DE9, 0x2F72, 0x3EFB, 0xD68D, 0xC704,
+        0xF59F, 0xE416, 0x90A9, 0x8120, 0xB3BB, 0xA232,
+        0x5AC5, 0x4B4C, 0x79D7, 0x685E, 0x1CE1, 0x0D68,
+        0x3FF3, 0x2E7A, 0xE70E, 0xF687, 0xC41C, 0xD595,
+        0xA12A, 0xB0A3, 0x8238, 0x93B1, 0x6B46, 0x7ACF,
+        0x4854, 0x59DD, 0x2D62, 0x3CEB, 0x0E70, 0x1FF9,
+        0xF78F, 0xE606, 0xD49D, 0xC514, 0xB1AB, 0xA022,
+        0x92B9, 0x8330, 0x7BC7, 0x6A4E, 0x58D5, 0x495C,
+        0x3DE3, 0x2C6A, 0x1EF1, 0x0F78
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/maxim.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.maxim = void 0;
+exports.maxim = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0xFFFF,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0,
+        0x0280, 0xC241, 0xC601, 0x06C0, 0x0780, 0xC741,
+        0x0500, 0xC5C1, 0xC481, 0x0440, 0xCC01, 0x0CC0,
+        0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
+        0x0A00, 0xCAC1, 0xCB81, 0x0B40, 0xC901, 0x09C0,
+        0x0880, 0xC841, 0xD801, 0x18C0, 0x1980, 0xD941,
+        0x1B00, 0xDBC1, 0xDA81, 0x1A40, 0x1E00, 0xDEC1,
+        0xDF81, 0x1F40, 0xDD01, 0x1DC0, 0x1C80, 0xDC41,
+        0x1400, 0xD4C1, 0xD581, 0x1540, 0xD701, 0x17C0,
+        0x1680, 0xD641, 0xD201, 0x12C0, 0x1380, 0xD341,
+        0x1100, 0xD1C1, 0xD081, 0x1040, 0xF001, 0x30C0,
+        0x3180, 0xF141, 0x3300, 0xF3C1, 0xF281, 0x3240,
+        0x3600, 0xF6C1, 0xF781, 0x3740, 0xF501, 0x35C0,
+        0x3480, 0xF441, 0x3C00, 0xFCC1, 0xFD81, 0x3D40,
+        0xFF01, 0x3FC0, 0x3E80, 0xFE41, 0xFA01, 0x3AC0,
+        0x3B80, 0xFB41, 0x3900, 0xF9C1, 0xF881, 0x3840,
+        0x2800, 0xE8C1, 0xE981, 0x2940, 0xEB01, 0x2BC0,
+        0x2A80, 0xEA41, 0xEE01, 0x2EC0, 0x2F80, 0xEF41,
+        0x2D00, 0xEDC1, 0xEC81, 0x2C40, 0xE401, 0x24C0,
+        0x2580, 0xE541, 0x2700, 0xE7C1, 0xE681, 0x2640,
+        0x2200, 0xE2C1, 0xE381, 0x2340, 0xE101, 0x21C0,
+        0x2080, 0xE041, 0xA001, 0x60C0, 0x6180, 0xA141,
+        0x6300, 0xA3C1, 0xA281, 0x6240, 0x6600, 0xA6C1,
+        0xA781, 0x6740, 0xA501, 0x65C0, 0x6480, 0xA441,
+        0x6C00, 0xACC1, 0xAD81, 0x6D40, 0xAF01, 0x6FC0,
+        0x6E80, 0xAE41, 0xAA01, 0x6AC0, 0x6B80, 0xAB41,
+        0x6900, 0xA9C1, 0xA881, 0x6840, 0x7800, 0xB8C1,
+        0xB981, 0x7940, 0xBB01, 0x7BC0, 0x7A80, 0xBA41,
+        0xBE01, 0x7EC0, 0x7F80, 0xBF41, 0x7D00, 0xBDC1,
+        0xBC81, 0x7C40, 0xB401, 0x74C0, 0x7580, 0xB541,
+        0x7700, 0xB7C1, 0xB681, 0x7640, 0x7200, 0xB2C1,
+        0xB381, 0x7340, 0xB101, 0x71C0, 0x7080, 0xB041,
+        0x5000, 0x90C1, 0x9181, 0x5140, 0x9301, 0x53C0,
+        0x5280, 0x9241, 0x9601, 0x56C0, 0x5780, 0x9741,
+        0x5500, 0x95C1, 0x9481, 0x5440, 0x9C01, 0x5CC0,
+        0x5D80, 0x9D41, 0x5F00, 0x9FC1, 0x9E81, 0x5E40,
+        0x5A00, 0x9AC1, 0x9B81, 0x5B40, 0x9901, 0x59C0,
+        0x5880, 0x9841, 0x8801, 0x48C0, 0x4980, 0x8941,
+        0x4B00, 0x8BC1, 0x8A81, 0x4A40, 0x4E00, 0x8EC1,
+        0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
+        0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0,
+        0x4680, 0x8641, 0x8201, 0x42C0, 0x4380, 0x8341,
+        0x4100, 0x81C1, 0x8081, 0x4040
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/mcrf4xx.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mcrf4xx = void 0;
+exports.mcrf4xx = {
+    init: 0xFFFF,
+    invertedInit: 0xFFFF,
+    xorOut: 0x0000,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0x1189, 0x2312, 0x329B, 0x4624, 0x57AD,
+        0x6536, 0x74BF, 0x8C48, 0x9DC1, 0xAF5A, 0xBED3,
+        0xCA6C, 0xDBE5, 0xE97E, 0xF8F7, 0x1081, 0x0108,
+        0x3393, 0x221A, 0x56A5, 0x472C, 0x75B7, 0x643E,
+        0x9CC9, 0x8D40, 0xBFDB, 0xAE52, 0xDAED, 0xCB64,
+        0xF9FF, 0xE876, 0x2102, 0x308B, 0x0210, 0x1399,
+        0x6726, 0x76AF, 0x4434, 0x55BD, 0xAD4A, 0xBCC3,
+        0x8E58, 0x9FD1, 0xEB6E, 0xFAE7, 0xC87C, 0xD9F5,
+        0x3183, 0x200A, 0x1291, 0x0318, 0x77A7, 0x662E,
+        0x54B5, 0x453C, 0xBDCB, 0xAC42, 0x9ED9, 0x8F50,
+        0xFBEF, 0xEA66, 0xD8FD, 0xC974, 0x4204, 0x538D,
+        0x6116, 0x709F, 0x0420, 0x15A9, 0x2732, 0x36BB,
+        0xCE4C, 0xDFC5, 0xED5E, 0xFCD7, 0x8868, 0x99E1,
+        0xAB7A, 0xBAF3, 0x5285, 0x430C, 0x7197, 0x601E,
+        0x14A1, 0x0528, 0x37B3, 0x263A, 0xDECD, 0xCF44,
+        0xFDDF, 0xEC56, 0x98E9, 0x8960, 0xBBFB, 0xAA72,
+        0x6306, 0x728F, 0x4014, 0x519D, 0x2522, 0x34AB,
+        0x0630, 0x17B9, 0xEF4E, 0xFEC7, 0xCC5C, 0xDDD5,
+        0xA96A, 0xB8E3, 0x8A78, 0x9BF1, 0x7387, 0x620E,
+        0x5095, 0x411C, 0x35A3, 0x242A, 0x16B1, 0x0738,
+        0xFFCF, 0xEE46, 0xDCDD, 0xCD54, 0xB9EB, 0xA862,
+        0x9AF9, 0x8B70, 0x8408, 0x9581, 0xA71A, 0xB693,
+        0xC22C, 0xD3A5, 0xE13E, 0xF0B7, 0x0840, 0x19C9,
+        0x2B52, 0x3ADB, 0x4E64, 0x5FED, 0x6D76, 0x7CFF,
+        0x9489, 0x8500, 0xB79B, 0xA612, 0xD2AD, 0xC324,
+        0xF1BF, 0xE036, 0x18C1, 0x0948, 0x3BD3, 0x2A5A,
+        0x5EE5, 0x4F6C, 0x7DF7, 0x6C7E, 0xA50A, 0xB483,
+        0x8618, 0x9791, 0xE32E, 0xF2A7, 0xC03C, 0xD1B5,
+        0x2942, 0x38CB, 0x0A50, 0x1BD9, 0x6F66, 0x7EEF,
+        0x4C74, 0x5DFD, 0xB58B, 0xA402, 0x9699, 0x8710,
+        0xF3AF, 0xE226, 0xD0BD, 0xC134, 0x39C3, 0x284A,
+        0x1AD1, 0x0B58, 0x7FE7, 0x6E6E, 0x5CF5, 0x4D7C,
+        0xC60C, 0xD785, 0xE51E, 0xF497, 0x8028, 0x91A1,
+        0xA33A, 0xB2B3, 0x4A44, 0x5BCD, 0x6956, 0x78DF,
+        0x0C60, 0x1DE9, 0x2F72, 0x3EFB, 0xD68D, 0xC704,
+        0xF59F, 0xE416, 0x90A9, 0x8120, 0xB3BB, 0xA232,
+        0x5AC5, 0x4B4C, 0x79D7, 0x685E, 0x1CE1, 0x0D68,
+        0x3FF3, 0x2E7A, 0xE70E, 0xF687, 0xC41C, 0xD595,
+        0xA12A, 0xB0A3, 0x8238, 0x93B1, 0x6B46, 0x7ACF,
+        0x4854, 0x59DD, 0x2D62, 0x3CEB, 0x0E70, 0x1FF9,
+        0xF78F, 0xE606, 0xD49D, 0xC514, 0xB1AB, 0xA022,
+        0x92B9, 0x8330, 0x7BC7, 0x6A4E, 0x58D5, 0x495C,
+        0x3DE3, 0x2C6A, 0x1EF1, 0x0F78
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/modbus.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.modbus = void 0;
+exports.modbus = {
+    init: 0xFFFF,
+    invertedInit: 0xFFFF,
+    xorOut: 0x0000,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0,
+        0x0280, 0xC241, 0xC601, 0x06C0, 0x0780, 0xC741,
+        0x0500, 0xC5C1, 0xC481, 0x0440, 0xCC01, 0x0CC0,
+        0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
+        0x0A00, 0xCAC1, 0xCB81, 0x0B40, 0xC901, 0x09C0,
+        0x0880, 0xC841, 0xD801, 0x18C0, 0x1980, 0xD941,
+        0x1B00, 0xDBC1, 0xDA81, 0x1A40, 0x1E00, 0xDEC1,
+        0xDF81, 0x1F40, 0xDD01, 0x1DC0, 0x1C80, 0xDC41,
+        0x1400, 0xD4C1, 0xD581, 0x1540, 0xD701, 0x17C0,
+        0x1680, 0xD641, 0xD201, 0x12C0, 0x1380, 0xD341,
+        0x1100, 0xD1C1, 0xD081, 0x1040, 0xF001, 0x30C0,
+        0x3180, 0xF141, 0x3300, 0xF3C1, 0xF281, 0x3240,
+        0x3600, 0xF6C1, 0xF781, 0x3740, 0xF501, 0x35C0,
+        0x3480, 0xF441, 0x3C00, 0xFCC1, 0xFD81, 0x3D40,
+        0xFF01, 0x3FC0, 0x3E80, 0xFE41, 0xFA01, 0x3AC0,
+        0x3B80, 0xFB41, 0x3900, 0xF9C1, 0xF881, 0x3840,
+        0x2800, 0xE8C1, 0xE981, 0x2940, 0xEB01, 0x2BC0,
+        0x2A80, 0xEA41, 0xEE01, 0x2EC0, 0x2F80, 0xEF41,
+        0x2D00, 0xEDC1, 0xEC81, 0x2C40, 0xE401, 0x24C0,
+        0x2580, 0xE541, 0x2700, 0xE7C1, 0xE681, 0x2640,
+        0x2200, 0xE2C1, 0xE381, 0x2340, 0xE101, 0x21C0,
+        0x2080, 0xE041, 0xA001, 0x60C0, 0x6180, 0xA141,
+        0x6300, 0xA3C1, 0xA281, 0x6240, 0x6600, 0xA6C1,
+        0xA781, 0x6740, 0xA501, 0x65C0, 0x6480, 0xA441,
+        0x6C00, 0xACC1, 0xAD81, 0x6D40, 0xAF01, 0x6FC0,
+        0x6E80, 0xAE41, 0xAA01, 0x6AC0, 0x6B80, 0xAB41,
+        0x6900, 0xA9C1, 0xA881, 0x6840, 0x7800, 0xB8C1,
+        0xB981, 0x7940, 0xBB01, 0x7BC0, 0x7A80, 0xBA41,
+        0xBE01, 0x7EC0, 0x7F80, 0xBF41, 0x7D00, 0xBDC1,
+        0xBC81, 0x7C40, 0xB401, 0x74C0, 0x7580, 0xB541,
+        0x7700, 0xB7C1, 0xB681, 0x7640, 0x7200, 0xB2C1,
+        0xB381, 0x7340, 0xB101, 0x71C0, 0x7080, 0xB041,
+        0x5000, 0x90C1, 0x9181, 0x5140, 0x9301, 0x53C0,
+        0x5280, 0x9241, 0x9601, 0x56C0, 0x5780, 0x9741,
+        0x5500, 0x95C1, 0x9481, 0x5440, 0x9C01, 0x5CC0,
+        0x5D80, 0x9D41, 0x5F00, 0x9FC1, 0x9E81, 0x5E40,
+        0x5A00, 0x9AC1, 0x9B81, 0x5B40, 0x9901, 0x59C0,
+        0x5880, 0x9841, 0x8801, 0x48C0, 0x4980, 0x8941,
+        0x4B00, 0x8BC1, 0x8A81, 0x4A40, 0x4E00, 0x8EC1,
+        0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
+        0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0,
+        0x4680, 0x8641, 0x8201, 0x42C0, 0x4380, 0x8341,
+        0x4100, 0x81C1, 0x8081, 0x4040
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/riello.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.riello = void 0;
+exports.riello = {
+    init: 0xB2AA,
+    invertedInit: 0x554D,
+    xorOut: 0x0000,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0x1189, 0x2312, 0x329B, 0x4624, 0x57AD,
+        0x6536, 0x74BF, 0x8C48, 0x9DC1, 0xAF5A, 0xBED3,
+        0xCA6C, 0xDBE5, 0xE97E, 0xF8F7, 0x1081, 0x0108,
+        0x3393, 0x221A, 0x56A5, 0x472C, 0x75B7, 0x643E,
+        0x9CC9, 0x8D40, 0xBFDB, 0xAE52, 0xDAED, 0xCB64,
+        0xF9FF, 0xE876, 0x2102, 0x308B, 0x0210, 0x1399,
+        0x6726, 0x76AF, 0x4434, 0x55BD, 0xAD4A, 0xBCC3,
+        0x8E58, 0x9FD1, 0xEB6E, 0xFAE7, 0xC87C, 0xD9F5,
+        0x3183, 0x200A, 0x1291, 0x0318, 0x77A7, 0x662E,
+        0x54B5, 0x453C, 0xBDCB, 0xAC42, 0x9ED9, 0x8F50,
+        0xFBEF, 0xEA66, 0xD8FD, 0xC974, 0x4204, 0x538D,
+        0x6116, 0x709F, 0x0420, 0x15A9, 0x2732, 0x36BB,
+        0xCE4C, 0xDFC5, 0xED5E, 0xFCD7, 0x8868, 0x99E1,
+        0xAB7A, 0xBAF3, 0x5285, 0x430C, 0x7197, 0x601E,
+        0x14A1, 0x0528, 0x37B3, 0x263A, 0xDECD, 0xCF44,
+        0xFDDF, 0xEC56, 0x98E9, 0x8960, 0xBBFB, 0xAA72,
+        0x6306, 0x728F, 0x4014, 0x519D, 0x2522, 0x34AB,
+        0x0630, 0x17B9, 0xEF4E, 0xFEC7, 0xCC5C, 0xDDD5,
+        0xA96A, 0xB8E3, 0x8A78, 0x9BF1, 0x7387, 0x620E,
+        0x5095, 0x411C, 0x35A3, 0x242A, 0x16B1, 0x0738,
+        0xFFCF, 0xEE46, 0xDCDD, 0xCD54, 0xB9EB, 0xA862,
+        0x9AF9, 0x8B70, 0x8408, 0x9581, 0xA71A, 0xB693,
+        0xC22C, 0xD3A5, 0xE13E, 0xF0B7, 0x0840, 0x19C9,
+        0x2B52, 0x3ADB, 0x4E64, 0x5FED, 0x6D76, 0x7CFF,
+        0x9489, 0x8500, 0xB79B, 0xA612, 0xD2AD, 0xC324,
+        0xF1BF, 0xE036, 0x18C1, 0x0948, 0x3BD3, 0x2A5A,
+        0x5EE5, 0x4F6C, 0x7DF7, 0x6C7E, 0xA50A, 0xB483,
+        0x8618, 0x9791, 0xE32E, 0xF2A7, 0xC03C, 0xD1B5,
+        0x2942, 0x38CB, 0x0A50, 0x1BD9, 0x6F66, 0x7EEF,
+        0x4C74, 0x5DFD, 0xB58B, 0xA402, 0x9699, 0x8710,
+        0xF3AF, 0xE226, 0xD0BD, 0xC134, 0x39C3, 0x284A,
+        0x1AD1, 0x0B58, 0x7FE7, 0x6E6E, 0x5CF5, 0x4D7C,
+        0xC60C, 0xD785, 0xE51E, 0xF497, 0x8028, 0x91A1,
+        0xA33A, 0xB2B3, 0x4A44, 0x5BCD, 0x6956, 0x78DF,
+        0x0C60, 0x1DE9, 0x2F72, 0x3EFB, 0xD68D, 0xC704,
+        0xF59F, 0xE416, 0x90A9, 0x8120, 0xB3BB, 0xA232,
+        0x5AC5, 0x4B4C, 0x79D7, 0x685E, 0x1CE1, 0x0D68,
+        0x3FF3, 0x2E7A, 0xE70E, 0xF687, 0xC41C, 0xD595,
+        0xA12A, 0xB0A3, 0x8238, 0x93B1, 0x6B46, 0x7ACF,
+        0x4854, 0x59DD, 0x2D62, 0x3CEB, 0x0E70, 0x1FF9,
+        0xF78F, 0xE606, 0xD49D, 0xC514, 0xB1AB, 0xA022,
+        0x92B9, 0x8330, 0x7BC7, 0x6A4E, 0x58D5, 0x495C,
+        0x3DE3, 0x2C6A, 0x1EF1, 0x0F78
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/t10-dif.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.t10_dif = void 0;
+exports.t10_dif = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x8BB7, 0x9CD9, 0x176E, 0xB205, 0x39B2,
+        0x2EDC, 0xA56B, 0xEFBD, 0x640A, 0x7364, 0xF8D3,
+        0x5DB8, 0xD60F, 0xC161, 0x4AD6, 0x54CD, 0xDF7A,
+        0xC814, 0x43A3, 0xE6C8, 0x6D7F, 0x7A11, 0xF1A6,
+        0xBB70, 0x30C7, 0x27A9, 0xAC1E, 0x0975, 0x82C2,
+        0x95AC, 0x1E1B, 0xA99A, 0x222D, 0x3543, 0xBEF4,
+        0x1B9F, 0x9028, 0x8746, 0x0CF1, 0x4627, 0xCD90,
+        0xDAFE, 0x5149, 0xF422, 0x7F95, 0x68FB, 0xE34C,
+        0xFD57, 0x76E0, 0x618E, 0xEA39, 0x4F52, 0xC4E5,
+        0xD38B, 0x583C, 0x12EA, 0x995D, 0x8E33, 0x0584,
+        0xA0EF, 0x2B58, 0x3C36, 0xB781, 0xD883, 0x5334,
+        0x445A, 0xCFED, 0x6A86, 0xE131, 0xF65F, 0x7DE8,
+        0x373E, 0xBC89, 0xABE7, 0x2050, 0x853B, 0x0E8C,
+        0x19E2, 0x9255, 0x8C4E, 0x07F9, 0x1097, 0x9B20,
+        0x3E4B, 0xB5FC, 0xA292, 0x2925, 0x63F3, 0xE844,
+        0xFF2A, 0x749D, 0xD1F6, 0x5A41, 0x4D2F, 0xC698,
+        0x7119, 0xFAAE, 0xEDC0, 0x6677, 0xC31C, 0x48AB,
+        0x5FC5, 0xD472, 0x9EA4, 0x1513, 0x027D, 0x89CA,
+        0x2CA1, 0xA716, 0xB078, 0x3BCF, 0x25D4, 0xAE63,
+        0xB90D, 0x32BA, 0x97D1, 0x1C66, 0x0B08, 0x80BF,
+        0xCA69, 0x41DE, 0x56B0, 0xDD07, 0x786C, 0xF3DB,
+        0xE4B5, 0x6F02, 0x3AB1, 0xB106, 0xA668, 0x2DDF,
+        0x88B4, 0x0303, 0x146D, 0x9FDA, 0xD50C, 0x5EBB,
+        0x49D5, 0xC262, 0x6709, 0xECBE, 0xFBD0, 0x7067,
+        0x6E7C, 0xE5CB, 0xF2A5, 0x7912, 0xDC79, 0x57CE,
+        0x40A0, 0xCB17, 0x81C1, 0x0A76, 0x1D18, 0x96AF,
+        0x33C4, 0xB873, 0xAF1D, 0x24AA, 0x932B, 0x189C,
+        0x0FF2, 0x8445, 0x212E, 0xAA99, 0xBDF7, 0x3640,
+        0x7C96, 0xF721, 0xE04F, 0x6BF8, 0xCE93, 0x4524,
+        0x524A, 0xD9FD, 0xC7E6, 0x4C51, 0x5B3F, 0xD088,
+        0x75E3, 0xFE54, 0xE93A, 0x628D, 0x285B, 0xA3EC,
+        0xB482, 0x3F35, 0x9A5E, 0x11E9, 0x0687, 0x8D30,
+        0xE232, 0x6985, 0x7EEB, 0xF55C, 0x5037, 0xDB80,
+        0xCCEE, 0x4759, 0x0D8F, 0x8638, 0x9156, 0x1AE1,
+        0xBF8A, 0x343D, 0x2353, 0xA8E4, 0xB6FF, 0x3D48,
+        0x2A26, 0xA191, 0x04FA, 0x8F4D, 0x9823, 0x1394,
+        0x5942, 0xD2F5, 0xC59B, 0x4E2C, 0xEB47, 0x60F0,
+        0x779E, 0xFC29, 0x4BA8, 0xC01F, 0xD771, 0x5CC6,
+        0xF9AD, 0x721A, 0x6574, 0xEEC3, 0xA415, 0x2FA2,
+        0x38CC, 0xB37B, 0x1610, 0x9DA7, 0x8AC9, 0x017E,
+        0x1F65, 0x94D2, 0x83BC, 0x080B, 0xAD60, 0x26D7,
+        0x31B9, 0xBA0E, 0xF0D8, 0x7B6F, 0x6C01, 0xE7B6,
+        0x42DD, 0xC96A, 0xDE04, 0x55B3
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/teledisk.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.teledisk = void 0;
+exports.teledisk = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0xA097, 0xE1B9, 0x412E, 0x63E5, 0xC372,
+        0x825C, 0x22CB, 0xC7CA, 0x675D, 0x2673, 0x86E4,
+        0xA42F, 0x04B8, 0x4596, 0xE501, 0x2F03, 0x8F94,
+        0xCEBA, 0x6E2D, 0x4CE6, 0xEC71, 0xAD5F, 0x0DC8,
+        0xE8C9, 0x485E, 0x0970, 0xA9E7, 0x8B2C, 0x2BBB,
+        0x6A95, 0xCA02, 0x5E06, 0xFE91, 0xBFBF, 0x1F28,
+        0x3DE3, 0x9D74, 0xDC5A, 0x7CCD, 0x99CC, 0x395B,
+        0x7875, 0xD8E2, 0xFA29, 0x5ABE, 0x1B90, 0xBB07,
+        0x7105, 0xD192, 0x90BC, 0x302B, 0x12E0, 0xB277,
+        0xF359, 0x53CE, 0xB6CF, 0x1658, 0x5776, 0xF7E1,
+        0xD52A, 0x75BD, 0x3493, 0x9404, 0xBC0C, 0x1C9B,
+        0x5DB5, 0xFD22, 0xDFE9, 0x7F7E, 0x3E50, 0x9EC7,
+        0x7BC6, 0xDB51, 0x9A7F, 0x3AE8, 0x1823, 0xB8B4,
+        0xF99A, 0x590D, 0x930F, 0x3398, 0x72B6, 0xD221,
+        0xF0EA, 0x507D, 0x1153, 0xB1C4, 0x54C5, 0xF452,
+        0xB57C, 0x15EB, 0x3720, 0x97B7, 0xD699, 0x760E,
+        0xE20A, 0x429D, 0x03B3, 0xA324, 0x81EF, 0x2178,
+        0x6056, 0xC0C1, 0x25C0, 0x8557, 0xC479, 0x64EE,
+        0x4625, 0xE6B2, 0xA79C, 0x070B, 0xCD09, 0x6D9E,
+        0x2CB0, 0x8C27, 0xAEEC, 0x0E7B, 0x4F55, 0xEFC2,
+        0x0AC3, 0xAA54, 0xEB7A, 0x4BED, 0x6926, 0xC9B1,
+        0x889F, 0x2808, 0xD88F, 0x7818, 0x3936, 0x99A1,
+        0xBB6A, 0x1BFD, 0x5AD3, 0xFA44, 0x1F45, 0xBFD2,
+        0xFEFC, 0x5E6B, 0x7CA0, 0xDC37, 0x9D19, 0x3D8E,
+        0xF78C, 0x571B, 0x1635, 0xB6A2, 0x9469, 0x34FE,
+        0x75D0, 0xD547, 0x3046, 0x90D1, 0xD1FF, 0x7168,
+        0x53A3, 0xF334, 0xB21A, 0x128D, 0x8689, 0x261E,
+        0x6730, 0xC7A7, 0xE56C, 0x45FB, 0x04D5, 0xA442,
+        0x4143, 0xE1D4, 0xA0FA, 0x006D, 0x22A6, 0x8231,
+        0xC31F, 0x6388, 0xA98A, 0x091D, 0x4833, 0xE8A4,
+        0xCA6F, 0x6AF8, 0x2BD6, 0x8B41, 0x6E40, 0xCED7,
+        0x8FF9, 0x2F6E, 0x0DA5, 0xAD32, 0xEC1C, 0x4C8B,
+        0x6483, 0xC414, 0x853A, 0x25AD, 0x0766, 0xA7F1,
+        0xE6DF, 0x4648, 0xA349, 0x03DE, 0x42F0, 0xE267,
+        0xC0AC, 0x603B, 0x2115, 0x8182, 0x4B80, 0xEB17,
+        0xAA39, 0x0AAE, 0x2865, 0x88F2, 0xC9DC, 0x694B,
+        0x8C4A, 0x2CDD, 0x6DF3, 0xCD64, 0xEFAF, 0x4F38,
+        0x0E16, 0xAE81, 0x3A85, 0x9A12, 0xDB3C, 0x7BAB,
+        0x5960, 0xF9F7, 0xB8D9, 0x184E, 0xFD4F, 0x5DD8,
+        0x1CF6, 0xBC61, 0x9EAA, 0x3E3D, 0x7F13, 0xDF84,
+        0x1586, 0xB511, 0xF43F, 0x54A8, 0x7663, 0xD6F4,
+        0x97DA, 0x374D, 0xD24C, 0x72DB, 0x33F5, 0x9362,
+        0xB1A9, 0x113E, 0x5010, 0xF087
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/tms37157.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.tms37157 = void 0;
+exports.tms37157 = {
+    init: 0x89EC,
+    invertedInit: 0x3791,
+    xorOut: 0x0000,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0x1189, 0x2312, 0x329B, 0x4624, 0x57AD,
+        0x6536, 0x74BF, 0x8C48, 0x9DC1, 0xAF5A, 0xBED3,
+        0xCA6C, 0xDBE5, 0xE97E, 0xF8F7, 0x1081, 0x0108,
+        0x3393, 0x221A, 0x56A5, 0x472C, 0x75B7, 0x643E,
+        0x9CC9, 0x8D40, 0xBFDB, 0xAE52, 0xDAED, 0xCB64,
+        0xF9FF, 0xE876, 0x2102, 0x308B, 0x0210, 0x1399,
+        0x6726, 0x76AF, 0x4434, 0x55BD, 0xAD4A, 0xBCC3,
+        0x8E58, 0x9FD1, 0xEB6E, 0xFAE7, 0xC87C, 0xD9F5,
+        0x3183, 0x200A, 0x1291, 0x0318, 0x77A7, 0x662E,
+        0x54B5, 0x453C, 0xBDCB, 0xAC42, 0x9ED9, 0x8F50,
+        0xFBEF, 0xEA66, 0xD8FD, 0xC974, 0x4204, 0x538D,
+        0x6116, 0x709F, 0x0420, 0x15A9, 0x2732, 0x36BB,
+        0xCE4C, 0xDFC5, 0xED5E, 0xFCD7, 0x8868, 0x99E1,
+        0xAB7A, 0xBAF3, 0x5285, 0x430C, 0x7197, 0x601E,
+        0x14A1, 0x0528, 0x37B3, 0x263A, 0xDECD, 0xCF44,
+        0xFDDF, 0xEC56, 0x98E9, 0x8960, 0xBBFB, 0xAA72,
+        0x6306, 0x728F, 0x4014, 0x519D, 0x2522, 0x34AB,
+        0x0630, 0x17B9, 0xEF4E, 0xFEC7, 0xCC5C, 0xDDD5,
+        0xA96A, 0xB8E3, 0x8A78, 0x9BF1, 0x7387, 0x620E,
+        0x5095, 0x411C, 0x35A3, 0x242A, 0x16B1, 0x0738,
+        0xFFCF, 0xEE46, 0xDCDD, 0xCD54, 0xB9EB, 0xA862,
+        0x9AF9, 0x8B70, 0x8408, 0x9581, 0xA71A, 0xB693,
+        0xC22C, 0xD3A5, 0xE13E, 0xF0B7, 0x0840, 0x19C9,
+        0x2B52, 0x3ADB, 0x4E64, 0x5FED, 0x6D76, 0x7CFF,
+        0x9489, 0x8500, 0xB79B, 0xA612, 0xD2AD, 0xC324,
+        0xF1BF, 0xE036, 0x18C1, 0x0948, 0x3BD3, 0x2A5A,
+        0x5EE5, 0x4F6C, 0x7DF7, 0x6C7E, 0xA50A, 0xB483,
+        0x8618, 0x9791, 0xE32E, 0xF2A7, 0xC03C, 0xD1B5,
+        0x2942, 0x38CB, 0x0A50, 0x1BD9, 0x6F66, 0x7EEF,
+        0x4C74, 0x5DFD, 0xB58B, 0xA402, 0x9699, 0x8710,
+        0xF3AF, 0xE226, 0xD0BD, 0xC134, 0x39C3, 0x284A,
+        0x1AD1, 0x0B58, 0x7FE7, 0x6E6E, 0x5CF5, 0x4D7C,
+        0xC60C, 0xD785, 0xE51E, 0xF497, 0x8028, 0x91A1,
+        0xA33A, 0xB2B3, 0x4A44, 0x5BCD, 0x6956, 0x78DF,
+        0x0C60, 0x1DE9, 0x2F72, 0x3EFB, 0xD68D, 0xC704,
+        0xF59F, 0xE416, 0x90A9, 0x8120, 0xB3BB, 0xA232,
+        0x5AC5, 0x4B4C, 0x79D7, 0x685E, 0x1CE1, 0x0D68,
+        0x3FF3, 0x2E7A, 0xE70E, 0xF687, 0xC41C, 0xD595,
+        0xA12A, 0xB0A3, 0x8238, 0x93B1, 0x6B46, 0x7ACF,
+        0x4854, 0x59DD, 0x2D62, 0x3CEB, 0x0E70, 0x1FF9,
+        0xF78F, 0xE606, 0xD49D, 0xC514, 0xB1AB, 0xA022,
+        0x92B9, 0x8330, 0x7BC7, 0x6A4E, 0x58D5, 0x495C,
+        0x3DE3, 0x2C6A, 0x1EF1, 0x0F78
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/usb.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.usb = void 0;
+exports.usb = {
+    init: 0xFFFF,
+    invertedInit: 0xFFFF,
+    xorOut: 0xFFFF,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0,
+        0x0280, 0xC241, 0xC601, 0x06C0, 0x0780, 0xC741,
+        0x0500, 0xC5C1, 0xC481, 0x0440, 0xCC01, 0x0CC0,
+        0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
+        0x0A00, 0xCAC1, 0xCB81, 0x0B40, 0xC901, 0x09C0,
+        0x0880, 0xC841, 0xD801, 0x18C0, 0x1980, 0xD941,
+        0x1B00, 0xDBC1, 0xDA81, 0x1A40, 0x1E00, 0xDEC1,
+        0xDF81, 0x1F40, 0xDD01, 0x1DC0, 0x1C80, 0xDC41,
+        0x1400, 0xD4C1, 0xD581, 0x1540, 0xD701, 0x17C0,
+        0x1680, 0xD641, 0xD201, 0x12C0, 0x1380, 0xD341,
+        0x1100, 0xD1C1, 0xD081, 0x1040, 0xF001, 0x30C0,
+        0x3180, 0xF141, 0x3300, 0xF3C1, 0xF281, 0x3240,
+        0x3600, 0xF6C1, 0xF781, 0x3740, 0xF501, 0x35C0,
+        0x3480, 0xF441, 0x3C00, 0xFCC1, 0xFD81, 0x3D40,
+        0xFF01, 0x3FC0, 0x3E80, 0xFE41, 0xFA01, 0x3AC0,
+        0x3B80, 0xFB41, 0x3900, 0xF9C1, 0xF881, 0x3840,
+        0x2800, 0xE8C1, 0xE981, 0x2940, 0xEB01, 0x2BC0,
+        0x2A80, 0xEA41, 0xEE01, 0x2EC0, 0x2F80, 0xEF41,
+        0x2D00, 0xEDC1, 0xEC81, 0x2C40, 0xE401, 0x24C0,
+        0x2580, 0xE541, 0x2700, 0xE7C1, 0xE681, 0x2640,
+        0x2200, 0xE2C1, 0xE381, 0x2340, 0xE101, 0x21C0,
+        0x2080, 0xE041, 0xA001, 0x60C0, 0x6180, 0xA141,
+        0x6300, 0xA3C1, 0xA281, 0x6240, 0x6600, 0xA6C1,
+        0xA781, 0x6740, 0xA501, 0x65C0, 0x6480, 0xA441,
+        0x6C00, 0xACC1, 0xAD81, 0x6D40, 0xAF01, 0x6FC0,
+        0x6E80, 0xAE41, 0xAA01, 0x6AC0, 0x6B80, 0xAB41,
+        0x6900, 0xA9C1, 0xA881, 0x6840, 0x7800, 0xB8C1,
+        0xB981, 0x7940, 0xBB01, 0x7BC0, 0x7A80, 0xBA41,
+        0xBE01, 0x7EC0, 0x7F80, 0xBF41, 0x7D00, 0xBDC1,
+        0xBC81, 0x7C40, 0xB401, 0x74C0, 0x7580, 0xB541,
+        0x7700, 0xB7C1, 0xB681, 0x7640, 0x7200, 0xB2C1,
+        0xB381, 0x7340, 0xB101, 0x71C0, 0x7080, 0xB041,
+        0x5000, 0x90C1, 0x9181, 0x5140, 0x9301, 0x53C0,
+        0x5280, 0x9241, 0x9601, 0x56C0, 0x5780, 0x9741,
+        0x5500, 0x95C1, 0x9481, 0x5440, 0x9C01, 0x5CC0,
+        0x5D80, 0x9D41, 0x5F00, 0x9FC1, 0x9E81, 0x5E40,
+        0x5A00, 0x9AC1, 0x9B81, 0x5B40, 0x9901, 0x59C0,
+        0x5880, 0x9841, 0x8801, 0x48C0, 0x4980, 0x8941,
+        0x4B00, 0x8BC1, 0x8A81, 0x4A40, 0x4E00, 0x8EC1,
+        0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
+        0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0,
+        0x4680, 0x8641, 0x8201, 0x42C0, 0x4380, 0x8341,
+        0x4100, 0x81C1, 0x8081, 0x4040
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/x-25.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x_25 = void 0;
+exports.x_25 = {
+    init: 0xFFFF,
+    invertedInit: 0xFFFF,
+    xorOut: 0xFFFF,
+    refOut: true,
+    refIn: true,
+    table: Uint16Array.from([
+        0x0000, 0x1189, 0x2312, 0x329B, 0x4624, 0x57AD,
+        0x6536, 0x74BF, 0x8C48, 0x9DC1, 0xAF5A, 0xBED3,
+        0xCA6C, 0xDBE5, 0xE97E, 0xF8F7, 0x1081, 0x0108,
+        0x3393, 0x221A, 0x56A5, 0x472C, 0x75B7, 0x643E,
+        0x9CC9, 0x8D40, 0xBFDB, 0xAE52, 0xDAED, 0xCB64,
+        0xF9FF, 0xE876, 0x2102, 0x308B, 0x0210, 0x1399,
+        0x6726, 0x76AF, 0x4434, 0x55BD, 0xAD4A, 0xBCC3,
+        0x8E58, 0x9FD1, 0xEB6E, 0xFAE7, 0xC87C, 0xD9F5,
+        0x3183, 0x200A, 0x1291, 0x0318, 0x77A7, 0x662E,
+        0x54B5, 0x453C, 0xBDCB, 0xAC42, 0x9ED9, 0x8F50,
+        0xFBEF, 0xEA66, 0xD8FD, 0xC974, 0x4204, 0x538D,
+        0x6116, 0x709F, 0x0420, 0x15A9, 0x2732, 0x36BB,
+        0xCE4C, 0xDFC5, 0xED5E, 0xFCD7, 0x8868, 0x99E1,
+        0xAB7A, 0xBAF3, 0x5285, 0x430C, 0x7197, 0x601E,
+        0x14A1, 0x0528, 0x37B3, 0x263A, 0xDECD, 0xCF44,
+        0xFDDF, 0xEC56, 0x98E9, 0x8960, 0xBBFB, 0xAA72,
+        0x6306, 0x728F, 0x4014, 0x519D, 0x2522, 0x34AB,
+        0x0630, 0x17B9, 0xEF4E, 0xFEC7, 0xCC5C, 0xDDD5,
+        0xA96A, 0xB8E3, 0x8A78, 0x9BF1, 0x7387, 0x620E,
+        0x5095, 0x411C, 0x35A3, 0x242A, 0x16B1, 0x0738,
+        0xFFCF, 0xEE46, 0xDCDD, 0xCD54, 0xB9EB, 0xA862,
+        0x9AF9, 0x8B70, 0x8408, 0x9581, 0xA71A, 0xB693,
+        0xC22C, 0xD3A5, 0xE13E, 0xF0B7, 0x0840, 0x19C9,
+        0x2B52, 0x3ADB, 0x4E64, 0x5FED, 0x6D76, 0x7CFF,
+        0x9489, 0x8500, 0xB79B, 0xA612, 0xD2AD, 0xC324,
+        0xF1BF, 0xE036, 0x18C1, 0x0948, 0x3BD3, 0x2A5A,
+        0x5EE5, 0x4F6C, 0x7DF7, 0x6C7E, 0xA50A, 0xB483,
+        0x8618, 0x9791, 0xE32E, 0xF2A7, 0xC03C, 0xD1B5,
+        0x2942, 0x38CB, 0x0A50, 0x1BD9, 0x6F66, 0x7EEF,
+        0x4C74, 0x5DFD, 0xB58B, 0xA402, 0x9699, 0x8710,
+        0xF3AF, 0xE226, 0xD0BD, 0xC134, 0x39C3, 0x284A,
+        0x1AD1, 0x0B58, 0x7FE7, 0x6E6E, 0x5CF5, 0x4D7C,
+        0xC60C, 0xD785, 0xE51E, 0xF497, 0x8028, 0x91A1,
+        0xA33A, 0xB2B3, 0x4A44, 0x5BCD, 0x6956, 0x78DF,
+        0x0C60, 0x1DE9, 0x2F72, 0x3EFB, 0xD68D, 0xC704,
+        0xF59F, 0xE416, 0x90A9, 0x8120, 0xB3BB, 0xA232,
+        0x5AC5, 0x4B4C, 0x79D7, 0x685E, 0x1CE1, 0x0D68,
+        0x3FF3, 0x2E7A, 0xE70E, 0xF687, 0xC41C, 0xD595,
+        0xA12A, 0xB0A3, 0x8238, 0x93B1, 0x6B46, 0x7ACF,
+        0x4854, 0x59DD, 0x2D62, 0x3CEB, 0x0E70, 0x1FF9,
+        0xF78F, 0xE606, 0xD49D, 0xC514, 0xB1AB, 0xA022,
+        0x92B9, 0x8330, 0x7BC7, 0x6A4E, 0x58D5, 0x495C,
+        0x3DE3, 0x2C6A, 0x1EF1, 0x0F78
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc16/xmodem.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.xmodem = void 0;
+exports.xmodem = {
+    init: 0x0000,
+    invertedInit: null,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint16Array.from([
+        0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5,
+        0x60C6, 0x70E7, 0x8108, 0x9129, 0xA14A, 0xB16B,
+        0xC18C, 0xD1AD, 0xE1CE, 0xF1EF, 0x1231, 0x0210,
+        0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
+        0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C,
+        0xF3FF, 0xE3DE, 0x2462, 0x3443, 0x0420, 0x1401,
+        0x64E6, 0x74C7, 0x44A4, 0x5485, 0xA56A, 0xB54B,
+        0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D,
+        0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6,
+        0x5695, 0x46B4, 0xB75B, 0xA77A, 0x9719, 0x8738,
+        0xF7DF, 0xE7FE, 0xD79D, 0xC7BC, 0x48C4, 0x58E5,
+        0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823,
+        0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969,
+        0xA90A, 0xB92B, 0x5AF5, 0x4AD4, 0x7AB7, 0x6A96,
+        0x1A71, 0x0A50, 0x3A33, 0x2A12, 0xDBFD, 0xCBDC,
+        0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A,
+        0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03,
+        0x0C60, 0x1C41, 0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD,
+        0xAD2A, 0xBD0B, 0x8D68, 0x9D49, 0x7E97, 0x6EB6,
+        0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70,
+        0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A,
+        0x9F59, 0x8F78, 0x9188, 0x81A9, 0xB1CA, 0xA1EB,
+        0xD10C, 0xC12D, 0xF14E, 0xE16F, 0x1080, 0x00A1,
+        0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067,
+        0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C,
+        0xE37F, 0xF35E, 0x02B1, 0x1290, 0x22F3, 0x32D2,
+        0x4235, 0x5214, 0x6277, 0x7256, 0xB5EA, 0xA5CB,
+        0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D,
+        0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447,
+        0x5424, 0x4405, 0xA7DB, 0xB7FA, 0x8799, 0x97B8,
+        0xE75F, 0xF77E, 0xC71D, 0xD73C, 0x26D3, 0x36F2,
+        0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634,
+        0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9,
+        0xB98A, 0xA9AB, 0x5844, 0x4865, 0x7806, 0x6827,
+        0x18C0, 0x08E1, 0x3882, 0x28A3, 0xCB7D, 0xDB5C,
+        0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A,
+        0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0,
+        0x2AB3, 0x3A92, 0xFD2E, 0xED0F, 0xDD6C, 0xCD4D,
+        0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9, 0x7C26, 0x6C07,
+        0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
+        0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA,
+        0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74,
+        0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/bzip2.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.bzip2 = void 0;
+exports.bzip2 = {
+    init: 0xFFFFFFFF,
+    xorOut: 0xFFFFFFFF,
+    refOut: false,
+    refIn: false,
+    table: Uint32Array.from([
+        0x00000000, 0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
+        0x1A864DB2, 0x1E475005, 0x2608EDB8, 0x22C9F00F, 0x2F8AD6D6, 0x2B4BCB61,
+        0x350C9B64, 0x31CD86D3, 0x3C8EA00A, 0x384FBDBD, 0x4C11DB70, 0x48D0C6C7,
+        0x4593E01E, 0x4152FDA9, 0x5F15ADAC, 0x5BD4B01B, 0x569796C2, 0x52568B75,
+        0x6A1936C8, 0x6ED82B7F, 0x639B0DA6, 0x675A1011, 0x791D4014, 0x7DDC5DA3,
+        0x709F7B7A, 0x745E66CD, 0x9823B6E0, 0x9CE2AB57, 0x91A18D8E, 0x95609039,
+        0x8B27C03C, 0x8FE6DD8B, 0x82A5FB52, 0x8664E6E5, 0xBE2B5B58, 0xBAEA46EF,
+        0xB7A96036, 0xB3687D81, 0xAD2F2D84, 0xA9EE3033, 0xA4AD16EA, 0xA06C0B5D,
+        0xD4326D90, 0xD0F37027, 0xDDB056FE, 0xD9714B49, 0xC7361B4C, 0xC3F706FB,
+        0xCEB42022, 0xCA753D95, 0xF23A8028, 0xF6FB9D9F, 0xFBB8BB46, 0xFF79A6F1,
+        0xE13EF6F4, 0xE5FFEB43, 0xE8BCCD9A, 0xEC7DD02D, 0x34867077, 0x30476DC0,
+        0x3D044B19, 0x39C556AE, 0x278206AB, 0x23431B1C, 0x2E003DC5, 0x2AC12072,
+        0x128E9DCF, 0x164F8078, 0x1B0CA6A1, 0x1FCDBB16, 0x018AEB13, 0x054BF6A4,
+        0x0808D07D, 0x0CC9CDCA, 0x7897AB07, 0x7C56B6B0, 0x71159069, 0x75D48DDE,
+        0x6B93DDDB, 0x6F52C06C, 0x6211E6B5, 0x66D0FB02, 0x5E9F46BF, 0x5A5E5B08,
+        0x571D7DD1, 0x53DC6066, 0x4D9B3063, 0x495A2DD4, 0x44190B0D, 0x40D816BA,
+        0xACA5C697, 0xA864DB20, 0xA527FDF9, 0xA1E6E04E, 0xBFA1B04B, 0xBB60ADFC,
+        0xB6238B25, 0xB2E29692, 0x8AAD2B2F, 0x8E6C3698, 0x832F1041, 0x87EE0DF6,
+        0x99A95DF3, 0x9D684044, 0x902B669D, 0x94EA7B2A, 0xE0B41DE7, 0xE4750050,
+        0xE9362689, 0xEDF73B3E, 0xF3B06B3B, 0xF771768C, 0xFA325055, 0xFEF34DE2,
+        0xC6BCF05F, 0xC27DEDE8, 0xCF3ECB31, 0xCBFFD686, 0xD5B88683, 0xD1799B34,
+        0xDC3ABDED, 0xD8FBA05A, 0x690CE0EE, 0x6DCDFD59, 0x608EDB80, 0x644FC637,
+        0x7A089632, 0x7EC98B85, 0x738AAD5C, 0x774BB0EB, 0x4F040D56, 0x4BC510E1,
+        0x46863638, 0x42472B8F, 0x5C007B8A, 0x58C1663D, 0x558240E4, 0x51435D53,
+        0x251D3B9E, 0x21DC2629, 0x2C9F00F0, 0x285E1D47, 0x36194D42, 0x32D850F5,
+        0x3F9B762C, 0x3B5A6B9B, 0x0315D626, 0x07D4CB91, 0x0A97ED48, 0x0E56F0FF,
+        0x1011A0FA, 0x14D0BD4D, 0x19939B94, 0x1D528623, 0xF12F560E, 0xF5EE4BB9,
+        0xF8AD6D60, 0xFC6C70D7, 0xE22B20D2, 0xE6EA3D65, 0xEBA91BBC, 0xEF68060B,
+        0xD727BBB6, 0xD3E6A601, 0xDEA580D8, 0xDA649D6F, 0xC423CD6A, 0xC0E2D0DD,
+        0xCDA1F604, 0xC960EBB3, 0xBD3E8D7E, 0xB9FF90C9, 0xB4BCB610, 0xB07DABA7,
+        0xAE3AFBA2, 0xAAFBE615, 0xA7B8C0CC, 0xA379DD7B, 0x9B3660C6, 0x9FF77D71,
+        0x92B45BA8, 0x9675461F, 0x8832161A, 0x8CF30BAD, 0x81B02D74, 0x857130C3,
+        0x5D8A9099, 0x594B8D2E, 0x5408ABF7, 0x50C9B640, 0x4E8EE645, 0x4A4FFBF2,
+        0x470CDD2B, 0x43CDC09C, 0x7B827D21, 0x7F436096, 0x7200464F, 0x76C15BF8,
+        0x68860BFD, 0x6C47164A, 0x61043093, 0x65C52D24, 0x119B4BE9, 0x155A565E,
+        0x18197087, 0x1CD86D30, 0x029F3D35, 0x065E2082, 0x0B1D065B, 0x0FDC1BEC,
+        0x3793A651, 0x3352BBE6, 0x3E119D3F, 0x3AD08088, 0x2497D08D, 0x2056CD3A,
+        0x2D15EBE3, 0x29D4F654, 0xC5A92679, 0xC1683BCE, 0xCC2B1D17, 0xC8EA00A0,
+        0xD6AD50A5, 0xD26C4D12, 0xDF2F6BCB, 0xDBEE767C, 0xE3A1CBC1, 0xE760D676,
+        0xEA23F0AF, 0xEEE2ED18, 0xF0A5BD1D, 0xF464A0AA, 0xF9278673, 0xFDE69BC4,
+        0x89B8FD09, 0x8D79E0BE, 0x803AC667, 0x84FBDBD0, 0x9ABC8BD5, 0x9E7D9662,
+        0x933EB0BB, 0x97FFAD0C, 0xAFB010B1, 0xAB710D06, 0xA6322BDF, 0xA2F33668,
+        0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/crc-32.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc_32 = void 0;
+exports.crc_32 = {
+    init: 0xFFFFFFFF,
+    xorOut: 0xFFFFFFFF,
+    refOut: true,
+    refIn: true,
+    table: Uint32Array.from([
+        0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F,
+        0xE963A535, 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988,
+        0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91, 0x1DB71064, 0x6AB020F2,
+        0xF3B97148, 0x84BE41DE, 0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7,
+        0x136C9856, 0x646BA8C0, 0xFD62F97A, 0x8A65C9EC, 0x14015C4F, 0x63066CD9,
+        0xFA0F3D63, 0x8D080DF5, 0x3B6E20C8, 0x4C69105E, 0xD56041E4, 0xA2677172,
+        0x3C03E4D1, 0x4B04D447, 0xD20D85FD, 0xA50AB56B, 0x35B5A8FA, 0x42B2986C,
+        0xDBBBC9D6, 0xACBCF940, 0x32D86CE3, 0x45DF5C75, 0xDCD60DCF, 0xABD13D59,
+        0x26D930AC, 0x51DE003A, 0xC8D75180, 0xBFD06116, 0x21B4F4B5, 0x56B3C423,
+        0xCFBA9599, 0xB8BDA50F, 0x2802B89E, 0x5F058808, 0xC60CD9B2, 0xB10BE924,
+        0x2F6F7C87, 0x58684C11, 0xC1611DAB, 0xB6662D3D, 0x76DC4190, 0x01DB7106,
+        0x98D220BC, 0xEFD5102A, 0x71B18589, 0x06B6B51F, 0x9FBFE4A5, 0xE8B8D433,
+        0x7807C9A2, 0x0F00F934, 0x9609A88E, 0xE10E9818, 0x7F6A0DBB, 0x086D3D2D,
+        0x91646C97, 0xE6635C01, 0x6B6B51F4, 0x1C6C6162, 0x856530D8, 0xF262004E,
+        0x6C0695ED, 0x1B01A57B, 0x8208F4C1, 0xF50FC457, 0x65B0D9C6, 0x12B7E950,
+        0x8BBEB8EA, 0xFCB9887C, 0x62DD1DDF, 0x15DA2D49, 0x8CD37CF3, 0xFBD44C65,
+        0x4DB26158, 0x3AB551CE, 0xA3BC0074, 0xD4BB30E2, 0x4ADFA541, 0x3DD895D7,
+        0xA4D1C46D, 0xD3D6F4FB, 0x4369E96A, 0x346ED9FC, 0xAD678846, 0xDA60B8D0,
+        0x44042D73, 0x33031DE5, 0xAA0A4C5F, 0xDD0D7CC9, 0x5005713C, 0x270241AA,
+        0xBE0B1010, 0xC90C2086, 0x5768B525, 0x206F85B3, 0xB966D409, 0xCE61E49F,
+        0x5EDEF90E, 0x29D9C998, 0xB0D09822, 0xC7D7A8B4, 0x59B33D17, 0x2EB40D81,
+        0xB7BD5C3B, 0xC0BA6CAD, 0xEDB88320, 0x9ABFB3B6, 0x03B6E20C, 0x74B1D29A,
+        0xEAD54739, 0x9DD277AF, 0x04DB2615, 0x73DC1683, 0xE3630B12, 0x94643B84,
+        0x0D6D6A3E, 0x7A6A5AA8, 0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1,
+        0xF00F9344, 0x8708A3D2, 0x1E01F268, 0x6906C2FE, 0xF762575D, 0x806567CB,
+        0x196C3671, 0x6E6B06E7, 0xFED41B76, 0x89D32BE0, 0x10DA7A5A, 0x67DD4ACC,
+        0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5, 0xD6D6A3E8, 0xA1D1937E,
+        0x38D8C2C4, 0x4FDFF252, 0xD1BB67F1, 0xA6BC5767, 0x3FB506DD, 0x48B2364B,
+        0xD80D2BDA, 0xAF0A1B4C, 0x36034AF6, 0x41047A60, 0xDF60EFC3, 0xA867DF55,
+        0x316E8EEF, 0x4669BE79, 0xCB61B38C, 0xBC66831A, 0x256FD2A0, 0x5268E236,
+        0xCC0C7795, 0xBB0B4703, 0x220216B9, 0x5505262F, 0xC5BA3BBE, 0xB2BD0B28,
+        0x2BB45A92, 0x5CB36A04, 0xC2D7FFA7, 0xB5D0CF31, 0x2CD99E8B, 0x5BDEAE1D,
+        0x9B64C2B0, 0xEC63F226, 0x756AA39C, 0x026D930A, 0x9C0906A9, 0xEB0E363F,
+        0x72076785, 0x05005713, 0x95BF4A82, 0xE2B87A14, 0x7BB12BAE, 0x0CB61B38,
+        0x92D28E9B, 0xE5D5BE0D, 0x7CDCEFB7, 0x0BDBDF21, 0x86D3D2D4, 0xF1D4E242,
+        0x68DDB3F8, 0x1FDA836E, 0x81BE16CD, 0xF6B9265B, 0x6FB077E1, 0x18B74777,
+        0x88085AE6, 0xFF0F6A70, 0x66063BCA, 0x11010B5C, 0x8F659EFF, 0xF862AE69,
+        0x616BFFD3, 0x166CCF45, 0xA00AE278, 0xD70DD2EE, 0x4E048354, 0x3903B3C2,
+        0xA7672661, 0xD06016F7, 0x4969474D, 0x3E6E77DB, 0xAED16A4A, 0xD9D65ADC,
+        0x40DF0B66, 0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9,
+        0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6, 0xBAD03605, 0xCDD70693,
+        0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
+        0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/crc-32c.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc_32c = void 0;
+exports.crc_32c = {
+    init: 0xFFFFFFFF,
+    xorOut: 0xFFFFFFFF,
+    refOut: true,
+    refIn: true,
+    table: Uint32Array.from([
+        0x00000000, 0xF26B8303, 0xE13B70F7, 0x1350F3F4, 0xC79A971F, 0x35F1141C,
+        0x26A1E7E8, 0xD4CA64EB, 0x8AD958CF, 0x78B2DBCC, 0x6BE22838, 0x9989AB3B,
+        0x4D43CFD0, 0xBF284CD3, 0xAC78BF27, 0x5E133C24, 0x105EC76F, 0xE235446C,
+        0xF165B798, 0x030E349B, 0xD7C45070, 0x25AFD373, 0x36FF2087, 0xC494A384,
+        0x9A879FA0, 0x68EC1CA3, 0x7BBCEF57, 0x89D76C54, 0x5D1D08BF, 0xAF768BBC,
+        0xBC267848, 0x4E4DFB4B, 0x20BD8EDE, 0xD2D60DDD, 0xC186FE29, 0x33ED7D2A,
+        0xE72719C1, 0x154C9AC2, 0x061C6936, 0xF477EA35, 0xAA64D611, 0x580F5512,
+        0x4B5FA6E6, 0xB93425E5, 0x6DFE410E, 0x9F95C20D, 0x8CC531F9, 0x7EAEB2FA,
+        0x30E349B1, 0xC288CAB2, 0xD1D83946, 0x23B3BA45, 0xF779DEAE, 0x05125DAD,
+        0x1642AE59, 0xE4292D5A, 0xBA3A117E, 0x4851927D, 0x5B016189, 0xA96AE28A,
+        0x7DA08661, 0x8FCB0562, 0x9C9BF696, 0x6EF07595, 0x417B1DBC, 0xB3109EBF,
+        0xA0406D4B, 0x522BEE48, 0x86E18AA3, 0x748A09A0, 0x67DAFA54, 0x95B17957,
+        0xCBA24573, 0x39C9C670, 0x2A993584, 0xD8F2B687, 0x0C38D26C, 0xFE53516F,
+        0xED03A29B, 0x1F682198, 0x5125DAD3, 0xA34E59D0, 0xB01EAA24, 0x42752927,
+        0x96BF4DCC, 0x64D4CECF, 0x77843D3B, 0x85EFBE38, 0xDBFC821C, 0x2997011F,
+        0x3AC7F2EB, 0xC8AC71E8, 0x1C661503, 0xEE0D9600, 0xFD5D65F4, 0x0F36E6F7,
+        0x61C69362, 0x93AD1061, 0x80FDE395, 0x72966096, 0xA65C047D, 0x5437877E,
+        0x4767748A, 0xB50CF789, 0xEB1FCBAD, 0x197448AE, 0x0A24BB5A, 0xF84F3859,
+        0x2C855CB2, 0xDEEEDFB1, 0xCDBE2C45, 0x3FD5AF46, 0x7198540D, 0x83F3D70E,
+        0x90A324FA, 0x62C8A7F9, 0xB602C312, 0x44694011, 0x5739B3E5, 0xA55230E6,
+        0xFB410CC2, 0x092A8FC1, 0x1A7A7C35, 0xE811FF36, 0x3CDB9BDD, 0xCEB018DE,
+        0xDDE0EB2A, 0x2F8B6829, 0x82F63B78, 0x709DB87B, 0x63CD4B8F, 0x91A6C88C,
+        0x456CAC67, 0xB7072F64, 0xA457DC90, 0x563C5F93, 0x082F63B7, 0xFA44E0B4,
+        0xE9141340, 0x1B7F9043, 0xCFB5F4A8, 0x3DDE77AB, 0x2E8E845F, 0xDCE5075C,
+        0x92A8FC17, 0x60C37F14, 0x73938CE0, 0x81F80FE3, 0x55326B08, 0xA759E80B,
+        0xB4091BFF, 0x466298FC, 0x1871A4D8, 0xEA1A27DB, 0xF94AD42F, 0x0B21572C,
+        0xDFEB33C7, 0x2D80B0C4, 0x3ED04330, 0xCCBBC033, 0xA24BB5A6, 0x502036A5,
+        0x4370C551, 0xB11B4652, 0x65D122B9, 0x97BAA1BA, 0x84EA524E, 0x7681D14D,
+        0x2892ED69, 0xDAF96E6A, 0xC9A99D9E, 0x3BC21E9D, 0xEF087A76, 0x1D63F975,
+        0x0E330A81, 0xFC588982, 0xB21572C9, 0x407EF1CA, 0x532E023E, 0xA145813D,
+        0x758FE5D6, 0x87E466D5, 0x94B49521, 0x66DF1622, 0x38CC2A06, 0xCAA7A905,
+        0xD9F75AF1, 0x2B9CD9F2, 0xFF56BD19, 0x0D3D3E1A, 0x1E6DCDEE, 0xEC064EED,
+        0xC38D26C4, 0x31E6A5C7, 0x22B65633, 0xD0DDD530, 0x0417B1DB, 0xF67C32D8,
+        0xE52CC12C, 0x1747422F, 0x49547E0B, 0xBB3FFD08, 0xA86F0EFC, 0x5A048DFF,
+        0x8ECEE914, 0x7CA56A17, 0x6FF599E3, 0x9D9E1AE0, 0xD3D3E1AB, 0x21B862A8,
+        0x32E8915C, 0xC083125F, 0x144976B4, 0xE622F5B7, 0xF5720643, 0x07198540,
+        0x590AB964, 0xAB613A67, 0xB831C993, 0x4A5A4A90, 0x9E902E7B, 0x6CFBAD78,
+        0x7FAB5E8C, 0x8DC0DD8F, 0xE330A81A, 0x115B2B19, 0x020BD8ED, 0xF0605BEE,
+        0x24AA3F05, 0xD6C1BC06, 0xC5914FF2, 0x37FACCF1, 0x69E9F0D5, 0x9B8273D6,
+        0x88D28022, 0x7AB90321, 0xAE7367CA, 0x5C18E4C9, 0x4F48173D, 0xBD23943E,
+        0xF36E6F75, 0x0105EC76, 0x12551F82, 0xE03E9C81, 0x34F4F86A, 0xC69F7B69,
+        0xD5CF889D, 0x27A40B9E, 0x79B737BA, 0x8BDCB4B9, 0x988C474D, 0x6AE7C44E,
+        0xBE2DA0A5, 0x4C4623A6, 0x5F16D052, 0xAD7D5351
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/crc-32d.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc_32d = void 0;
+exports.crc_32d = {
+    init: 0xFFFFFFFF,
+    xorOut: 0xFFFFFFFF,
+    refOut: true,
+    refIn: true,
+    table: Uint32Array.from([
+        0x00000000, 0x2BDDD04F, 0x57BBA09E, 0x7C6670D1, 0xAF77413C, 0x84AA9173,
+        0xF8CCE1A2, 0xD31131ED, 0xF6DD1A53, 0xDD00CA1C, 0xA166BACD, 0x8ABB6A82,
+        0x59AA5B6F, 0x72778B20, 0x0E11FBF1, 0x25CC2BBE, 0x4589AC8D, 0x6E547CC2,
+        0x12320C13, 0x39EFDC5C, 0xEAFEEDB1, 0xC1233DFE, 0xBD454D2F, 0x96989D60,
+        0xB354B6DE, 0x98896691, 0xE4EF1640, 0xCF32C60F, 0x1C23F7E2, 0x37FE27AD,
+        0x4B98577C, 0x60458733, 0x8B13591A, 0xA0CE8955, 0xDCA8F984, 0xF77529CB,
+        0x24641826, 0x0FB9C869, 0x73DFB8B8, 0x580268F7, 0x7DCE4349, 0x56139306,
+        0x2A75E3D7, 0x01A83398, 0xD2B90275, 0xF964D23A, 0x8502A2EB, 0xAEDF72A4,
+        0xCE9AF597, 0xE54725D8, 0x99215509, 0xB2FC8546, 0x61EDB4AB, 0x4A3064E4,
+        0x36561435, 0x1D8BC47A, 0x3847EFC4, 0x139A3F8B, 0x6FFC4F5A, 0x44219F15,
+        0x9730AEF8, 0xBCED7EB7, 0xC08B0E66, 0xEB56DE29, 0xBE152A1F, 0x95C8FA50,
+        0xE9AE8A81, 0xC2735ACE, 0x11626B23, 0x3ABFBB6C, 0x46D9CBBD, 0x6D041BF2,
+        0x48C8304C, 0x6315E003, 0x1F7390D2, 0x34AE409D, 0xE7BF7170, 0xCC62A13F,
+        0xB004D1EE, 0x9BD901A1, 0xFB9C8692, 0xD04156DD, 0xAC27260C, 0x87FAF643,
+        0x54EBC7AE, 0x7F3617E1, 0x03506730, 0x288DB77F, 0x0D419CC1, 0x269C4C8E,
+        0x5AFA3C5F, 0x7127EC10, 0xA236DDFD, 0x89EB0DB2, 0xF58D7D63, 0xDE50AD2C,
+        0x35067305, 0x1EDBA34A, 0x62BDD39B, 0x496003D4, 0x9A713239, 0xB1ACE276,
+        0xCDCA92A7, 0xE61742E8, 0xC3DB6956, 0xE806B919, 0x9460C9C8, 0xBFBD1987,
+        0x6CAC286A, 0x4771F825, 0x3B1788F4, 0x10CA58BB, 0x708FDF88, 0x5B520FC7,
+        0x27347F16, 0x0CE9AF59, 0xDFF89EB4, 0xF4254EFB, 0x88433E2A, 0xA39EEE65,
+        0x8652C5DB, 0xAD8F1594, 0xD1E96545, 0xFA34B50A, 0x292584E7, 0x02F854A8,
+        0x7E9E2479, 0x5543F436, 0xD419CC15, 0xFFC41C5A, 0x83A26C8B, 0xA87FBCC4,
+        0x7B6E8D29, 0x50B35D66, 0x2CD52DB7, 0x0708FDF8, 0x22C4D646, 0x09190609,
+        0x757F76D8, 0x5EA2A697, 0x8DB3977A, 0xA66E4735, 0xDA0837E4, 0xF1D5E7AB,
+        0x91906098, 0xBA4DB0D7, 0xC62BC006, 0xEDF61049, 0x3EE721A4, 0x153AF1EB,
+        0x695C813A, 0x42815175, 0x674D7ACB, 0x4C90AA84, 0x30F6DA55, 0x1B2B0A1A,
+        0xC83A3BF7, 0xE3E7EBB8, 0x9F819B69, 0xB45C4B26, 0x5F0A950F, 0x74D74540,
+        0x08B13591, 0x236CE5DE, 0xF07DD433, 0xDBA0047C, 0xA7C674AD, 0x8C1BA4E2,
+        0xA9D78F5C, 0x820A5F13, 0xFE6C2FC2, 0xD5B1FF8D, 0x06A0CE60, 0x2D7D1E2F,
+        0x511B6EFE, 0x7AC6BEB1, 0x1A833982, 0x315EE9CD, 0x4D38991C, 0x66E54953,
+        0xB5F478BE, 0x9E29A8F1, 0xE24FD820, 0xC992086F, 0xEC5E23D1, 0xC783F39E,
+        0xBBE5834F, 0x90385300, 0x432962ED, 0x68F4B2A2, 0x1492C273, 0x3F4F123C,
+        0x6A0CE60A, 0x41D13645, 0x3DB74694, 0x166A96DB, 0xC57BA736, 0xEEA67779,
+        0x92C007A8, 0xB91DD7E7, 0x9CD1FC59, 0xB70C2C16, 0xCB6A5CC7, 0xE0B78C88,
+        0x33A6BD65, 0x187B6D2A, 0x641D1DFB, 0x4FC0CDB4, 0x2F854A87, 0x04589AC8,
+        0x783EEA19, 0x53E33A56, 0x80F20BBB, 0xAB2FDBF4, 0xD749AB25, 0xFC947B6A,
+        0xD95850D4, 0xF285809B, 0x8EE3F04A, 0xA53E2005, 0x762F11E8, 0x5DF2C1A7,
+        0x2194B176, 0x0A496139, 0xE11FBF10, 0xCAC26F5F, 0xB6A41F8E, 0x9D79CFC1,
+        0x4E68FE2C, 0x65B52E63, 0x19D35EB2, 0x320E8EFD, 0x17C2A543, 0x3C1F750C,
+        0x407905DD, 0x6BA4D592, 0xB8B5E47F, 0x93683430, 0xEF0E44E1, 0xC4D394AE,
+        0xA496139D, 0x8F4BC3D2, 0xF32DB303, 0xD8F0634C, 0x0BE152A1, 0x203C82EE,
+        0x5C5AF23F, 0x77872270, 0x524B09CE, 0x7996D981, 0x05F0A950, 0x2E2D791F,
+        0xFD3C48F2, 0xD6E198BD, 0xAA87E86C, 0x815A3823
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/crc-32q.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc_32q = void 0;
+exports.crc_32q = {
+    init: 0x00000000,
+    xorOut: 0x00000000,
+    refOut: false,
+    refIn: false,
+    table: Uint32Array.from([
+        0x00000000, 0x814141AB, 0x83C3C2FD, 0x02828356, 0x86C6C451, 0x078785FA,
+        0x050506AC, 0x84444707, 0x8CCCC909, 0x0D8D88A2, 0x0F0F0BF4, 0x8E4E4A5F,
+        0x0A0A0D58, 0x8B4B4CF3, 0x89C9CFA5, 0x08888E0E, 0x98D8D3B9, 0x19999212,
+        0x1B1B1144, 0x9A5A50EF, 0x1E1E17E8, 0x9F5F5643, 0x9DDDD515, 0x1C9C94BE,
+        0x14141AB0, 0x95555B1B, 0x97D7D84D, 0x169699E6, 0x92D2DEE1, 0x13939F4A,
+        0x11111C1C, 0x90505DB7, 0xB0F0E6D9, 0x31B1A772, 0x33332424, 0xB272658F,
+        0x36362288, 0xB7776323, 0xB5F5E075, 0x34B4A1DE, 0x3C3C2FD0, 0xBD7D6E7B,
+        0xBFFFED2D, 0x3EBEAC86, 0xBAFAEB81, 0x3BBBAA2A, 0x3939297C, 0xB87868D7,
+        0x28283560, 0xA96974CB, 0xABEBF79D, 0x2AAAB636, 0xAEEEF131, 0x2FAFB09A,
+        0x2D2D33CC, 0xAC6C7267, 0xA4E4FC69, 0x25A5BDC2, 0x27273E94, 0xA6667F3F,
+        0x22223838, 0xA3637993, 0xA1E1FAC5, 0x20A0BB6E, 0xE0A08C19, 0x61E1CDB2,
+        0x63634EE4, 0xE2220F4F, 0x66664848, 0xE72709E3, 0xE5A58AB5, 0x64E4CB1E,
+        0x6C6C4510, 0xED2D04BB, 0xEFAF87ED, 0x6EEEC646, 0xEAAA8141, 0x6BEBC0EA,
+        0x696943BC, 0xE8280217, 0x78785FA0, 0xF9391E0B, 0xFBBB9D5D, 0x7AFADCF6,
+        0xFEBE9BF1, 0x7FFFDA5A, 0x7D7D590C, 0xFC3C18A7, 0xF4B496A9, 0x75F5D702,
+        0x77775454, 0xF63615FF, 0x727252F8, 0xF3331353, 0xF1B19005, 0x70F0D1AE,
+        0x50506AC0, 0xD1112B6B, 0xD393A83D, 0x52D2E996, 0xD696AE91, 0x57D7EF3A,
+        0x55556C6C, 0xD4142DC7, 0xDC9CA3C9, 0x5DDDE262, 0x5F5F6134, 0xDE1E209F,
+        0x5A5A6798, 0xDB1B2633, 0xD999A565, 0x58D8E4CE, 0xC888B979, 0x49C9F8D2,
+        0x4B4B7B84, 0xCA0A3A2F, 0x4E4E7D28, 0xCF0F3C83, 0xCD8DBFD5, 0x4CCCFE7E,
+        0x44447070, 0xC50531DB, 0xC787B28D, 0x46C6F326, 0xC282B421, 0x43C3F58A,
+        0x414176DC, 0xC0003777, 0x40005999, 0xC1411832, 0xC3C39B64, 0x4282DACF,
+        0xC6C69DC8, 0x4787DC63, 0x45055F35, 0xC4441E9E, 0xCCCC9090, 0x4D8DD13B,
+        0x4F0F526D, 0xCE4E13C6, 0x4A0A54C1, 0xCB4B156A, 0xC9C9963C, 0x4888D797,
+        0xD8D88A20, 0x5999CB8B, 0x5B1B48DD, 0xDA5A0976, 0x5E1E4E71, 0xDF5F0FDA,
+        0xDDDD8C8C, 0x5C9CCD27, 0x54144329, 0xD5550282, 0xD7D781D4, 0x5696C07F,
+        0xD2D28778, 0x5393C6D3, 0x51114585, 0xD050042E, 0xF0F0BF40, 0x71B1FEEB,
+        0x73337DBD, 0xF2723C16, 0x76367B11, 0xF7773ABA, 0xF5F5B9EC, 0x74B4F847,
+        0x7C3C7649, 0xFD7D37E2, 0xFFFFB4B4, 0x7EBEF51F, 0xFAFAB218, 0x7BBBF3B3,
+        0x793970E5, 0xF878314E, 0x68286CF9, 0xE9692D52, 0xEBEBAE04, 0x6AAAEFAF,
+        0xEEEEA8A8, 0x6FAFE903, 0x6D2D6A55, 0xEC6C2BFE, 0xE4E4A5F0, 0x65A5E45B,
+        0x6727670D, 0xE66626A6, 0x622261A1, 0xE363200A, 0xE1E1A35C, 0x60A0E2F7,
+        0xA0A0D580, 0x21E1942B, 0x2363177D, 0xA22256D6, 0x266611D1, 0xA727507A,
+        0xA5A5D32C, 0x24E49287, 0x2C6C1C89, 0xAD2D5D22, 0xAFAFDE74, 0x2EEE9FDF,
+        0xAAAAD8D8, 0x2BEB9973, 0x29691A25, 0xA8285B8E, 0x38780639, 0xB9394792,
+        0xBBBBC4C4, 0x3AFA856F, 0xBEBEC268, 0x3FFF83C3, 0x3D7D0095, 0xBC3C413E,
+        0xB4B4CF30, 0x35F58E9B, 0x37770DCD, 0xB6364C66, 0x32720B61, 0xB3334ACA,
+        0xB1B1C99C, 0x30F08837, 0x10503359, 0x911172F2, 0x9393F1A4, 0x12D2B00F,
+        0x9696F708, 0x17D7B6A3, 0x155535F5, 0x9414745E, 0x9C9CFA50, 0x1DDDBBFB,
+        0x1F5F38AD, 0x9E1E7906, 0x1A5A3E01, 0x9B1B7FAA, 0x9999FCFC, 0x18D8BD57,
+        0x8888E0E0, 0x09C9A14B, 0x0B4B221D, 0x8A0A63B6, 0x0E4E24B1, 0x8F0F651A,
+        0x8D8DE64C, 0x0CCCA7E7, 0x044429E9, 0x85056842, 0x8787EB14, 0x06C6AABF,
+        0x8282EDB8, 0x03C3AC13, 0x01412F45, 0x80006EEE
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/jamcrc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.jamcrc = void 0;
+exports.jamcrc = {
+    init: 0xFFFFFFFF,
+    xorOut: 0x00000000,
+    refOut: true,
+    refIn: true,
+    table: Uint32Array.from([
+        0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F,
+        0xE963A535, 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988,
+        0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91, 0x1DB71064, 0x6AB020F2,
+        0xF3B97148, 0x84BE41DE, 0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7,
+        0x136C9856, 0x646BA8C0, 0xFD62F97A, 0x8A65C9EC, 0x14015C4F, 0x63066CD9,
+        0xFA0F3D63, 0x8D080DF5, 0x3B6E20C8, 0x4C69105E, 0xD56041E4, 0xA2677172,
+        0x3C03E4D1, 0x4B04D447, 0xD20D85FD, 0xA50AB56B, 0x35B5A8FA, 0x42B2986C,
+        0xDBBBC9D6, 0xACBCF940, 0x32D86CE3, 0x45DF5C75, 0xDCD60DCF, 0xABD13D59,
+        0x26D930AC, 0x51DE003A, 0xC8D75180, 0xBFD06116, 0x21B4F4B5, 0x56B3C423,
+        0xCFBA9599, 0xB8BDA50F, 0x2802B89E, 0x5F058808, 0xC60CD9B2, 0xB10BE924,
+        0x2F6F7C87, 0x58684C11, 0xC1611DAB, 0xB6662D3D, 0x76DC4190, 0x01DB7106,
+        0x98D220BC, 0xEFD5102A, 0x71B18589, 0x06B6B51F, 0x9FBFE4A5, 0xE8B8D433,
+        0x7807C9A2, 0x0F00F934, 0x9609A88E, 0xE10E9818, 0x7F6A0DBB, 0x086D3D2D,
+        0x91646C97, 0xE6635C01, 0x6B6B51F4, 0x1C6C6162, 0x856530D8, 0xF262004E,
+        0x6C0695ED, 0x1B01A57B, 0x8208F4C1, 0xF50FC457, 0x65B0D9C6, 0x12B7E950,
+        0x8BBEB8EA, 0xFCB9887C, 0x62DD1DDF, 0x15DA2D49, 0x8CD37CF3, 0xFBD44C65,
+        0x4DB26158, 0x3AB551CE, 0xA3BC0074, 0xD4BB30E2, 0x4ADFA541, 0x3DD895D7,
+        0xA4D1C46D, 0xD3D6F4FB, 0x4369E96A, 0x346ED9FC, 0xAD678846, 0xDA60B8D0,
+        0x44042D73, 0x33031DE5, 0xAA0A4C5F, 0xDD0D7CC9, 0x5005713C, 0x270241AA,
+        0xBE0B1010, 0xC90C2086, 0x5768B525, 0x206F85B3, 0xB966D409, 0xCE61E49F,
+        0x5EDEF90E, 0x29D9C998, 0xB0D09822, 0xC7D7A8B4, 0x59B33D17, 0x2EB40D81,
+        0xB7BD5C3B, 0xC0BA6CAD, 0xEDB88320, 0x9ABFB3B6, 0x03B6E20C, 0x74B1D29A,
+        0xEAD54739, 0x9DD277AF, 0x04DB2615, 0x73DC1683, 0xE3630B12, 0x94643B84,
+        0x0D6D6A3E, 0x7A6A5AA8, 0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1,
+        0xF00F9344, 0x8708A3D2, 0x1E01F268, 0x6906C2FE, 0xF762575D, 0x806567CB,
+        0x196C3671, 0x6E6B06E7, 0xFED41B76, 0x89D32BE0, 0x10DA7A5A, 0x67DD4ACC,
+        0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5, 0xD6D6A3E8, 0xA1D1937E,
+        0x38D8C2C4, 0x4FDFF252, 0xD1BB67F1, 0xA6BC5767, 0x3FB506DD, 0x48B2364B,
+        0xD80D2BDA, 0xAF0A1B4C, 0x36034AF6, 0x41047A60, 0xDF60EFC3, 0xA867DF55,
+        0x316E8EEF, 0x4669BE79, 0xCB61B38C, 0xBC66831A, 0x256FD2A0, 0x5268E236,
+        0xCC0C7795, 0xBB0B4703, 0x220216B9, 0x5505262F, 0xC5BA3BBE, 0xB2BD0B28,
+        0x2BB45A92, 0x5CB36A04, 0xC2D7FFA7, 0xB5D0CF31, 0x2CD99E8B, 0x5BDEAE1D,
+        0x9B64C2B0, 0xEC63F226, 0x756AA39C, 0x026D930A, 0x9C0906A9, 0xEB0E363F,
+        0x72076785, 0x05005713, 0x95BF4A82, 0xE2B87A14, 0x7BB12BAE, 0x0CB61B38,
+        0x92D28E9B, 0xE5D5BE0D, 0x7CDCEFB7, 0x0BDBDF21, 0x86D3D2D4, 0xF1D4E242,
+        0x68DDB3F8, 0x1FDA836E, 0x81BE16CD, 0xF6B9265B, 0x6FB077E1, 0x18B74777,
+        0x88085AE6, 0xFF0F6A70, 0x66063BCA, 0x11010B5C, 0x8F659EFF, 0xF862AE69,
+        0x616BFFD3, 0x166CCF45, 0xA00AE278, 0xD70DD2EE, 0x4E048354, 0x3903B3C2,
+        0xA7672661, 0xD06016F7, 0x4969474D, 0x3E6E77DB, 0xAED16A4A, 0xD9D65ADC,
+        0x40DF0B66, 0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9,
+        0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6, 0xBAD03605, 0xCDD70693,
+        0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
+        0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/mpeg-2.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mpeg_2 = void 0;
+exports.mpeg_2 = {
+    init: 0xFFFFFFFF,
+    xorOut: 0x00000000,
+    refOut: false,
+    refIn: false,
+    table: Uint32Array.from([
+        0x00000000, 0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
+        0x1A864DB2, 0x1E475005, 0x2608EDB8, 0x22C9F00F, 0x2F8AD6D6, 0x2B4BCB61,
+        0x350C9B64, 0x31CD86D3, 0x3C8EA00A, 0x384FBDBD, 0x4C11DB70, 0x48D0C6C7,
+        0x4593E01E, 0x4152FDA9, 0x5F15ADAC, 0x5BD4B01B, 0x569796C2, 0x52568B75,
+        0x6A1936C8, 0x6ED82B7F, 0x639B0DA6, 0x675A1011, 0x791D4014, 0x7DDC5DA3,
+        0x709F7B7A, 0x745E66CD, 0x9823B6E0, 0x9CE2AB57, 0x91A18D8E, 0x95609039,
+        0x8B27C03C, 0x8FE6DD8B, 0x82A5FB52, 0x8664E6E5, 0xBE2B5B58, 0xBAEA46EF,
+        0xB7A96036, 0xB3687D81, 0xAD2F2D84, 0xA9EE3033, 0xA4AD16EA, 0xA06C0B5D,
+        0xD4326D90, 0xD0F37027, 0xDDB056FE, 0xD9714B49, 0xC7361B4C, 0xC3F706FB,
+        0xCEB42022, 0xCA753D95, 0xF23A8028, 0xF6FB9D9F, 0xFBB8BB46, 0xFF79A6F1,
+        0xE13EF6F4, 0xE5FFEB43, 0xE8BCCD9A, 0xEC7DD02D, 0x34867077, 0x30476DC0,
+        0x3D044B19, 0x39C556AE, 0x278206AB, 0x23431B1C, 0x2E003DC5, 0x2AC12072,
+        0x128E9DCF, 0x164F8078, 0x1B0CA6A1, 0x1FCDBB16, 0x018AEB13, 0x054BF6A4,
+        0x0808D07D, 0x0CC9CDCA, 0x7897AB07, 0x7C56B6B0, 0x71159069, 0x75D48DDE,
+        0x6B93DDDB, 0x6F52C06C, 0x6211E6B5, 0x66D0FB02, 0x5E9F46BF, 0x5A5E5B08,
+        0x571D7DD1, 0x53DC6066, 0x4D9B3063, 0x495A2DD4, 0x44190B0D, 0x40D816BA,
+        0xACA5C697, 0xA864DB20, 0xA527FDF9, 0xA1E6E04E, 0xBFA1B04B, 0xBB60ADFC,
+        0xB6238B25, 0xB2E29692, 0x8AAD2B2F, 0x8E6C3698, 0x832F1041, 0x87EE0DF6,
+        0x99A95DF3, 0x9D684044, 0x902B669D, 0x94EA7B2A, 0xE0B41DE7, 0xE4750050,
+        0xE9362689, 0xEDF73B3E, 0xF3B06B3B, 0xF771768C, 0xFA325055, 0xFEF34DE2,
+        0xC6BCF05F, 0xC27DEDE8, 0xCF3ECB31, 0xCBFFD686, 0xD5B88683, 0xD1799B34,
+        0xDC3ABDED, 0xD8FBA05A, 0x690CE0EE, 0x6DCDFD59, 0x608EDB80, 0x644FC637,
+        0x7A089632, 0x7EC98B85, 0x738AAD5C, 0x774BB0EB, 0x4F040D56, 0x4BC510E1,
+        0x46863638, 0x42472B8F, 0x5C007B8A, 0x58C1663D, 0x558240E4, 0x51435D53,
+        0x251D3B9E, 0x21DC2629, 0x2C9F00F0, 0x285E1D47, 0x36194D42, 0x32D850F5,
+        0x3F9B762C, 0x3B5A6B9B, 0x0315D626, 0x07D4CB91, 0x0A97ED48, 0x0E56F0FF,
+        0x1011A0FA, 0x14D0BD4D, 0x19939B94, 0x1D528623, 0xF12F560E, 0xF5EE4BB9,
+        0xF8AD6D60, 0xFC6C70D7, 0xE22B20D2, 0xE6EA3D65, 0xEBA91BBC, 0xEF68060B,
+        0xD727BBB6, 0xD3E6A601, 0xDEA580D8, 0xDA649D6F, 0xC423CD6A, 0xC0E2D0DD,
+        0xCDA1F604, 0xC960EBB3, 0xBD3E8D7E, 0xB9FF90C9, 0xB4BCB610, 0xB07DABA7,
+        0xAE3AFBA2, 0xAAFBE615, 0xA7B8C0CC, 0xA379DD7B, 0x9B3660C6, 0x9FF77D71,
+        0x92B45BA8, 0x9675461F, 0x8832161A, 0x8CF30BAD, 0x81B02D74, 0x857130C3,
+        0x5D8A9099, 0x594B8D2E, 0x5408ABF7, 0x50C9B640, 0x4E8EE645, 0x4A4FFBF2,
+        0x470CDD2B, 0x43CDC09C, 0x7B827D21, 0x7F436096, 0x7200464F, 0x76C15BF8,
+        0x68860BFD, 0x6C47164A, 0x61043093, 0x65C52D24, 0x119B4BE9, 0x155A565E,
+        0x18197087, 0x1CD86D30, 0x029F3D35, 0x065E2082, 0x0B1D065B, 0x0FDC1BEC,
+        0x3793A651, 0x3352BBE6, 0x3E119D3F, 0x3AD08088, 0x2497D08D, 0x2056CD3A,
+        0x2D15EBE3, 0x29D4F654, 0xC5A92679, 0xC1683BCE, 0xCC2B1D17, 0xC8EA00A0,
+        0xD6AD50A5, 0xD26C4D12, 0xDF2F6BCB, 0xDBEE767C, 0xE3A1CBC1, 0xE760D676,
+        0xEA23F0AF, 0xEEE2ED18, 0xF0A5BD1D, 0xF464A0AA, 0xF9278673, 0xFDE69BC4,
+        0x89B8FD09, 0x8D79E0BE, 0x803AC667, 0x84FBDBD0, 0x9ABC8BD5, 0x9E7D9662,
+        0x933EB0BB, 0x97FFAD0C, 0xAFB010B1, 0xAB710D06, 0xA6322BDF, 0xA2F33668,
+        0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/posix.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.posix = void 0;
+exports.posix = {
+    init: 0x00000000,
+    xorOut: 0xFFFFFFFF,
+    refOut: false,
+    refIn: false,
+    table: Uint32Array.from([
+        0x00000000, 0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B,
+        0x1A864DB2, 0x1E475005, 0x2608EDB8, 0x22C9F00F, 0x2F8AD6D6, 0x2B4BCB61,
+        0x350C9B64, 0x31CD86D3, 0x3C8EA00A, 0x384FBDBD, 0x4C11DB70, 0x48D0C6C7,
+        0x4593E01E, 0x4152FDA9, 0x5F15ADAC, 0x5BD4B01B, 0x569796C2, 0x52568B75,
+        0x6A1936C8, 0x6ED82B7F, 0x639B0DA6, 0x675A1011, 0x791D4014, 0x7DDC5DA3,
+        0x709F7B7A, 0x745E66CD, 0x9823B6E0, 0x9CE2AB57, 0x91A18D8E, 0x95609039,
+        0x8B27C03C, 0x8FE6DD8B, 0x82A5FB52, 0x8664E6E5, 0xBE2B5B58, 0xBAEA46EF,
+        0xB7A96036, 0xB3687D81, 0xAD2F2D84, 0xA9EE3033, 0xA4AD16EA, 0xA06C0B5D,
+        0xD4326D90, 0xD0F37027, 0xDDB056FE, 0xD9714B49, 0xC7361B4C, 0xC3F706FB,
+        0xCEB42022, 0xCA753D95, 0xF23A8028, 0xF6FB9D9F, 0xFBB8BB46, 0xFF79A6F1,
+        0xE13EF6F4, 0xE5FFEB43, 0xE8BCCD9A, 0xEC7DD02D, 0x34867077, 0x30476DC0,
+        0x3D044B19, 0x39C556AE, 0x278206AB, 0x23431B1C, 0x2E003DC5, 0x2AC12072,
+        0x128E9DCF, 0x164F8078, 0x1B0CA6A1, 0x1FCDBB16, 0x018AEB13, 0x054BF6A4,
+        0x0808D07D, 0x0CC9CDCA, 0x7897AB07, 0x7C56B6B0, 0x71159069, 0x75D48DDE,
+        0x6B93DDDB, 0x6F52C06C, 0x6211E6B5, 0x66D0FB02, 0x5E9F46BF, 0x5A5E5B08,
+        0x571D7DD1, 0x53DC6066, 0x4D9B3063, 0x495A2DD4, 0x44190B0D, 0x40D816BA,
+        0xACA5C697, 0xA864DB20, 0xA527FDF9, 0xA1E6E04E, 0xBFA1B04B, 0xBB60ADFC,
+        0xB6238B25, 0xB2E29692, 0x8AAD2B2F, 0x8E6C3698, 0x832F1041, 0x87EE0DF6,
+        0x99A95DF3, 0x9D684044, 0x902B669D, 0x94EA7B2A, 0xE0B41DE7, 0xE4750050,
+        0xE9362689, 0xEDF73B3E, 0xF3B06B3B, 0xF771768C, 0xFA325055, 0xFEF34DE2,
+        0xC6BCF05F, 0xC27DEDE8, 0xCF3ECB31, 0xCBFFD686, 0xD5B88683, 0xD1799B34,
+        0xDC3ABDED, 0xD8FBA05A, 0x690CE0EE, 0x6DCDFD59, 0x608EDB80, 0x644FC637,
+        0x7A089632, 0x7EC98B85, 0x738AAD5C, 0x774BB0EB, 0x4F040D56, 0x4BC510E1,
+        0x46863638, 0x42472B8F, 0x5C007B8A, 0x58C1663D, 0x558240E4, 0x51435D53,
+        0x251D3B9E, 0x21DC2629, 0x2C9F00F0, 0x285E1D47, 0x36194D42, 0x32D850F5,
+        0x3F9B762C, 0x3B5A6B9B, 0x0315D626, 0x07D4CB91, 0x0A97ED48, 0x0E56F0FF,
+        0x1011A0FA, 0x14D0BD4D, 0x19939B94, 0x1D528623, 0xF12F560E, 0xF5EE4BB9,
+        0xF8AD6D60, 0xFC6C70D7, 0xE22B20D2, 0xE6EA3D65, 0xEBA91BBC, 0xEF68060B,
+        0xD727BBB6, 0xD3E6A601, 0xDEA580D8, 0xDA649D6F, 0xC423CD6A, 0xC0E2D0DD,
+        0xCDA1F604, 0xC960EBB3, 0xBD3E8D7E, 0xB9FF90C9, 0xB4BCB610, 0xB07DABA7,
+        0xAE3AFBA2, 0xAAFBE615, 0xA7B8C0CC, 0xA379DD7B, 0x9B3660C6, 0x9FF77D71,
+        0x92B45BA8, 0x9675461F, 0x8832161A, 0x8CF30BAD, 0x81B02D74, 0x857130C3,
+        0x5D8A9099, 0x594B8D2E, 0x5408ABF7, 0x50C9B640, 0x4E8EE645, 0x4A4FFBF2,
+        0x470CDD2B, 0x43CDC09C, 0x7B827D21, 0x7F436096, 0x7200464F, 0x76C15BF8,
+        0x68860BFD, 0x6C47164A, 0x61043093, 0x65C52D24, 0x119B4BE9, 0x155A565E,
+        0x18197087, 0x1CD86D30, 0x029F3D35, 0x065E2082, 0x0B1D065B, 0x0FDC1BEC,
+        0x3793A651, 0x3352BBE6, 0x3E119D3F, 0x3AD08088, 0x2497D08D, 0x2056CD3A,
+        0x2D15EBE3, 0x29D4F654, 0xC5A92679, 0xC1683BCE, 0xCC2B1D17, 0xC8EA00A0,
+        0xD6AD50A5, 0xD26C4D12, 0xDF2F6BCB, 0xDBEE767C, 0xE3A1CBC1, 0xE760D676,
+        0xEA23F0AF, 0xEEE2ED18, 0xF0A5BD1D, 0xF464A0AA, 0xF9278673, 0xFDE69BC4,
+        0x89B8FD09, 0x8D79E0BE, 0x803AC667, 0x84FBDBD0, 0x9ABC8BD5, 0x9E7D9662,
+        0x933EB0BB, 0x97FFAD0C, 0xAFB010B1, 0xAB710D06, 0xA6322BDF, 0xA2F33668,
+        0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc32/xfer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.xfer = void 0;
+exports.xfer = {
+    init: 0x00000000,
+    xorOut: 0x00000000,
+    refOut: false,
+    refIn: false,
+    table: Uint32Array.from([
+        0x00000000, 0x000000AF, 0x0000015E, 0x000001F1, 0x000002BC, 0x00000213,
+        0x000003E2, 0x0000034D, 0x00000578, 0x000005D7, 0x00000426, 0x00000489,
+        0x000007C4, 0x0000076B, 0x0000069A, 0x00000635, 0x00000AF0, 0x00000A5F,
+        0x00000BAE, 0x00000B01, 0x0000084C, 0x000008E3, 0x00000912, 0x000009BD,
+        0x00000F88, 0x00000F27, 0x00000ED6, 0x00000E79, 0x00000D34, 0x00000D9B,
+        0x00000C6A, 0x00000CC5, 0x000015E0, 0x0000154F, 0x000014BE, 0x00001411,
+        0x0000175C, 0x000017F3, 0x00001602, 0x000016AD, 0x00001098, 0x00001037,
+        0x000011C6, 0x00001169, 0x00001224, 0x0000128B, 0x0000137A, 0x000013D5,
+        0x00001F10, 0x00001FBF, 0x00001E4E, 0x00001EE1, 0x00001DAC, 0x00001D03,
+        0x00001CF2, 0x00001C5D, 0x00001A68, 0x00001AC7, 0x00001B36, 0x00001B99,
+        0x000018D4, 0x0000187B, 0x0000198A, 0x00001925, 0x00002BC0, 0x00002B6F,
+        0x00002A9E, 0x00002A31, 0x0000297C, 0x000029D3, 0x00002822, 0x0000288D,
+        0x00002EB8, 0x00002E17, 0x00002FE6, 0x00002F49, 0x00002C04, 0x00002CAB,
+        0x00002D5A, 0x00002DF5, 0x00002130, 0x0000219F, 0x0000206E, 0x000020C1,
+        0x0000238C, 0x00002323, 0x000022D2, 0x0000227D, 0x00002448, 0x000024E7,
+        0x00002516, 0x000025B9, 0x000026F4, 0x0000265B, 0x000027AA, 0x00002705,
+        0x00003E20, 0x00003E8F, 0x00003F7E, 0x00003FD1, 0x00003C9C, 0x00003C33,
+        0x00003DC2, 0x00003D6D, 0x00003B58, 0x00003BF7, 0x00003A06, 0x00003AA9,
+        0x000039E4, 0x0000394B, 0x000038BA, 0x00003815, 0x000034D0, 0x0000347F,
+        0x0000358E, 0x00003521, 0x0000366C, 0x000036C3, 0x00003732, 0x0000379D,
+        0x000031A8, 0x00003107, 0x000030F6, 0x00003059, 0x00003314, 0x000033BB,
+        0x0000324A, 0x000032E5, 0x00005780, 0x0000572F, 0x000056DE, 0x00005671,
+        0x0000553C, 0x00005593, 0x00005462, 0x000054CD, 0x000052F8, 0x00005257,
+        0x000053A6, 0x00005309, 0x00005044, 0x000050EB, 0x0000511A, 0x000051B5,
+        0x00005D70, 0x00005DDF, 0x00005C2E, 0x00005C81, 0x00005FCC, 0x00005F63,
+        0x00005E92, 0x00005E3D, 0x00005808, 0x000058A7, 0x00005956, 0x000059F9,
+        0x00005AB4, 0x00005A1B, 0x00005BEA, 0x00005B45, 0x00004260, 0x000042CF,
+        0x0000433E, 0x00004391, 0x000040DC, 0x00004073, 0x00004182, 0x0000412D,
+        0x00004718, 0x000047B7, 0x00004646, 0x000046E9, 0x000045A4, 0x0000450B,
+        0x000044FA, 0x00004455, 0x00004890, 0x0000483F, 0x000049CE, 0x00004961,
+        0x00004A2C, 0x00004A83, 0x00004B72, 0x00004BDD, 0x00004DE8, 0x00004D47,
+        0x00004CB6, 0x00004C19, 0x00004F54, 0x00004FFB, 0x00004E0A, 0x00004EA5,
+        0x00007C40, 0x00007CEF, 0x00007D1E, 0x00007DB1, 0x00007EFC, 0x00007E53,
+        0x00007FA2, 0x00007F0D, 0x00007938, 0x00007997, 0x00007866, 0x000078C9,
+        0x00007B84, 0x00007B2B, 0x00007ADA, 0x00007A75, 0x000076B0, 0x0000761F,
+        0x000077EE, 0x00007741, 0x0000740C, 0x000074A3, 0x00007552, 0x000075FD,
+        0x000073C8, 0x00007367, 0x00007296, 0x00007239, 0x00007174, 0x000071DB,
+        0x0000702A, 0x00007085, 0x000069A0, 0x0000690F, 0x000068FE, 0x00006851,
+        0x00006B1C, 0x00006BB3, 0x00006A42, 0x00006AED, 0x00006CD8, 0x00006C77,
+        0x00006D86, 0x00006D29, 0x00006E64, 0x00006ECB, 0x00006F3A, 0x00006F95,
+        0x00006350, 0x000063FF, 0x0000620E, 0x000062A1, 0x000061EC, 0x00006143,
+        0x000060B2, 0x0000601D, 0x00006628, 0x00006687, 0x00006776, 0x000067D9,
+        0x00006494, 0x0000643B, 0x000065CA, 0x00006565
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/cdma2000.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cdma2000 = void 0;
+exports.cdma2000 = {
+    init: 0xFF,
+    xorOut: 0x00,
+    refOut: false,
+    refIn: false,
+    table: Uint8Array.from([
+        0x00, 0x9B, 0xAD, 0x36, 0xC1, 0x5A,
+        0x6C, 0xF7, 0x19, 0x82, 0xB4, 0x2F,
+        0xD8, 0x43, 0x75, 0xEE, 0x32, 0xA9,
+        0x9F, 0x04, 0xF3, 0x68, 0x5E, 0xC5,
+        0x2B, 0xB0, 0x86, 0x1D, 0xEA, 0x71,
+        0x47, 0xDC, 0x64, 0xFF, 0xC9, 0x52,
+        0xA5, 0x3E, 0x08, 0x93, 0x7D, 0xE6,
+        0xD0, 0x4B, 0xBC, 0x27, 0x11, 0x8A,
+        0x56, 0xCD, 0xFB, 0x60, 0x97, 0x0C,
+        0x3A, 0xA1, 0x4F, 0xD4, 0xE2, 0x79,
+        0x8E, 0x15, 0x23, 0xB8, 0xC8, 0x53,
+        0x65, 0xFE, 0x09, 0x92, 0xA4, 0x3F,
+        0xD1, 0x4A, 0x7C, 0xE7, 0x10, 0x8B,
+        0xBD, 0x26, 0xFA, 0x61, 0x57, 0xCC,
+        0x3B, 0xA0, 0x96, 0x0D, 0xE3, 0x78,
+        0x4E, 0xD5, 0x22, 0xB9, 0x8F, 0x14,
+        0xAC, 0x37, 0x01, 0x9A, 0x6D, 0xF6,
+        0xC0, 0x5B, 0xB5, 0x2E, 0x18, 0x83,
+        0x74, 0xEF, 0xD9, 0x42, 0x9E, 0x05,
+        0x33, 0xA8, 0x5F, 0xC4, 0xF2, 0x69,
+        0x87, 0x1C, 0x2A, 0xB1, 0x46, 0xDD,
+        0xEB, 0x70, 0x0B, 0x90, 0xA6, 0x3D,
+        0xCA, 0x51, 0x67, 0xFC, 0x12, 0x89,
+        0xBF, 0x24, 0xD3, 0x48, 0x7E, 0xE5,
+        0x39, 0xA2, 0x94, 0x0F, 0xF8, 0x63,
+        0x55, 0xCE, 0x20, 0xBB, 0x8D, 0x16,
+        0xE1, 0x7A, 0x4C, 0xD7, 0x6F, 0xF4,
+        0xC2, 0x59, 0xAE, 0x35, 0x03, 0x98,
+        0x76, 0xED, 0xDB, 0x40, 0xB7, 0x2C,
+        0x1A, 0x81, 0x5D, 0xC6, 0xF0, 0x6B,
+        0x9C, 0x07, 0x31, 0xAA, 0x44, 0xDF,
+        0xE9, 0x72, 0x85, 0x1E, 0x28, 0xB3,
+        0xC3, 0x58, 0x6E, 0xF5, 0x02, 0x99,
+        0xAF, 0x34, 0xDA, 0x41, 0x77, 0xEC,
+        0x1B, 0x80, 0xB6, 0x2D, 0xF1, 0x6A,
+        0x5C, 0xC7, 0x30, 0xAB, 0x9D, 0x06,
+        0xE8, 0x73, 0x45, 0xDE, 0x29, 0xB2,
+        0x84, 0x1F, 0xA7, 0x3C, 0x0A, 0x91,
+        0x66, 0xFD, 0xCB, 0x50, 0xBE, 0x25,
+        0x13, 0x88, 0x7F, 0xE4, 0xD2, 0x49,
+        0x95, 0x0E, 0x38, 0xA3, 0x54, 0xCF,
+        0xF9, 0x62, 0x8C, 0x17, 0x21, 0xBA,
+        0x4D, 0xD6, 0xE0, 0x7B
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/crc-8.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc_8 = void 0;
+exports.crc_8 = {
+    init: 0x0000,
+    xorOut: 0x0000,
+    refOut: false,
+    refIn: false,
+    table: Uint8Array.from([
+        0x00, 0x07, 0x0E, 0x09, 0x1C, 0x1B,
+        0x12, 0x15, 0x38, 0x3F, 0x36, 0x31,
+        0x24, 0x23, 0x2A, 0x2D, 0x70, 0x77,
+        0x7E, 0x79, 0x6C, 0x6B, 0x62, 0x65,
+        0x48, 0x4F, 0x46, 0x41, 0x54, 0x53,
+        0x5A, 0x5D, 0xE0, 0xE7, 0xEE, 0xE9,
+        0xFC, 0xFB, 0xF2, 0xF5, 0xD8, 0xDF,
+        0xD6, 0xD1, 0xC4, 0xC3, 0xCA, 0xCD,
+        0x90, 0x97, 0x9E, 0x99, 0x8C, 0x8B,
+        0x82, 0x85, 0xA8, 0xAF, 0xA6, 0xA1,
+        0xB4, 0xB3, 0xBA, 0xBD, 0xC7, 0xC0,
+        0xC9, 0xCE, 0xDB, 0xDC, 0xD5, 0xD2,
+        0xFF, 0xF8, 0xF1, 0xF6, 0xE3, 0xE4,
+        0xED, 0xEA, 0xB7, 0xB0, 0xB9, 0xBE,
+        0xAB, 0xAC, 0xA5, 0xA2, 0x8F, 0x88,
+        0x81, 0x86, 0x93, 0x94, 0x9D, 0x9A,
+        0x27, 0x20, 0x29, 0x2E, 0x3B, 0x3C,
+        0x35, 0x32, 0x1F, 0x18, 0x11, 0x16,
+        0x03, 0x04, 0x0D, 0x0A, 0x57, 0x50,
+        0x59, 0x5E, 0x4B, 0x4C, 0x45, 0x42,
+        0x6F, 0x68, 0x61, 0x66, 0x73, 0x74,
+        0x7D, 0x7A, 0x89, 0x8E, 0x87, 0x80,
+        0x95, 0x92, 0x9B, 0x9C, 0xB1, 0xB6,
+        0xBF, 0xB8, 0xAD, 0xAA, 0xA3, 0xA4,
+        0xF9, 0xFE, 0xF7, 0xF0, 0xE5, 0xE2,
+        0xEB, 0xEC, 0xC1, 0xC6, 0xCF, 0xC8,
+        0xDD, 0xDA, 0xD3, 0xD4, 0x69, 0x6E,
+        0x67, 0x60, 0x75, 0x72, 0x7B, 0x7C,
+        0x51, 0x56, 0x5F, 0x58, 0x4D, 0x4A,
+        0x43, 0x44, 0x19, 0x1E, 0x17, 0x10,
+        0x05, 0x02, 0x0B, 0x0C, 0x21, 0x26,
+        0x2F, 0x28, 0x3D, 0x3A, 0x33, 0x34,
+        0x4E, 0x49, 0x40, 0x47, 0x52, 0x55,
+        0x5C, 0x5B, 0x76, 0x71, 0x78, 0x7F,
+        0x6A, 0x6D, 0x64, 0x63, 0x3E, 0x39,
+        0x30, 0x37, 0x22, 0x25, 0x2C, 0x2B,
+        0x06, 0x01, 0x08, 0x0F, 0x1A, 0x1D,
+        0x14, 0x13, 0xAE, 0xA9, 0xA0, 0xA7,
+        0xB2, 0xB5, 0xBC, 0xBB, 0x96, 0x91,
+        0x98, 0x9F, 0x8A, 0x8D, 0x84, 0x83,
+        0xDE, 0xD9, 0xD0, 0xD7, 0xC2, 0xC5,
+        0xCC, 0xCB, 0xE6, 0xE1, 0xE8, 0xEF,
+        0xFA, 0xFD, 0xF4, 0xF3
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/darc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.darc = void 0;
+exports.darc = {
+    init: 0x00,
+    xorOut: 0x00,
+    refOut: true,
+    refIn: true,
+    table: Uint8Array.from([
+        0x00, 0x72, 0xE4, 0x96, 0xF1, 0x83,
+        0x15, 0x67, 0xDB, 0xA9, 0x3F, 0x4D,
+        0x2A, 0x58, 0xCE, 0xBC, 0x8F, 0xFD,
+        0x6B, 0x19, 0x7E, 0x0C, 0x9A, 0xE8,
+        0x54, 0x26, 0xB0, 0xC2, 0xA5, 0xD7,
+        0x41, 0x33, 0x27, 0x55, 0xC3, 0xB1,
+        0xD6, 0xA4, 0x32, 0x40, 0xFC, 0x8E,
+        0x18, 0x6A, 0x0D, 0x7F, 0xE9, 0x9B,
+        0xA8, 0xDA, 0x4C, 0x3E, 0x59, 0x2B,
+        0xBD, 0xCF, 0x73, 0x01, 0x97, 0xE5,
+        0x82, 0xF0, 0x66, 0x14, 0x4E, 0x3C,
+        0xAA, 0xD8, 0xBF, 0xCD, 0x5B, 0x29,
+        0x95, 0xE7, 0x71, 0x03, 0x64, 0x16,
+        0x80, 0xF2, 0xC1, 0xB3, 0x25, 0x57,
+        0x30, 0x42, 0xD4, 0xA6, 0x1A, 0x68,
+        0xFE, 0x8C, 0xEB, 0x99, 0x0F, 0x7D,
+        0x69, 0x1B, 0x8D, 0xFF, 0x98, 0xEA,
+        0x7C, 0x0E, 0xB2, 0xC0, 0x56, 0x24,
+        0x43, 0x31, 0xA7, 0xD5, 0xE6, 0x94,
+        0x02, 0x70, 0x17, 0x65, 0xF3, 0x81,
+        0x3D, 0x4F, 0xD9, 0xAB, 0xCC, 0xBE,
+        0x28, 0x5A, 0x9C, 0xEE, 0x78, 0x0A,
+        0x6D, 0x1F, 0x89, 0xFB, 0x47, 0x35,
+        0xA3, 0xD1, 0xB6, 0xC4, 0x52, 0x20,
+        0x13, 0x61, 0xF7, 0x85, 0xE2, 0x90,
+        0x06, 0x74, 0xC8, 0xBA, 0x2C, 0x5E,
+        0x39, 0x4B, 0xDD, 0xAF, 0xBB, 0xC9,
+        0x5F, 0x2D, 0x4A, 0x38, 0xAE, 0xDC,
+        0x60, 0x12, 0x84, 0xF6, 0x91, 0xE3,
+        0x75, 0x07, 0x34, 0x46, 0xD0, 0xA2,
+        0xC5, 0xB7, 0x21, 0x53, 0xEF, 0x9D,
+        0x0B, 0x79, 0x1E, 0x6C, 0xFA, 0x88,
+        0xD2, 0xA0, 0x36, 0x44, 0x23, 0x51,
+        0xC7, 0xB5, 0x09, 0x7B, 0xED, 0x9F,
+        0xF8, 0x8A, 0x1C, 0x6E, 0x5D, 0x2F,
+        0xB9, 0xCB, 0xAC, 0xDE, 0x48, 0x3A,
+        0x86, 0xF4, 0x62, 0x10, 0x77, 0x05,
+        0x93, 0xE1, 0xF5, 0x87, 0x11, 0x63,
+        0x04, 0x76, 0xE0, 0x92, 0x2E, 0x5C,
+        0xCA, 0xB8, 0xDF, 0xAD, 0x3B, 0x49,
+        0x7A, 0x08, 0x9E, 0xEC, 0x8B, 0xF9,
+        0x6F, 0x1D, 0xA1, 0xD3, 0x45, 0x37,
+        0x50, 0x22, 0xB4, 0xC6
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/dvb-s2.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.dvb_s2 = void 0;
+exports.dvb_s2 = {
+    init: 0x00,
+    xorOut: 0x00,
+    refOut: false,
+    refIn: false,
+    table: Uint8Array.from([
+        0x00, 0xD5, 0x7F, 0xAA, 0xFE, 0x2B,
+        0x81, 0x54, 0x29, 0xFC, 0x56, 0x83,
+        0xD7, 0x02, 0xA8, 0x7D, 0x52, 0x87,
+        0x2D, 0xF8, 0xAC, 0x79, 0xD3, 0x06,
+        0x7B, 0xAE, 0x04, 0xD1, 0x85, 0x50,
+        0xFA, 0x2F, 0xA4, 0x71, 0xDB, 0x0E,
+        0x5A, 0x8F, 0x25, 0xF0, 0x8D, 0x58,
+        0xF2, 0x27, 0x73, 0xA6, 0x0C, 0xD9,
+        0xF6, 0x23, 0x89, 0x5C, 0x08, 0xDD,
+        0x77, 0xA2, 0xDF, 0x0A, 0xA0, 0x75,
+        0x21, 0xF4, 0x5E, 0x8B, 0x9D, 0x48,
+        0xE2, 0x37, 0x63, 0xB6, 0x1C, 0xC9,
+        0xB4, 0x61, 0xCB, 0x1E, 0x4A, 0x9F,
+        0x35, 0xE0, 0xCF, 0x1A, 0xB0, 0x65,
+        0x31, 0xE4, 0x4E, 0x9B, 0xE6, 0x33,
+        0x99, 0x4C, 0x18, 0xCD, 0x67, 0xB2,
+        0x39, 0xEC, 0x46, 0x93, 0xC7, 0x12,
+        0xB8, 0x6D, 0x10, 0xC5, 0x6F, 0xBA,
+        0xEE, 0x3B, 0x91, 0x44, 0x6B, 0xBE,
+        0x14, 0xC1, 0x95, 0x40, 0xEA, 0x3F,
+        0x42, 0x97, 0x3D, 0xE8, 0xBC, 0x69,
+        0xC3, 0x16, 0xEF, 0x3A, 0x90, 0x45,
+        0x11, 0xC4, 0x6E, 0xBB, 0xC6, 0x13,
+        0xB9, 0x6C, 0x38, 0xED, 0x47, 0x92,
+        0xBD, 0x68, 0xC2, 0x17, 0x43, 0x96,
+        0x3C, 0xE9, 0x94, 0x41, 0xEB, 0x3E,
+        0x6A, 0xBF, 0x15, 0xC0, 0x4B, 0x9E,
+        0x34, 0xE1, 0xB5, 0x60, 0xCA, 0x1F,
+        0x62, 0xB7, 0x1D, 0xC8, 0x9C, 0x49,
+        0xE3, 0x36, 0x19, 0xCC, 0x66, 0xB3,
+        0xE7, 0x32, 0x98, 0x4D, 0x30, 0xE5,
+        0x4F, 0x9A, 0xCE, 0x1B, 0xB1, 0x64,
+        0x72, 0xA7, 0x0D, 0xD8, 0x8C, 0x59,
+        0xF3, 0x26, 0x5B, 0x8E, 0x24, 0xF1,
+        0xA5, 0x70, 0xDA, 0x0F, 0x20, 0xF5,
+        0x5F, 0x8A, 0xDE, 0x0B, 0xA1, 0x74,
+        0x09, 0xDC, 0x76, 0xA3, 0xF7, 0x22,
+        0x88, 0x5D, 0xD6, 0x03, 0xA9, 0x7C,
+        0x28, 0xFD, 0x57, 0x82, 0xFF, 0x2A,
+        0x80, 0x55, 0x01, 0xD4, 0x7E, 0xAB,
+        0x84, 0x51, 0xFB, 0x2E, 0x7A, 0xAF,
+        0x05, 0xD0, 0xAD, 0x78, 0xD2, 0x07,
+        0x53, 0x86, 0x2C, 0xF9
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/ebu.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ebu = void 0;
+exports.ebu = {
+    init: 0xFF,
+    xorOut: 0x00,
+    refOut: true,
+    refIn: true,
+    table: Uint8Array.from([
+        0x00, 0x64, 0xC8, 0xAC, 0xE1, 0x85,
+        0x29, 0x4D, 0xB3, 0xD7, 0x7B, 0x1F,
+        0x52, 0x36, 0x9A, 0xFE, 0x17, 0x73,
+        0xDF, 0xBB, 0xF6, 0x92, 0x3E, 0x5A,
+        0xA4, 0xC0, 0x6C, 0x08, 0x45, 0x21,
+        0x8D, 0xE9, 0x2E, 0x4A, 0xE6, 0x82,
+        0xCF, 0xAB, 0x07, 0x63, 0x9D, 0xF9,
+        0x55, 0x31, 0x7C, 0x18, 0xB4, 0xD0,
+        0x39, 0x5D, 0xF1, 0x95, 0xD8, 0xBC,
+        0x10, 0x74, 0x8A, 0xEE, 0x42, 0x26,
+        0x6B, 0x0F, 0xA3, 0xC7, 0x5C, 0x38,
+        0x94, 0xF0, 0xBD, 0xD9, 0x75, 0x11,
+        0xEF, 0x8B, 0x27, 0x43, 0x0E, 0x6A,
+        0xC6, 0xA2, 0x4B, 0x2F, 0x83, 0xE7,
+        0xAA, 0xCE, 0x62, 0x06, 0xF8, 0x9C,
+        0x30, 0x54, 0x19, 0x7D, 0xD1, 0xB5,
+        0x72, 0x16, 0xBA, 0xDE, 0x93, 0xF7,
+        0x5B, 0x3F, 0xC1, 0xA5, 0x09, 0x6D,
+        0x20, 0x44, 0xE8, 0x8C, 0x65, 0x01,
+        0xAD, 0xC9, 0x84, 0xE0, 0x4C, 0x28,
+        0xD6, 0xB2, 0x1E, 0x7A, 0x37, 0x53,
+        0xFF, 0x9B, 0xB8, 0xDC, 0x70, 0x14,
+        0x59, 0x3D, 0x91, 0xF5, 0x0B, 0x6F,
+        0xC3, 0xA7, 0xEA, 0x8E, 0x22, 0x46,
+        0xAF, 0xCB, 0x67, 0x03, 0x4E, 0x2A,
+        0x86, 0xE2, 0x1C, 0x78, 0xD4, 0xB0,
+        0xFD, 0x99, 0x35, 0x51, 0x96, 0xF2,
+        0x5E, 0x3A, 0x77, 0x13, 0xBF, 0xDB,
+        0x25, 0x41, 0xED, 0x89, 0xC4, 0xA0,
+        0x0C, 0x68, 0x81, 0xE5, 0x49, 0x2D,
+        0x60, 0x04, 0xA8, 0xCC, 0x32, 0x56,
+        0xFA, 0x9E, 0xD3, 0xB7, 0x1B, 0x7F,
+        0xE4, 0x80, 0x2C, 0x48, 0x05, 0x61,
+        0xCD, 0xA9, 0x57, 0x33, 0x9F, 0xFB,
+        0xB6, 0xD2, 0x7E, 0x1A, 0xF3, 0x97,
+        0x3B, 0x5F, 0x12, 0x76, 0xDA, 0xBE,
+        0x40, 0x24, 0x88, 0xEC, 0xA1, 0xC5,
+        0x69, 0x0D, 0xCA, 0xAE, 0x02, 0x66,
+        0x2B, 0x4F, 0xE3, 0x87, 0x79, 0x1D,
+        0xB1, 0xD5, 0x98, 0xFC, 0x50, 0x34,
+        0xDD, 0xB9, 0x15, 0x71, 0x3C, 0x58,
+        0xF4, 0x90, 0x6E, 0x0A, 0xA6, 0xC2,
+        0x8F, 0xEB, 0x47, 0x23
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/i-code.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.i_code = void 0;
+exports.i_code = {
+    init: 0xFD,
+    xorOut: 0x00,
+    refOut: false,
+    refIn: false,
+    table: Uint8Array.from([
+        0x00, 0x1D, 0x3A, 0x27, 0x74, 0x69,
+        0x4E, 0x53, 0xE8, 0xF5, 0xD2, 0xCF,
+        0x9C, 0x81, 0xA6, 0xBB, 0xCD, 0xD0,
+        0xF7, 0xEA, 0xB9, 0xA4, 0x83, 0x9E,
+        0x25, 0x38, 0x1F, 0x02, 0x51, 0x4C,
+        0x6B, 0x76, 0x87, 0x9A, 0xBD, 0xA0,
+        0xF3, 0xEE, 0xC9, 0xD4, 0x6F, 0x72,
+        0x55, 0x48, 0x1B, 0x06, 0x21, 0x3C,
+        0x4A, 0x57, 0x70, 0x6D, 0x3E, 0x23,
+        0x04, 0x19, 0xA2, 0xBF, 0x98, 0x85,
+        0xD6, 0xCB, 0xEC, 0xF1, 0x13, 0x0E,
+        0x29, 0x34, 0x67, 0x7A, 0x5D, 0x40,
+        0xFB, 0xE6, 0xC1, 0xDC, 0x8F, 0x92,
+        0xB5, 0xA8, 0xDE, 0xC3, 0xE4, 0xF9,
+        0xAA, 0xB7, 0x90, 0x8D, 0x36, 0x2B,
+        0x0C, 0x11, 0x42, 0x5F, 0x78, 0x65,
+        0x94, 0x89, 0xAE, 0xB3, 0xE0, 0xFD,
+        0xDA, 0xC7, 0x7C, 0x61, 0x46, 0x5B,
+        0x08, 0x15, 0x32, 0x2F, 0x59, 0x44,
+        0x63, 0x7E, 0x2D, 0x30, 0x17, 0x0A,
+        0xB1, 0xAC, 0x8B, 0x96, 0xC5, 0xD8,
+        0xFF, 0xE2, 0x26, 0x3B, 0x1C, 0x01,
+        0x52, 0x4F, 0x68, 0x75, 0xCE, 0xD3,
+        0xF4, 0xE9, 0xBA, 0xA7, 0x80, 0x9D,
+        0xEB, 0xF6, 0xD1, 0xCC, 0x9F, 0x82,
+        0xA5, 0xB8, 0x03, 0x1E, 0x39, 0x24,
+        0x77, 0x6A, 0x4D, 0x50, 0xA1, 0xBC,
+        0x9B, 0x86, 0xD5, 0xC8, 0xEF, 0xF2,
+        0x49, 0x54, 0x73, 0x6E, 0x3D, 0x20,
+        0x07, 0x1A, 0x6C, 0x71, 0x56, 0x4B,
+        0x18, 0x05, 0x22, 0x3F, 0x84, 0x99,
+        0xBE, 0xA3, 0xF0, 0xED, 0xCA, 0xD7,
+        0x35, 0x28, 0x0F, 0x12, 0x41, 0x5C,
+        0x7B, 0x66, 0xDD, 0xC0, 0xE7, 0xFA,
+        0xA9, 0xB4, 0x93, 0x8E, 0xF8, 0xE5,
+        0xC2, 0xDF, 0x8C, 0x91, 0xB6, 0xAB,
+        0x10, 0x0D, 0x2A, 0x37, 0x64, 0x79,
+        0x5E, 0x43, 0xB2, 0xAF, 0x88, 0x95,
+        0xC6, 0xDB, 0xFC, 0xE1, 0x5A, 0x47,
+        0x60, 0x7D, 0x2E, 0x33, 0x14, 0x09,
+        0x7F, 0x62, 0x45, 0x58, 0x0B, 0x16,
+        0x31, 0x2C, 0x97, 0x8A, 0xAD, 0xB0,
+        0xE3, 0xFE, 0xD9, 0xC4
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/itu.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.itu = void 0;
+exports.itu = {
+    init: 0x00,
+    xorOut: 0x55,
+    refOut: false,
+    refIn: false,
+    table: Uint8Array.from([
+        0x00, 0x07, 0x0E, 0x09, 0x1C, 0x1B,
+        0x12, 0x15, 0x38, 0x3F, 0x36, 0x31,
+        0x24, 0x23, 0x2A, 0x2D, 0x70, 0x77,
+        0x7E, 0x79, 0x6C, 0x6B, 0x62, 0x65,
+        0x48, 0x4F, 0x46, 0x41, 0x54, 0x53,
+        0x5A, 0x5D, 0xE0, 0xE7, 0xEE, 0xE9,
+        0xFC, 0xFB, 0xF2, 0xF5, 0xD8, 0xDF,
+        0xD6, 0xD1, 0xC4, 0xC3, 0xCA, 0xCD,
+        0x90, 0x97, 0x9E, 0x99, 0x8C, 0x8B,
+        0x82, 0x85, 0xA8, 0xAF, 0xA6, 0xA1,
+        0xB4, 0xB3, 0xBA, 0xBD, 0xC7, 0xC0,
+        0xC9, 0xCE, 0xDB, 0xDC, 0xD5, 0xD2,
+        0xFF, 0xF8, 0xF1, 0xF6, 0xE3, 0xE4,
+        0xED, 0xEA, 0xB7, 0xB0, 0xB9, 0xBE,
+        0xAB, 0xAC, 0xA5, 0xA2, 0x8F, 0x88,
+        0x81, 0x86, 0x93, 0x94, 0x9D, 0x9A,
+        0x27, 0x20, 0x29, 0x2E, 0x3B, 0x3C,
+        0x35, 0x32, 0x1F, 0x18, 0x11, 0x16,
+        0x03, 0x04, 0x0D, 0x0A, 0x57, 0x50,
+        0x59, 0x5E, 0x4B, 0x4C, 0x45, 0x42,
+        0x6F, 0x68, 0x61, 0x66, 0x73, 0x74,
+        0x7D, 0x7A, 0x89, 0x8E, 0x87, 0x80,
+        0x95, 0x92, 0x9B, 0x9C, 0xB1, 0xB6,
+        0xBF, 0xB8, 0xAD, 0xAA, 0xA3, 0xA4,
+        0xF9, 0xFE, 0xF7, 0xF0, 0xE5, 0xE2,
+        0xEB, 0xEC, 0xC1, 0xC6, 0xCF, 0xC8,
+        0xDD, 0xDA, 0xD3, 0xD4, 0x69, 0x6E,
+        0x67, 0x60, 0x75, 0x72, 0x7B, 0x7C,
+        0x51, 0x56, 0x5F, 0x58, 0x4D, 0x4A,
+        0x43, 0x44, 0x19, 0x1E, 0x17, 0x10,
+        0x05, 0x02, 0x0B, 0x0C, 0x21, 0x26,
+        0x2F, 0x28, 0x3D, 0x3A, 0x33, 0x34,
+        0x4E, 0x49, 0x40, 0x47, 0x52, 0x55,
+        0x5C, 0x5B, 0x76, 0x71, 0x78, 0x7F,
+        0x6A, 0x6D, 0x64, 0x63, 0x3E, 0x39,
+        0x30, 0x37, 0x22, 0x25, 0x2C, 0x2B,
+        0x06, 0x01, 0x08, 0x0F, 0x1A, 0x1D,
+        0x14, 0x13, 0xAE, 0xA9, 0xA0, 0xA7,
+        0xB2, 0xB5, 0xBC, 0xBB, 0x96, 0x91,
+        0x98, 0x9F, 0x8A, 0x8D, 0x84, 0x83,
+        0xDE, 0xD9, 0xD0, 0xD7, 0xC2, 0xC5,
+        0xCC, 0xCB, 0xE6, 0xE1, 0xE8, 0xEF,
+        0xFA, 0xFD, 0xF4, 0xF3
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/maxim.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.maxim = void 0;
+exports.maxim = {
+    init: 0x00,
+    xorOut: 0x00,
+    refOut: true,
+    refIn: true,
+    table: Uint8Array.from([
+        0x00, 0x5E, 0xBC, 0xE2, 0x61, 0x3F,
+        0xDD, 0x83, 0xC2, 0x9C, 0x7E, 0x20,
+        0xA3, 0xFD, 0x1F, 0x41, 0x9D, 0xC3,
+        0x21, 0x7F, 0xFC, 0xA2, 0x40, 0x1E,
+        0x5F, 0x01, 0xE3, 0xBD, 0x3E, 0x60,
+        0x82, 0xDC, 0x23, 0x7D, 0x9F, 0xC1,
+        0x42, 0x1C, 0xFE, 0xA0, 0xE1, 0xBF,
+        0x5D, 0x03, 0x80, 0xDE, 0x3C, 0x62,
+        0xBE, 0xE0, 0x02, 0x5C, 0xDF, 0x81,
+        0x63, 0x3D, 0x7C, 0x22, 0xC0, 0x9E,
+        0x1D, 0x43, 0xA1, 0xFF, 0x46, 0x18,
+        0xFA, 0xA4, 0x27, 0x79, 0x9B, 0xC5,
+        0x84, 0xDA, 0x38, 0x66, 0xE5, 0xBB,
+        0x59, 0x07, 0xDB, 0x85, 0x67, 0x39,
+        0xBA, 0xE4, 0x06, 0x58, 0x19, 0x47,
+        0xA5, 0xFB, 0x78, 0x26, 0xC4, 0x9A,
+        0x65, 0x3B, 0xD9, 0x87, 0x04, 0x5A,
+        0xB8, 0xE6, 0xA7, 0xF9, 0x1B, 0x45,
+        0xC6, 0x98, 0x7A, 0x24, 0xF8, 0xA6,
+        0x44, 0x1A, 0x99, 0xC7, 0x25, 0x7B,
+        0x3A, 0x64, 0x86, 0xD8, 0x5B, 0x05,
+        0xE7, 0xB9, 0x8C, 0xD2, 0x30, 0x6E,
+        0xED, 0xB3, 0x51, 0x0F, 0x4E, 0x10,
+        0xF2, 0xAC, 0x2F, 0x71, 0x93, 0xCD,
+        0x11, 0x4F, 0xAD, 0xF3, 0x70, 0x2E,
+        0xCC, 0x92, 0xD3, 0x8D, 0x6F, 0x31,
+        0xB2, 0xEC, 0x0E, 0x50, 0xAF, 0xF1,
+        0x13, 0x4D, 0xCE, 0x90, 0x72, 0x2C,
+        0x6D, 0x33, 0xD1, 0x8F, 0x0C, 0x52,
+        0xB0, 0xEE, 0x32, 0x6C, 0x8E, 0xD0,
+        0x53, 0x0D, 0xEF, 0xB1, 0xF0, 0xAE,
+        0x4C, 0x12, 0x91, 0xCF, 0x2D, 0x73,
+        0xCA, 0x94, 0x76, 0x28, 0xAB, 0xF5,
+        0x17, 0x49, 0x08, 0x56, 0xB4, 0xEA,
+        0x69, 0x37, 0xD5, 0x8B, 0x57, 0x09,
+        0xEB, 0xB5, 0x36, 0x68, 0x8A, 0xD4,
+        0x95, 0xCB, 0x29, 0x77, 0xF4, 0xAA,
+        0x48, 0x16, 0xE9, 0xB7, 0x55, 0x0B,
+        0x88, 0xD6, 0x34, 0x6A, 0x2B, 0x75,
+        0x97, 0xC9, 0x4A, 0x14, 0xF6, 0xA8,
+        0x74, 0x2A, 0xC8, 0x96, 0x15, 0x4B,
+        0xA9, 0xF7, 0xB6, 0xE8, 0x0A, 0x54,
+        0xD7, 0x89, 0x6B, 0x35
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/rohc.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.rohc = void 0;
+exports.rohc = {
+    init: 0xFF,
+    xorOut: 0x00,
+    refOut: true,
+    refIn: true,
+    table: Uint8Array.from([
+        0x00, 0x91, 0xE3, 0x72, 0x07, 0x96,
+        0xE4, 0x75, 0x0E, 0x9F, 0xED, 0x7C,
+        0x09, 0x98, 0xEA, 0x7B, 0x1C, 0x8D,
+        0xFF, 0x6E, 0x1B, 0x8A, 0xF8, 0x69,
+        0x12, 0x83, 0xF1, 0x60, 0x15, 0x84,
+        0xF6, 0x67, 0x38, 0xA9, 0xDB, 0x4A,
+        0x3F, 0xAE, 0xDC, 0x4D, 0x36, 0xA7,
+        0xD5, 0x44, 0x31, 0xA0, 0xD2, 0x43,
+        0x24, 0xB5, 0xC7, 0x56, 0x23, 0xB2,
+        0xC0, 0x51, 0x2A, 0xBB, 0xC9, 0x58,
+        0x2D, 0xBC, 0xCE, 0x5F, 0x70, 0xE1,
+        0x93, 0x02, 0x77, 0xE6, 0x94, 0x05,
+        0x7E, 0xEF, 0x9D, 0x0C, 0x79, 0xE8,
+        0x9A, 0x0B, 0x6C, 0xFD, 0x8F, 0x1E,
+        0x6B, 0xFA, 0x88, 0x19, 0x62, 0xF3,
+        0x81, 0x10, 0x65, 0xF4, 0x86, 0x17,
+        0x48, 0xD9, 0xAB, 0x3A, 0x4F, 0xDE,
+        0xAC, 0x3D, 0x46, 0xD7, 0xA5, 0x34,
+        0x41, 0xD0, 0xA2, 0x33, 0x54, 0xC5,
+        0xB7, 0x26, 0x53, 0xC2, 0xB0, 0x21,
+        0x5A, 0xCB, 0xB9, 0x28, 0x5D, 0xCC,
+        0xBE, 0x2F, 0xE0, 0x71, 0x03, 0x92,
+        0xE7, 0x76, 0x04, 0x95, 0xEE, 0x7F,
+        0x0D, 0x9C, 0xE9, 0x78, 0x0A, 0x9B,
+        0xFC, 0x6D, 0x1F, 0x8E, 0xFB, 0x6A,
+        0x18, 0x89, 0xF2, 0x63, 0x11, 0x80,
+        0xF5, 0x64, 0x16, 0x87, 0xD8, 0x49,
+        0x3B, 0xAA, 0xDF, 0x4E, 0x3C, 0xAD,
+        0xD6, 0x47, 0x35, 0xA4, 0xD1, 0x40,
+        0x32, 0xA3, 0xC4, 0x55, 0x27, 0xB6,
+        0xC3, 0x52, 0x20, 0xB1, 0xCA, 0x5B,
+        0x29, 0xB8, 0xCD, 0x5C, 0x2E, 0xBF,
+        0x90, 0x01, 0x73, 0xE2, 0x97, 0x06,
+        0x74, 0xE5, 0x9E, 0x0F, 0x7D, 0xEC,
+        0x99, 0x08, 0x7A, 0xEB, 0x8C, 0x1D,
+        0x6F, 0xFE, 0x8B, 0x1A, 0x68, 0xF9,
+        0x82, 0x13, 0x61, 0xF0, 0x85, 0x14,
+        0x66, 0xF7, 0xA8, 0x39, 0x4B, 0xDA,
+        0xAF, 0x3E, 0x4C, 0xDD, 0xA6, 0x37,
+        0x45, 0xD4, 0xA1, 0x30, 0x42, 0xD3,
+        0xB4, 0x25, 0x57, 0xC6, 0xB3, 0x22,
+        0x50, 0xC1, 0xBA, 0x2B, 0x59, 0xC8,
+        0xBD, 0x2C, 0x5E, 0xCF
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/algorithms/crc8/wcdma.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.wcdma = void 0;
+exports.wcdma = {
+    init: 0x00,
+    xorOut: 0x00,
+    refOut: true,
+    refIn: true,
+    table: Uint8Array.from([
+        0x00, 0xD0, 0x13, 0xC3, 0x26, 0xF6,
+        0x35, 0xE5, 0x4C, 0x9C, 0x5F, 0x8F,
+        0x6A, 0xBA, 0x79, 0xA9, 0x98, 0x48,
+        0x8B, 0x5B, 0xBE, 0x6E, 0xAD, 0x7D,
+        0xD4, 0x04, 0xC7, 0x17, 0xF2, 0x22,
+        0xE1, 0x31, 0x83, 0x53, 0x90, 0x40,
+        0xA5, 0x75, 0xB6, 0x66, 0xCF, 0x1F,
+        0xDC, 0x0C, 0xE9, 0x39, 0xFA, 0x2A,
+        0x1B, 0xCB, 0x08, 0xD8, 0x3D, 0xED,
+        0x2E, 0xFE, 0x57, 0x87, 0x44, 0x94,
+        0x71, 0xA1, 0x62, 0xB2, 0xB5, 0x65,
+        0xA6, 0x76, 0x93, 0x43, 0x80, 0x50,
+        0xF9, 0x29, 0xEA, 0x3A, 0xDF, 0x0F,
+        0xCC, 0x1C, 0x2D, 0xFD, 0x3E, 0xEE,
+        0x0B, 0xDB, 0x18, 0xC8, 0x61, 0xB1,
+        0x72, 0xA2, 0x47, 0x97, 0x54, 0x84,
+        0x36, 0xE6, 0x25, 0xF5, 0x10, 0xC0,
+        0x03, 0xD3, 0x7A, 0xAA, 0x69, 0xB9,
+        0x5C, 0x8C, 0x4F, 0x9F, 0xAE, 0x7E,
+        0xBD, 0x6D, 0x88, 0x58, 0x9B, 0x4B,
+        0xE2, 0x32, 0xF1, 0x21, 0xC4, 0x14,
+        0xD7, 0x07, 0xD9, 0x09, 0xCA, 0x1A,
+        0xFF, 0x2F, 0xEC, 0x3C, 0x95, 0x45,
+        0x86, 0x56, 0xB3, 0x63, 0xA0, 0x70,
+        0x41, 0x91, 0x52, 0x82, 0x67, 0xB7,
+        0x74, 0xA4, 0x0D, 0xDD, 0x1E, 0xCE,
+        0x2B, 0xFB, 0x38, 0xE8, 0x5A, 0x8A,
+        0x49, 0x99, 0x7C, 0xAC, 0x6F, 0xBF,
+        0x16, 0xC6, 0x05, 0xD5, 0x30, 0xE0,
+        0x23, 0xF3, 0xC2, 0x12, 0xD1, 0x01,
+        0xE4, 0x34, 0xF7, 0x27, 0x8E, 0x5E,
+        0x9D, 0x4D, 0xA8, 0x78, 0xBB, 0x6B,
+        0x6C, 0xBC, 0x7F, 0xAF, 0x4A, 0x9A,
+        0x59, 0x89, 0x20, 0xF0, 0x33, 0xE3,
+        0x06, 0xD6, 0x15, 0xC5, 0xF4, 0x24,
+        0xE7, 0x37, 0xD2, 0x02, 0xC1, 0x11,
+        0xB8, 0x68, 0xAB, 0x7B, 0x9E, 0x4E,
+        0x8D, 0x5D, 0xEF, 0x3F, 0xFC, 0x2C,
+        0xC9, 0x19, 0xDA, 0x0A, 0xA3, 0x73,
+        0xB0, 0x60, 0x85, 0x55, 0x96, 0x46,
+        0x77, 0xA7, 0x64, 0xB4, 0x51, 0x81,
+        0x42, 0x92, 0x3B, 0xEB, 0x28, 0xF8,
+        0x1D, 0xCD, 0x0E, 0xDE
+    ])
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/classes/AlgorithmException.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AlgorithmException = void 0;
+class AlgorithmException extends Error {
+    constructor(algorithm) {
+        super(algorithm);
+        this.message = 'Unknown algorithm';
+        this.algorithm = undefined;
+        this.algorithm = algorithm;
+        this.message = `Unknown algorithm "${this.algorithm}"`;
+        this.name = "AlgorithmException";
+    }
+}
+exports.AlgorithmException = AlgorithmException;
+
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/lib/crc16.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc16 = void 0;
+const AlgorithmException_1 = __webpack_require__("./node_modules/easy-crc/dist/src/classes/AlgorithmException.js");
+const arc_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/arc.js");
+const aug_ccit_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/aug-ccit.js");
+const buypass_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/buypass.js");
+const ccitt_false_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/ccitt-false.js");
+const cdma2000_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/cdma2000.js");
+const crc_a_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/crc-a.js");
+const dds_110_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/dds-110.js");
+const dect_r_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/dect-r.js");
+const dect_x_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/dect-x.js");
+const dnp_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/dnp.js");
+const en_13757_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/en-13757.js");
+const genibus_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/genibus.js");
+const kermit_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/kermit.js");
+const maxim_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/maxim.js");
+const mcrf4xx_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/mcrf4xx.js");
+const modbus_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/modbus.js");
+const riello_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/riello.js");
+const t10_dif_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/t10-dif.js");
+const teledisk_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/teledisk.js");
+const tms37157_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/tms37157.js");
+const usb_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/usb.js");
+const x_25_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/x-25.js");
+const xmodem_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc16/xmodem.js");
+const crc16Algorithms = {
+    BUYPASS: buypass_1.buypass,
+    'CCITT-FALSE': ccitt_false_1.ccitt_false,
+    'AUG-CCITT': aug_ccit_1.aug_ccit,
+    ARC: arc_1.arc,
+    CDMA2000: cdma2000_1.cdma2000,
+    'DDS-110': dds_110_1.dds_110,
+    'DECT-R': dect_r_1.dect_r,
+    'DECT-X': dect_x_1.dect_x,
+    DNP: dnp_1.dnp,
+    'EN-13757': en_13757_1.en_13757,
+    GENIBUS: genibus_1.genibus,
+    MAXIM: maxim_1.maxim,
+    KERMIT: kermit_1.kermit,
+    MCRF4XX: mcrf4xx_1.mcrf4xx,
+    MODBUS: modbus_1.modbus,
+    RIELLO: riello_1.riello,
+    'T10-DIF': t10_dif_1.t10_dif,
+    TELEDISK: teledisk_1.teledisk,
+    TMS37157: tms37157_1.tms37157,
+    USB: usb_1.usb,
+    'X-25': x_25_1.x_25,
+    XMODEM: xmodem_1.xmodem,
+    'CRC-A': crc_a_1.crc_a
+};
+/**
+ * @param {String} algorithm Name of the algorithm
+ * @param {String|Buffer} data A string or an array of bytes
+ * @param {Number=} seed A number
+ * @returns {Number} CRC16 checksum
+ */
+function crc16(algorithm, data, seed) {
+    const availables = Object.keys(crc16Algorithms);
+    if (!availables.includes(algorithm))
+        throw new AlgorithmException_1.AlgorithmException(algorithm);
+    if (!Buffer.isBuffer(data))
+        data = Buffer.from(data);
+    const { init, invertedInit, xorOut, refOut, refIn, table } = crc16Algorithms[algorithm];
+    let crc = seed ? seed ^ xorOut : (refIn ? invertedInit || 0 : init);
+    if (refOut) {
+        for (const b of data)
+            crc = table[(b ^ crc) & 0xFF] ^ (crc >> 8 & 0xFF);
+    }
+    else {
+        for (const b of data)
+            crc = table[((crc >> 8) ^ b) & 0xFF] ^ (crc << 8);
+    }
+    return (crc ^ xorOut) & 0xFFFF;
+}
+exports.crc16 = crc16;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/lib/crc32.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc32 = void 0;
+const AlgorithmException_1 = __webpack_require__("./node_modules/easy-crc/dist/src/classes/AlgorithmException.js");
+const bzip2_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/bzip2.js");
+const crc_32_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/crc-32.js");
+const crc_32c_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/crc-32c.js");
+const crc_32d_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/crc-32d.js");
+const crc_32q_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/crc-32q.js");
+const jamcrc_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/jamcrc.js");
+const mpeg_2_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/mpeg-2.js");
+const posix_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/posix.js");
+const xfer_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc32/xfer.js");
+const crc32Algorithms = {
+    'CRC-32': crc_32_1.crc_32,
+    'CRC-32C': crc_32c_1.crc_32c,
+    'CRC-32D': crc_32d_1.crc_32d,
+    'CRC-32Q': crc_32q_1.crc_32q,
+    BZIP2: bzip2_1.bzip2,
+    JAMCRC: jamcrc_1.jamcrc,
+    'MPEG-2': mpeg_2_1.mpeg_2,
+    POSIX: posix_1.posix,
+    XFER: xfer_1.xfer
+};
+/**
+ * @param {String} algorithm Name of the algorithm
+ * @param {String|Buffer} data A string or an array of bytes
+ * @param {Number=} seed A number
+ * @returns {Number} CRC32 checksum
+ */
+function crc32(algorithm, data, seed) {
+    const availables = Object.keys(crc32Algorithms);
+    if (!availables.includes(algorithm))
+        throw new AlgorithmException_1.AlgorithmException(algorithm);
+    if (!Buffer.isBuffer(data))
+        data = Buffer.from(data);
+    const { init, xorOut, refOut, table } = crc32Algorithms[algorithm];
+    let crc = seed ? (seed ^ xorOut) : init;
+    if (refOut) {
+        for (const b of data)
+            crc = table[(b ^ crc) & 0xFF] ^ (crc >> 8 & 0xFFFFFF);
+    }
+    else {
+        for (const b of data)
+            crc = table[((crc >> 24) ^ b) & 0xFF] ^ (crc << 8);
+    }
+    return (crc ^ xorOut) >>> 0;
+}
+exports.crc32 = crc32;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./node_modules/easy-crc/dist/src/lib/crc8.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crc8 = void 0;
+const AlgorithmException_1 = __webpack_require__("./node_modules/easy-crc/dist/src/classes/AlgorithmException.js");
+const crc_8_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/crc-8.js");
+const cdma2000_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/cdma2000.js");
+const darc_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/darc.js");
+const dvb_s2_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/dvb-s2.js");
+const ebu_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/ebu.js");
+const i_code_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/i-code.js");
+const itu_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/itu.js");
+const maxim_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/maxim.js");
+const rohc_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/rohc.js");
+const wcdma_1 = __webpack_require__("./node_modules/easy-crc/dist/src/algorithms/crc8/wcdma.js");
+const crc8Algorithms = {
+    'CRC-8': crc_8_1.crc_8,
+    CDMA2000: cdma2000_1.cdma2000,
+    DARC: darc_1.darc,
+    'DVB-S2': dvb_s2_1.dvb_s2,
+    EBU: ebu_1.ebu,
+    'I-CODE': i_code_1.i_code,
+    ITU: itu_1.itu,
+    MAXIM: maxim_1.maxim,
+    ROHC: rohc_1.rohc,
+    WCDMA: wcdma_1.wcdma
+};
+/**
+ * @param {String} algorithm Name of the algorithm
+ * @param {String|Buffer} data A string or an array of bytes
+ * @param {Number=} seed A number
+ * @returns {Number} CRC8 checksum
+ */
+function crc8(algorithm, data, seed) {
+    const availables = Object.keys(crc8Algorithms);
+    if (!availables.includes(algorithm))
+        throw new AlgorithmException_1.AlgorithmException(algorithm);
+    if (!Buffer.isBuffer(data))
+        data = Buffer.from(data);
+    const { init, xorOut, table } = crc8Algorithms[algorithm];
+    let crc = seed ? seed ^ xorOut : init;
+    for (const b of data)
+        crc = table[crc ^ b];
+    return (crc ^ xorOut) & 0xFFFF;
+}
+exports.crc8 = crc8;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 

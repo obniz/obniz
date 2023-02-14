@@ -177,8 +177,19 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     const masterKey =
       '7AFCE720C798F4F46C98B0B8D87D242E13CD2056B3458D4EC58F4455DA2C89A0';
     const str = deviceName + serialHex + masterKey;
-
     const deviceKey = await this.digestMessageWait(str);
+
+    for (let i = 0; i < 10; i++) {
+      if (!charengeArr!) {
+        await this.wait(1);
+      } else {
+        break;
+      }
+    }
+    if (!charengeArr!) {
+      throw new Error('Failed to get challenge');
+    }
+
     const charengeCode = this.toHex(charengeArr!);
     const message = deviceName + serialHex + charengeCode;
 
@@ -329,5 +340,11 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     };
 
     return result;
+  }
+
+  private wait(sec: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, sec * 1000);
+    });
   }
 }
