@@ -57,4 +57,5 @@ export default class GT_7510 implements ObnizPartsBleInterface {
     private digestMessageWait;
     private toHex;
     private analyzeData;
+    private wait;
 }

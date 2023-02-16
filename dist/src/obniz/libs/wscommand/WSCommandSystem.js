@@ -173,6 +173,14 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
             { uri: '/request/system/network_get', onValid: this.getNetworkSetting },
         ];
         const res = this.validateCommandSchema(schemaData, module, 'system');
+        if (module.firmware) {
+            this.update_firmware(module.firmware);
+            return;
+        }
+        else if (module.hardReset) {
+            this.hardReset();
+            return;
+        }
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
                 throw new Error(res.invalidButLike[0].message);
