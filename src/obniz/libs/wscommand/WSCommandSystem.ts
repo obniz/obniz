@@ -205,17 +205,11 @@ export class WSCommandSystem extends WSCommandAbstract {
       // for admin
       { uri: '/request/system/network_value', onValid: this.setNetworkSetting },
       { uri: '/request/system/network_get', onValid: this.getNetworkSetting },
+      { uri: '/request/system/firmware', onValid: this.update_firmware },
+      { uri: '/request/system/hard_reset', onValid: this.hardReset },
     ];
 
     const res = this.validateCommandSchema(schemaData, module, 'system');
-
-    if (module.firmware) {
-      this.update_firmware(module.firmware);
-      return;
-    } else if (module.hardReset) {
-      this.hardReset();
-      return;
-    }
 
     if (res.valid === 0) {
       if (res.invalidButLike.length > 0) {

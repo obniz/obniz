@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/hard_reset"
+
+type: object
+required: [hard_reset]
+properties:
+  hard_reset:
+    type: boolean
+    enum: [true]
