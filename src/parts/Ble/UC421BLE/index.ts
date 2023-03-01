@@ -12,6 +12,7 @@ import {
   ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
+import roundTo from 'round-to';
 
 /**
  * Options of UC421BLE.
@@ -860,7 +861,7 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         if (weightInt === errorValue) {
           result.weight = null;
         } else {
-          const weightFloat = weightInt * resolutionWeight;
+          const weightFloat = roundTo(weightInt * resolutionWeight, 3);
           result.weight = { unit: measurementUnit, value: weightFloat };
         }
         const byteLenWeight = 2;
@@ -910,13 +911,13 @@ export default class UC421BLE implements ObnizPartsBleInterface {
         if (bmiAndHeightPresent) {
           const resolutionBmi = 0.1;
           const bmiMass = buf.readUInt16LE(offset);
-          const bmi = bmiMass * resolutionBmi;
+          const bmi = roundTo(bmiMass * resolutionBmi, 1);
           const byteLenBmi = 2;
           offset += byteLenBmi;
 
           const resolutionHeight = 0.1;
           const heightMass = buf.readUInt16LE(offset);
-          const height = heightMass * resolutionHeight;
+          const height = roundTo(heightMass * resolutionHeight, 1);
           const byteLenHeight = 2;
           offset += byteLenHeight;
 
@@ -1085,7 +1086,10 @@ export default class UC421BLE implements ObnizPartsBleInterface {
           if (mascleMassInt === errorValue) {
             result.muscleMass = null;
           } else {
-            const mascleMassFloat = mascleMassInt * resolutionMascleMass;
+            const mascleMassFloat = roundTo(
+              mascleMassInt * resolutionMascleMass,
+              3
+            );
             result.muscleMass = {
               unit: measurementUnit,
               value: mascleMassFloat,
@@ -1103,8 +1107,10 @@ export default class UC421BLE implements ObnizPartsBleInterface {
           if (bodyWaterMassInt === errorValue) {
             result.bodyWaterMass = null;
           } else {
-            const bodyWaterMassFloat =
-              bodyWaterMassInt * resolutionBodyWaterMass;
+            const bodyWaterMassFloat = roundTo(
+              bodyWaterMassInt * resolutionBodyWaterMass,
+              3
+            );
             result.bodyWaterMass = {
               unit: measurementUnit,
               value: bodyWaterMassFloat,
