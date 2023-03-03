@@ -307,6 +307,9 @@ import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
 import HPO_300T, { HPO_300TOptions } from '../parts/Ble/HPO_300T';
 import MC_6810T2, { MC_6810T2Options } from '../parts/Ble/MC_6810T2';
 import Talia, { TaliaOptions } from '../parts/Ble/Talia';
+import Panasonic_lock, {
+  Panasonic_lockOptions,
+} from '../parts/Ble/panasonic_lock';
 
 export type PartsType = keyof PartsList;
 
@@ -753,4 +756,9 @@ export interface PartsList {
   HPO_300T: PartsInterface<HPO_300T, HPO_300TOptions, typeof HPO_300T>;
   MC_6810T2: PartsInterface<MC_6810T2, MC_6810T2Options, typeof MC_6810T2>;
   Talia: PartsInterface<Talia, TaliaOptions, typeof Talia>;
+  Panasonic_lock: PartsInterface<
+    Panasonic_lock,
+    Panasonic_lockOptions,
+    typeof Panasonic_lock
+  >;
 }
