@@ -129,6 +129,8 @@ export default class panasonic_lock implements ObnizPartsBleInterface {
   public ondisconnect?: (reason: any) => void;
 
   private _buffer: Buffer[] = [];
+  private commandChar?: BleRemoteCharacteristic;
+  private responseChar?: BleRemoteCharacteristic;
 
   constructor(peripheral: BleRemotePeripheral) {
     if (!peripheral || !panasonic_lock.isDevice(peripheral)) {
@@ -142,42 +144,21 @@ export default class panasonic_lock implements ObnizPartsBleInterface {
     return adv && adv.indexOf('PS-Lock') >= 0;
   }
 
-  public async unlockWait() {
+  public async connectWait() {
     const p = this._peripheral;
-    const adv = this.parseAdvData(p);
-    if (!adv) {
-      throw new Error('advertisement data does not exist');
-    }
     await p.connectWait();
 
     const service = p.getService('dc8e2744-a374-458d-8d09-95af60463529')!;
-    const commandChar = service.getCharacteristic(
+    this.commandChar = service.getCharacteristic(
       '25bd9d85-ab09-4c0c-8b98-126f6360fd3d'
     )!;
-    const responseChar = service.getCharacteristic(
+    this.responseChar = service.getCharacteristic(
       'b9331036-fb06-4d15-bafd-e07ceb1b75ac'
     )!;
+  }
 
-    const _token = this.generateToken(
-      p.address,
-      Buffer.from(adv.manufacture.rand).toString('hex')
-    );
-
-    await this.sendCommandWait(commandChar, responseChar, {
-      command: 'UpdateToken',
-      items: [
-        {
-          itemId: 'Token',
-          payload: Array.from(Buffer.from(_token.cipherToken, 'hex')),
-        },
-        {
-          itemId: 'Hash',
-          payload: Array.from(Buffer.from(_token.hashToken, 'hex')),
-        },
-      ],
-    });
-
-    const recv = await this.sendCommandWait(commandChar, responseChar, {
+  public async unlockWait() {
+    const recv = await this.sendCommandWait({
       command: 'Unlock',
       items: [],
     });
@@ -195,22 +176,13 @@ export default class panasonic_lock implements ObnizPartsBleInterface {
     if (!adv) {
       throw new Error('advertisement data does not exist');
     }
-    await p.connectWait();
-
-    const service = p.getService('dc8e2744-a374-458d-8d09-95af60463529')!;
-    const commandChar = service.getCharacteristic(
-      '25bd9d85-ab09-4c0c-8b98-126f6360fd3d'
-    )!;
-    const responseChar = service.getCharacteristic(
-      'b9331036-fb06-4d15-bafd-e07ceb1b75ac'
-    )!;
 
     const _token = this.generateToken(
       p.address,
       Buffer.from(adv.manufacture.rand).toString('hex')
     );
 
-    const recv = await this.sendCommandWait(commandChar, responseChar, {
+    const recv = await this.sendCommandWait({
       command: 'UpdateToken',
       items: [
         {
@@ -245,16 +217,12 @@ export default class panasonic_lock implements ObnizPartsBleInterface {
     return adv;
   }
 
-  public async sendCommandWait(
-    commandChar: BleRemoteCharacteristic,
-    responseChar: BleRemoteCharacteristic,
-    command: Command
-  ) {
+  public async sendCommandWait(command: Command) {
     const data = this.buildCommand(command);
-    await commandChar.writeWait(data);
+    await this.commandChar!.writeWait(data);
 
     for (let i = 0; i < 10; i++) {
-      const res = await responseChar.readWait();
+      const res = await this.responseChar!.readWait();
       if (res.length === 0) {
         await this.wait(1);
         continue;
