@@ -117,10 +117,10 @@ interface ParsedAdv {
   };
 }
 
-export default class panasonic_lock implements ObnizPartsBleInterface {
+export default class Panasonic_lock implements ObnizPartsBleInterface {
   public static info(): ObnizPartsBleInfo {
     return {
-      name: 'panasonic_lock',
+      name: 'Panasonic_lock',
     };
   }
 
@@ -133,7 +133,7 @@ export default class panasonic_lock implements ObnizPartsBleInterface {
   private responseChar?: BleRemoteCharacteristic;
 
   constructor(peripheral: BleRemotePeripheral) {
-    if (!peripheral || !panasonic_lock.isDevice(peripheral)) {
+    if (!peripheral || !Panasonic_lock.isDevice(peripheral)) {
       throw new Error('peripheral is not panasonic_lock');
     }
     this._peripheral = peripheral;
