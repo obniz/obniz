@@ -146,9 +146,11 @@ export default class Panasonic_lock implements ObnizPartsBleInterface {
 
   public async connectWait() {
     const p = this._peripheral;
-    await p.connectWait();
+    await p.connectWait({ autoDiscovery: false });
 
+    await p.discoverAllServicesWait();
     const service = p.getService('dc8e2744-a374-458d-8d09-95af60463529')!;
+    await service.discoverAllCharacteristicsWait();
     this.commandChar = service.getCharacteristic(
       '25bd9d85-ab09-4c0c-8b98-126f6360fd3d'
     )!;
