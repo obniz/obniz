@@ -90,6 +90,64 @@ export interface EngineerSettingData {
   offsetSec: number; // 時刻補正(秒) 時刻設定時の遅延時間補正 default 0秒
 }
 
+export interface FlashRomInfoData {
+  total: number; // 記録されている計測履歴の件数（0 ～ 32768）
+  startDate?: Date; // 最古履歴の日付
+  endDate?: Date; // 最新履歴の日付
+}
+
+export interface FlashRomSearchData {
+  total: number; // 記録されている計測履歴の件数（0 ～ 32768）
+  hit: number; // ヒットした計測履歴の件数（0 ～ 32768）
+  startIndex?: number; // 開始番号（1 ～ 60000）、 ヒット件数がない場合は０
+  endIndex?: number; // 終了番号（1 ～ 60000）、 ヒット件数がない場合は０
+}
+
+export interface FlashRomHistoryData {
+  index: number; // 履歴番号
+  monitoringStatus: {
+    // 計測中のステータスデータ
+    outRange: boolean; // 移動平均前のパルス周期が 288ms 以下
+    changeSetting: boolean; // 中断モードで計測条件設定値を変更した
+    overSumFlow: boolean; // 積算流量が設定量を超えている
+    lowInstantFlow: boolean; // 流量が規定値より低い
+    highInstantFlow: boolean; // 流量が規定値より高い
+    shutdownBattery: boolean; // バッテリレベルが電源断レベルを下回った
+    lowBattery: boolean; // バッテリレベルが低い
+    isError: boolean; // エラーが発生しているかどうか
+  };
+  monitoringResultStatus: {
+    // 計測結果のステータスデータ
+    shutdownBattery: boolean; // バッテリ電源断による計測停止
+    swFinish: boolean; // 電源SWによる計測停止
+    userFinish: boolean; // ユーザーによる計測停止
+    overSumFlow: boolean; // 積算流量過多
+    lowSumFlow: boolean; // 積算流量不足
+    isError: boolean; // エラーが発生しているかどうか
+  };
+  averageFlowRate: number; // 平均流量
+  sumFlowRate: number; // 積算流量
+  startDatetime: Date; // 計測開始時間
+  endDatetime: Date; // 計測終了時間
+  startBatteryVoltage: number; // 開始時の電圧値 ㎷
+  endBatteryVoltage: number; // 終了時の電圧値 ㎷
+  logIndex: number; // ログセットのINDEX 0～19 LINKがある 9999 LINKがない
+
+  reserved1: number;
+
+  infusionDropCount: number; // 輸液セットタイプ default 20滴
+  targetSumFlowRate: number; // 設定量 (ml) default 500ml
+  targetFlowRate: number; // 目標流量(ml/h) default 250ml/h
+  correctionFactor: number; // 流量を補正する(-20% ～ 20%) default 0%
+
+  effectiveInstantFlowRate: number; // 有効瞬時流量(%) 瞬時流量判定に使用 目標流量に対する瞬時流量の差分 default 30%
+  finishJudgmentSec: number; // 輸液終了判定時間(秒後) 輸液終了判定（センサ信号無応答時間） default 60秒後
+  effectiveIntegratedFlowRate: number; // 有効積算流量(%) 総積算流量を判定する ※計測中の流量異常判定無効区間を算出 default 10%
+  powerOffSec: number; // 自動電源断時間(秒後) default 60秒後
+
+  reserved2: number;
+}
+
 export interface DR_MARKOptions {}
 
 /** DR MARK management class DR MARKを管理するクラス */
@@ -605,9 +663,199 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     });
   }
 
+  /* FlashROM */
+
+  /**
+   * Erase FlashROM
+   *
+   */
+  public async eraseFlashRomWait() {
+    await this.getCommandResultWait(0x40);
+  }
+
+  /**
+   * FlashROMに保存されているデータ数確認用
+   * 最新の計測日時と最古の計測日時を確認できる
+   *
+   * @param timeOffsetMinute 時差を入れる
+   * @return FlashRomInfoData
+   */
+  public async getFlashRomInfoWait(
+    timeOffsetMinute: number
+  ): Promise<FlashRomInfoData> {
+    const data = await this.getCommandResultWait(0x41);
+    const buffer = Buffer.from(data.data);
+    const total = buffer.readUInt16LE(0);
+    if (total === 0) {
+      return {
+        total,
+      };
+    }
+    const sd = String('00000000' + buffer.readUInt32LE(2))
+      .slice(-8)
+      .match(/.{2}/g);
+    const ed = String('00000000' + buffer.readUInt32LE(6))
+      .slice(-8)
+      .match(/.{2}/g);
+    if (sd === null || ed === null) {
+      throw new Error('getFlashRomInfoWait error');
+    }
+    const startDate = new Date(`${sd[0]}${sd[1]}/${sd[2]}/${sd[3]} 0:0:0`);
+    startDate.setTime(startDate.getTime() + 1000 * 60 * timeOffsetMinute);
+    const endDate = new Date(`${ed[0]}${ed[1]}/${ed[2]}/${ed[3]} 0:0:0`);
+    endDate.setTime(endDate.getTime() + 1000 * 60 * timeOffsetMinute);
+    return {
+      total,
+      startDate,
+      endDate,
+    };
+  }
+
+  /**
+   * FlashROMに保存されているデータ数確認用
+   * 最新の計測日時と最古の計測日時を確認できる
+   *
+   * @param startDate 検索開始日(UTC)
+   * @param endDate 検索終了日(UTC)
+   * @param timeOffsetMinute 時差を入れる
+   * @return FlashRomSearchData
+   */
+  public async getFlashRomSearchWait(
+    startDate: Date,
+    endDate: Date,
+    timeOffsetMinute: number
+  ): Promise<FlashRomSearchData> {
+    startDate.setTime(startDate.getTime() + 1000 * 60 * timeOffsetMinute);
+    endDate.setTime(endDate.getTime() + 1000 * 60 * timeOffsetMinute);
+    const buf = Buffer.alloc(8);
+    buf.writeUInt32LE(
+      startDate.getUTCFullYear() * 10000 +
+        (startDate.getUTCMonth() + 1) * 100 +
+        startDate.getUTCDate(),
+      0
+    );
+    buf.writeUInt32LE(
+      endDate.getUTCHours() * 10000 +
+        endDate.getUTCMinutes() * 100 +
+        endDate.getUTCSeconds(),
+      4
+    );
+
+    const data = await this.getCommandResultWait(0x42, Uint8Array.from(buf));
+    const buffer = Buffer.from(data.data);
+
+    return {
+      total: buffer.readUInt16LE(0),
+      hit: buffer.readUInt16LE(2),
+      startIndex: buffer.readUInt16LE(4),
+      endIndex: buffer.readUInt16LE(6),
+    };
+  }
+
+  /**
+   * FlashROMに保存されている計測履歴を取得
+   * 終了モードの時に0xFFFFでリクエストすると最新の結果を取得
+   * それ以外の場合は、getFlashRomSearchWaitで取得したIndexを元に取得する
+   *
+   * @param index データIndex
+   * @param timeOffsetMinute 時差を入れる
+   * @return FlashRomHistoryData
+   */
+  public async getFlashRomHistoryDataWait(
+    index: number,
+    timeOffsetMinute: number
+  ): Promise<FlashRomHistoryData> {
+    const buf = Buffer.alloc(2);
+    buf.writeUInt16LE(index, 0);
+
+    const data = await this.getCommandFlashRomRecodeResultWait(
+      0x43,
+      Uint8Array.from(buf)
+    );
+    const recode1 = data.find((value) => value.commandId === 0xc3);
+    const recode2 = data.find((value) => value.commandId === 0xc4);
+    const recode3 = data.find((value) => value.commandId === 0xc5);
+    if (
+      !(recode1 !== undefined && recode2 !== undefined && recode3 !== undefined)
+    ) {
+      throw new Error('getFlashRomDataWait error');
+    }
+    const buffer = Buffer.from(recode1.data);
+    const buffer2 = Buffer.from(recode2.data);
+    const buffer3 = Buffer.from(recode3.data);
+    return {
+      index: buffer.readUInt16LE(0),
+      monitoringStatus: {
+        outRange: Boolean(buffer.readUInt8(2) & 0b01000000),
+        changeSetting: Boolean(buffer.readUInt8(2) & 0b00100000),
+        overSumFlow: Boolean(buffer.readUInt8(2) & 0b00010000),
+        lowInstantFlow: Boolean(buffer.readUInt8(2) & 0b00001000),
+        highInstantFlow: Boolean(buffer.readUInt8(2) & 0b00000100),
+        shutdownBattery: Boolean(buffer.readUInt8(2) & 0b00000010),
+        lowBattery: Boolean(buffer.readUInt8(3) & 0b00000001),
+        isError: Boolean(buffer.readUInt8(2)),
+      },
+      monitoringResultStatus: {
+        shutdownBattery: Boolean(buffer.readUInt8(3) & 0b00100000),
+        swFinish: Boolean(buffer.readUInt8(3) & 0b00010000),
+        userFinish: Boolean(buffer.readUInt8(3) & 0b00001000),
+        overSumFlow: Boolean(buffer.readUInt8(3) & 0b00000100),
+        lowSumFlow: Boolean(buffer.readUInt8(3) & 0b00000010),
+        isError: Boolean(buffer.readUInt8(3)),
+      },
+      averageFlowRate: buffer.readUInt16LE(4),
+      sumFlowRate: buffer.readUInt16LE(6),
+      startDatetime: this.convertBufferToDate(buffer, 8, timeOffsetMinute),
+      endDatetime: this.convertBufferToDate(buffer2, 0, timeOffsetMinute),
+      startBatteryVoltage: buffer2.readUInt16LE(8),
+      endBatteryVoltage: buffer2.readUInt16LE(10),
+      logIndex: buffer2.readUInt16LE(12),
+      reserved1: buffer2.readUInt16LE(14),
+      infusionDropCount: buffer3.readUInt16LE(0),
+      targetSumFlowRate: buffer3.readUInt16LE(2),
+      targetFlowRate: buffer3.readUInt16LE(4),
+      correctionFactor: buffer3.readUInt16LE(6),
+      effectiveInstantFlowRate: buffer3.readUInt8(8),
+      finishJudgmentSec: buffer3.readUInt8(9),
+      effectiveIntegratedFlowRate: buffer3.readUInt8(10),
+      powerOffSec: buffer3.readUInt8(11),
+      reserved2: buffer3.readUInt32LE(12),
+    };
+  }
+
+  private convertBufferToDate(
+    buffer: Buffer,
+    index: number,
+    timeOffsetMinute: number
+  ): Date {
+    const d = String('00000000' + buffer.readUInt32LE(index))
+      .slice(-8)
+      .match(/.{2}/g);
+    const t = String('00000000' + buffer.readUInt32LE(index + 4))
+      .slice(-8)
+      .match(/.{2}/g);
+    if (d === null || t === null) {
+      throw new Error('rtc error');
+    }
+    const date = new Date(
+      `${d[0]}${d[1]}/${d[2]}/${d[3]} ${t[1]}:${t[2]}:${t[3]}`
+    );
+    date.setTime(date.getTime() + 1000 * 60 * timeOffsetMinute);
+    return date;
+  }
+
   private async getCommandResultWait(
     commandId: number,
     data?: Uint8Array,
+    timeoutMs?: number
+  ): Promise<CommandNotifyData> {
+    const promise = this.createCommandCallback(commandId, timeoutMs);
+    await this.writeCommandWait(commandId, data);
+    return promise;
+  }
+
+  private createCommandCallback(
+    commandId: number,
     timeoutMs?: number
   ): Promise<CommandNotifyData> {
     return new Promise((resolve, reject) => {
@@ -625,8 +873,21 @@ export default class DR_MARK implements ObnizPartsBleInterface {
         }
         resolve(notifyData);
       });
-      this.writeCommandWait(commandId, data);
     });
+  }
+
+  private async getCommandFlashRomRecodeResultWait(
+    commandId: number,
+    data?: Uint8Array,
+    timeoutMs?: number
+  ): Promise<CommandNotifyData[]> {
+    const promise = Promise.all([
+      this.createCommandCallback(commandId, timeoutMs),
+      this.createCommandCallback(commandId + 1, timeoutMs),
+      this.createCommandCallback(commandId + 2, timeoutMs),
+    ]);
+    await this.writeCommandWait(commandId, data);
+    return promise;
   }
 
   private setCommandCallback(

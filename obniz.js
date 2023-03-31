@@ -26977,7 +26977,158 @@ class DR_MARK {
             this.requestPulseDataWait(true);
         });
     }
+    /* FlashROM */
+    /**
+     * Erase FlashROM
+     *
+     */
+    async eraseFlashRomWait() {
+        await this.getCommandResultWait(0x40);
+    }
+    /**
+     * FlashROMに保存されているデータ数確認用
+     * 最新の計測日時と最古の計測日時を確認できる
+     *
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomInfoData
+     */
+    async getFlashRomInfoWait(timeOffsetMinute) {
+        const data = await this.getCommandResultWait(0x41);
+        const buffer = Buffer.from(data.data);
+        const total = buffer.readUInt16LE(0);
+        if (total === 0) {
+            return {
+                total,
+            };
+        }
+        const sd = String('00000000' + buffer.readUInt32LE(2))
+            .slice(-8)
+            .match(/.{2}/g);
+        const ed = String('00000000' + buffer.readUInt32LE(6))
+            .slice(-8)
+            .match(/.{2}/g);
+        if (sd === null || ed === null) {
+            throw new Error('getFlashRomInfoWait error');
+        }
+        const startDate = new Date(`${sd[0]}${sd[1]}/${sd[2]}/${sd[3]} 0:0:0`);
+        startDate.setTime(startDate.getTime() + 1000 * 60 * timeOffsetMinute);
+        const endDate = new Date(`${ed[0]}${ed[1]}/${ed[2]}/${ed[3]} 0:0:0`);
+        endDate.setTime(endDate.getTime() + 1000 * 60 * timeOffsetMinute);
+        return {
+            total,
+            startDate,
+            endDate,
+        };
+    }
+    /**
+     * FlashROMに保存されているデータ数確認用
+     * 最新の計測日時と最古の計測日時を確認できる
+     *
+     * @param startDate 検索開始日(UTC)
+     * @param endDate 検索終了日(UTC)
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomSearchData
+     */
+    async getFlashRomSearchWait(startDate, endDate, timeOffsetMinute) {
+        startDate.setTime(startDate.getTime() + 1000 * 60 * timeOffsetMinute);
+        endDate.setTime(endDate.getTime() + 1000 * 60 * timeOffsetMinute);
+        const buf = Buffer.alloc(8);
+        buf.writeUInt32LE(startDate.getUTCFullYear() * 10000 +
+            (startDate.getUTCMonth() + 1) * 100 +
+            startDate.getUTCDate(), 0);
+        buf.writeUInt32LE(endDate.getUTCHours() * 10000 +
+            endDate.getUTCMinutes() * 100 +
+            endDate.getUTCSeconds(), 4);
+        const data = await this.getCommandResultWait(0x42, Uint8Array.from(buf));
+        const buffer = Buffer.from(data.data);
+        return {
+            total: buffer.readUInt16LE(0),
+            hit: buffer.readUInt16LE(2),
+            startIndex: buffer.readUInt16LE(4),
+            endIndex: buffer.readUInt16LE(6),
+        };
+    }
+    /**
+     * FlashROMに保存されている計測履歴を取得
+     * 終了モードの時に0xFFFFでリクエストすると最新の結果を取得
+     * それ以外の場合は、getFlashRomSearchWaitで取得したIndexを元に取得する
+     *
+     * @param index データIndex
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomHistoryData
+     */
+    async getFlashRomHistoryDataWait(index, timeOffsetMinute) {
+        const buf = Buffer.alloc(2);
+        buf.writeUInt16LE(index, 0);
+        const data = await this.getCommandFlashRomRecodeResultWait(0x43, Uint8Array.from(buf));
+        const recode1 = data.find((value) => value.commandId === 0xc3);
+        const recode2 = data.find((value) => value.commandId === 0xc4);
+        const recode3 = data.find((value) => value.commandId === 0xc5);
+        if (!(recode1 !== undefined && recode2 !== undefined && recode3 !== undefined)) {
+            throw new Error('getFlashRomDataWait error');
+        }
+        const buffer = Buffer.from(recode1.data);
+        const buffer2 = Buffer.from(recode2.data);
+        const buffer3 = Buffer.from(recode3.data);
+        return {
+            index: buffer.readUInt16LE(0),
+            monitoringStatus: {
+                outRange: Boolean(buffer.readUInt8(2) & 0b01000000),
+                changeSetting: Boolean(buffer.readUInt8(2) & 0b00100000),
+                overSumFlow: Boolean(buffer.readUInt8(2) & 0b00010000),
+                lowInstantFlow: Boolean(buffer.readUInt8(2) & 0b00001000),
+                highInstantFlow: Boolean(buffer.readUInt8(2) & 0b00000100),
+                shutdownBattery: Boolean(buffer.readUInt8(2) & 0b00000010),
+                lowBattery: Boolean(buffer.readUInt8(3) & 0b00000001),
+                isError: Boolean(buffer.readUInt8(2)),
+            },
+            monitoringResultStatus: {
+                shutdownBattery: Boolean(buffer.readUInt8(3) & 0b00100000),
+                swFinish: Boolean(buffer.readUInt8(3) & 0b00010000),
+                userFinish: Boolean(buffer.readUInt8(3) & 0b00001000),
+                overSumFlow: Boolean(buffer.readUInt8(3) & 0b00000100),
+                lowSumFlow: Boolean(buffer.readUInt8(3) & 0b00000010),
+                isError: Boolean(buffer.readUInt8(3)),
+            },
+            averageFlowRate: buffer.readUInt16LE(4),
+            sumFlowRate: buffer.readUInt16LE(6),
+            startDatetime: this.convertBufferToDate(buffer, 8, timeOffsetMinute),
+            endDatetime: this.convertBufferToDate(buffer2, 0, timeOffsetMinute),
+            startBatteryVoltage: buffer2.readUInt16LE(8),
+            endBatteryVoltage: buffer2.readUInt16LE(10),
+            logIndex: buffer2.readUInt16LE(12),
+            reserved1: buffer2.readUInt16LE(14),
+            infusionDropCount: buffer3.readUInt16LE(0),
+            targetSumFlowRate: buffer3.readUInt16LE(2),
+            targetFlowRate: buffer3.readUInt16LE(4),
+            correctionFactor: buffer3.readUInt16LE(6),
+            effectiveInstantFlowRate: buffer3.readUInt8(8),
+            finishJudgmentSec: buffer3.readUInt8(9),
+            effectiveIntegratedFlowRate: buffer3.readUInt8(10),
+            powerOffSec: buffer3.readUInt8(11),
+            reserved2: buffer3.readUInt32LE(12),
+        };
+    }
+    convertBufferToDate(buffer, index, timeOffsetMinute) {
+        const d = String('00000000' + buffer.readUInt32LE(index))
+            .slice(-8)
+            .match(/.{2}/g);
+        const t = String('00000000' + buffer.readUInt32LE(index + 4))
+            .slice(-8)
+            .match(/.{2}/g);
+        if (d === null || t === null) {
+            throw new Error('rtc error');
+        }
+        const date = new Date(`${d[0]}${d[1]}/${d[2]}/${d[3]} ${t[1]}:${t[2]}:${t[3]}`);
+        date.setTime(date.getTime() + 1000 * 60 * timeOffsetMinute);
+        return date;
+    }
     async getCommandResultWait(commandId, data, timeoutMs) {
+        const promise = this.createCommandCallback(commandId, timeoutMs);
+        await this.writeCommandWait(commandId, data);
+        return promise;
+    }
+    createCommandCallback(commandId, timeoutMs) {
         return new Promise((resolve, reject) => {
             setTimeout(() => reject(new Error(`timeout command:${commandId}`)), timeoutMs ? timeoutMs : 5000);
             // callbackは0x80を加算する
@@ -26988,8 +27139,16 @@ class DR_MARK {
                 }
                 resolve(notifyData);
             });
-            this.writeCommandWait(commandId, data);
         });
+    }
+    async getCommandFlashRomRecodeResultWait(commandId, data, timeoutMs) {
+        const promise = Promise.all([
+            this.createCommandCallback(commandId, timeoutMs),
+            this.createCommandCallback(commandId + 1, timeoutMs),
+            this.createCommandCallback(commandId + 2, timeoutMs),
+        ]);
+        await this.writeCommandWait(commandId, data);
+        return promise;
     }
     setCommandCallback(commandId, callback) {
         this.callbackArray = [
@@ -81645,7 +81804,7 @@ utils.intFromLE = intFromLE;
 /***/ "./node_modules/elliptic/package.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
