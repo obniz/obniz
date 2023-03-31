@@ -326,7 +326,7 @@ export abstract class ObnizConnection extends EventEmitter<
       debug_dom_id: options.debug_dom_id || 'obniz-debug',
       auto_connect: options.auto_connect === false ? false : true,
       access_token: options.access_token || null,
-      obniz_server: options.obniz_server || 'wss://obniz.io',
+      obniz_server: options.obniz_server || 'wss://device.obniz.com',
       reset_obniz_on_ws_disconnection:
         options.reset_obniz_on_ws_disconnection === false ? false : true,
       obnizid_dialog: options.obnizid_dialog === false ? false : true,

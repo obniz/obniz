@@ -28,7 +28,7 @@ export class ObnizApi {
     options = options || {};
     this.options = {
       access_token: options.access_token || null,
-      obniz_server: options.obniz_server || 'https://obniz.io',
+      obniz_server: options.obniz_server || 'https://console.obniz.com',
     };
     this.urlBase = this.options.obniz_server + '/obniz/' + this.id;
   }
