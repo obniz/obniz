@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.25.0-beta.1",
+  "version": "3.25.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -26194,8 +26194,12 @@ exports.default = Puls08M5stickcS;
  * @module Parts.OMRON_2JCIE
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 /** 2JCIE management class 2JCIEを管理するクラス */
 class OMRON_2JCIE {
     constructor(peripheral) {
@@ -26257,11 +26261,11 @@ class OMRON_2JCIE {
             return {
                 temperature: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[9], adv_data[8]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01,
+                relative_humidity: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[11], adv_data[10]) * 0.01, 2),
                 light: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[13], adv_data[12]) * 1,
-                uv_index: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01,
-                barometric_pressure: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1,
-                sound_noise: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01,
+                uv_index: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[15], adv_data[14]) * 0.01, 2),
+                barometric_pressure: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[17], adv_data[16]) * 0.1, 1),
+                sound_noise: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[19], adv_data[18]) * 0.01, 2),
                 acceleration_x: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[21], adv_data[20]),
                 acceleration_y: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[23], adv_data[22]),
                 acceleration_z: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[25], adv_data[24]),
@@ -26276,10 +26280,10 @@ class OMRON_2JCIE {
             return {
                 temperature: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[10], adv_data[9]) *
                     0.01,
-                relative_humidity: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01,
+                relative_humidity: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[12], adv_data[11]) * 0.01, 2),
                 light: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[14], adv_data[13]) * 1,
-                barometric_pressure: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001,
-                sound_noise: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01,
+                barometric_pressure: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed32FromBinary(adv_data[18], adv_data[17], adv_data[16], adv_data[15]) * 0.001, 3),
+                sound_noise: (0, round_to_1.default)(ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[20], adv_data[19]) * 0.01, 2),
                 etvoc: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[22], adv_data[21]),
                 eco2: ObnizPartsBleInterface_1.ObnizPartsBleInterface.signed16FromBinary(adv_data[24], adv_data[23]),
             };
@@ -26405,15 +26409,15 @@ class OMRON_2JCIE {
         const data = await c.readWait();
         const json = {
             row_number: data[0],
-            temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
-            relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+            temperature: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(1, 3)) * 0.01, 2),
+            relative_humidity: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(3, 5)) * 0.01, 2),
             light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
-            uv_index: this.signedNumberFromBinary(data.slice(7, 9)) * 0.01,
-            barometric_pressure: this.signedNumberFromBinary(data.slice(9, 11)) * 0.1,
-            sound_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
-            discomfort_index: this.signedNumberFromBinary(data.slice(13, 15)) * 0.01,
-            heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(15, 17)) * 0.01,
-            battery_voltage: this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001,
+            uv_index: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(7, 9)) * 0.01, 2),
+            barometric_pressure: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(9, 11)) * 0.1, 1),
+            sound_noise: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(11, 13)) * 0.01, 2),
+            discomfort_index: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(13, 15)) * 0.01, 2),
+            heatstroke_risk_factor: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(15, 17)) * 0.01, 2),
+            battery_voltage: (0, round_to_1.default)(this.unsignedNumberFromBinary(data.slice(17, 19)) * 0.001, 3),
         };
         return json;
     }
@@ -26438,11 +26442,11 @@ class OMRON_2JCIE {
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],
-            temperature: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
-            relative_humidity: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+            temperature: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(1, 3)) * 0.01, 2),
+            relative_humidity: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(3, 5)) * 0.01, 2),
             light: this.signedNumberFromBinary(data.slice(5, 7)) * 1,
-            barometric_pressure: this.signedNumberFromBinary(data.slice(7, 11)) * 0.001,
-            sound_noise: this.signedNumberFromBinary(data.slice(11, 13)) * 0.01,
+            barometric_pressure: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(7, 11)) * 0.001, 3),
+            sound_noise: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(11, 13)) * 0.01, 2),
             etvoc: this.signedNumberFromBinary(data.slice(13, 15)) * 1,
             eco2: this.signedNumberFromBinary(data.slice(15, 17)) * 1,
         };
@@ -26469,12 +26473,12 @@ class OMRON_2JCIE {
         const data = await c.readWait();
         const json = {
             sequence_number: data[0],
-            discomfort_index: this.signedNumberFromBinary(data.slice(1, 3)) * 0.01,
-            heatstroke_risk_factor: this.signedNumberFromBinary(data.slice(3, 5)) * 0.01,
+            discomfort_index: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(1, 3)) * 0.01, 2),
+            heatstroke_risk_factor: (0, round_to_1.default)(this.signedNumberFromBinary(data.slice(3, 5)) * 0.01, 2),
             vibration_information: this.vibrationState[data[5]],
-            si_value: this.unsignedNumberFromBinary(data.slice(6, 8)) * 0.1,
-            pga: this.unsignedNumberFromBinary(data.slice(8, 10)) * 0.1,
-            seismic_intensity: this.unsignedNumberFromBinary(data.slice(10, 12)) * 0.001,
+            si_value: (0, round_to_1.default)(this.unsignedNumberFromBinary(data.slice(6, 8)) * 0.1, 1),
+            pga: (0, round_to_1.default)(this.unsignedNumberFromBinary(data.slice(8, 10)) * 0.1, 1),
+            seismic_intensity: (0, round_to_1.default)(this.unsignedNumberFromBinary(data.slice(10, 12)) * 0.001, 3),
             acceleration_x: this.signedNumberFromBinary(data.slice(12, 14)) * 1,
             acceleration_y: this.signedNumberFromBinary(data.slice(14, 16)) * 1,
             acceleration_z: this.signedNumberFromBinary(data.slice(16, 18)) * 1,
@@ -26503,6 +26507,7 @@ class DR_MARK {
     constructor(peripheral) {
         this.keys = [];
         this.requiredKeys = [];
+        this.onsystempulse = null;
         this._peripheral = null;
         this._uuids = {
             deviceInfoSystem: '180a',
@@ -26514,6 +26519,81 @@ class DR_MARK {
         };
         this._deviceInfoSystem = null;
         this._requestChar = null;
+        this.callbackArray = [];
+        this.notifyCallback = (data) => {
+            let result = 'errorId';
+            switch (data[1]) {
+                case 0:
+                    result = 'ok';
+                    break;
+                case 0xf0:
+                    result = 'errorId';
+                    break;
+                case 0xf1:
+                    result = 'errorMode';
+                    break;
+                case 0xf2:
+                    result = 'errorExecution';
+                    break;
+                case 0xf3:
+                    result = 'errorParams';
+                    break;
+                case 0xf4:
+                    result = 'errorFrom';
+                    break;
+                case 0xf5:
+                    result = 'errorTimeout';
+                    break;
+                case 0xf6:
+                    result = 'errorObject';
+                    break;
+            }
+            const notifyData = {
+                commandId: data[0],
+                result,
+                data: data.slice(2),
+            };
+            if (DR_MARK.onnotify && typeof DR_MARK.onnotify === 'function') {
+                DR_MARK.onnotify(notifyData);
+            }
+            if (DR_MARK.onfinish &&
+                typeof DR_MARK.onfinish === 'function' &&
+                notifyData.commandId === 0x88) {
+                DR_MARK.onfinish();
+            }
+            const callback = this.callbackArray.filter((value) => value.commandId === notifyData.commandId);
+            callback.forEach((value) => value.function(notifyData));
+            if (notifyData.commandId === 0xa0) {
+                const buffer = Buffer.from(notifyData.data);
+                const status = buffer.readUInt8(7);
+                const scanData = {
+                    sequenceNumber: buffer.readUInt32LE(0),
+                    pulse: buffer.readUInt32LE(4) & 0x0fff,
+                    status,
+                    error: {
+                        outRange: Boolean(status & 0b01000000),
+                        changeSetting: Boolean(status & 0b00100000),
+                        overSumFlow: Boolean(status & 0b00010000),
+                        lowInstantFlow: Boolean(status & 0b00001000),
+                        highInstantFlow: Boolean(status & 0b00000100),
+                        shutdownBattery: Boolean(status & 0b00000010),
+                        lowBattery: Boolean(status & 0b00000001),
+                        isError: Boolean(status),
+                    },
+                    instantFlowRate: buffer.readUInt16LE(8),
+                    sumFlowRate: buffer.readUInt16LE(10),
+                    averageFlowRate: buffer.readUInt16LE(12),
+                    batteryVoltage: buffer.readUInt16LE(14),
+                };
+                DR_MARK.pulseDataArray.push(scanData);
+                if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
+                    DR_MARK.onpulse(scanData);
+                }
+                if (this.onsystempulse && typeof this.onsystempulse === 'function') {
+                    this.onsystempulse(scanData);
+                }
+            }
+        };
         if (peripheral && !DR_MARK.isDevice(peripheral)) {
             throw new Error('peripheral is not DR_MARK');
         }
@@ -26923,9 +27003,12 @@ class DR_MARK {
      */
     async getPulseDataWait(timeoutMs) {
         return new Promise((resolve, reject) => {
-            setTimeout(() => reject(new Error('timeout')), timeoutMs ? timeoutMs : 5000);
-            DR_MARK.onsystempulse = (data) => {
-                DR_MARK.onsystempulse = null;
+            setTimeout(() => {
+                this.onsystempulse = null;
+                reject(new Error('timeout'));
+            }, timeoutMs ? timeoutMs : 5000);
+            this.onsystempulse = (data) => {
+                this.onsystempulse = null;
                 this.requestPulseDataWait(false).then(() => resolve(data));
             };
             this.requestPulseDataWait(true);
@@ -26946,96 +27029,19 @@ class DR_MARK {
         });
     }
     setCommandCallback(commandId, callback) {
-        DR_MARK.callbackArray = [
-            ...DR_MARK.callbackArray,
+        this.callbackArray = [
+            ...this.callbackArray,
             { commandId, function: callback },
         ];
     }
     removeCommandCallback(commandId) {
-        DR_MARK.callbackArray = DR_MARK.callbackArray.filter((value) => value.commandId !== commandId);
-    }
-    notifyCallback(data) {
-        let result = 'errorId';
-        switch (data[1]) {
-            case 0:
-                result = 'ok';
-                break;
-            case 0xf0:
-                result = 'errorId';
-                break;
-            case 0xf1:
-                result = 'errorMode';
-                break;
-            case 0xf2:
-                result = 'errorExecution';
-                break;
-            case 0xf3:
-                result = 'errorParams';
-                break;
-            case 0xf4:
-                result = 'errorFrom';
-                break;
-            case 0xf5:
-                result = 'errorTimeout';
-                break;
-            case 0xf6:
-                result = 'errorObject';
-                break;
-        }
-        const notifyData = {
-            commandId: data[0],
-            result,
-            data: data.slice(2),
-        };
-        if (DR_MARK.onnotify && typeof DR_MARK.onnotify === 'function') {
-            DR_MARK.onnotify(notifyData);
-        }
-        if (DR_MARK.onfinish &&
-            typeof DR_MARK.onfinish === 'function' &&
-            notifyData.commandId === 0x88) {
-            DR_MARK.onfinish();
-        }
-        const callback = DR_MARK.callbackArray.filter((value) => value.commandId === notifyData.commandId);
-        callback.forEach((value) => value.function(notifyData));
-        if (notifyData.commandId === 0xa0) {
-            const buffer = Buffer.from(notifyData.data);
-            const status = buffer.readUInt8(7);
-            const scanData = {
-                sequenceNumber: buffer.readUInt32LE(0),
-                pulse: buffer.readUInt32LE(4) & 0x0fff,
-                status,
-                error: {
-                    outRange: Boolean(status & 0b01000000),
-                    changeSetting: Boolean(status & 0b00100000),
-                    overSumFlow: Boolean(status & 0b00010000),
-                    lowInstantFlow: Boolean(status & 0b00001000),
-                    highInstantFlow: Boolean(status & 0b00000100),
-                    shutdownBattery: Boolean(status & 0b00000010),
-                    lowBattery: Boolean(status & 0b00000001),
-                    isError: Boolean(status),
-                },
-                instantFlowRate: buffer.readUInt16LE(8),
-                sumFlowRate: buffer.readUInt16LE(10),
-                averageFlowRate: buffer.readUInt16LE(12),
-                batteryVoltage: buffer.readUInt16LE(14),
-            };
-            DR_MARK.pulseDataArray.push(scanData);
-            if (DR_MARK.onpulse && typeof DR_MARK.onpulse === 'function') {
-                DR_MARK.onpulse(scanData);
-            }
-            if (DR_MARK.onsystempulse &&
-                typeof DR_MARK.onsystempulse === 'function') {
-                DR_MARK.onsystempulse(scanData);
-            }
-        }
+        this.callbackArray = this.callbackArray.filter((value) => value.commandId !== commandId);
     }
 }
 exports.default = DR_MARK;
 DR_MARK.onnotify = null;
 DR_MARK.onfinish = null;
 DR_MARK.onpulse = null;
-DR_MARK.onsystempulse = null;
-DR_MARK.callbackArray = [];
 DR_MARK.pulseDataArray = [];
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
@@ -30179,7 +30185,7 @@ class MT_500BT {
      * 通信開始コマンドを送信
      */
     async startCommunicationCommandWait() {
-        const cnkey = '' + MT_500BT.getCNKey(this._peripheral); // to string
+        const cnkey = ('' + MT_500BT.getCNKey(this._peripheral)).padStart(4, '0'); // to string
         const CNKeyBuf = Buffer.from(cnkey, 'utf8');
         const startCommand = this._createCommand(0xfd, Array.from(CNKeyBuf));
         // console.log("sendDataReplyWait");
@@ -30975,6 +30981,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ObnizPartsBleAbstract_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleAbstract.js");
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
 const LED_DISPLAY_MODE = ['Disable', 'PM2.5', 'CO2'];
 const PM2_5_CONCENTRATION_MODE = ['Mass', 'Number'];
 /** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
@@ -30994,6 +31001,13 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         this.firmwareRevision = '';
         this.firmwareSemRevision = null;
     }
+    static isDevice(peripheral) {
+        var _a;
+        if (!((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.match(this.LocalName))) {
+            return false;
+        }
+        return true;
+    }
     /**
      * Connect to the services of a device
      *
@@ -31003,6 +31017,35 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         await super.connectWait();
         this.firmwareRevision = Buffer.from(await this.readCharWait('180A', '2A26')).toString();
         this.firmwareSemRevision = semver_1.default.parse(this.firmwareRevision.replace('Ver.', ''));
+    }
+    static getData(peripheral) {
+        var _a;
+        if (!RS_BTEVS1.isDevice(peripheral)) {
+            return null;
+        }
+        const measureData = RS_BTEVS1._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'data');
+        if (!measureData)
+            return null;
+        if ((_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('BT')) {
+            return {
+                co2: Buffer.from(measureData).readUInt16LE(0),
+                pm1_0: Buffer.from(measureData).readUInt8(2),
+                pm2_5: Buffer.from(measureData).readUInt8(3),
+                pm4_0: Buffer.from(measureData).readUInt8(4),
+                pm10_0: Buffer.from(measureData).readUInt8(5),
+                temp: Buffer.from(measureData).readUInt8(6),
+                humid: Buffer.from(measureData).readUInt8(7),
+            };
+        }
+        return {
+            co2: Buffer.from(measureData).readUInt16LE(0),
+            pm1_0: Buffer.from(measureData).readUInt8(2),
+            pm2_5: Buffer.from(measureData).readUInt8(3),
+            pm4_0: Buffer.from(measureData).readUInt8(4),
+            pm10_0: Buffer.from(measureData).readUInt8(5),
+            temp: Buffer.from(measureData).readInt16LE(6) / 10,
+            humid: Buffer.from(measureData).readUInt8(8),
+        };
     }
     /**
      * Get device all data
@@ -31035,6 +31078,9 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
         });
     }
     async beforeOnDisconnectWait() {
+        if (!this.firmwareSemRevision) {
+            return;
+        }
         if (semver_1.default.gte(this.firmwareSemRevision, '1.1.2')) {
             await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
             // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
@@ -31208,8 +31254,9 @@ RS_BTEVS1.PartsName = 'RS_BTEVS1';
 /**
  * BTEVS-1234: ~1.0.2
  * EVS-1234: 1.1.2~
+ * EVS_1234 1.2~
  */
-RS_BTEVS1.LocalName = /^(BT)?EVS-[0-9A-F]{4}/;
+RS_BTEVS1.LocalName = /^(BT)?EVS[-_][0-9A-F]{4}/;
 // public static readonly BeaconDataLength: ObnizPartsBleCompare<
 //   number | null
 // > = 0x0c;
@@ -31249,6 +31296,7 @@ RS_BTEVS1.BeaconDataStruct = {
         length: 2,
         type: 'custom',
         multiple: 0.1,
+        round: 1,
         func: (data, p) => {
             var _a, _b, _c;
             return ((_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + 1 === 0x0b &&
@@ -31270,6 +31318,14 @@ RS_BTEVS1.BeaconDataStruct = {
         },
     },
 };
+RS_BTEVS1._deviceAdvAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x03, 0x19, 0x40, 0x05, 0x02, 0x01, 0x05])
+    .groupStart('manufacture')
+    .addTarget('length', [0x0c])
+    .addTarget('type', [0xff])
+    .addTargetByLength('companyId', 2)
+    .addTargetByLength('data', 9)
+    .groupEnd();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -32552,8 +32608,12 @@ STM550B.CompanyID = {
  * @module Parts.TR4
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 /** Tr4 series management class Tr4シリーズを管理するクラス */
 class Tr4 {
     constructor() {
@@ -32609,7 +32669,7 @@ class Tr4 {
         }
         const temperatureRaw = Buffer.from(measureData).readInt16LE(0);
         return {
-            temperature: (temperatureRaw - 1000) / 10,
+            temperature: (0, round_to_1.default)((temperatureRaw - 1000) / 10, 1),
         };
     }
 }
@@ -33398,6 +33458,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const eventemitter3_1 = __webpack_require__("./node_modules/eventemitter3/index.js");
 const moment_1 = __importDefault(__webpack_require__("./node_modules/moment/moment.js"));
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 const arrUserNoType = [1, 2, 3, 4, 5];
 const arrGuestUserNoType = [99];
 /**
@@ -33826,7 +33887,7 @@ class UC421BLE {
                     result.weight = null;
                 }
                 else {
-                    const weightFloat = weightInt * resolutionWeight;
+                    const weightFloat = (0, round_to_1.default)(weightInt * resolutionWeight, 3);
                     result.weight = { unit: measurementUnit, value: weightFloat };
                 }
                 const byteLenWeight = 2;
@@ -33869,12 +33930,12 @@ class UC421BLE {
                 if (bmiAndHeightPresent) {
                     const resolutionBmi = 0.1;
                     const bmiMass = buf.readUInt16LE(offset);
-                    const bmi = bmiMass * resolutionBmi;
+                    const bmi = (0, round_to_1.default)(bmiMass * resolutionBmi, 1);
                     const byteLenBmi = 2;
                     offset += byteLenBmi;
                     const resolutionHeight = 0.1;
                     const heightMass = buf.readUInt16LE(offset);
-                    const height = heightMass * resolutionHeight;
+                    const height = (0, round_to_1.default)(heightMass * resolutionHeight, 1);
                     const byteLenHeight = 2;
                     offset += byteLenHeight;
                     result.bmi = bmi;
@@ -34016,7 +34077,7 @@ class UC421BLE {
                         result.muscleMass = null;
                     }
                     else {
-                        const mascleMassFloat = mascleMassInt * resolutionMascleMass;
+                        const mascleMassFloat = (0, round_to_1.default)(mascleMassInt * resolutionMascleMass, 3);
                         result.muscleMass = {
                             unit: measurementUnit,
                             value: mascleMassFloat,
@@ -34033,7 +34094,7 @@ class UC421BLE {
                         result.bodyWaterMass = null;
                     }
                     else {
-                        const bodyWaterMassFloat = bodyWaterMassInt * resolutionBodyWaterMass;
+                        const bodyWaterMassFloat = (0, round_to_1.default)(bodyWaterMassInt * resolutionBodyWaterMass, 3);
                         result.bodyWaterMass = {
                             unit: measurementUnit,
                             value: bodyWaterMassFloat,
@@ -34481,7 +34542,7 @@ class UT201BLE {
         });
         const { timeChar, customServiceChar } = this._getChars();
         await this._writeTimeCharWait(this._timezoneOffsetMinute);
-        await customServiceChar.writeWait([2, 1, 3]); // disconnect req
+        // await customServiceChar.writeWait([2, 1, 3]); // disconnect req
         return key;
     }
     /**
@@ -34659,6 +34720,7 @@ VitalBand.Config = {
         index: 4,
         length: 2,
         multiple: 0.01,
+        round: 2,
     },
     blood_pleasure_high: {
         type: 'numBE',
@@ -41918,6 +41980,7 @@ BaseiBS.Config = {
         length: 2,
         type: 'unsignedNumLE',
         multiple: 0.01,
+        round: 2,
     },
     button: {
         index: 4,
@@ -41946,6 +42009,7 @@ BaseiBS.Config = {
         length: 2,
         type: 'numLE',
         multiple: 0.01,
+        round: 2,
     },
     humidity: {
         index: 7,

@@ -4,24 +4,17 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import Obniz, {
-  BleRemoteCharacteristic,
-  BleRemotePeripheral,
-} from '../../../obniz';
+import { BleRemotePeripheral } from '../../../obniz';
 import {
-  ObnizPartsInterface,
-  ObnizPartsInfo,
-} from '../../../obniz/ObnizPartsInterface';
-import {
-  ObnizPartsBleConnectable,
-  ObnizPartsBleCompare,
-  ObnizBleBeaconStruct,
-  ObnizPartsBleMode,
-  uintToArray,
   int,
+  ObnizBleBeaconStruct,
+  ObnizPartsBleCompare,
+  ObnizPartsBleConnectable,
+  ObnizPartsBleMode,
   uint,
 } from '../../../obniz/ObnizPartsBleAbstract';
 import semver from 'semver';
+import { BleAdvBinaryAnalyzer } from '../utils/advertisement/advertismentAnalyzer';
 
 export interface RS_BTEVS1Options {}
 
@@ -142,8 +135,9 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   /**
    * BTEVS-1234: ~1.0.2
    * EVS-1234: 1.1.2~
+   * EVS_1234 1.2~
    */
-  public static readonly LocalName = /^(BT)?EVS-[0-9A-F]{4}/;
+  public static readonly LocalName = /^(BT)?EVS[-_][0-9A-F]{4}/;
 
   // public static readonly BeaconDataLength: ObnizPartsBleCompare<
   //   number | null
@@ -186,6 +180,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
       length: 2,
       type: 'custom', // 'numLE',
       multiple: 0.1,
+      round: 1,
       func: (data, p) =>
         (p.manufacturerSpecificData?.length ?? 0) + 1 === 0x0b &&
         (p.localName ?? '').startsWith('BT')
@@ -221,6 +216,13 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
 
   private firmwareSemRevision: semver.SemVer | null = null;
 
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    if (!peripheral.localName?.match(this.LocalName)) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * Connect to the services of a device
    *
@@ -232,9 +234,57 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
     this.firmwareRevision = Buffer.from(
       await this.readCharWait('180A', '2A26')
     ).toString();
+
     this.firmwareSemRevision = semver.parse(
       this.firmwareRevision.replace('Ver.', '')
     );
+  }
+
+  private static _deviceAdvAnalyzer = new BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x03, 0x19, 0x40, 0x05, 0x02, 0x01, 0x05])
+    .groupStart('manufacture')
+    .addTarget('length', [0x0c])
+    .addTarget('type', [0xff])
+    .addTargetByLength('companyId', 2)
+    .addTargetByLength('data', 9)
+    .groupEnd();
+
+  public static getData(
+    peripheral: BleRemotePeripheral
+  ): RS_BTEVS1_Data | null {
+    if (!RS_BTEVS1.isDevice(peripheral)) {
+      return null;
+    }
+
+    const measureData = RS_BTEVS1._deviceAdvAnalyzer.getData(
+      peripheral.adv_data,
+      'manufacture',
+      'data'
+    );
+
+    if (!measureData) return null;
+
+    if (peripheral.localName?.startsWith('BT')) {
+      return {
+        co2: Buffer.from(measureData).readUInt16LE(0),
+        pm1_0: Buffer.from(measureData).readUInt8(2),
+        pm2_5: Buffer.from(measureData).readUInt8(3),
+        pm4_0: Buffer.from(measureData).readUInt8(4),
+        pm10_0: Buffer.from(measureData).readUInt8(5),
+        temp: Buffer.from(measureData).readUInt8(6),
+        humid: Buffer.from(measureData).readUInt8(7),
+      };
+    }
+
+    return {
+      co2: Buffer.from(measureData).readUInt16LE(0),
+      pm1_0: Buffer.from(measureData).readUInt8(2),
+      pm2_5: Buffer.from(measureData).readUInt8(3),
+      pm4_0: Buffer.from(measureData).readUInt8(4),
+      pm10_0: Buffer.from(measureData).readUInt8(5),
+      temp: Buffer.from(measureData).readInt16LE(6) / 10,
+      humid: Buffer.from(measureData).readUInt8(8),
+    };
   }
 
   /**
@@ -270,6 +320,9 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   }
 
   protected async beforeOnDisconnectWait(): Promise<void> {
+    if (!this.firmwareSemRevision) {
+      return;
+    }
     if (semver.gte(this.firmwareSemRevision!, '1.1.2')) {
       await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1524));
       // await this.unsubscribeWait(this.serviceUuid, this.getCharUuid(0x1525));
