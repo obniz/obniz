@@ -27036,9 +27036,9 @@ class DR_MARK {
         buf.writeUInt32LE(startDate.getUTCFullYear() * 10000 +
             (startDate.getUTCMonth() + 1) * 100 +
             startDate.getUTCDate(), 0);
-        buf.writeUInt32LE(endDate.getUTCHours() * 10000 +
-            endDate.getUTCMinutes() * 100 +
-            endDate.getUTCSeconds(), 4);
+        buf.writeUInt32LE(endDate.getUTCFullYear() * 10000 +
+            (endDate.getUTCMonth() + 1) * 100 +
+            endDate.getUTCDate(), 4);
         const data = await this.getCommandResultWait(0x42, Uint8Array.from(buf));
         const buffer = Buffer.from(data.data);
         return {
@@ -27060,7 +27060,7 @@ class DR_MARK {
     async getFlashRomHistoryDataWait(index, timeOffsetMinute) {
         const buf = Buffer.alloc(2);
         buf.writeUInt16LE(index, 0);
-        const data = await this.getCommandFlashRomRecodeResultWait(0x43, Uint8Array.from(buf));
+        const data = await this.getCommandFlashRomHistoryWait(0x43, Uint8Array.from(buf));
         const recode1 = data.find((value) => value.commandId === 0xc3);
         const recode2 = data.find((value) => value.commandId === 0xc4);
         const recode3 = data.find((value) => value.commandId === 0xc5);
@@ -27079,7 +27079,7 @@ class DR_MARK {
                 lowInstantFlow: Boolean(buffer.readUInt8(2) & 0b00001000),
                 highInstantFlow: Boolean(buffer.readUInt8(2) & 0b00000100),
                 shutdownBattery: Boolean(buffer.readUInt8(2) & 0b00000010),
-                lowBattery: Boolean(buffer.readUInt8(3) & 0b00000001),
+                lowBattery: Boolean(buffer.readUInt8(2) & 0b00000001),
                 isError: Boolean(buffer.readUInt8(2)),
             },
             monitoringResultStatus: {
@@ -27141,7 +27141,7 @@ class DR_MARK {
             });
         });
     }
-    async getCommandFlashRomRecodeResultWait(commandId, data, timeoutMs) {
+    async getCommandFlashRomHistoryWait(commandId, data, timeoutMs) {
         const promise = Promise.all([
             this.createCommandCallback(commandId, timeoutMs),
             this.createCommandCallback(commandId + 1, timeoutMs),

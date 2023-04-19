@@ -735,9 +735,9 @@ export default class DR_MARK implements ObnizPartsBleInterface {
       0
     );
     buf.writeUInt32LE(
-      endDate.getUTCHours() * 10000 +
-        endDate.getUTCMinutes() * 100 +
-        endDate.getUTCSeconds(),
+      endDate.getUTCFullYear() * 10000 +
+        (endDate.getUTCMonth() + 1) * 100 +
+        endDate.getUTCDate(),
       4
     );
 
@@ -768,7 +768,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     const buf = Buffer.alloc(2);
     buf.writeUInt16LE(index, 0);
 
-    const data = await this.getCommandFlashRomRecodeResultWait(
+    const data = await this.getCommandFlashRomHistoryWait(
       0x43,
       Uint8Array.from(buf)
     );
@@ -792,7 +792,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
         lowInstantFlow: Boolean(buffer.readUInt8(2) & 0b00001000),
         highInstantFlow: Boolean(buffer.readUInt8(2) & 0b00000100),
         shutdownBattery: Boolean(buffer.readUInt8(2) & 0b00000010),
-        lowBattery: Boolean(buffer.readUInt8(3) & 0b00000001),
+        lowBattery: Boolean(buffer.readUInt8(2) & 0b00000001),
         isError: Boolean(buffer.readUInt8(2)),
       },
       monitoringResultStatus: {
@@ -876,7 +876,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
     });
   }
 
-  private async getCommandFlashRomRecodeResultWait(
+  private async getCommandFlashRomHistoryWait(
     commandId: number,
     data?: Uint8Array,
     timeoutMs?: number
