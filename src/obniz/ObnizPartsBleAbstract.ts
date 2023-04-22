@@ -67,12 +67,14 @@ export type ObnizBleBeaconStructNormal<
   S,
   key extends keyof S
 > = ObnizBleBeaconStructStandard<NormalValueType> & {
-  /** Default: 1 (ex: parseInt() * multiple) */
+  /** Default: 0 (def: base + parseInt() * multiple) */
+  base?: number;
+  /** Default: 1 (def: base + parseInt() * multiple) */
   multiple?: number;
+  /** Default: none (ex: 0.1234 --(round: 2)-> 0.12) */
+  round?: number;
   /** Number of bytes in the integer part with fixed point */
   fixedIntegerBytes?: number;
-  /** round precision */
-  round?: number;
   /** Required in array type, Only in xyz */
   // repeat?: number;
   /** Used only 'custom' */
@@ -86,7 +88,10 @@ export type ObnizBleBeaconStructCheck = ObnizBleBeaconStructStandard<ValueType> 
 
 export const notMatchDeviceError = new Error('Is NOT target device.');
 
-export const fixedPoint = (value: number[], integerBytes: number): number => {
+export const fixedPoint = (
+  value: number[] | Uint8Array,
+  integerBytes: number
+): number => {
   const positive = value[0] >> 7 === 0;
   if (!positive) {
     value = value.map((n, i) => (n ^ 0xff) + (i === value.length - 1 ? 1 : 0));
@@ -99,13 +104,13 @@ export const fixedPoint = (value: number[], integerBytes: number): number => {
   return val;
 };
 
-export const uint = (value: number[]): number => {
+export const uint = (value: number[] | Uint8Array): number => {
   let val = 0;
   value.forEach((v, i) => (val += v << (i * 8)));
   return val;
 };
 
-export const int = (value: number[]): number => {
+export const int = (value: number[] | Uint8Array): number => {
   const num = uint(value);
   return (
     num -
@@ -117,14 +122,39 @@ export const int = (value: number[]): number => {
   );
 };
 
-export const uintBE = (value: number[]): number => uint(value.reverse());
+export const uintBE = (value: number[] | Uint8Array): number =>
+  uint(value.reverse());
 
-export const intBE = (value: number[]): number => int(value.reverse());
+export const intBE = (value: number[] | Uint8Array): number =>
+  int(value.reverse());
 
-export const uintToArray = (value: number, length = 2): number[] =>
-  new Array(length)
+export const uintToArray = (value: number, length = 2): Uint8Array =>
+  new Uint8Array(length)
     .fill(0)
     .map((v, i) => value % (1 << ((i + 1) * 8)) >> (i * 8));
+
+export const uintToArrayWithBE = (value: number, length = 2): Uint8Array =>
+  uintToArray(value, length).reverse();
+
+export const fixByRange = (
+  name: string,
+  value: number,
+  min: number,
+  max: number
+): number => {
+  if (value < min) {
+    console.warn(`Since ${name} ranges from ${min} to ${max}, ${min} is used.`);
+    return min;
+  }
+  if (value > max) {
+    console.warn(`Since ${name} ranges from ${min} to ${max}, ${max} is used.`);
+    return max;
+  }
+  return value;
+};
+
+export const checkEquals = (base: Uint8Array, target: Uint8Array): boolean =>
+  base.filter((v, i) => v !== target[i]).length === 0;
 
 export interface ObnizPartsBleProps extends ObnizPartsProps {
   readonly PartsName: PartsType;
@@ -219,8 +249,10 @@ export abstract class ObnizPartsBle<S> {
   > = undefined;
 
   /**
+   * Overall length of manufacturer-specific data.
    * Used as a condition of isDevice() by default.
    *
+   * 製造者固有データ全体の長さ
    * 標準でisDevice()の条件として使用
    */
   public static readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<
@@ -548,8 +580,11 @@ export abstract class ObnizPartsBle<S> {
 
   /**
    * アドバタイジングデータを連想配列に成形
+   *
    * 利用可能なモード: Beacon, Connectable(一部のみ)
+   *
    * Form advertising data into an associative array
+   *
    * Available modes: Beacon, Connectable(only part)
    */
   public getData(): S {
@@ -613,6 +648,7 @@ export abstract class ObnizPartsBle<S> {
             if (!config.func) return [];
             else return [name, config.func(vals, this.peripheral)];
           else {
+            const base = config.base ?? 0;
             const multi = config.multiple ?? 1;
             const f = (d: number[]): number =>
               config.fixedIntegerBytes !== undefined
@@ -620,7 +656,7 @@ export abstract class ObnizPartsBle<S> {
                 : (config.type.indexOf('u') === 0 ? uint : int)(
                     config.type.indexOf('BE') >= 0 ? d.reverse() : d
                   );
-            const num = f(vals) * multi;
+            const num = base + f(vals) * multi;
             return [
               name,
               config.round !== undefined ? roundTo(num, config.round) : num,
@@ -789,7 +825,7 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
   protected async writeCharWait(
     serviceUuid: string,
     characteristicUuid: string,
-    data?: number[],
+    data?: number[] | string | Buffer,
     needResponse?: boolean
   ): Promise<boolean> {
     const characteristic = this.getChar(serviceUuid, characteristicUuid);
