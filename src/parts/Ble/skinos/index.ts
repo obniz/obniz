@@ -215,10 +215,10 @@ export default class Skinos implements ObnizPartsBleInterface {
         atmospheric_pressure: data[17] * 256 + data[18],
       };
     } else {
-      console.log('something wrong');
+      console.log(`something wrong: data [${data}]`);
     }
 
-    if (this.log[timestamp.toString()]) {
+    if (Object.keys(this.log[timestamp.toString()]).length !== 0) {
       this.log[timestamp.toString()] = Object.assign(
         this.log[timestamp.toString()],
         log
@@ -294,7 +294,7 @@ export default class Skinos implements ObnizPartsBleInterface {
 
   // デバイスに保存されているデータ量によって2〜10分近くかかる。
   public async getAllDataWait() {
-    const allData: any = [];
+    let allData: any = [];
     for (let blockNo = 1; blockNo <= 9; blockNo++) {
       const res = await this.commandGBWait(blockNo);
       if (res) {
@@ -313,7 +313,9 @@ export default class Skinos implements ObnizPartsBleInterface {
             unixTime * 1000 + 1000 * 60 * 60 * this._timeZoneOffset
           );
           const data = await this.getOnePageDataWait(pageNo);
-          allData.push(data);
+          if (data.length > 0) {
+            allData = allData.concat(data);
+          }
         }
       }
     }
@@ -321,7 +323,7 @@ export default class Skinos implements ObnizPartsBleInterface {
   }
 
   public async getDataAfterDateWait(date: Date) {
-    const allData: any = [];
+    let allData: any = [];
     for (let blockNo = 1; blockNo <= 9; blockNo++) {
       const res = await this.commandGBWait(blockNo);
       if (res) {
@@ -342,7 +344,7 @@ export default class Skinos implements ObnizPartsBleInterface {
           // 指定された日時以降のデータ
           if (timestamp.getTime() > date.getTime()) {
             const data = await this.getOnePageDataWait(pageNo);
-            allData.push(data);
+            allData = allData.concat(data);
           }
         }
       }
