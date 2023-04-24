@@ -124,7 +124,6 @@ export default class Skinos implements ObnizPartsBleInterface {
   // base送受信
   public async readCommandWait() {
     try {
-      // await this.commandReadChara?.readWait()
       return await this.commandReadChara?.readWait();
     } catch (e) {
       console.log(e);
@@ -168,7 +167,6 @@ export default class Skinos implements ObnizPartsBleInterface {
 
   public async writeNotifyWait(array: number[]) {
     try {
-      console.log(`notify write${array}`);
       await this.writeNotifyChara?.writeWait(array, false);
       // await this.writeNotifyChara?.writeWait(array);
     } catch (e) {
@@ -178,7 +176,6 @@ export default class Skinos implements ObnizPartsBleInterface {
 
   private analyNotifydata(data: number[]) {
     if (data[0] === 0xff && data[1] === 0xff && data[2] === 0xff) {
-      console.log('end');
       this.isNotifyReadEnd = true;
       return;
     }
@@ -288,7 +285,6 @@ export default class Skinos implements ObnizPartsBleInterface {
       }
       await this.wait(200);
     }
-    console.log('notify data recieve end');
     const data = this.allData;
     this.allData = [];
     this.log = {};
@@ -307,7 +303,6 @@ export default class Skinos implements ObnizPartsBleInterface {
           if (pageNo > 60) {
             break;
           }
-          console.log(`page${pageNo} data getting`);
 
           const unixTime =
             res[i * 4] * 16777216 +
@@ -318,12 +313,6 @@ export default class Skinos implements ObnizPartsBleInterface {
             unixTime * 1000 + 1000 * 60 * 60 * this._timeZoneOffset
           );
           const data = await this.getOnePageDataWait(pageNo);
-          const onePageData = {
-            page: pageNo,
-            data,
-          };
-          console.log(`page${pageNo} data recieved`);
-
           allData.push(data);
         }
       }
@@ -353,11 +342,6 @@ export default class Skinos implements ObnizPartsBleInterface {
           // 指定された日時以降のデータ
           if (timestamp.getTime() > date.getTime()) {
             const data = await this.getOnePageDataWait(pageNo);
-            // const onePageData = {
-            //   "after":"AFTER",
-            //   "page": pageNo,
-            //   "data": data
-            // }
             allData.push(data);
           }
         }
@@ -393,7 +377,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
     if (buf[1] !== res![1] || seqNo !== res![2]) {
-      console.log('Inconsistency between sent and received data.');
+      console.log(`GA[${buf}]: Inconsistency between sent and received data.`);
     }
     const prodInfo = {
       deviceName: String.fromCharCode.apply(null, res!.slice(3, 11)),
@@ -413,7 +397,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     const res = await this.readCommandWait();
     if (res![1] !== 0x4c || seqNo !== res![2]) {
       // 0x4c=76
-      console.log('Inconsistency between sent and received data.');
+      console.log(`GB[${buf}]: Inconsistency between sent and received data.`);
     }
     return res;
   }
@@ -427,7 +411,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     const res = await this.readCommandWait();
     // GCを送信すると、GGが返ってくる。
     if (res![0] !== 0x47 || res![1] !== 0x47) {
-      console.log('Inconsistency between sent and received data.');
+      console.log(`GC[${buf}]: Inconsistency between sent and received data.`);
     }
   }
 
@@ -439,7 +423,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
     if (buf[1] !== res![1] || seqNo !== res![2]) {
-      console.log('Inconsistency between sent and received data.');
+      console.log(`GD[${buf}]: Inconsistency between sent and received data.`);
     }
     const sysmReq = {
       // 補正係数値
@@ -467,18 +451,15 @@ export default class Skinos implements ObnizPartsBleInterface {
     const seqNo = this.randomNum(0, 255);
     const cmd = 'GF';
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo];
-    console.log(`GF command:${buf}`);
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
-    console.log(`GF command res: ${res}`);
     if (buf[1] !== res![1] || seqNo !== res![2]) {
-      console.log('Inconsistency between sent and received data.');
+      console.log(`GF[${buf}]: Inconsistency between sent and received data.`);
     }
     const codeInfo = {
       companyCode: String.fromCharCode.apply(null, res!.slice(3, 6)),
       userCode: String.fromCharCode.apply(null, res!.slice(6, 10)),
     };
-    console.log(`code info : ${JSON.stringify(codeInfo)}`);
     return codeInfo;
   }
 
@@ -488,8 +469,6 @@ export default class Skinos implements ObnizPartsBleInterface {
     const cmd = 'GG';
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo];
     await this.writeNotifyWait(buf);
-    // const res = await this.readCommand();
-    // log(`GG command res: ${res}`);
   }
 
   // notifyをバイナリモードに設定
@@ -497,8 +476,6 @@ export default class Skinos implements ObnizPartsBleInterface {
     const cmd = 'EF';
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), 0x31];
     await this.writeNotifyWait(buf);
-    // const res = await this.readCommand();
-    // log(`EF command res: ${res}`);
   }
 
   private randomNum(min: number, max: number) {
