@@ -9,6 +9,7 @@ import {
   ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
+import { relativeTimeThreshold } from 'moment';
 
 export interface SkinosOptions {}
 
@@ -68,8 +69,11 @@ export default class Skinos implements ObnizPartsBleInterface {
   public allData: Skinos_Data[] = [];
   public log: Log = {};
 
-  constructor(p: BleRemotePeripheral) {
+  private _timeZoneOffset = 9;
+
+  constructor(p: BleRemotePeripheral, timeZoneOffset: number) {
     this._peripheral = p;
+    this._timeZoneOffset = timeZoneOffset;
   }
 
   public static info(): ObnizPartsBleInfo {
@@ -180,7 +184,9 @@ export default class Skinos implements ObnizPartsBleInterface {
     }
     const unixTime =
       data[0] * 16777216 + data[1] * 65536 + data[2] * 256 + data[3];
-    const timestamp = new Date(unixTime * 1000 + 1000 * 60 * 60 * 9);
+    const timestamp = new Date(
+      unixTime * 1000 + 1000 * 60 * 60 * this._timeZoneOffset
+    );
     if (!this.log[timestamp.toString()]) {
       this.log[timestamp.toString()] = {};
     }
@@ -247,7 +253,9 @@ export default class Skinos implements ObnizPartsBleInterface {
             res[i * 4 + 1] * 65536 +
             res[i * 4 + 2] * 256 +
             res[i * 4 + 3];
-          const timestamp = new Date(unixTime * 1000 + 1000 * 60 * 60 * 9);
+          const timestamp = new Date(
+            unixTime * 1000 + 1000 * 60 * 60 * this._timeZoneOffset
+          );
           const pageInfo = {
             block: blockNo,
             page: pageNo,
@@ -306,7 +314,9 @@ export default class Skinos implements ObnizPartsBleInterface {
             res[i * 4 + 1] * 65536 +
             res[i * 4 + 2] * 256 +
             res[i * 4 + 3];
-          const timestamp = new Date(unixTime * 1000 + 1000 * 60 * 60 * 9);
+          const timestamp = new Date(
+            unixTime * 1000 + 1000 * 60 * 60 * this._timeZoneOffset
+          );
           const data = await this.getOnePageDataWait(pageNo);
           const onePageData = {
             page: pageNo,
@@ -336,7 +346,9 @@ export default class Skinos implements ObnizPartsBleInterface {
             res[i * 4 + 1] * 65536 +
             res[i * 4 + 2] * 256 +
             res[i * 4 + 3];
-          const timestamp = new Date(unixTime * 1000 + 1000 * 60 * 60 * 9);
+          const timestamp = new Date(
+            unixTime * 1000 + 1000 * 60 * 60 * this._timeZoneOffset
+          );
 
           // 指定された日時以降のデータ
           if (timestamp.getTime() > date.getTime()) {
