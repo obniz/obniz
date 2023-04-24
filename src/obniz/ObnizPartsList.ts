@@ -310,6 +310,7 @@ import Talia, { TaliaOptions } from '../parts/Ble/Talia';
 import Panasonic_lock, {
   Panasonic_lockOptions,
 } from '../parts/Ble/panasonic_lock';
+import Skinos, { SkinosOptions } from '../parts/Ble/skinos';
 
 export type PartsType = keyof PartsList;
 
@@ -761,4 +762,5 @@ export interface PartsList {
     Panasonic_lockOptions,
     typeof Panasonic_lock
   >;
+  Skinos: PartsInterface<Skinos, SkinosOptions, typeof Skinos>;
 }
