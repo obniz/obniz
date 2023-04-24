@@ -383,9 +383,9 @@ export default class Skinos implements ObnizPartsBleInterface {
     }
     const prodInfo = {
       deviceName: String.fromCharCode.apply(null, res!.slice(3, 11)),
-      firmVer: String.fromCharCode.apply(null, res!.slice(11, 15)),
-      bleVer: String.fromCharCode.apply(null, res!.slice(15, 19)),
-      serialNo: String.fromCharCode.apply(null, res!.slice(19, 27)),
+      firmwareVersion: String.fromCharCode.apply(null, res!.slice(11, 15)),
+      bleVersion: String.fromCharCode.apply(null, res!.slice(15, 19)),
+      serialNumber: String.fromCharCode.apply(null, res!.slice(19, 27)),
     };
     return prodInfo;
   }
@@ -427,11 +427,20 @@ export default class Skinos implements ObnizPartsBleInterface {
     if (buf[1] !== res![1] || seqNo !== res![2]) {
       console.log(`GD[${buf}]: Inconsistency between sent and received data.`);
     }
+
+    const sweat_gain = parseInt(
+      String.fromCharCode.apply(null, res!.slice(3, 6)),
+      10
+    );
+    const fan_volt = parseInt(
+      String.fromCharCode.apply(null, res!.slice(6, 9)),
+      10
+    );
     const sysmReq = {
       // 補正係数値
-      sweatGain: String.fromCharCode.apply(null, res!.slice(3, 6)),
+      sweatGain: sweat_gain / 100,
       // FAN電圧値
-      fanVoltage: String.fromCharCode.apply(null, res!.slice(6, 9)),
+      fanVoltage: fan_volt / 100,
       // 積和上限値
       integralMax: String.fromCharCode.apply(null, res!.slice(9, 12)),
       // 微分時間値
