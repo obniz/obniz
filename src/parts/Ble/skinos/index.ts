@@ -83,7 +83,7 @@ export default class Skinos implements ObnizPartsBleInterface {
   }
 
   public static isDevice(p: BleRemotePeripheral): boolean {
-    return p.localName!.indexOf('SK-7-BLE') >= 0 ? true : false;
+    return p.localName && p.localName.indexOf('SK-7-BLE') >= 0 ? true : false;
   }
 
   public async connectWait() {
