@@ -399,7 +399,12 @@ export default class Skinos implements ObnizPartsBleInterface {
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo, blockNo];
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
-    if (res![1] !== 0x4c || seqNo !== res![2]) {
+    if (!res || res.length <= 3) {
+      throw new Error(
+        `GF[${buf}]: Inconsistency between sent and received data.`
+      );
+    }
+    if (res[1] !== 0x4c || seqNo !== res[2]) {
       // 0x4c=76
       throw new Error(
         `GB[${buf}]: Inconsistency between sent and received data.`
@@ -416,7 +421,12 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
     // GCを送信すると、GGが返ってくる。
-    if (res![0] !== 0x47 || res![1] !== 0x47) {
+    if (!res || res.length <= 3) {
+      throw new Error(
+        `GC[${buf}]: Inconsistency between sent and received data.`
+      );
+    }
+    if (res[0] !== 0x47 || res[1] !== 0x47) {
       throw new Error(
         `GC[${buf}]: Inconsistency between sent and received data.`
       );
@@ -430,7 +440,12 @@ export default class Skinos implements ObnizPartsBleInterface {
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo];
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
-    if (buf[1] !== res![1] || seqNo !== res![2]) {
+    if (!res || res.length <= 3) {
+      throw new Error(
+        `GD[${buf}]: Inconsistency between sent and received data.`
+      );
+    }
+    if (buf[1] !== res[1] || seqNo !== res[2]) {
       throw new Error(
         `GD[${buf}]: Inconsistency between sent and received data.`
       );
@@ -472,7 +487,12 @@ export default class Skinos implements ObnizPartsBleInterface {
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo];
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
-    if (buf[1] !== res![1] || seqNo !== res![2]) {
+    if (!res || res.length <= 3) {
+      throw new Error(
+        `GF[${buf}]: Inconsistency between sent and received data.`
+      );
+    }
+    if (buf[1] !== res[1] || seqNo !== res[2]) {
       throw new Error(
         `GF[${buf}]: Inconsistency between sent and received data.`
       );
