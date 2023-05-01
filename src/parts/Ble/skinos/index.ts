@@ -71,6 +71,8 @@ export default class Skinos implements ObnizPartsBleInterface {
 
   private _timeZoneOffset = 9;
 
+  private _lastNotifyReceivedAt: null | number = null;
+
   constructor(p: BleRemotePeripheral, timeZoneOffset: number) {
     this._peripheral = p;
     this._timeZoneOffset = timeZoneOffset;
@@ -145,6 +147,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     }
     try {
       await this.notifyChara?.registerNotifyWait((data: number[]) => {
+        this._lastNotifyReceivedAt = new Date().getTime();
         this.analyNotifydata(data);
       });
       this.isNotifyStart = true;
@@ -277,8 +280,13 @@ export default class Skinos implements ObnizPartsBleInterface {
     }
     await this.commandGGWait();
 
-    // 全て受け取るまで待つ。MAX=30sec
-    for (let i = 0; i < 150; i++) {
+    // 意味がちょっとずれるけど、更新する。番兵
+    this._lastNotifyReceivedAt = new Date().getTime();
+
+    while (true) {
+      if (this._lastNotifyReceivedAt + 30 * 1000 < new Date().getTime()) {
+        throw new Error('Data receive timeout on Skinos device');
+      }
       if (this.isNotifyReadEnd) {
         this.isNotifyReadEnd = false;
         break;
