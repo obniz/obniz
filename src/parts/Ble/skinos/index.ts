@@ -215,7 +215,7 @@ export default class Skinos implements ObnizPartsBleInterface {
         atmospheric_pressure: data[17] * 256 + data[18],
       };
     } else {
-      console.log(`something wrong: data [${data}]`);
+      throw new Error(`something wrong: data [${data}]`);
     }
 
     if (Object.keys(this.log[timestamp.toString()]).length !== 0) {
@@ -379,7 +379,9 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
     if (buf[1] !== res![1] || seqNo !== res![2]) {
-      console.log(`GA[${buf}]: Inconsistency between sent and received data.`);
+      throw new Error(
+        `GA[${buf}]: Inconsistency between sent and received data.`
+      );
     }
     const prodInfo = {
       deviceName: String.fromCharCode.apply(null, res!.slice(3, 11)),
@@ -399,7 +401,9 @@ export default class Skinos implements ObnizPartsBleInterface {
     const res = await this.readCommandWait();
     if (res![1] !== 0x4c || seqNo !== res![2]) {
       // 0x4c=76
-      console.log(`GB[${buf}]: Inconsistency between sent and received data.`);
+      throw new Error(
+        `GB[${buf}]: Inconsistency between sent and received data.`
+      );
     }
     return res;
   }
@@ -413,7 +417,9 @@ export default class Skinos implements ObnizPartsBleInterface {
     const res = await this.readCommandWait();
     // GCを送信すると、GGが返ってくる。
     if (res![0] !== 0x47 || res![1] !== 0x47) {
-      console.log(`GC[${buf}]: Inconsistency between sent and received data.`);
+      throw new Error(
+        `GC[${buf}]: Inconsistency between sent and received data.`
+      );
     }
   }
 
@@ -425,7 +431,9 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
     if (buf[1] !== res![1] || seqNo !== res![2]) {
-      console.log(`GD[${buf}]: Inconsistency between sent and received data.`);
+      throw new Error(
+        `GD[${buf}]: Inconsistency between sent and received data.`
+      );
     }
 
     const sweat_gain = parseInt(
@@ -465,7 +473,9 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     const res = await this.readCommandWait();
     if (buf[1] !== res![1] || seqNo !== res![2]) {
-      console.log(`GF[${buf}]: Inconsistency between sent and received data.`);
+      throw new Error(
+        `GF[${buf}]: Inconsistency between sent and received data.`
+      );
     }
     const codeInfo = {
       companyCode: String.fromCharCode.apply(null, res!.slice(3, 6)),
