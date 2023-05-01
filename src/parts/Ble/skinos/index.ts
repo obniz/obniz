@@ -377,8 +377,16 @@ export default class Skinos implements ObnizPartsBleInterface {
     const cmd = 'GA';
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo];
     await this.writeCommandWait(buf);
+    await this.wait(300);
     const res = await this.readCommandWait();
-    if (buf[1] !== res![1] || seqNo !== res![2]) {
+    console.log(buf);
+    console.log(res);
+    if (!res || res.length <= 3) {
+      throw new Error(
+        `GA[${buf}]: Inconsistency between sent and received data.`
+      );
+    }
+    if (buf[1] !== res[1] || seqNo !== res[2]) {
       throw new Error(
         `GA[${buf}]: Inconsistency between sent and received data.`
       );
@@ -398,10 +406,13 @@ export default class Skinos implements ObnizPartsBleInterface {
     const cmd = 'GB';
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo, blockNo];
     await this.writeCommandWait(buf);
+    await this.wait(300);
     const res = await this.readCommandWait();
+    console.log(buf);
+    console.log(res);
     if (!res || res.length <= 3) {
       throw new Error(
-        `GF[${buf}]: Inconsistency between sent and received data.`
+        `GB[${buf}]: Inconsistency between sent and received data.`
       );
     }
     if (res[1] !== 0x4c || seqNo !== res[2]) {
@@ -419,6 +430,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     const cmd = 'GC';
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo, pageNo];
     await this.writeCommandWait(buf);
+    await this.wait(300);
     const res = await this.readCommandWait();
     // GCを送信すると、GGが返ってくる。
     if (!res || res.length <= 3) {
@@ -439,6 +451,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     const cmd = 'GD';
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo];
     await this.writeCommandWait(buf);
+    await this.wait(300);
     const res = await this.readCommandWait();
     if (!res || res.length <= 3) {
       throw new Error(
@@ -486,7 +499,10 @@ export default class Skinos implements ObnizPartsBleInterface {
     const cmd = 'GF';
     const buf = [cmd.charCodeAt(0), cmd.charCodeAt(1), seqNo];
     await this.writeCommandWait(buf);
+    await this.wait(300);
     const res = await this.readCommandWait();
+    console.log(buf);
+    console.log(res);
     if (!res || res.length <= 3) {
       throw new Error(
         `GF[${buf}]: Inconsistency between sent and received data.`
