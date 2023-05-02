@@ -355,7 +355,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
     await this.writeCharWait(
       this.commandDataServiceUuid,
       this.sendCommandCharacteristicUuid,
-      `${this.processingCommand}\n`
+      Array.from(te.encode(`${this.processingCommand}\n`))
     );
 
     return await promise;
@@ -389,7 +389,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
     return await this.writeCharWait(
       this.commandDataServiceUuid,
       this.sendCommandCharacteristicUuid,
-      `${this.processingCommand}\n`
+      Array.from(te.encode(`${this.processingCommand}\n`))
     );
   }
 

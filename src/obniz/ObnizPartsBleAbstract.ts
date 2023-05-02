@@ -825,7 +825,7 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
   protected async writeCharWait(
     serviceUuid: string,
     characteristicUuid: string,
-    data?: number[] | string | Buffer,
+    data?: number[],
     needResponse?: boolean
   ): Promise<boolean> {
     const characteristic = this.getChar(serviceUuid, characteristicUuid);
