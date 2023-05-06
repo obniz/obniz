@@ -331,7 +331,13 @@ export default class Skinos implements ObnizPartsBleInterface {
   }
 
   public async getDataAfterDateWait(date: Date) {
-    let allData: any = [];
+    // まずページの情報をさらってunix timeを並べ替える
+    interface PageData {
+      id: number;
+      time: number;
+    }
+
+    const timeMap: PageData[] = [];
     for (let blockNo = 1; blockNo <= 9; blockNo++) {
       const res = await this.commandGBWait(blockNo);
       if (res) {
@@ -345,19 +351,33 @@ export default class Skinos implements ObnizPartsBleInterface {
             res[i * 4 + 1] * 65536 +
             res[i * 4 + 2] * 256 +
             res[i * 4 + 3];
-          const timestamp = new Date(
-            unixTime * 1000 + 1000 * 60 * 60 * this._timeZoneOffset
-          );
 
-          // 指定された日時以降のデータ
-          if (timestamp.getTime() > date.getTime()) {
-            const data = await this.getOnePageDataWait(pageNo);
-            allData = allData.concat(data);
-          }
+          timeMap.push({ id: pageNo, time: unixTime * 1000 });
         }
       }
     }
-    return allData;
+    timeMap.sort((a, b) => a.time - b.time);
+
+    // ソートして 1個前をとる
+    const index = timeMap.findIndex((i) => i.time > date.getTime());
+    let startIndex = index;
+    if (date.getTime() !== 0) {
+      startIndex--;
+    }
+    const items = timeMap.slice(startIndex);
+
+    let logs = [];
+    // 大雑把なログがここに入る
+    for (const item of items) {
+      const d = await this.getOnePageDataWait(item.id);
+      logs.push(...d);
+    }
+
+    // 順番でとってるはずなので、ほぼO(n)のはず
+    logs.sort((a, b) => (a.time || 0) - (b.time || 0));
+    logs = logs.filter((log) => (log.time || 0) * 1000 > date.getTime());
+
+    return logs;
   }
 
   // カスタム時刻設定
@@ -387,8 +407,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     await this.wait(300);
     const res = await this.readCommandWait();
-    console.log(buf);
-    console.log(res);
+
     if (!res || res.length <= 3) {
       throw new Error(
         `GA[${buf}]: Inconsistency between sent and received data.`
@@ -416,8 +435,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     await this.wait(300);
     const res = await this.readCommandWait();
-    console.log(buf);
-    console.log(res);
+
     if (!res || res.length <= 3) {
       throw new Error(
         `GB[${buf}]: Inconsistency between sent and received data.`
@@ -509,8 +527,7 @@ export default class Skinos implements ObnizPartsBleInterface {
     await this.writeCommandWait(buf);
     await this.wait(300);
     const res = await this.readCommandWait();
-    console.log(buf);
-    console.log(res);
+
     if (!res || res.length <= 3) {
       throw new Error(
         `GF[${buf}]: Inconsistency between sent and received data.`
