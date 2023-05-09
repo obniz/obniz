@@ -958,7 +958,7 @@ export default class DR_MARK implements ObnizPartsBleInterface {
       const status = buffer.readUInt8(7);
       const scanData: PulseData = {
         sequenceNumber: buffer.readUInt32LE(0),
-        pulse: buffer.readUInt32LE(4) & 0x0fff,
+        pulse: buffer.readUInt32LE(4) & 0x00ffffff,
         status,
         error: {
           outRange: Boolean(status & 0b01000000),
