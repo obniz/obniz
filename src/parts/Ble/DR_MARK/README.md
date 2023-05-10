@@ -423,3 +423,101 @@ await obniz.ble.scan.startWait();
 ```
 
 
+## [await]eraseFlashRomWait()
+
+erase FlashROM
+
+```javascript
+
+// Javascript Example
+await obniz.ble.initWait();
+const DR_MARK = Obniz.getPartsClass("DR_MARK");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (DR_MARK.isDevice(peripheral)) {
+    console.log("find");
+    const device = new DR_MARK(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const mode = await device.eraseFlashRomWait()
+  }
+};
+await obniz.ble.scan.startWait();
+```
+
+## [await]getFlashRomInfoWait(timeOffsetMinute:時差を入れる)
+
+The number of data stored in FlashROM can be checked.
+Check the date and time of the latest and oldest measurements.
+
+```javascript
+
+// Javascript Example
+await obniz.ble.initWait();
+const DR_MARK = Obniz.getPartsClass("DR_MARK");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (DR_MARK.isDevice(peripheral)) {
+    console.log("find");
+    const device = new DR_MARK(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const info = await device.getFlashRomInfoWait(0)
+    console.log(info)
+  }
+};
+await obniz.ble.scan.startWait();
+```
+
+## [await]getFlashRomSearchWait(startDate:検索開始日,endDate:検索終了日,timeOffsetMinute:時差を入れる)
+
+The number of data stored in FlashROM can be checked.
+Able to check the Index and the number of pieces in the measurement history at a specified time
+
+```javascript
+
+// Javascript Example
+await obniz.ble.initWait();
+const DR_MARK = Obniz.getPartsClass("DR_MARK");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (DR_MARK.isDevice(peripheral)) {
+    console.log("find");
+    const device = new DR_MARK(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const info = await device.getFlashRomInfoWait(0)
+    console.log(info)
+    if(info.total != 0){
+      const result = await device.getFlashRomSearchWait(info.endDate,info.endDate,0)
+      console.log(result)
+    }
+  }
+};
+await obniz.ble.scan.startWait();
+```
+
+
+## [await]getFlashRomHistoryDataWait(index: number,timeOffsetMinute: number)
+
+Obtains the measurement history stored in FlashROM.
+If you request index as 0xFFFF when you are in exit mode, you will get the latest results.
+Otherwise, you can retrieve it based on the index retrieved by ``getFlashRomSearchWait``.
+
+```javascript
+
+// Javascript Example
+await obniz.ble.initWait();
+const DR_MARK = Obniz.getPartsClass("DR_MARK");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (DR_MARK.isDevice(peripheral)) {
+    console.log("find");
+    const device = new DR_MARK(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const mode = await device.getActionModeWait()
+    if(mode === "finish"){
+      const history = await device.getFlashRomSearchWait(0xffff,0);
+      console.log(history)
+    }
+  }
+};
+await obniz.ble.scan.startWait();
+```
