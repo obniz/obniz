@@ -145,9 +145,9 @@ export default class GX_3R_Pro extends ObnizPartsBleInterface {
       }
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      let timeoutFunc: ((msg: string) => void) | null = null;
+      let timeoutFunc: ((err: Error) => void) | null = null;
       const timeout = setTimeout(() => {
-        if (timeoutFunc) timeoutFunc('Timed out for waiting');
+        if (timeoutFunc) timeoutFunc(new Error('Timed out for waiting'));
       }, 30 * 1000);
 
       try {
