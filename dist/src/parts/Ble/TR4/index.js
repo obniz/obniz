@@ -4,8 +4,12 @@
  * @module Parts.TR4
  */
 /* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const advertismentAnalyzer_1 = require("../utils/advertisement/advertismentAnalyzer");
+const round_to_1 = __importDefault(require("round-to"));
 /** Tr4 series management class Tr4シリーズを管理するクラス */
 class Tr4 {
     constructor() {
@@ -61,7 +65,7 @@ class Tr4 {
         }
         const temperatureRaw = Buffer.from(measureData).readInt16LE(0);
         return {
-            temperature: (temperatureRaw - 1000) / 10,
+            temperature: (0, round_to_1.default)((temperatureRaw - 1000) / 10, 1),
         };
     }
 }

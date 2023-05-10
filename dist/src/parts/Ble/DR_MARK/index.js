@@ -71,7 +71,7 @@ class DR_MARK {
                 const status = buffer.readUInt8(7);
                 const scanData = {
                     sequenceNumber: buffer.readUInt32LE(0),
-                    pulse: buffer.readUInt32LE(4) & 0x0fff,
+                    pulse: buffer.readUInt32LE(4) & 0x00ffffff,
                     status,
                     error: {
                         outRange: Boolean(status & 0b01000000),
@@ -517,7 +517,158 @@ class DR_MARK {
             this.requestPulseDataWait(true);
         });
     }
+    /* FlashROM */
+    /**
+     * Erase FlashROM
+     *
+     */
+    async eraseFlashRomWait() {
+        await this.getCommandResultWait(0x40);
+    }
+    /**
+     * FlashROMに保存されているデータ数確認用
+     * 最新の計測日時と最古の計測日時を確認できる
+     *
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomInfoData
+     */
+    async getFlashRomInfoWait(timeOffsetMinute) {
+        const data = await this.getCommandResultWait(0x41);
+        const buffer = Buffer.from(data.data);
+        const total = buffer.readUInt16LE(0);
+        if (total === 0) {
+            return {
+                total,
+            };
+        }
+        const sd = String('00000000' + buffer.readUInt32LE(2))
+            .slice(-8)
+            .match(/.{2}/g);
+        const ed = String('00000000' + buffer.readUInt32LE(6))
+            .slice(-8)
+            .match(/.{2}/g);
+        if (sd === null || ed === null) {
+            throw new Error('getFlashRomInfoWait error');
+        }
+        const startDate = new Date(`${sd[0]}${sd[1]}/${sd[2]}/${sd[3]} 0:0:0`);
+        startDate.setTime(startDate.getTime() + 1000 * 60 * timeOffsetMinute);
+        const endDate = new Date(`${ed[0]}${ed[1]}/${ed[2]}/${ed[3]} 0:0:0`);
+        endDate.setTime(endDate.getTime() + 1000 * 60 * timeOffsetMinute);
+        return {
+            total,
+            startDate,
+            endDate,
+        };
+    }
+    /**
+     * FlashROMに保存されているデータ数確認用
+     * 最新の計測日時と最古の計測日時を確認できる
+     *
+     * @param startDate 検索開始日(UTC)
+     * @param endDate 検索終了日(UTC)
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomSearchData
+     */
+    async getFlashRomSearchWait(startDate, endDate, timeOffsetMinute) {
+        startDate.setTime(startDate.getTime() + 1000 * 60 * timeOffsetMinute);
+        endDate.setTime(endDate.getTime() + 1000 * 60 * timeOffsetMinute);
+        const buf = Buffer.alloc(8);
+        buf.writeUInt32LE(startDate.getUTCFullYear() * 10000 +
+            (startDate.getUTCMonth() + 1) * 100 +
+            startDate.getUTCDate(), 0);
+        buf.writeUInt32LE(endDate.getUTCFullYear() * 10000 +
+            (endDate.getUTCMonth() + 1) * 100 +
+            endDate.getUTCDate(), 4);
+        const data = await this.getCommandResultWait(0x42, Uint8Array.from(buf));
+        const buffer = Buffer.from(data.data);
+        return {
+            total: buffer.readUInt16LE(0),
+            hit: buffer.readUInt16LE(2),
+            startIndex: buffer.readUInt16LE(4),
+            endIndex: buffer.readUInt16LE(6),
+        };
+    }
+    /**
+     * FlashROMに保存されている計測履歴を取得
+     * 終了モードの時に0xFFFFでリクエストすると最新の結果を取得
+     * それ以外の場合は、getFlashRomSearchWaitで取得したIndexを元に取得する
+     *
+     * @param index データIndex
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomHistoryData
+     */
+    async getFlashRomHistoryDataWait(index, timeOffsetMinute) {
+        const buf = Buffer.alloc(2);
+        buf.writeUInt16LE(index, 0);
+        const data = await this.getCommandFlashRomHistoryWait(0x43, Uint8Array.from(buf));
+        const recode1 = data.find((value) => value.commandId === 0xc3);
+        const recode2 = data.find((value) => value.commandId === 0xc4);
+        const recode3 = data.find((value) => value.commandId === 0xc5);
+        if (!(recode1 !== undefined && recode2 !== undefined && recode3 !== undefined)) {
+            throw new Error('getFlashRomDataWait error');
+        }
+        const buffer = Buffer.from(recode1.data);
+        const buffer2 = Buffer.from(recode2.data);
+        const buffer3 = Buffer.from(recode3.data);
+        return {
+            index: buffer.readUInt16LE(0),
+            monitoringStatus: {
+                outRange: Boolean(buffer.readUInt8(2) & 0b01000000),
+                changeSetting: Boolean(buffer.readUInt8(2) & 0b00100000),
+                overSumFlow: Boolean(buffer.readUInt8(2) & 0b00010000),
+                lowInstantFlow: Boolean(buffer.readUInt8(2) & 0b00001000),
+                highInstantFlow: Boolean(buffer.readUInt8(2) & 0b00000100),
+                shutdownBattery: Boolean(buffer.readUInt8(2) & 0b00000010),
+                lowBattery: Boolean(buffer.readUInt8(2) & 0b00000001),
+                isError: Boolean(buffer.readUInt8(2)),
+            },
+            monitoringResultStatus: {
+                shutdownBattery: Boolean(buffer.readUInt8(3) & 0b00100000),
+                swFinish: Boolean(buffer.readUInt8(3) & 0b00010000),
+                userFinish: Boolean(buffer.readUInt8(3) & 0b00001000),
+                overSumFlow: Boolean(buffer.readUInt8(3) & 0b00000100),
+                lowSumFlow: Boolean(buffer.readUInt8(3) & 0b00000010),
+                isError: Boolean(buffer.readUInt8(3)),
+            },
+            averageFlowRate: buffer.readUInt16LE(4),
+            sumFlowRate: buffer.readUInt16LE(6),
+            startDatetime: this.convertBufferToDate(buffer, 8, timeOffsetMinute),
+            endDatetime: this.convertBufferToDate(buffer2, 0, timeOffsetMinute),
+            startBatteryVoltage: buffer2.readUInt16LE(8),
+            endBatteryVoltage: buffer2.readUInt16LE(10),
+            logIndex: buffer2.readUInt16LE(12),
+            reserved1: buffer2.readUInt16LE(14),
+            infusionDropCount: buffer3.readUInt16LE(0),
+            targetSumFlowRate: buffer3.readUInt16LE(2),
+            targetFlowRate: buffer3.readUInt16LE(4),
+            correctionFactor: buffer3.readUInt16LE(6),
+            effectiveInstantFlowRate: buffer3.readUInt8(8),
+            finishJudgmentSec: buffer3.readUInt8(9),
+            effectiveIntegratedFlowRate: buffer3.readUInt8(10),
+            powerOffSec: buffer3.readUInt8(11),
+            reserved2: buffer3.readUInt32LE(12),
+        };
+    }
+    convertBufferToDate(buffer, index, timeOffsetMinute) {
+        const d = String('00000000' + buffer.readUInt32LE(index))
+            .slice(-8)
+            .match(/.{2}/g);
+        const t = String('00000000' + buffer.readUInt32LE(index + 4))
+            .slice(-8)
+            .match(/.{2}/g);
+        if (d === null || t === null) {
+            throw new Error('rtc error');
+        }
+        const date = new Date(`${d[0]}${d[1]}/${d[2]}/${d[3]} ${t[1]}:${t[2]}:${t[3]}`);
+        date.setTime(date.getTime() + 1000 * 60 * timeOffsetMinute);
+        return date;
+    }
     async getCommandResultWait(commandId, data, timeoutMs) {
+        const promise = this.createCommandCallback(commandId, timeoutMs);
+        await this.writeCommandWait(commandId, data);
+        return promise;
+    }
+    createCommandCallback(commandId, timeoutMs) {
         return new Promise((resolve, reject) => {
             setTimeout(() => reject(new Error(`timeout command:${commandId}`)), timeoutMs ? timeoutMs : 5000);
             // callbackは0x80を加算する
@@ -528,8 +679,16 @@ class DR_MARK {
                 }
                 resolve(notifyData);
             });
-            this.writeCommandWait(commandId, data);
         });
+    }
+    async getCommandFlashRomHistoryWait(commandId, data, timeoutMs) {
+        const promise = Promise.all([
+            this.createCommandCallback(commandId, timeoutMs),
+            this.createCommandCallback(commandId + 1, timeoutMs),
+            this.createCommandCallback(commandId + 2, timeoutMs),
+        ]);
+        await this.writeCommandWait(commandId, data);
+        return promise;
     }
     setCommandCallback(commandId, callback) {
         this.callbackArray = [

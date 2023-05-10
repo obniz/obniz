@@ -325,6 +325,7 @@ RS_BTEVS1.BeaconDataStruct = {
         length: 2,
         type: 'custom',
         multiple: 0.1,
+        round: 1,
         func: (data, p) => {
             var _a, _b, _c;
             return ((_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + 1 === 0x0b &&

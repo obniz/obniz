@@ -52,6 +52,55 @@ export interface EngineerSettingData {
     shutdownVoltage: number;
     offsetSec: number;
 }
+export interface FlashRomInfoData {
+    total: number;
+    startDate?: Date;
+    endDate?: Date;
+}
+export interface FlashRomSearchData {
+    total: number;
+    hit: number;
+    startIndex?: number;
+    endIndex?: number;
+}
+export interface FlashRomHistoryData {
+    index: number;
+    monitoringStatus: {
+        outRange: boolean;
+        changeSetting: boolean;
+        overSumFlow: boolean;
+        lowInstantFlow: boolean;
+        highInstantFlow: boolean;
+        shutdownBattery: boolean;
+        lowBattery: boolean;
+        isError: boolean;
+    };
+    monitoringResultStatus: {
+        shutdownBattery: boolean;
+        swFinish: boolean;
+        userFinish: boolean;
+        overSumFlow: boolean;
+        lowSumFlow: boolean;
+        isError: boolean;
+    };
+    averageFlowRate: number;
+    sumFlowRate: number;
+    startDatetime: Date;
+    endDatetime: Date;
+    startBatteryVoltage: number;
+    endBatteryVoltage: number;
+    logIndex: number;
+    reserved1: number;
+    infusionDropCount: number;
+    targetSumFlowRate: number;
+    targetFlowRate: number;
+    correctionFactor: number;
+    effectiveInstantFlowRate: number;
+    finishJudgmentSec: number;
+    effectiveIntegratedFlowRate: number;
+    powerOffSec: number;
+    reserved2: number;
+}
 export interface DR_MARKOptions {
 }
 /** DR MARK management class DR MARKを管理するクラス */
@@ -239,7 +288,43 @@ export default class DR_MARK implements ObnizPartsBleInterface {
      * Pulseデータを1件取得する
      */
     getPulseDataWait(timeoutMs?: number): Promise<PulseData>;
+    /**
+     * Erase FlashROM
+     *
+     */
+    eraseFlashRomWait(): Promise<void>;
+    /**
+     * FlashROMに保存されているデータ数確認用
+     * 最新の計測日時と最古の計測日時を確認できる
+     *
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomInfoData
+     */
+    getFlashRomInfoWait(timeOffsetMinute: number): Promise<FlashRomInfoData>;
+    /**
+     * FlashROMに保存されているデータ数確認用
+     * 最新の計測日時と最古の計測日時を確認できる
+     *
+     * @param startDate 検索開始日(UTC)
+     * @param endDate 検索終了日(UTC)
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomSearchData
+     */
+    getFlashRomSearchWait(startDate: Date, endDate: Date, timeOffsetMinute: number): Promise<FlashRomSearchData>;
+    /**
+     * FlashROMに保存されている計測履歴を取得
+     * 終了モードの時に0xFFFFでリクエストすると最新の結果を取得
+     * それ以外の場合は、getFlashRomSearchWaitで取得したIndexを元に取得する
+     *
+     * @param index データIndex
+     * @param timeOffsetMinute 時差を入れる
+     * @return FlashRomHistoryData
+     */
+    getFlashRomHistoryDataWait(index: number, timeOffsetMinute: number): Promise<FlashRomHistoryData>;
+    private convertBufferToDate;
     private getCommandResultWait;
+    private createCommandCallback;
+    private getCommandFlashRomHistoryWait;
     private setCommandCallback;
     private removeCommandCallback;
     notifyCallback: (data: number[]) => void;
