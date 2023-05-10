@@ -144,15 +144,27 @@ export default class GX_3R_Pro extends ObnizPartsBleInterface {
         throw new Error('peripheral is not connected');
       }
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const responsePromise = new Promise<ReturnType<typeof this.parseCommand>>(
-        (resolve, reject) => {
+
+      let timeoutFunc: ((err: Error) => void) | null = null;
+      const timeout = setTimeout(() => {
+        if (timeoutFunc) timeoutFunc(new Error('Timed out for waiting'));
+      }, 30 * 1000);
+
+      try {
+        const responsePromise = new Promise<
+          ReturnType<typeof this.parseCommand>
+        >((resolve, reject) => {
+          timeoutFunc = reject;
           this.event.once('data', resolve);
-        }
-      );
-      await this.gasCharTx.writeWait(packet);
-      // console.log(`send ${Buffer.from(packet).toString('hex')}`);
-      const response = await responsePromise;
-      return response;
+        });
+        await this.gasCharTx.writeWait(packet);
+        const response = await responsePromise;
+        clearTimeout(timeout);
+        return response;
+      } catch (e) {
+        clearTimeout(timeout);
+        throw e;
+      }
     });
   }
 
