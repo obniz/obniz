@@ -310,6 +310,7 @@ import Talia, { TaliaOptions } from '../parts/Ble/Talia';
 import Panasonic_lock, {
   Panasonic_lockOptions,
 } from '../parts/Ble/panasonic_lock';
+import TM2101_SR, { TM2101_SROptions } from '../parts/Ble/TM2101_SR';
 import Skinos, { SkinosOptions } from '../parts/Ble/skinos';
 
 export type PartsType = keyof PartsList;
@@ -762,5 +763,6 @@ export interface PartsList {
     Panasonic_lockOptions,
     typeof Panasonic_lock
   >;
+  TM2101_SR: PartsInterface<TM2101_SR, TM2101_SROptions, typeof TM2101_SR>;
   Skinos: PartsInterface<Skinos, SkinosOptions, typeof Skinos>;
 }
