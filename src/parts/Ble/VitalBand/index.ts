@@ -56,6 +56,7 @@ export default class VitalBand extends ObnizPartsBle<VitalBand_Data> {
       index: 4,
       length: 2,
       multiple: 0.01,
+      round: 2,
     },
     blood_pleasure_high: {
       type: 'numBE',
