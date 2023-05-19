@@ -525,8 +525,12 @@ class GattCentral extends eventemitter3_1.default {
             this.emit('handleNotify', this._address, valueHandle, valueData);
             if (data[0] === att_1.ATT.OP_HANDLE_IND) {
                 // background
-                this._execNoRespCommandWait(this._gattCommon.handleConfirmation()).then(() => {
+                this._execNoRespCommandWait(this._gattCommon.handleConfirmation())
+                    .then(() => {
                     this.emit('handleConfirmation', this._address, valueHandle);
+                })
+                    .catch((e) => {
+                    console.warn(e);
                 });
             }
             for (const serviceUuid in this._services) {
