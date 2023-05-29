@@ -280,10 +280,12 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
   }
 
   protected async beforeOnDisconnectWait(): Promise<void> {
-    await this.unsubscribeWait(
-      this.commandDataServiceUuid,
-      this.receiveDataCharacteristicUuid
-    );
+    if (this.peripheral.connected) {
+      await this.unsubscribeWait(
+        this.commandDataServiceUuid,
+        this.receiveDataCharacteristicUuid
+      );
+    }
   }
 
   /**
