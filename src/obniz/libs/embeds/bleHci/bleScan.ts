@@ -308,7 +308,7 @@ export class BleScan {
       });
     }
 
-    const ble5DeviceFilterSupportVersion = '5.0.0'; // TODO: CHANGE
+    const ble5DeviceFilterSupportVersion = '4.1.0';
     if (
       settings.filterOnDevice === true &&
       this.obnizBle.hci._extended === true &&
