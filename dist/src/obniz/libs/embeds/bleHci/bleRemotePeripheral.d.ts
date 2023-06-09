@@ -8,6 +8,7 @@ import { BleRemoteCharacteristic } from './bleRemoteCharacteristic';
 import { BleRemoteService } from './bleRemoteService';
 import { BleDeviceAddress, BleDeviceAddressType, BleDeviceType, BleEventType, UUID } from './bleTypes';
 import { SmpEncryptOptions } from './protocol/central/smp';
+import { HciPhy } from './protocol/hci';
 /**
  * The return values are shown below.
  *
@@ -243,6 +244,8 @@ export declare class BleRemotePeripheral {
      * ```
      */
     rssi: number | null;
+    primary_phy: HciPhy | null;
+    secondary_phy: HciPhy | null;
     /**
      * This returns raw advertise data.
      *

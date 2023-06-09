@@ -98,7 +98,7 @@ class BleScan {
                 message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
             });
         }
-        const ble5DeviceFilterSupportVersion = '5.0.0'; // TODO: CHANGE
+        const ble5DeviceFilterSupportVersion = '4.1.0';
         if (settings.filterOnDevice === true &&
             this.obnizBle.hci._extended === true &&
             semver_1.default.lt(semver_1.default.coerce(this.obnizBle.Obniz.firmware_ver), ble5DeviceFilterSupportVersion)) {

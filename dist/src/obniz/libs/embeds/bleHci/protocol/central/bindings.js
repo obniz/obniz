@@ -194,7 +194,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._state = state;
         this.emit('stateChange', state);
     }
-    onDiscover(status, address, addressType, connectable, advertisement, rssi) {
+    onDiscover(status, address, addressType, connectable, advertisement, rssi, primaryPhy, secondaryPhy) {
         if (this._scanServiceUuids === null) {
             // scan not started ?
             return;
@@ -220,7 +220,7 @@ class NobleBindings extends eventemitter3_1.default {
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = connectable;
-            this.emit('discover', uuid, address, addressType, connectable, advertisement, rssi);
+            this.emit('discover', uuid, address, addressType, connectable, advertisement, rssi, primaryPhy, secondaryPhy);
         }
     }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {

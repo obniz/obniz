@@ -39,6 +39,8 @@ class BleRemotePeripheral {
             'adv_data',
             'scan_resp',
             'service_data',
+            'primary_phy',
+            'secondary_phy',
         ];
         this._extended = false;
         this.obnizBle = obnizBle;
@@ -49,6 +51,8 @@ class BleRemotePeripheral {
         this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
+        this.primary_phy = null;
+        this.secondary_phy = null;
         // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;

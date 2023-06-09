@@ -133,7 +133,7 @@ class Gap extends eventemitter3_1.default {
     }
     onHciLeExtendedAdvertisingReport(status, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress) {
         debug('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
-        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
+        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true, primaryPhy, secondaryPhy);
     }
     isAdvOrScanResp(type, extended) {
         if (extended) {
@@ -169,7 +169,7 @@ class Gap extends eventemitter3_1.default {
         }
         return null;
     }
-    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {
+    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended, primaryPhy, secondaryPhy) {
         const previouslyDiscovered = !!this._discoveries[address];
         const advertisement = previouslyDiscovered
             ? this._discoveries[address].advertisement
@@ -349,7 +349,7 @@ class Gap extends eventemitter3_1.default {
             count: discoveryCount,
             hasScanResponse,
         };
-        this.emit('discover', status, address, addressType, connectable, advertisement, rssi);
+        this.emit('discover', status, address, addressType, connectable, advertisement, rssi, primaryPhy, secondaryPhy);
     }
     async setExtendedScanEnabledWait(enabled, filterDuplicates) {
         const status = await this._hci.setExtendedScanEnabledWait(enabled, filterDuplicates);

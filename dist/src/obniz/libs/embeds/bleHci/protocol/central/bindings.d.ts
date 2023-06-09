@@ -7,7 +7,7 @@
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import { BleDeviceAddress, BleDeviceAddressType, Handle, UUID } from '../../bleTypes';
-import { HciState } from '../hci';
+import { HciPhy, HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
 import { SmpEncryptOptions } from './smp';
 declare type NobleBindingsEventType = 'discover' | 'disconnect' | 'stateChange' | 'notification' | 'handleNotify' | 'updatePhy';
@@ -55,7 +55,7 @@ export declare class NobleBindings extends EventEmitter<NobleBindingsEventType> 
     disconnect(peripheralUuid: any): void;
     updateRssiWait(peripheralUuid: UUID): Promise<number>;
     onStateChange(state: HciState): void;
-    onDiscover(status: any, address: any, addressType: any, connectable: any, advertisement: any, rssi: number): void;
+    onDiscover(status: any, address: any, addressType: any, connectable: any, advertisement: any, rssi: number, primaryPhy: HciPhy, secondaryPhy: HciPhy): void;
     onLeConnComplete(status: any, handle: any, role: any, addressType: any, address: BleDeviceAddress, interval: any, latency: any, supervisionTimeout: any, masterClockAccuracy: any): void;
     onDisconnComplete(handle: any, reason: number): void;
     onAclDataPkt(handle: any, cid?: any, data?: any): void;

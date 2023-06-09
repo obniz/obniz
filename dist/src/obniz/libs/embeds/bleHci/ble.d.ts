@@ -8,7 +8,7 @@
  */
 import { ObnizBLEHci } from './hci';
 import { NobleBindings as CentralBindings } from './protocol/central/bindings';
-import { Hci as HciProtocol } from './protocol/hci';
+import { Hci as HciProtocol, HciPhy } from './protocol/hci';
 import { BlenoBindings as PeripheralBindings } from './protocol/peripheral/bindings';
 import Obniz from '../../../index';
 import { ObnizBleHciStateError } from '../../../ObnizError';
@@ -197,7 +197,7 @@ export declare class ObnizBLE extends ComponentAbstract {
     schemaBasePath(): string;
     protected onStateChange(): void;
     protected findPeripheral(address: BleDeviceAddress): BleRemotePeripheral | null;
-    protected onDiscover(uuid: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any): void;
+    protected onDiscover(uuid: any, address?: any, addressType?: any, connectable?: any, advertisement?: any, rssi?: any, primaryPhy?: HciPhy, secondaryPhy?: HciPhy): void;
     protected onDisconnect(peripheralUuid: any, reason: ObnizBleHciStateError): void;
     protected onNotification(peripheralUuid: any, serviceUuid?: any, characteristicUuid?: any, data?: any, isNotification?: any, isSuccess?: any): void;
     protected onPeripheralStateChange(state: any): void;

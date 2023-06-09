@@ -40,7 +40,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
          */
         this._initialized = false;
         // eslint-disable-next-line
-        this.debugHandler = (text) => { };
+        this.debugHandler = (text) => {
+        };
         const extended = info.extended;
         this.hci = new hci_1.ObnizBLEHci(obniz, extended);
         this.service = bleService_1.BleService;
@@ -426,7 +427,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return null;
     }
-    onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
+    onDiscover(uuid, address, addressType, connectable, advertisement, rssi, primaryPhy, secondaryPhy) {
         let val = this.findPeripheral(uuid);
         if (!val) {
             val = new bleRemotePeripheral_1.BleRemotePeripheral(this, uuid);
@@ -443,6 +444,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
             service_data: advertisement.serviceData,
+            primary_phy: primaryPhy !== null && primaryPhy !== void 0 ? primaryPhy : null,
+            secondary_phy: secondaryPhy !== null && secondaryPhy !== void 0 ? secondaryPhy : null,
         };
         val.setParams(peripheralData);
         val.setExtendFlg(this.hci._extended);

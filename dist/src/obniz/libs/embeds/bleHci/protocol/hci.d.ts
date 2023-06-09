@@ -9,6 +9,7 @@ import { ObnizBLEHci } from '../hci';
 import { BleDeviceAddress, BleDeviceAddressType, BleExtendedAdvertisingEnable, Handle } from '../bleTypes';
 declare type HciEventTypes = 'leAdvertisingReport' | 'leExtendedAdvertisingReport' | 'leConnComplete' | 'stateChange' | 'leConnUpdateComplete' | 'disconnComplete' | 'encryptChange' | 'aclDataPkt' | 'updatePhy';
 export declare type HciState = 'poweredOn' | 'poweredOff';
+export declare type HciPhy = 'noPhy' | '1m' | '2m' | 'coded' | 'error';
 /**
  * @ignore
  */
