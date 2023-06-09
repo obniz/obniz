@@ -421,4 +421,101 @@ await obniz.ble.scan.startWait();
 
 ```
 
+## [await]eraseFlashRomWait()
 
+FlashROMを削除する
+
+```javascript
+
+// Javascript Example
+await obniz.ble.initWait();
+const DR_MARK = Obniz.getPartsClass("DR_MARK");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (DR_MARK.isDevice(peripheral)) {
+    console.log("find");
+    const device = new DR_MARK(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const mode = await device.eraseFlashRomWait()
+  }
+};
+await obniz.ble.scan.startWait();
+```
+
+## [await]getFlashRomInfoWait(timeOffsetMinute:時差を入れる)
+
+FlashROMに保存されているデータ数を確認できる
+最新の計測日時と最古の計測日時を確認できる
+
+```javascript
+
+// Javascript Example
+await obniz.ble.initWait();
+const DR_MARK = Obniz.getPartsClass("DR_MARK");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (DR_MARK.isDevice(peripheral)) {
+    console.log("find");
+    const device = new DR_MARK(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const info = await device.getFlashRomInfoWait(0)
+    console.log(info)
+  }
+};
+await obniz.ble.scan.startWait();
+```
+
+## [await]getFlashRomSearchWait(startDate:検索開始日,endDate:検索終了日,timeOffsetMinute:時差を入れる)
+
+FlashROMに保存されているデータ数を確認できる
+指定時間にある計測履歴のIndexや個数を確認できます
+
+```javascript
+
+// Javascript Example
+await obniz.ble.initWait();
+const DR_MARK = Obniz.getPartsClass("DR_MARK");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (DR_MARK.isDevice(peripheral)) {
+    console.log("find");
+    const device = new DR_MARK(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const info = await device.getFlashRomInfoWait(0)
+    console.log(info)
+    if(info.total != 0){
+      const result = await device.getFlashRomSearchWait(info.endDate,info.endDate,0)
+      console.log(result)
+    }
+  }
+};
+await obniz.ble.scan.startWait();
+```
+
+
+## [await]getFlashRomHistoryDataWait(index: number,timeOffsetMinute: number)
+
+FlashROMに保存されている計測履歴を取得します。
+終了モードの時にindexを0xFFFFでリクエストすると最新の結果を取得します。
+それ以外の場合は、```getFlashRomSearchWait```で取得したIndexを元に取得できます。
+
+```javascript
+
+// Javascript Example
+await obniz.ble.initWait();
+const DR_MARK = Obniz.getPartsClass("DR_MARK");
+obniz.ble.scan.onfind = async (peripheral) => {
+  if (DR_MARK.isDevice(peripheral)) {
+    console.log("find");
+    const device = new DR_MARK(peripheral);
+    await device.connectWait();
+    console.log("connected");
+    const mode = await device.getActionModeWait()
+    if(mode === "finish"){
+      const history = await device.getFlashRomSearchWait(0xffff,0);
+      console.log(history)
+    }
+  }
+};
+await obniz.ble.scan.startWait();
+```

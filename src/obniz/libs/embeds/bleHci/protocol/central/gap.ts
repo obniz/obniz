@@ -16,7 +16,7 @@ const debug: any = (message: any) => {
 import EventEmitter from 'eventemitter3';
 import { ObnizBleScanStartError } from '../../../../../ObnizError';
 import BleHelper from '../../bleHelper';
-import { Hci } from '../hci';
+import { Hci, HciPhy } from '../hci';
 
 type GapEventTypes = 'scanStop' | 'discover';
 
@@ -204,7 +204,9 @@ export class Gap extends EventEmitter<GapEventTypes> {
       addressType,
       eir,
       rssi,
-      true
+      true,
+      primaryPhy,
+      secondaryPhy
     );
   }
 
@@ -252,7 +254,9 @@ export class Gap extends EventEmitter<GapEventTypes> {
     addressType: any,
     eir: any,
     rssi: number,
-    extended: boolean
+    extended: boolean,
+    primaryPhy: HciPhy,
+    secondaryPhy: HciPhy
   ) {
     const previouslyDiscovered: any = !!this._discoveries[address];
 
@@ -488,7 +492,9 @@ export class Gap extends EventEmitter<GapEventTypes> {
       addressType,
       connectable,
       advertisement,
-      rssi
+      rssi,
+      primaryPhy,
+      secondaryPhy
     );
   }
 

@@ -18,6 +18,7 @@ import {
 } from './bleTypes';
 import { SmpEncryptOptions } from './protocol/central/smp';
 import { retry } from '../../utils/retry';
+import { HciPhy } from './protocol/hci';
 
 /**
  * The return values are shown below.
@@ -278,6 +279,10 @@ export class BleRemotePeripheral {
    */
   public rssi: number | null;
 
+  public primary_phy: HciPhy | null;
+
+  public secondary_phy: HciPhy | null;
+
   /**
    * This returns raw advertise data.
    *
@@ -450,7 +455,10 @@ export class BleRemotePeripheral {
     'adv_data',
     'scan_resp',
     'service_data',
+    'primary_phy',
+    'secondary_phy',
   ];
+
   protected _services: BleRemoteService[];
   protected emitter: EventEmitter;
   private _extended = false;
@@ -465,6 +473,8 @@ export class BleRemotePeripheral {
     this.address_type = null;
     this.ble_event_type = null;
     this.rssi = null;
+    this.primary_phy = null;
+    this.secondary_phy = null;
     // this.adv_data = null;
     this.scan_resp = null;
     this.localName = null;

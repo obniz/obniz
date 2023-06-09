@@ -15,7 +15,7 @@ jobs:
   build-test:
     strategy:
       matrix:
-        os: [ubuntu-18.04]
+        os: [ubuntu-latest]
         node: [16.x]
 
     runs-on: ${{ matrix.os }}

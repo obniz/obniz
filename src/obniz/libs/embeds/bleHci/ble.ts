@@ -9,7 +9,7 @@
 
 import { ObnizBLEHci } from './hci';
 import { NobleBindings as CentralBindings } from './protocol/central/bindings';
-import { Hci as HciProtocol } from './protocol/hci';
+import { Hci as HciProtocol, HciPhy } from './protocol/hci';
 import { BlenoBindings as PeripheralBindings } from './protocol/peripheral/bindings';
 
 import semver from 'semver';
@@ -233,7 +233,8 @@ export class ObnizBLE extends ComponentAbstract {
   }
 
   // eslint-disable-next-line
-  public debugHandler = (text: string): void => {};
+  public debugHandler = (text: string): void => {
+  };
 
   /**
    * Initialize BLE module. You need call this first everything before.
@@ -539,7 +540,9 @@ export class ObnizBLE extends ComponentAbstract {
     addressType?: any,
     connectable?: any,
     advertisement?: any,
-    rssi?: any
+    rssi?: any,
+    primaryPhy?: HciPhy,
+    secondaryPhy?: HciPhy
   ) {
     let val: BleRemotePeripheral | null = this.findPeripheral(uuid);
     if (!val) {
@@ -558,6 +561,8 @@ export class ObnizBLE extends ComponentAbstract {
       adv_data: advertisement.advertisementRaw,
       scan_resp: advertisement.scanResponseRaw,
       service_data: advertisement.serviceData,
+      primary_phy: primaryPhy ?? null,
+      secondary_phy: secondaryPhy ?? null,
     };
 
     val.setParams(peripheralData);
