@@ -19,7 +19,7 @@ import {
   Handle,
   UUID,
 } from '../../bleTypes';
-import { Hci, HciState } from '../hci';
+import { Hci, HciPhy, HciState } from '../hci';
 import { HandleIndex } from '../peripheral/gatt';
 import { AclStream } from './acl-stream';
 import { Gap } from './gap';
@@ -371,7 +371,9 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     addressType: any,
     connectable: any,
     advertisement: any,
-    rssi: number
+    rssi: number,
+    primaryPhy: HciPhy,
+    secondaryPhy: HciPhy
   ) {
     if (this._scanServiceUuids === null) {
       // scan not started ?
@@ -412,7 +414,9 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
         addressType,
         connectable,
         advertisement,
-        rssi
+        rssi,
+        primaryPhy,
+        secondaryPhy
       );
     }
   }

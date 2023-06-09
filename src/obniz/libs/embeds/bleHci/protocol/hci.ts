@@ -293,6 +293,8 @@ type HciEventTypes =
 
 export type HciState = 'poweredOn' | 'poweredOff';
 
+export type HciPhy = 'noPhy' | '1m' | '2m' | 'coded' | 'error';
+
 /**
  * @ignore
  */
