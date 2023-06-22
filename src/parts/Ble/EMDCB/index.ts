@@ -17,6 +17,7 @@ export interface EMDCB_Data {
   light_level_solar_cell?: number;
   light_level_sensor?: number;
   occupancy_status?: boolean;
+  commissioning_info?: number[];
 }
 
 export default class EMDCB implements ObnizPartsBleInterface {
@@ -42,13 +43,21 @@ export default class EMDCB implements ObnizPartsBleInterface {
    */
   public static getData(peripheral: BleRemotePeripheral): EMDCB_Data | null {
     const results = this.analyzeData(peripheral);
-    const data: EMDCB_Data = {
-      address: peripheral.address,
-      energy_level: results.energy_level,
-      light_level_solar_cell: results.light_level_solar_cell,
-      light_level_sensor: results.light_level_sensor,
-      occupancy_status: results.occupancy_status,
-    };
+    let data: EMDCB_Data;
+    if (results.commissioning_info) {
+      data = {
+        address: peripheral.address,
+        commissioning_info: results.commissioning_info,
+      };
+    } else {
+      data = {
+        address: peripheral.address,
+        energy_level: results.energy_level,
+        light_level_solar_cell: results.light_level_solar_cell,
+        light_level_sensor: results.light_level_sensor,
+        occupancy_status: results.occupancy_status,
+      };
+    }
     return data;
   }
 
@@ -58,7 +67,7 @@ export default class EMDCB implements ObnizPartsBleInterface {
     const sensorData = peripheral.adv_data.slice(8, -4);
     let i = 0;
     let isDescriptor = true;
-    let dataLength = 0;
+    let dataLength = 1;
     let typeId = 0;
     const results: {
       backup_battery_voltage?: number;
@@ -66,7 +75,7 @@ export default class EMDCB implements ObnizPartsBleInterface {
       light_level_solar_cell?: number;
       light_level_sensor?: number;
       occupancy_status?: boolean;
-      commissioning_info?: number | null;
+      commissioning_info?: number[];
     } = {};
 
     while (i < sensorData.length) {
@@ -83,10 +92,10 @@ export default class EMDCB implements ObnizPartsBleInterface {
             dataLength = 4;
             break;
           case 3:
-            dataLength = 0; // extended
+            dataLength = 1; // extended
             break;
           default:
-            throw new Error();
+            throw new Error('data that cannot be analyzed');
         }
         typeId = descriptor & 0b111111;
         isDescriptor = false;
@@ -95,13 +104,17 @@ export default class EMDCB implements ObnizPartsBleInterface {
         let data = 0;
         switch (dataLength) {
           case 0x01:
-            data = sensorData[i];
+            if (typeId === 0x3e) {
+              dataLength = 22;
+            } else {
+              data = sensorData[i];
+            }
             break;
           case 0x02:
             data = (sensorData[i + 1] << 8) + sensorData[i];
             break;
           default:
-            throw new Error();
+            throw new Error('data that cannot be analyzed');
         }
         switch (typeId) {
           case 0x01:
@@ -124,10 +137,10 @@ export default class EMDCB implements ObnizPartsBleInterface {
             }
             break;
           case 0x3e:
-            results.commissioning_info = null;
+            results.commissioning_info = peripheral.adv_data.slice(9);
             break;
           default:
-            throw new Error();
+            throw new Error('data that cannot be analyzed');
         }
         i += dataLength;
         isDescriptor = true;

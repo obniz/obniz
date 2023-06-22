@@ -1,11 +1,11 @@
 # EMDCB
-EMDCB is a BLE-based human detection sensor and illuminance sensor.  
-It can be attached to ceilings, etc., to measure the amount of light in a room and the number of people entering and leaving the room.  
+EMDCBはBLEを使用した人感センサおよび照度センサです。  
+天井等に取り付け、室内の光量、人の出入りを測定できます。  
 
 ![](./image.jpg)
 
 ## isDevice(peripheral)
-Determine if the scanned peripheral is an EMDCB with BLE. 
+BLEでスキャンしたperipheralがEMDCBかどうかを判定します。  
 
 ```javascript
 // Javascript Example
@@ -22,7 +22,7 @@ await obniz.ble.scan.startWait();
 
 
 ## getData()
-Parses advertisement and retrieves data.
+アドバタイズ情報を解析し、データを取得します。
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
@@ -37,14 +37,14 @@ await obniz.ble.scan.startWait();
 
 ```
 
-### Data format
+### データフォーマット
 ```
 {
   address: string;
-  energy_level?: number; //(%)
-  light_level_solar_cell?: number; //(lx)
-  light_level_sensor?: number; //(lx)
-  occupancy_status?: boolean; 
+  energy_level?: number; //電池残量(%)
+  light_level_solar_cell?: number; //太陽電池の光量(lx)
+  light_level_sensor?: number; //センサーの光量(lx)
+  occupancy_status?: boolean; //人がいるかどうか
   commissioning_info?: number[]; //AES key & device address(22byte)
 }
 ```
