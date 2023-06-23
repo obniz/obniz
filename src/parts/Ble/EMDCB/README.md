@@ -22,7 +22,9 @@ await obniz.ble.scan.startWait();
 
 
 ## getData()
-Parses advertisement and retrieves data.
+Parses advertisement and retrieves data.  
+There are two types of advertisements, Sensor Data and Commissioning Data, which differ in the data they return.  
+(see data format)  
 ```javascript
 // Javascript Example
 await obniz.ble.initWait();
@@ -38,13 +40,21 @@ await obniz.ble.scan.startWait();
 ```
 
 ### Data format
+Sensor Data
 ```
 {
   address: string;
-  energy_level?: number; //(%)
-  light_level_solar_cell?: number; //(lx)
-  light_level_sensor?: number; //(lx)
-  occupancy_status?: boolean; 
+  energy_level?: number; //電池残量(%)
+  light_level_solar_cell?: number; //太陽電池の光量(lx)
+  light_level_sensor?: number; //センサーの光量(lx)
+  occupancy_status?: boolean; //人がいるかどうか
+}
+```
+
+Commissioning Data
+```
+{
+  address: string;
   commissioning_info?: number[]; //AES key & device address(22byte)
 }
 ```
