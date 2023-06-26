@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.25.0",
+  "version": "3.25.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -5510,7 +5510,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
          */
         this._initialized = false;
         // eslint-disable-next-line
-        this.debugHandler = (text) => { };
+        this.debugHandler = (text) => {
+        };
         const extended = info.extended;
         this.hci = new hci_1.ObnizBLEHci(obniz, extended);
         this.service = bleService_1.BleService;
@@ -5896,7 +5897,7 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
         }
         return null;
     }
-    onDiscover(uuid, address, addressType, connectable, advertisement, rssi) {
+    onDiscover(uuid, address, addressType, connectable, advertisement, rssi, primaryPhy, secondaryPhy) {
         let val = this.findPeripheral(uuid);
         if (!val) {
             val = new bleRemotePeripheral_1.BleRemotePeripheral(this, uuid);
@@ -5913,6 +5914,8 @@ class ObnizBLE extends ComponentAbstact_1.ComponentAbstract {
             adv_data: advertisement.advertisementRaw,
             scan_resp: advertisement.scanResponseRaw,
             service_data: advertisement.serviceData,
+            primary_phy: primaryPhy !== null && primaryPhy !== void 0 ? primaryPhy : null,
+            secondary_phy: secondaryPhy !== null && secondaryPhy !== void 0 ? secondaryPhy : null,
         };
         val.setParams(peripheralData);
         val.setExtendFlg(this.hci._extended);
@@ -8299,6 +8302,8 @@ class BleRemotePeripheral {
             'adv_data',
             'scan_resp',
             'service_data',
+            'primary_phy',
+            'secondary_phy',
         ];
         this._extended = false;
         this.obnizBle = obnizBle;
@@ -8309,6 +8314,8 @@ class BleRemotePeripheral {
         this.address_type = null;
         this.ble_event_type = null;
         this.rssi = null;
+        this.primary_phy = null;
+        this.secondary_phy = null;
         // this.adv_data = null;
         this.scan_resp = null;
         this.localName = null;
@@ -9388,7 +9395,7 @@ class BleScan {
                 message: `Unexpected arguments. It might be contained the second argument keys. Please check object keys and order of 'startWait()' / 'startOneWait()' / 'startAllWait()' arguments. `,
             });
         }
-        const ble5DeviceFilterSupportVersion = '5.0.0'; // TODO: CHANGE
+        const ble5DeviceFilterSupportVersion = '4.1.0';
         if (settings.filterOnDevice === true &&
             this.obnizBle.hci._extended === true &&
             semver_1.default.lt(semver_1.default.coerce(this.obnizBle.Obniz.firmware_ver), ble5DeviceFilterSupportVersion)) {
@@ -10531,7 +10538,7 @@ class NobleBindings extends eventemitter3_1.default {
         this._state = state;
         this.emit('stateChange', state);
     }
-    onDiscover(status, address, addressType, connectable, advertisement, rssi) {
+    onDiscover(status, address, addressType, connectable, advertisement, rssi, primaryPhy, secondaryPhy) {
         if (this._scanServiceUuids === null) {
             // scan not started ?
             return;
@@ -10557,7 +10564,7 @@ class NobleBindings extends eventemitter3_1.default {
             this._addresses[uuid] = address;
             this._addresseTypes[uuid] = addressType;
             this._connectable[uuid] = connectable;
-            this.emit('discover', uuid, address, addressType, connectable, advertisement, rssi);
+            this.emit('discover', uuid, address, addressType, connectable, advertisement, rssi, primaryPhy, secondaryPhy);
         }
     }
     onLeConnComplete(status, handle, role, addressType, address, interval, latency, supervisionTimeout, masterClockAccuracy) {
@@ -10867,7 +10874,7 @@ class Gap extends eventemitter3_1.default {
     }
     onHciLeExtendedAdvertisingReport(status, type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress) {
         debug('onHciLeExtendedAdvertisingReport', type, address, addressType, eir, rssi, primaryPhy, secondaryPhy, sid, txPower, periodicAdvertisingInterval, directAddressType, directAddress);
-        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true);
+        this.onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, true, primaryPhy, secondaryPhy);
     }
     isAdvOrScanResp(type, extended) {
         if (extended) {
@@ -10903,7 +10910,7 @@ class Gap extends eventemitter3_1.default {
         }
         return null;
     }
-    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended) {
+    onHciLeAdvertisingReport(status, type, address, addressType, eir, rssi, extended, primaryPhy, secondaryPhy) {
         const previouslyDiscovered = !!this._discoveries[address];
         const advertisement = previouslyDiscovered
             ? this._discoveries[address].advertisement
@@ -11083,7 +11090,7 @@ class Gap extends eventemitter3_1.default {
             count: discoveryCount,
             hasScanResponse,
         };
-        this.emit('discover', status, address, addressType, connectable, advertisement, rssi);
+        this.emit('discover', status, address, addressType, connectable, advertisement, rssi, primaryPhy, secondaryPhy);
     }
     async setExtendedScanEnabledWait(enabled, filterDuplicates) {
         const status = await this._hci.setExtendedScanEnabledWait(enabled, filterDuplicates);
@@ -25661,6 +25668,7 @@ var map = {
 	"./Biological/PULSE08-M5STICKC-S/index.js": "./dist/src/parts/Biological/PULSE08-M5STICKC-S/index.js",
 	"./Ble/2JCIE/index.js": "./dist/src/parts/Ble/2JCIE/index.js",
 	"./Ble/DR_MARK/index.js": "./dist/src/parts/Ble/DR_MARK/index.js",
+	"./Ble/EMDCB/index.js": "./dist/src/parts/Ble/EMDCB/index.js",
 	"./Ble/ENERTALK/index.js": "./dist/src/parts/Ble/ENERTALK/index.js",
 	"./Ble/EXTxx/index.js": "./dist/src/parts/Ble/EXTxx/index.js",
 	"./Ble/EXVital/index.js": "./dist/src/parts/Ble/EXVital/index.js",
@@ -27171,6 +27179,141 @@ DR_MARK.onpulse = null;
 DR_MARK.pulseDataArray = [];
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/EMDCB/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class EMDCB {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'EMDCB',
+        };
+    }
+    /**
+     */
+    static isDevice(peripheral) {
+        if (peripheral.adv_data[2] === 0xda && peripheral.adv_data[3] === 0x03) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     */
+    static getData(peripheral) {
+        const results = this.analyzeData(peripheral);
+        let data;
+        if (results.commissioning_info) {
+            data = {
+                address: peripheral.address,
+                commissioning_info: results.commissioning_info,
+            };
+        }
+        else {
+            data = {
+                address: peripheral.address,
+                energy_level: results.energy_level,
+                light_level_solar_cell: results.light_level_solar_cell,
+                light_level_sensor: results.light_level_sensor,
+                occupancy_status: results.occupancy_status,
+            };
+        }
+        return data;
+    }
+    /**
+     */
+    static analyzeData(peripheral) {
+        const sensorData = peripheral.adv_data.slice(8, -4);
+        let i = 0;
+        let isDescriptor = true;
+        let dataLength = 1;
+        let typeId = 0;
+        const results = {};
+        while (i < sensorData.length) {
+            if (isDescriptor) {
+                const descriptor = sensorData[i];
+                switch (descriptor >> 6) {
+                    case 0:
+                        dataLength = 1;
+                        break;
+                    case 1:
+                        dataLength = 2;
+                        break;
+                    case 2:
+                        dataLength = 4;
+                        break;
+                    case 3:
+                        dataLength = 1; // extended
+                        break;
+                    default:
+                        throw new Error('data that cannot be analyzed');
+                }
+                typeId = descriptor & 0b111111;
+                isDescriptor = false;
+                i += 1;
+            }
+            else {
+                let data = 0;
+                switch (dataLength) {
+                    case 0x01:
+                        if (typeId === 0x3e) {
+                            dataLength = 22;
+                        }
+                        else {
+                            data = sensorData[i];
+                        }
+                        break;
+                    case 0x02:
+                        data = (sensorData[i + 1] << 8) + sensorData[i];
+                        break;
+                    default:
+                        throw new Error('data that cannot be analyzed');
+                }
+                switch (typeId) {
+                    case 0x01:
+                        results.backup_battery_voltage = data / 2;
+                        break;
+                    case 0x02:
+                        results.energy_level = data / 2;
+                        break;
+                    case 0x04:
+                        results.light_level_solar_cell = data;
+                        break;
+                    case 0x05:
+                        results.light_level_sensor = data;
+                        break;
+                    case 0x20:
+                        if (data === 1) {
+                            results.occupancy_status = false;
+                        }
+                        else if (data === 2) {
+                            results.occupancy_status = true;
+                        }
+                        break;
+                    case 0x3e:
+                        results.commissioning_info = peripheral.adv_data.slice(9);
+                        break;
+                    default:
+                        throw new Error('data that cannot be analyzed');
+                }
+                i += dataLength;
+                isDescriptor = true;
+            }
+        }
+        return results;
+    }
+}
+exports.default = EMDCB;
+
 
 /***/ }),
 
