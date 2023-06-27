@@ -14,6 +14,7 @@ import {
   uint,
   uintToArray,
 } from '../../../obniz/ObnizPartsBleAbstract';
+import { ObnizTimeoutError } from '../../../obniz/ObnizError';
 
 export interface TM2101_SROptions {}
 
@@ -299,7 +300,9 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
    *
    * @returns Instance of TM2101_SR_Data TM2101_SR_Dataのインスタンス
    */
-  public async getDataWait(): Promise<TM2101_SR_Data> {
+  public async getDataWait(
+    { timeout }: { timeout: number } = { timeout: 60 } // 無反応になって60秒たったら完了扱いにする
+  ): Promise<TM2101_SR_Data> {
     this.checkConnected();
 
     // Prevent parallel execution of commands
@@ -310,6 +313,21 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
       );
     }
     this.processingCommand = 'GETDATA';
+    let lastReceiveTime = Date.now(); // 番兵
+    let finished = false;
+
+    // rejectしかしないのでpromiseの型は何でも良い
+    const timeoutPromise = new Promise<TM2101_SR_Data>((resolve, reject) => {
+      setInterval(() => {
+        if (lastReceiveTime + timeout * 1000 > Date.now()) {
+          reject(
+            new ObnizTimeoutError(
+              `TM2101_SR getDataWait sequence timeout: ${timeout}sec`
+            )
+          );
+        }
+      }, 1);
+    });
 
     // [elapsed time since last temperature measurement (sec), body temperature (°C)]
     // [前回の体温測定からの経過時間(秒), 体温(℃)]
@@ -317,6 +335,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
 
     const promise = new Promise<TM2101_SR_Data>((resolve) => {
       this.onFrameDataReceived = (data) => {
+        lastReceiveTime = Date.now();
         if (data.length % 2 === 1) {
           // Final frame 最終フレーム
           if (data.length === 9 && checkEquals(RESULT_EN_DATA, data)) {
@@ -337,6 +356,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
               time -= prevDiff;
             }
             resolve(result);
+            finished = true;
             // Since the final frame came 最終フレームが来たため
             return true;
           }
@@ -360,7 +380,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
       Array.from(te.encode(`${this.processingCommand}\n`))
     );
 
-    return await promise;
+    return await Promise.race([promise, timeoutPromise]);
   }
 
   /**
@@ -408,7 +428,8 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
    * @returns Write result 書き込み結果
    */
   public async setConfigWait(
-    config: Partial<TM2101_SR_Config>
+    config: Partial<TM2101_SR_Config>,
+    { timeout }: { timeout: number } = { timeout: 60 } // 60秒たっても完了しなければエラーにする
   ): Promise<boolean> {
     this.checkConnected();
 
@@ -452,7 +473,19 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
       ],
       true
     );
+    const timeoutPromise = new Promise<boolean>((
+      resolve,
+      reject // rejectしかしないのでpromiseの型は何でも良い
+    ) =>
+      setTimeout(() => {
+        reject(
+          new ObnizTimeoutError(
+            `TM2101_SR setConfigWait sequence timeout: ${timeout}sec`
+          )
+        );
+      }, timeout)
+    );
 
-    return await promise;
+    return await Promise.race([promise, timeoutPromise]);
   }
 }
