@@ -317,7 +317,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
     let finished = false;
 
     const timeoutError = new ObnizTimeoutError(
-      `TM2101_SR getDataWait sequence timeout: ${timeout}sec`
+      `TM2101_SR getDataWait sequence timeout: ${timeout}msec`
     );
     // rejectしかしないのでpromiseの型は何でも良い
     const timeoutPromise = new Promise<TM2101_SR_Data>((resolve, reject) => {
@@ -473,7 +473,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
       true
     );
     const timeoutError = new ObnizTimeoutError(
-      `TM2101_SR setConfigWait sequence timeout: ${timeout}sec`
+      `TM2101_SR setConfigWait sequence timeout: ${timeout}msec`
     );
     const timeoutPromise = new Promise<boolean>((
       resolve,
