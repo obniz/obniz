@@ -316,18 +316,6 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
     let lastReceiveTime = Date.now(); // 番兵
     let finished = false;
 
-    const timeoutError = new ObnizTimeoutError(
-      `TM2101_SR getDataWait sequence timeout: ${timeout}msec`
-    );
-    // rejectしかしないのでpromiseの型は何でも良い
-    const timeoutPromise = new Promise<TM2101_SR_Data>((resolve, reject) => {
-      setInterval(() => {
-        if (lastReceiveTime + timeout * 1000 > Date.now()) {
-          reject(timeoutError);
-        }
-      }, 1);
-    });
-
     // [elapsed time since last temperature measurement (sec), body temperature (°C)]
     // [前回の体温測定からの経過時間(秒), 体温(℃)]
     const results: [number, number][] = [];
@@ -379,6 +367,18 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
       Array.from(te.encode(`${this.processingCommand}\n`))
     );
 
+    const timeoutError = new ObnizTimeoutError(
+      `TM2101_SR getDataWait sequence timeout: ${timeout}msec`
+    );
+    // rejectしかしないのでpromiseの型は何でも良い
+    const timeoutPromise = new Promise<TM2101_SR_Data>((resolve, reject) => {
+      const timer = setInterval(() => {
+        if (lastReceiveTime + timeout < Date.now()) {
+          clearTimeout(timer);
+          reject(timeoutError);
+        }
+      }, 100);
+    });
     return await Promise.race([promise, timeoutPromise]);
   }
 
