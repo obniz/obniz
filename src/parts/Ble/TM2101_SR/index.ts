@@ -301,7 +301,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
    * @returns Instance of TM2101_SR_Data TM2101_SR_Dataのインスタンス
    */
   public async getDataWait(
-    { timeout }: { timeout: number } = { timeout: 60 } // 無反応になって60秒たったら完了扱いにする
+    { timeout }: { timeout: number } = { timeout: 60 * 1000 } // 無反応になって60秒たったら完了扱いにする
   ): Promise<TM2101_SR_Data> {
     this.checkConnected();
 
@@ -428,7 +428,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
    */
   public async setConfigWait(
     config: Partial<TM2101_SR_Config>,
-    { timeout }: { timeout: number } = { timeout: 60 } // 60秒たっても完了しなければエラーにする
+    { timeout }: { timeout: number } = { timeout: 60 * 1000 } // 60秒たっても完了しなければエラーにする
   ): Promise<boolean> {
     this.checkConnected();
 
