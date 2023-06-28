@@ -316,15 +316,14 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
     let lastReceiveTime = Date.now(); // 番兵
     let finished = false;
 
+    const timeoutError = new ObnizTimeoutError(
+      `TM2101_SR getDataWait sequence timeout: ${timeout}sec`
+    );
     // rejectしかしないのでpromiseの型は何でも良い
     const timeoutPromise = new Promise<TM2101_SR_Data>((resolve, reject) => {
       setInterval(() => {
         if (lastReceiveTime + timeout * 1000 > Date.now()) {
-          reject(
-            new ObnizTimeoutError(
-              `TM2101_SR getDataWait sequence timeout: ${timeout}sec`
-            )
-          );
+          reject(timeoutError);
         }
       }, 1);
     });
@@ -473,16 +472,15 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
       ],
       true
     );
+    const timeoutError = new ObnizTimeoutError(
+      `TM2101_SR setConfigWait sequence timeout: ${timeout}sec`
+    );
     const timeoutPromise = new Promise<boolean>((
       resolve,
       reject // rejectしかしないのでpromiseの型は何でも良い
     ) =>
       setTimeout(() => {
-        reject(
-          new ObnizTimeoutError(
-            `TM2101_SR setConfigWait sequence timeout: ${timeout}sec`
-          )
-        );
+        reject(timeoutError);
       }, timeout)
     );
 
