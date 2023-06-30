@@ -2350,7 +2350,7 @@ exports.ObnizComponents = ObnizComponents;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {
+/* WEBPACK VAR INJECTION */(function(process, Buffer) {
 /**
  * @packageDocumentation
  * @module ObnizCore
@@ -2385,6 +2385,7 @@ class ObnizConnection extends eventemitter3_1.default {
         this._nextAutoConnectLoopTimeout = null;
         this._lastDataReceivedAt = 0;
         this._localConnectIp = null;
+        this._userAgentTexts = [];
         this.isNode = typeof window === 'undefined';
         this.id = id;
         this.socket = null;
@@ -2409,6 +2410,25 @@ class ObnizConnection extends eventemitter3_1.default {
             obniz_server: options.obniz_server || 'wss://obniz.io',
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
             obnizid_dialog: options.obnizid_dialog === false ? false : true,
+            userAgent: options.userAgent || '',
+        };
+        const obnizJsVer = this.constructor.version;
+        this._userAgentTexts.push(`obniz.js/${obnizJsVer}`);
+        if (this.isNode) {
+            // Node.js
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const os = __webpack_require__("./node_modules/os-browserify/browser.js");
+            let nodeVer = process.version;
+            if (nodeVer.startsWith('v'))
+                nodeVer = nodeVer.slice(1);
+            this._userAgentTexts.push(`Node.js/${nodeVer} (${typeof os.function !== 'undefined'
+                ? `${os.type()} ${os.release()}`
+                : `${os.type()} ${os.version()} ${os.release()}`}; ${os.platform()})`);
+        }
+        if (this.options.userAgent !== '')
+            this._userAgentTexts.push(this.options.userAgent);
+        this._connectionHeaders = {
+            'user-agent': this._userAgentTexts.join(' '),
         };
         this.wsCommandManager.createCommandInstances();
         if (this.autoConnect) {
@@ -2920,7 +2940,17 @@ class ObnizConnection extends eventemitter3_1.default {
         });
     }
     _createCloudSocket(url) {
-        const socket = new ws_1.default(url);
+        /**
+         * Note:
+         * When running in a browser, the header cannot be set due to
+         * the specifications of the browser's WebSocket API.
+         * Also, [CompatibleWebSocket](./libs/webpackReplace/ws.ts) is used instead of ws.
+         */
+        const socket = this.isNode
+            ? new ws_1.default(url, {
+                headers: this._connectionHeaders,
+            })
+            : new ws_1.default(url);
         socket.on('open', () => {
             this.wsOnOpen();
         });
@@ -2956,7 +2986,17 @@ class ObnizConnection extends eventemitter3_1.default {
         }
         const url = 'ws://' + host;
         this._print_debug('local connect to ' + url);
-        const ws = new ws_1.default(url);
+        /**
+         * Note:
+         * When running in a browser, the header cannot be set due to
+         * the specifications of the browser's WebSocket API.
+         * Also, [CompatibleWebSocket](./libs/webpackReplace/ws.ts) is used instead of ws.
+         */
+        const ws = this.isNode
+            ? new ws_1.default(url, {
+                headers: this._connectionHeaders,
+            })
+            : new ws_1.default(url);
         ws.on('open', () => {
             this._print_debug('connected to ' + url);
             this.emit('_localConnectReady');
@@ -3381,7 +3421,7 @@ class ObnizConnection extends eventemitter3_1.default {
 }
 exports.ObnizConnection = ObnizConnection;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/process/browser.js"), __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -106937,6 +106977,62 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	}
 
 	return to;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/os-browserify/browser.js":
+/***/ (function(module, exports) {
+
+exports.endianness = function () { return 'LE' };
+
+exports.hostname = function () {
+    if (typeof location !== 'undefined') {
+        return location.hostname
+    }
+    else return '';
+};
+
+exports.loadavg = function () { return [] };
+
+exports.uptime = function () { return 0 };
+
+exports.freemem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.totalmem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.cpus = function () { return [] };
+
+exports.type = function () { return 'Browser' };
+
+exports.release = function () {
+    if (typeof navigator !== 'undefined') {
+        return navigator.appVersion;
+    }
+    return '';
+};
+
+exports.networkInterfaces
+= exports.getNetworkInterfaces
+= function () { return {} };
+
+exports.arch = function () { return 'javascript' };
+
+exports.platform = function () { return 'browser' };
+
+exports.tmpdir = exports.tmpDir = function () {
+    return '/tmp';
+};
+
+exports.EOL = '\n';
+
+exports.homedir = function () {
+	return '/'
 };
 
 

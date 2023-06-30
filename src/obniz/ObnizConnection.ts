@@ -300,6 +300,8 @@ export abstract class ObnizConnection extends EventEmitter<
   private _lastDataReceivedAt = 0;
   private _autoConnectTimeout?: ReturnType<typeof setTimeout>;
   private _localConnectIp: string | null = null;
+  private _userAgentTexts: string[] = [];
+  private _connectionHeaders: { [key: string]: string };
 
   constructor(id: string, options?: ObnizOptions) {
     super();
@@ -330,7 +332,34 @@ export abstract class ObnizConnection extends EventEmitter<
       reset_obniz_on_ws_disconnection:
         options.reset_obniz_on_ws_disconnection === false ? false : true,
       obnizid_dialog: options.obnizid_dialog === false ? false : true,
+      userAgent: options.userAgent || '',
     };
+
+    const obnizJsVer = (this.constructor as typeof ObnizConnection).version;
+    this._userAgentTexts.push(`obniz.js/${obnizJsVer}`);
+
+    if (this.isNode) {
+      // Node.js
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const os = require('os');
+      let nodeVer = process.version;
+      if (nodeVer.startsWith('v')) nodeVer = nodeVer.slice(1);
+      this._userAgentTexts.push(
+        `Node.js/${nodeVer} (${
+          typeof os.function !== 'undefined'
+            ? `${os.type()} ${os.release()}`
+            : `${os.type()} ${os.version()} ${os.release()}`
+        }; ${os.platform()})`
+      );
+    }
+
+    if (this.options.userAgent !== '')
+      this._userAgentTexts.push(this.options.userAgent);
+
+    this._connectionHeaders = {
+      'user-agent': this._userAgentTexts.join(' '),
+    };
+
     this.wsCommandManager.createCommandInstances();
     if (this.autoConnect) {
       this._startAutoConnectLoopInBackground();
@@ -890,7 +919,17 @@ export abstract class ObnizConnection extends EventEmitter<
   }
 
   protected _createCloudSocket(url: string) {
-    const socket = new wsClient(url);
+    /**
+     * Note:
+     * When running in a browser, the header cannot be set due to
+     * the specifications of the browser's WebSocket API.
+     * Also, [CompatibleWebSocket](./libs/webpackReplace/ws.ts) is used instead of ws.
+     */
+    const socket = this.isNode
+      ? new wsClient(url, {
+          headers: this._connectionHeaders,
+        })
+      : new wsClient(url);
     socket.on('open', () => {
       this.wsOnOpen();
     });
@@ -928,7 +967,17 @@ export abstract class ObnizConnection extends EventEmitter<
 
     const url = 'ws://' + host;
     this._print_debug('local connect to ' + url);
-    const ws = new wsClient(url);
+    /**
+     * Note:
+     * When running in a browser, the header cannot be set due to
+     * the specifications of the browser's WebSocket API.
+     * Also, [CompatibleWebSocket](./libs/webpackReplace/ws.ts) is used instead of ws.
+     */
+    const ws = this.isNode
+      ? new wsClient(url, {
+          headers: this._connectionHeaders,
+        })
+      : new wsClient(url);
     ws.on('open', () => {
       this._print_debug('connected to ' + url);
       this.emit('_localConnectReady');

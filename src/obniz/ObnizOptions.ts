@@ -57,4 +57,9 @@ export interface ObnizOptions {
    * @default true
    */
   obnizid_dialog?: boolean;
+
+  /**
+   * @ignore
+   */
+  userAgent?: string;
 }
