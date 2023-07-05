@@ -136,6 +136,7 @@
   },
   "dependencies": {
     "@9wick/serial-executor": "^1.0.0",
+    "@larksuiteoapi/node-sdk": "^1.18.0",
     "@types/tv4": "^1.2.29",
     "@types/ws": "^6.0.4",
     "crypto": "^1.0.1",
