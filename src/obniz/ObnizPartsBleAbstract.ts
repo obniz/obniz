@@ -23,11 +23,15 @@ const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'] as const;
 
 export type ObnizPartsBleMode = typeof ObnizPartsBleModeList[number];
 
-export type ObnizPartsBleCompare<S> = ObnizPartsBleCompareWithMode<S> | S;
-
-export type ObnizPartsBleCompareWithMode<S> = {
+type ObnizPartsBleCompareByMode<S> = {
   [key in ObnizPartsBleMode]?: S;
 };
+
+export type ObnizPartsBleCompareWithNonNull<S> =
+  | ObnizPartsBleCompareByMode<S>
+  | S;
+
+export type ObnizPartsBleCompare<S> = ObnizPartsBleCompareByMode<S | null> | S;
 
 type NumberType = 'numLE' | 'numBE' | 'unsignedNumLE' | 'unsignedNumBE';
 type BoolType =
@@ -43,14 +47,21 @@ type OtherType = 'string' | 'xyz';
 type CustomType = 'custom';
 type CheckType = 'check';
 
-export type NormalValueType = NumberType | BoolType | OtherType | CustomType;
+export type NormalValueType = NumberType | BoolType | OtherType;
 
-export type ValueType = NormalValueType | CheckType;
+export type ObnizBleBeaconStruct<S> =
+  | {
+      [key in keyof S]: ObnizBleBeaconStructNormal<S, key>;
+    }
+  | {
+      [key in Exclude<string, keyof S>]: ObnizBleBeaconStructCheck;
+    };
 
-export type ObnizBleBeaconStruct<S> = {
-  [key in keyof S]: ObnizBleBeaconStructNormal<S, key>;
-} &
-  { [key in string]: ObnizBleBeaconStructCheck };
+type ObnizBleBeaconStructStrict<S, T extends string> = {
+  [key in keyof S | T]: key extends keyof S
+    ? ObnizBleBeaconStructNormal<S, key>
+    : ObnizBleBeaconStructCheck;
+};
 
 interface ObnizBleBeaconStructStandard<S> {
   /** Value type */
@@ -63,27 +74,36 @@ interface ObnizBleBeaconStructStandard<S> {
   scanResponse?: boolean;
 }
 
-export type ObnizBleBeaconStructNormal<
-  S,
-  key extends keyof S
-> = ObnizBleBeaconStructStandard<NormalValueType> & {
-  /** Default: 0 (def: base + parseInt() * multiple) */
-  base?: number;
-  /** Default: 1 (def: base + parseInt() * multiple) */
-  multiple?: number;
-  /** Default: none (ex: 0.1234 --(round: 2)-> 0.12) */
-  round?: number;
-  /** Number of bytes in the integer part with fixed point */
-  fixedIntegerBytes?: number;
-  /** Required in array type, Only in xyz */
-  // repeat?: number;
-  /** Used only 'custom' */
-  func?: (data: number[], peripheral: BleRemotePeripheral) => S[key];
+export type ObnizBleBeaconStructNormal<S, key extends keyof S> =
+  | (ObnizBleBeaconStructStandard<NormalValueType> & {
+      /** Default: 0 (def: base + parseInt() * multiple) */
+      base?: number;
+      /** Default: 1 (def: base + parseInt() * multiple) */
+      multiple?: number;
+      /** Default: none (ex: 0.1234 --(round: 2)-> 0.12) */
+      round?: number;
+      /** Number of bytes in the integer part with fixed point */
+      fixedIntegerBytes?: number;
+      /** Required in array type, Only in xyz */
+      // repeat?: number;
+    })
+  | (ObnizBleBeaconStructStandard<CustomType> & {
+      /** Used only 'custom' */
+      func: (data: number[], peripheral: BleRemotePeripheral) => S[key];
+    });
+
+export type ObnizBleBeaconStructCheck =
+  | ObnizBleBeaconStructCheckWithData
+  | ObnizBleBeaconStructCheckWithFunc;
+
+type ObnizBleBeaconStructCheckWithData = ObnizBleBeaconStructStandard<CheckType> & {
+  /** Compare data value, Used only 'check' */
+  data: number | number[];
 };
 
-export type ObnizBleBeaconStructCheck = ObnizBleBeaconStructStandard<ValueType> & {
-  /** Compare data value, Used only 'check' */
-  data?: number | number[];
+type ObnizBleBeaconStructCheckWithFunc = ObnizBleBeaconStructStandard<CheckType> & {
+  /** Compare function with data value, Used only 'check' */
+  func: (data: Uint8Array) => boolean;
 };
 
 export const notMatchDeviceError = new Error('Is NOT target device.');
@@ -106,7 +126,9 @@ export const fixedPoint = (
 
 export const uint = (value: number[] | Uint8Array): number => {
   let val = 0;
-  value.forEach((v, i) => (val += v << (i * 8)));
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_operators#bitwise_logical_operators
+  // eslint-disable-next-line prettier/prettier
+  value.forEach((v, i) => (val += v * (2 ** (i * 8))));
   return val;
 };
 
@@ -153,23 +175,29 @@ export const fixByRange = (
   return value;
 };
 
-export const checkEquals = (base: Uint8Array, target: Uint8Array): boolean =>
-  base.filter((v, i) => v !== target[i]).length === 0;
+export const checkEquals = (
+  base: number[] | Uint8Array,
+  target: number[] | Uint8Array
+): boolean => base.filter((v, i) => v !== target[i]).length === 0;
 
 export interface ObnizPartsBleProps extends ObnizPartsProps {
   readonly PartsName: PartsType;
   readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
-  readonly Address?: ObnizPartsBleCompare<RegExp>;
-  readonly LocalName?: ObnizPartsBleCompare<RegExp>;
-  readonly ServiceUuids?: ObnizPartsBleCompare<string | string[] | null>;
-  readonly BeaconDataLength?: ObnizPartsBleCompare<number | null>;
-  readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number | null>;
-  readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
-  readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[] | null>;
-  readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
-  readonly ServiceDataLength?: ObnizPartsBleCompare<number | null>;
-  readonly ServiceUUID?: ObnizPartsBleCompare<number[] | null>;
-  readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+  readonly Address?: ObnizPartsBleCompareWithNonNull<RegExp>;
+  readonly LocalName?: ObnizPartsBleCompareWithNonNull<RegExp>;
+  readonly ServiceUuids?: ObnizPartsBleCompare<string | string[]>;
+  readonly BeaconDataLength?: ObnizPartsBleCompare<number>;
+  readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number>;
+  readonly CompanyID?: ObnizPartsBleCompare<number[]>;
+  readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[]>;
+  readonly BeaconDataStruct?: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<unknown>
+  >;
+  readonly ServiceDataLength?: ObnizPartsBleCompare<number>;
+  readonly ServiceUUID?: ObnizPartsBleCompare<number[]>;
+  readonly ServiceDataStruct?: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<unknown>
+  >;
 
   getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
 
@@ -208,14 +236,14 @@ export abstract class ObnizPartsBle<S> {
    *
    * 標準でisDevice()の条件として使用
    */
-  public static readonly Address?: ObnizPartsBleCompare<RegExp> = undefined;
+  public static readonly Address?: ObnizPartsBleCompareWithNonNull<RegExp> = undefined;
 
   /**
    * Used as a condition of isDevice() by default.
    *
    * 標準でisDevice()の条件として使用
    */
-  public static readonly LocalName?: ObnizPartsBleCompare<RegExp> = undefined;
+  public static readonly LocalName?: ObnizPartsBleCompareWithNonNull<RegExp> = undefined;
 
   /**
    * Used as a condition of isDevice() by default.
@@ -223,7 +251,7 @@ export abstract class ObnizPartsBle<S> {
    * 標準でisDevice()の条件として使用
    */
   public static readonly ServiceUuids?: ObnizPartsBleCompare<
-    string | string[] | null
+    string | string[]
   > = undefined;
 
   public static getServiceUuids(
@@ -244,9 +272,7 @@ export abstract class ObnizPartsBle<S> {
    *
    * 標準でisDevice()の条件として使用
    */
-  public static readonly BeaconDataLength?: ObnizPartsBleCompare<
-    number | null
-  > = undefined;
+  public static readonly BeaconDataLength?: ObnizPartsBleCompare<number> = undefined;
 
   /**
    * Overall length of manufacturer-specific data.
@@ -255,18 +281,14 @@ export abstract class ObnizPartsBle<S> {
    * 製造者固有データ全体の長さ
    * 標準でisDevice()の条件として使用
    */
-  public static readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<
-    number | null
-  > = undefined;
+  public static readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number> = undefined;
 
   /**
    * Used as a condition of isDevice() by default.
    *
    * 標準でisDevice()の条件として使用
    */
-  public static readonly CompanyID?: ObnizPartsBleCompare<
-    number[] | null
-  > = undefined;
+  public static readonly CompanyID?: ObnizPartsBleCompare<number[]> = undefined;
 
   /**
    * Used as a condition of isDevice() by default.
@@ -274,7 +296,7 @@ export abstract class ObnizPartsBle<S> {
    * 標準でisDevice()の条件として使用
    */
   public static readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<
-    number[] | null
+    number[]
   > = undefined;
 
   /**
@@ -284,16 +306,16 @@ export abstract class ObnizPartsBle<S> {
    * 標準でisDevice()の条件として使用
    * CompanyID以降のデータと比較
    */
-  public static readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+  public static readonly BeaconDataStruct?: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<unknown>
+  >;
 
   /**
    * Used as a condition of isDevice() by default.
    *
    * 標準でisDevice()の条件として使用
    */
-  public static readonly ServiceDataLength?: ObnizPartsBleCompare<
-    number | null
-  > = undefined;
+  public static readonly ServiceDataLength?: ObnizPartsBleCompare<number> = undefined;
 
   /**
    * Used as a condition of isDevice() by default.
@@ -301,7 +323,7 @@ export abstract class ObnizPartsBle<S> {
    * 標準でisDevice()の条件として使用
    */
   public static readonly ServiceDataUUID?: ObnizPartsBleCompare<
-    number[] | null
+    number[]
   > = undefined;
 
   /**
@@ -311,7 +333,9 @@ export abstract class ObnizPartsBle<S> {
    * 標準でisDevice()の条件として使用
    * ServiceUUID以降のデータと比較
    */
-  public static readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+  public static readonly ServiceDataStruct?: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<unknown>
+  >;
 
   /**
    * @deprecated
@@ -434,14 +458,15 @@ export abstract class ObnizPartsBle<S> {
   private static checkCustomData(
     mode: ObnizPartsBleMode,
     address: string,
-    data: number[] | null,
-    dataLength: ObnizPartsBleCompare<number | null> | undefined,
-    headID: ObnizPartsBleCompare<number[] | null> | undefined,
+    rawData: number[] | null,
+    dataLength: ObnizPartsBleCompareWithNonNull<number | null> | undefined,
+    headID: ObnizPartsBleCompareWithNonNull<number[] | null> | undefined,
     dataStruct:
-      | ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>
+      | ObnizPartsBleCompareWithNonNull<ObnizBleBeaconStruct<unknown> | null>
       | undefined,
     inScanResponse = false
   ): boolean {
+    const data = rawData ? new Uint8Array(rawData) : null;
     if (headID !== undefined) {
       const defHeadID =
         headID instanceof Array || headID === null || headID === undefined
@@ -478,41 +503,70 @@ export abstract class ObnizPartsBle<S> {
       }
     }
 
-    if (dataStruct !== undefined) {
-      const defDataStruct = (dataStruct !== null &&
-      (dataStruct.Beacon || dataStruct.Connectable || dataStruct.Pairing)
-        ? dataStruct[mode]
-        : dataStruct) as ObnizBleBeaconStruct<unknown> | null | undefined;
+    if (typeof dataStruct === 'object' && dataStruct !== null) {
+      // ひとまずモードで選択してみる
+      const defDataStructByMode = (dataStruct as ObnizPartsBleCompareByMode<
+        ObnizBleBeaconStruct<unknown>
+      >)[mode];
+      // モードで選択した変数がオブジェクトまたはnullならばそのまま使い、そうでなければモードで選択せずに使用
+      const defDataStruct = (typeof defDataStructByMode === 'object'
+        ? defDataStructByMode
+        : dataStruct) as ObnizBleBeaconStruct<Record<'macAddress_', unknown>>;
       if (defDataStruct !== undefined) {
         // TODO: macAddress_ -> macAddress
         if (defDataStruct && defDataStruct.macAddress_?.type === 'check') {
-          defDataStruct.macAddress_.data = new Array(6)
-            .fill(0)
-            .map((v, i) => parseInt(address.slice(i * 2, (i + 1) * 2), 16))
-            .reverse();
+          defDataStruct.macAddress_ = {
+            ...defDataStruct.macAddress_,
+            data: new Array(6)
+              .fill(0)
+              .map((v, i) => parseInt(address.slice(i * 2, (i + 1) * 2), 16))
+              .reverse(),
+          };
         }
-        if (
-          defDataStruct !== null &&
-          data !== null &&
-          Object.values(defDataStruct).filter(
+
+        if (defDataStruct === null && data === null) {
+          // OK
+        } else if (defDataStruct === null || data === null) {
+          // どちらかが明示的に空なのに存在するため、ミスマッチ
+          return false;
+        } else {
+          // チェック対象となる設定を抽出
+          const configs: (ObnizBleBeaconStructCheckWithData &
+            ObnizBleBeaconStructCheckWithFunc)[] = Object.values(
+            defDataStruct
+          ).filter(
             (config) =>
               inScanResponse === (config.scanResponse ?? false) &&
-              config.type === 'check' &&
-              data
-                .slice(
-                  2 + config.index,
-                  2 + config.index + (config.length ?? 1)
-                )
-                .filter(
-                  (d, i) =>
-                    d !==
-                    (typeof config.data === 'number'
-                      ? [config.data]
-                      : config.data ?? [])[i]
-                ).length !== 0
-          ).length !== 0
-        )
-          return false;
+              config.type === 'check'
+          );
+
+          for (const config of configs) {
+            // チェック対象となるバイト列
+            const targetData = data.slice(
+              2 + config.index,
+              2 + config.index + (config.length ?? 1)
+            );
+            if (typeof config.func === 'function') {
+              // funcが関数ならば、実行して確認
+              const result = config.func(targetData);
+              if (!result) {
+                return false;
+              }
+            } else if (
+              typeof config.data === 'number' ||
+              Array.isArray(config.data)
+            ) {
+              // dataに値や配列があれば、それらを比較
+              const baseData =
+                typeof config.data === 'number'
+                  ? [config.data]
+                  : config.data ?? [];
+              if (!checkEquals(baseData, targetData)) {
+                return false;
+              }
+            }
+          }
+        }
       }
     }
     return true;
@@ -589,7 +643,7 @@ export abstract class ObnizPartsBle<S> {
    */
   public getData(): S {
     this.checkMode();
-    const dataStruct =
+    const dataStruct: typeof this.staticClass.BeaconDataStruct =
       this.staticClass.BeaconDataStruct ?? this.staticClass.ServiceDataStruct;
     if (!dataStruct) throw new Error('Data analysis is not defined.');
 
@@ -600,19 +654,24 @@ export abstract class ObnizPartsBle<S> {
       : null;
     if (!data) throw new Error('Manufacturer specific data is null.');
 
-    const defDataStruct = (dataStruct.Beacon ||
-    dataStruct.Connectable ||
-    dataStruct.Pairing
-      ? dataStruct[this.mode]
+    // ひとまずモードで選択してみる
+    const defDataStructByMode = (dataStruct as ObnizPartsBleCompareByMode<
+      ObnizBleBeaconStruct<S>
+    >)[this.mode];
+    // モードで選択した変数がオブジェクトまたはnullならばそのまま使い、そうでなければモードで選択せずに使用
+    const defDataStruct = (typeof defDataStructByMode === 'object'
+      ? defDataStructByMode
       : dataStruct) as ObnizBleBeaconStruct<S> | null;
     if (defDataStruct === null)
       throw new Error('Data analysis is not defined.');
 
     return (Object.fromEntries(
-      Object.entries(defDataStruct)
-        .map(([name, c]) => {
-          if (c.type === 'check') return [];
-          const config = c as ObnizBleBeaconStructNormal<unknown, never>;
+      (Object.entries(defDataStruct) as [
+        string,
+        ObnizBleBeaconStructNormal<unknown, never> | ObnizBleBeaconStructCheck
+      ][])
+        .map(([name, config]) => {
+          if (config.type === 'check') return [];
           if (!(config.scanResponse ? this.beaconDataInScanResponse : data))
             throw new Error('manufacturerSpecificData is null.');
           const vals = (
@@ -874,7 +933,10 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
 
 export const iBeaconCompanyID = [0x4c, 0x00];
 
-export const iBeaconData: ObnizBleBeaconStruct<IBeacon> =
+export const iBeaconDataWithStrict: ObnizBleBeaconStructStrict<
+  IBeacon,
+  'type'
+> =
   // length !== 25
   {
     type: {
@@ -916,3 +978,5 @@ export const iBeaconData: ObnizBleBeaconStruct<IBeacon> =
       func: (d, p) => p.rssi ?? 0,
     },
   };
+
+export const iBeaconData: ObnizBleBeaconStruct<IBeacon> = iBeaconDataWithStrict;

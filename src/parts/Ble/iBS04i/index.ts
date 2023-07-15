@@ -7,7 +7,7 @@
 import { IBeacon } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import {
   iBeaconCompanyID,
-  iBeaconData,
+  iBeaconDataWithStrict,
   ObnizBleBeaconStruct,
 } from '../../../obniz/ObnizPartsBleAbstract';
 import { BaseiBS } from '../utils/abstracts/iBS';
@@ -53,7 +53,7 @@ export default class iBS04i extends BaseiBS<iBS04i_Data> {
       scanResponse: true,
     },
     ...BaseiBS.getUniqueData(4, 0x18, 0, true),
-    ...iBeaconData,
+    ...iBeaconDataWithStrict,
   };
 
   protected readonly staticClass = iBS04i;

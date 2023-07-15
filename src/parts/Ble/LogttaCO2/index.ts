@@ -66,7 +66,9 @@ export default class Logtta_CO2 extends Logtta<
     Beacon: null,
   };
 
-  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_CO2_Data> | null> = {
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<Logtta_CO2_Data>
+  > = {
     Connectable: null,
     Beacon: {
       appearance: {

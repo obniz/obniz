@@ -129,7 +129,9 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
 
   public static readonly CompanyID = [0x19, 0x0a];
 
-  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<TM2101_SR_Adv_Data> | null> = {
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<TM2101_SR_Adv_Data>
+  > = {
     serial: {
       // 後ろの6バイトがHal-Share IDと一致
       index: 0,
