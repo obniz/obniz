@@ -124,12 +124,26 @@ export default class MC_6810T2 extends ObnizPartsBlePairable<
     },
   };
 
+  /**
+   * Error when received temperature data is invalid
+   *
+   * 受信した体温データが無効のときのエラー
+   */
   public static readonly NoDataError = new Error('There is NO data.');
 
   /**
-   * タイムゾーンを接続前に数字で設定
+   * Time zone when setting time (must be set before connection)
+   *
+   * 時刻設定時のタイムゾーン(接続前に設定が必要)
    */
   public timezoneOffset = 9;
+
+  /**
+   * ID of setTimeout() when setting timeout
+   *
+   * タイムアウト設定時のsetTimeout()のID
+   */
+  protected processingTimeoutId: NodeJS.Timeout | null = null;
 
   public async connectWait(keys?: string, setting?: BleConnectSetting) {
     await super.connectWait(keys, setting);
@@ -180,19 +194,6 @@ export default class MC_6810T2 extends ObnizPartsBlePairable<
    * Bluetoothマークを長押しし、Pと表示されたらペアリング可能モードに
    */
   protected async afterPairingWait(): Promise<void> {
-    // 60秒でタイムアウトするよう設定
-    this.processingTimeoutId = setTimeout(() => {
-      console.warn('Force disconnect after 60 seconds since connected.');
-      this.disconnectWait();
-    }, 1000 * 60);
-    // 切断時にタイムアウト設定を削除
-    this.registerDisconnected(() => {
-      if (this.processingTimeoutId === null) return;
-
-      clearTimeout(this.processingTimeoutId);
-      this.processingTimeoutId = null;
-    });
-
     // 現在時刻を書き込み
     await this.writeCurrentTimeWait();
 
@@ -204,8 +205,6 @@ export default class MC_6810T2 extends ObnizPartsBlePairable<
       // do nothing
     });
   }
-
-  protected processingTimeoutId: NodeJS.Timeout | null = null;
 
   /**
    * Get body temperature data, throws `NoDataError` if unable to get, but always disconnects
@@ -335,5 +334,14 @@ export default class MC_6810T2 extends ObnizPartsBlePairable<
         second: data[11],
       },
     };
+  }
+
+  /**
+   * @deprecated Please use MC_6810T2.getDeviceMode(this.peripheral) === 'Pairing'
+   *
+   * @returns Pairing mode or not ペアリングモードか否か
+   */
+  public isPairingMode() {
+    return this.staticClass.getDeviceMode(this.peripheral) === 'Pairing';
   }
 }
