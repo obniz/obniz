@@ -1,16 +1,36 @@
 import {
-  ObnizPartsBleInterface,
-  ObnizPartsBleInfo,
-} from '../../../obniz/ObnizPartsBleInterface';
-import Obniz from '../../../obniz';
-import BleRemotePeripheral = Obniz.BleRemotePeripheral;
-import { BleRemoteCharacteristic } from '../../../obniz/libs/embeds/bleHci/bleRemoteCharacteristic';
+  ObnizBleBeaconStruct,
+  ObnizBleBeaconStructNormal,
+  ObnizPartsBleCompare,
+  ObnizPartsBleMode,
+  ObnizPartsBlePairable,
+  checkEquals,
+  uint,
+  uintToArray,
+} from '../../../obniz/ObnizPartsBleAbstract';
+import { CharUuids, ServiceUuids } from '../../../obniz/ObnizPartsBleUuids';
+import { BleConnectSetting } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 
 export interface MC_6810T2Options {}
 
-export interface MC_6810T2Result {
-  temperature?: number;
-  date?: {
+export interface MC_6810T2_Adv_User_Data {
+  sequence_number: number;
+  saved_data_count: number;
+}
+
+export interface MC_6810T2_Adv_Data {
+  user_count: number;
+  time_not_set: boolean;
+  service_uuid_mode: 'WLP' | 'WLP+STP';
+  user1: MC_6810T2_Adv_User_Data;
+  user2: MC_6810T2_Adv_User_Data;
+  user3: MC_6810T2_Adv_User_Data;
+  user4: MC_6810T2_Adv_User_Data;
+}
+
+export interface MC_6810T2_Data {
+  temperature: number | null;
+  date: {
     year: number;
     month: number;
     day: number;
@@ -20,164 +40,300 @@ export interface MC_6810T2Result {
   };
 }
 
-export default class MC_6810T2 implements ObnizPartsBleInterface {
-  public static info(): ObnizPartsBleInfo {
-    return {
-      name: 'MC_6810T2',
-    };
-  }
+const NanRawArray = new Uint8Array([0x00, 0x7f, 0xff, 0xff]);
 
-  public _peripheral: BleRemotePeripheral;
-  public ondisconnect?: (reason: any) => void;
-  _timezoneOffset: number;
+const getBeaconDataUserStruct = (
+  userNumber: number
+): ObnizBleBeaconStructNormal<MC_6810T2_Adv_Data, 'user1'> => ({
+  index: -1 + userNumber * 3,
+  length: 3,
+  type: 'custom',
+  func: (data) => ({
+    sequence_number: uint(data.slice(0, 2)),
+    saved_data_count: data[2],
+  }),
+});
 
-  constructor(peripheral: BleRemotePeripheral, timezoneOffset: number) {
-    if (!peripheral || !MC_6810T2.isDevice(peripheral)) {
-      throw new Error('peripheral is not MC_6810T2');
-    }
-    this._peripheral = peripheral;
-    this._timezoneOffset = timezoneOffset ? timezoneOffset : 9 * 60;
-  }
+/** MC_6810T2 management class MC_6810T2を管理するクラス */
+export default class MC_6810T2 extends ObnizPartsBlePairable<
+  MC_6810T2_Adv_Data,
+  MC_6810T2_Data
+> {
+  protected staticClass = MC_6810T2;
 
-  public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    if (!peripheral.localName) return false;
-    return peripheral.localName.startsWith('BLESmart_00130003');
-  }
+  public static readonly AvailableBleMode: ObnizPartsBleMode[] = [
+    'Pairing',
+    'Connectable',
+  ];
 
-  public isPairingMode() {
-    if (!this._peripheral) {
-      throw new Error('MC_6810T2 not found');
-    }
+  public static readonly PartsName = 'MC_6810T2';
 
-    return !!(this._peripheral.adv_data[15] & 8);
-  }
+  // category: '0013', modelType: '0003'
+  // from ScanResponse
+  public static readonly LocalName = /^BLE[Ss]mart_00130003[0-9A-F]{12}$/;
+
+  public static readonly ServiceUuids = ServiceUuids.health_thermometer;
+
+  public static readonly CompanyID = [0x0e, 0x02];
+
+  // Type 3
+  public static readonly CommonBeaconDataStruct: ObnizBleBeaconStruct<MC_6810T2_Adv_Data> = {
+    data_type: {
+      index: 0,
+      type: 'check',
+      data: 0x01, // Each User Data
+    },
+    user_count: {
+      index: 1,
+      type: 'custom',
+      func: (data) => (data[0] & 0b0011) + 1,
+    },
+    time_not_set: {
+      index: 1,
+      type: 'bool0100',
+    },
+    service_uuid_mode: {
+      index: 1,
+      type: 'custom',
+      func: (data) => (data[0] & 0b00100000 ? 'WLP' : 'WLP+STP'),
+    },
+    user1: getBeaconDataUserStruct(1),
+    user2: getBeaconDataUserStruct(2),
+    user3: getBeaconDataUserStruct(3),
+    user4: getBeaconDataUserStruct(4),
+  };
+
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<MC_6810T2_Adv_Data>
+  > = {
+    Connectable: {
+      ...this.CommonBeaconDataStruct,
+      pairing_mode: {
+        index: 1,
+        type: 'check',
+        func: (data) => Boolean((data[0] & 0b1000) === 0),
+      },
+    },
+    Pairing: {
+      ...this.CommonBeaconDataStruct,
+      pairing_mode: {
+        index: 1,
+        type: 'check',
+        func: (data) => Boolean((data[0] & 0b1000) > 0),
+      },
+    },
+  };
+
+  public static readonly NoDataError = new Error('There is NO data.');
 
   /**
-   * Pair with the device
-   *
-   * デバイスとペアリング 電源ボタンを長押しする
-   *
-   * @returns pairing key ペアリングキー
+   * タイムゾーンを接続前に数字で設定
    */
-  public async pairingWait(): Promise<string | null> {
-    if (!this._peripheral) {
-      throw new Error('MC_6810T2 not found');
-    }
-    this._peripheral.ondisconnect = (reason: any) => {
-      if (typeof this.ondisconnect === 'function') {
-        this.ondisconnect(reason);
+  public timezoneOffset = 9;
+
+  public async connectWait(keys?: string, setting?: BleConnectSetting) {
+    await super.connectWait(keys, setting);
+
+    // 60秒でタイムアウトするよう設定
+    this.processingTimeoutId = setTimeout(() => {
+      if (this.peripheral.connected) {
+        return;
       }
-    };
+      console.warn('Force disconnect after 60 seconds since connected.');
 
-    await this._peripheral.connectWait({
-      waitUntilPairing: true,
+      try {
+        this.disconnectWait();
+      } catch (e) {
+        console.warn(e);
+      }
+    }, 1000 * 60);
+    // 切断時にタイムアウト設定を削除
+    this.registerDisconnected(() => {
+      if (this.processingTimeoutId === null) return;
+
+      clearTimeout(this.processingTimeoutId);
+      this.processingTimeoutId = null;
     });
+  }
 
-    console.log('paring done');
-    const keys = await this._peripheral.getPairingKeysWait();
-
-    console.log('write current time');
-    const currentTime = this._peripheral!.getService('1805');
-    const current = await currentTime?.getCharacteristic('2a2b');
-    await this.writeCurrentTimeWait(current!);
-
-    console.log('read last data');
-    const service = this._peripheral!.getService('1809');
-    const chara = await service?.getCharacteristic('2a1c');
-    await chara?.registerNotifyWait((data) => {
-      console.log('data');
-    });
-
-    console.log('read current time');
-    await current?.readWait();
-
-    // await this._peripheral.disconnectWait();
-    const waitDisconnect = new Promise<string | null>((resolve, reject) => {
-      if (!this._peripheral) return;
-      this._peripheral.ondisconnect = (reason: any) => {
-        resolve(keys);
-      };
-    });
-
-    return await waitDisconnect;
+  public async disconnectWait(): Promise<void> {
+    if (!this.peripheral.connected) {
+      return;
+    }
+    await this.unsubscribeWait(
+      ServiceUuids.current_time,
+      CharUuids.current_time
+    );
+    await this.unsubscribeWait(
+      ServiceUuids.health_thermometer,
+      CharUuids.temperature_measurement
+    );
+    await super.disconnectWait();
   }
 
   /**
-   * Get SpO2, PulseRate Data from Device
-   *
-   * デバイスから計測データをとる
-   *
-   * @returns 受け取ったデータ
+   * 切断してしまうとペアリングモードが終わらないため、向こうからの切断を待つ
    */
-  public async getDataWait(pairingKeys: string) {
-    if (!this._peripheral) {
-      throw new Error('MC_6810T2 not found');
+  protected requestDisconnectAfterPairing = false;
+
+  /**
+   * Bluetoothマークを長押しし、Pと表示されたらペアリング可能モードに
+   */
+  protected async afterPairingWait(): Promise<void> {
+    // 60秒でタイムアウトするよう設定
+    this.processingTimeoutId = setTimeout(() => {
+      console.warn('Force disconnect after 60 seconds since connected.');
+      this.disconnectWait();
+    }, 1000 * 60);
+    // 切断時にタイムアウト設定を削除
+    this.registerDisconnected(() => {
+      if (this.processingTimeoutId === null) return;
+
+      clearTimeout(this.processingTimeoutId);
+      this.processingTimeoutId = null;
+    });
+
+    // 現在時刻を書き込み
+    await this.writeCurrentTimeWait();
+
+    // 切断してもらうため、体温データを読み込み
+    await this.getChar(
+      ServiceUuids.health_thermometer,
+      CharUuids.temperature_measurement
+    ).registerNotifyWait(() => {
+      // do nothing
+    });
+  }
+
+  protected processingTimeoutId: NodeJS.Timeout | null = null;
+
+  /**
+   * Get body temperature data, throws `NoDataError` if unable to get, but always disconnects
+   *
+   * 体温データを取得、取得できなかった場合は`NoDataError`をスローしますが、必ず切断されます。
+   *
+   * @returns Instance of MC_6810T2_Data MC_6810T2_Dataのインスタンス
+   */
+  public async getDataWait(pairingKeys?: string): Promise<MC_6810T2_Data> {
+    // TODO: only checkConnected();
+    try {
+      this.checkConnected();
+    } catch (e) {
+      if (!this.peripheral.connected) {
+        if (!pairingKeys) {
+          throw e;
+        }
+        await this.connectWait(pairingKeys);
+      }
     }
 
-    let result: MC_6810T2Result = {};
+    // 体温計の時刻を受信したかのフラグ
+    let currentTimeReceived = false;
 
-    await this._peripheral.connectWait({
-      pairingOption: { keys: pairingKeys },
-    });
-    const currentTime = this._peripheral!.getService('1805');
-    const current = await currentTime?.getCharacteristic('2a2b');
+    // 現在時刻の通知を登録
+    await this.getChar(
+      ServiceUuids.current_time,
+      CharUuids.current_time
+    ).registerNotifyWait(async () => {
+      // 一度時刻を受信したら、以降は実行しない
+      if (currentTimeReceived) return;
 
-    await this.writeCurrentTimeWait(current!);
-    const service = this._peripheral!.getService('1809');
-    const chara = await service?.getCharacteristic('2a1c');
-
-    await chara?.registerNotifyWait((data) => {
-      result = this._analyseData(data);
-    });
-
-    const waitDisconnect = new Promise<MC_6810T2Result>((resolve, reject) => {
-      if (!this._peripheral) return;
-      this._peripheral.ondisconnect = (reason: any) => {
-        resolve(result);
-      };
+      // フラグをtrueにすることで、何度も時刻を送信しないように
+      currentTimeReceived = true;
+      await this.writeCurrentTimeWait();
     });
 
-    return await waitDisconnect;
+    return new Promise<MC_6810T2_Data>((resolve, reject) => {
+      let result: MC_6810T2_Data | null = null;
+
+      // 体温測定の通知を登録
+      this.getChar(
+        ServiceUuids.health_thermometer,
+        CharUuids.temperature_measurement
+      ).registerNotifyWait((data) => {
+        result = this.parseData(data);
+      });
+      // 切断時にresolve()を呼ぶように登録
+      this.registerDisconnected(() => {
+        // 体温データがあるときはそれを返す
+        if (result) resolve(result);
+        // 体温データがなかったときはNoDataErrorをスロー
+        else reject(this.staticClass.NoDataError);
+      });
+      // ↓ "TM Mode" Activated
+      // ↓ Receive notification from current_time
+      // ↓ Send data to current_time
+      // ↓ Receive notification from temperature_measurement
+      // ↓ Wait disconnect from remote device
+      // ↓ resolve(result)
+    });
   }
 
-  private async writeCurrentTimeWait(chara: BleRemoteCharacteristic) {
-    const dayFormat: number[] = [7, 1, 2, 3, 4, 5, 6];
-    const date = new Date();
-    date.setTime(Date.now() + 1000 * 60 * this._timezoneOffset);
+  /**
+   * 現在時刻を書き込み
+   */
+  private async writeCurrentTimeWait() {
+    this.checkConnected();
 
-    const buf = Buffer.alloc(10);
-    buf.writeUInt16LE(date.getUTCFullYear(), 0);
-    buf.writeUInt8(date.getUTCMonth() + 1, 2);
-    buf.writeUInt8(date.getUTCDate(), 3);
-    buf.writeUInt8(date.getUTCHours(), 4);
-    buf.writeUInt8(date.getUTCMinutes(), 5);
-    buf.writeUInt8(date.getUTCSeconds(), 6);
-    buf.writeUInt8(dayFormat[date.getUTCDay()], 7);
-    buf.writeUInt8(Math.trunc(date.getUTCMilliseconds() / (9999 / 256)), 8);
-    buf.writeUInt8(1, 9);
-    const arr = Array.from(buf);
-    await chara!.writeWait(arr);
+    // UnixTimeにタイムゾーンの同じ現在時刻を
+    const date = new Date(Date.now() + 1000 * 60 * this.timezoneOffset);
+
+    const data = new Uint8Array([
+      // 年 (0, 0は不明)
+      ...uintToArray(date.getFullYear()),
+      // 月 (0は不明)
+      date.getUTCMonth() + 1,
+      // 日 (0は不明)
+      date.getUTCDate(),
+      // 時
+      date.getUTCHours(),
+      // 分
+      date.getUTCMinutes(),
+      // 秒
+      date.getUTCSeconds(),
+      // 曜日 (0は不明) 論理和で日曜日を7に
+      date.getUTCDay() || 7,
+      // 1/256秒
+      Math.trunc(date.getUTCMilliseconds() / (9999 / 256)),
+      // 調整理由 (手動設定)
+      0b0001,
+    ]);
+
+    // 送信
+    await this.writeCharWait(
+      ServiceUuids.current_time,
+      CharUuids.current_time,
+      data
+    );
   }
 
-  private _analyseData(data: number[]): MC_6810T2Result {
-    const buf = Buffer.from(data);
-    const result: MC_6810T2Result = {};
+  protected parseData(data: Uint8Array): MC_6810T2_Data {
+    // Always constant value: data = [ 0b0110, ..., 0x01 ];
+    // const measurementUnits = data[0] & 0b0001 ? 'fahrenheit' : 'celsius';
+    // const timeStampPresent = Boolean(data[0] & 0b0010);
+    // const typePresent = Boolean(data[0] & 0b0100);
+    // const measurementSite = { 0x01: '脇の下', 0x06: '口腔内' }[data[12]]
 
-    const tmpData = buf.readUInt32LE(1);
-    let ul = tmpData & 0x00ffffff;
+    const tempRawArray = data.slice(1, 5);
+    const mantissa = uint(tempRawArray);
+    let ul = mantissa & 0x00ffffff;
     if ((ul & 0x00800000) > 0) {
       ul = -1 * (~(ul - 0x01) & 0x00ffffff);
     }
-    const exponential = tmpData >> 24;
-    result.temperature = ul * Math.pow(10, exponential);
-    result.date = {
-      year: buf.readUInt16LE(5),
-      month: buf.readUInt8(7),
-      day: buf.readUInt8(8),
-      hour: buf.readUInt8(9),
-      minute: buf.readUInt8(10),
-      second: buf.readUInt8(11),
+    const exponential = mantissa >> 24;
+
+    return {
+      temperature: checkEquals(tempRawArray, NanRawArray)
+        ? null
+        : ul * Math.pow(10, exponential),
+      date: {
+        year: uint(data.slice(5, 7)),
+        month: data[7],
+        day: data[8],
+        hour: data[9],
+        minute: data[10],
+        second: data[11],
+      },
     };
-    return result;
   }
 }

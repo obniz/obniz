@@ -8,6 +8,7 @@
 import roundTo from 'round-to';
 import { BleRemoteCharacteristic } from './libs/embeds/bleHci/bleRemoteCharacteristic';
 import {
+  BleConnectSetting,
   BleRemotePeripheral,
   IBeacon,
 } from './libs/embeds/bleHci/bleRemotePeripheral';
@@ -18,6 +19,13 @@ import {
 import { Triaxial } from './ObnizParts';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
+
+const debugFlag = true;
+
+const debug = (...objects: unknown[]) => {
+  if (!debugFlag) return;
+  console.debug(...objects);
+};
 
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'] as const;
 
@@ -355,13 +363,16 @@ export abstract class ObnizPartsBle<S> {
   public static getDeviceMode(
     peripheral: BleRemotePeripheral
   ): ObnizPartsBleMode | null {
-    return (
-      this.getAvailableBleMode()
-        .map((mode) =>
-          this.isDeviceWithMode(peripheral, mode) ? mode : undefined
-        )
-        .find((mode) => mode) ?? null
-    );
+    debug('getAvailableBleMode()', this.getAvailableBleMode());
+    for (const mode of this.getAvailableBleMode()) {
+      const check = this.isDeviceWithMode(peripheral, mode);
+      if (check) {
+        debug(`getDeviceMode(p) => ${mode}`, peripheral.address);
+        return mode;
+      }
+    }
+    debug('getDeviceMode(p) => null', peripheral.address);
+    return null;
   }
 
   /**
@@ -377,16 +388,20 @@ export abstract class ObnizPartsBle<S> {
     peripheral: BleRemotePeripheral,
     mode: ObnizPartsBleMode
   ): boolean {
+    debug(`isDeviceWithMode(peripheral, ${mode})`);
     if (!this.getAvailableBleMode().includes(mode)) return false;
 
     if (this.Address) {
       const defaultAddress =
         this.Address instanceof RegExp ? this.Address : this.Address[mode];
+      debug('defaultAddress', defaultAddress);
       if (
         defaultAddress !== undefined &&
         !defaultAddress.test(peripheral.address)
-      )
+      ) {
+        debug(`defaultAddress.test(${peripheral.address}) === false`);
         return false;
+      }
     }
 
     if (this.LocalName) {
@@ -394,25 +409,35 @@ export abstract class ObnizPartsBle<S> {
         this.LocalName instanceof RegExp
           ? this.LocalName
           : this.LocalName[mode];
+      debug('defaultLocalName', defaultLocalName);
       if (
         defaultLocalName !== undefined &&
         !defaultLocalName.test(peripheral.localName ?? 'null')
-      )
+      ) {
+        debug(
+          `defaultLocalName.test(${peripheral.localName} ?? 'null') === false`
+        );
         return false;
+      }
     }
 
     if (this.ServiceUuids) {
       const defaultServiceUuids = this.getServiceUuids(mode);
+      debug('defaultServiceUuids', defaultServiceUuids);
       if (defaultServiceUuids !== undefined) {
         const uuids = peripheral.advertisementServiceUuids();
+        debug('uuids', uuids);
         if (defaultServiceUuids === null && uuids.length !== 0) return false;
         if (defaultServiceUuids !== null && uuids.length === 0) return false;
         if (
           defaultServiceUuids !== null &&
-          defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase()))
-            .length !== 0
-        )
+          defaultServiceUuids.some((u) => !uuids.includes(u.toLowerCase()))
+        ) {
+          debug(
+            'defaultServiceUuids.some((u) => !uuids.includes(u.toLowerCase())) === true'
+          );
           return false;
+        }
       }
     }
 
@@ -425,8 +450,12 @@ export abstract class ObnizPartsBle<S> {
         this.CompanyID,
         this.BeaconDataStruct
       )
-    )
+    ) {
+      debug(
+        'this.checkCustomData(mode, p.address, p.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, this.BeaconDataStruct) === false'
+      );
       return false;
+    }
 
     if (
       !this.checkCustomData(
@@ -435,10 +464,15 @@ export abstract class ObnizPartsBle<S> {
         peripheral.manufacturerSpecificDataInScanResponse,
         this.BeaconDataLength_ScanResponse,
         this.CompanyID_ScanResponse,
-        this.BeaconDataStruct
+        this.BeaconDataStruct,
+        true
       )
-    )
+    ) {
+      debug(
+        'this.checkCustomData(mode, p.address, p.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, this.BeaconDataStruct, true) === false'
+      );
       return false;
+    }
 
     if (
       !this.checkCustomData(
@@ -449,8 +483,12 @@ export abstract class ObnizPartsBle<S> {
         this.ServiceDataUUID,
         this.ServiceDataStruct
       )
-    )
+    ) {
+      debug(
+        'this.checkCustomData(mode, p.address, p.serviceData, this.ServiceDataLength, this.ServiceDataUUID, this.ServiceDataStruct) === false'
+      );
       return false;
+    }
 
     return true;
   }
@@ -459,14 +497,16 @@ export abstract class ObnizPartsBle<S> {
     mode: ObnizPartsBleMode,
     address: string,
     rawData: number[] | null,
-    dataLength: ObnizPartsBleCompareWithNonNull<number | null> | undefined,
-    headID: ObnizPartsBleCompareWithNonNull<number[] | null> | undefined,
-    dataStruct:
-      | ObnizPartsBleCompareWithNonNull<ObnizBleBeaconStruct<unknown> | null>
-      | undefined,
+    dataLength?: ObnizPartsBleCompare<number>,
+    headID?: ObnizPartsBleCompare<number[]>,
+    dataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown>>,
     inScanResponse = false
   ): boolean {
+    debug(
+      `checkCustomData(mode, address, ${rawData}, ${dataLength}, ${headID}, ${dataStruct}, ${inScanResponse})`
+    );
     const data = rawData ? new Uint8Array(rawData) : null;
+
     if (headID !== undefined) {
       const defHeadID =
         headID instanceof Array || headID === null || headID === undefined
@@ -511,7 +551,9 @@ export abstract class ObnizPartsBle<S> {
       // モードで選択した変数がオブジェクトまたはnullならばそのまま使い、そうでなければモードで選択せずに使用
       const defDataStruct = (typeof defDataStructByMode === 'object'
         ? defDataStructByMode
-        : dataStruct) as ObnizBleBeaconStruct<Record<'macAddress_', unknown>>;
+        : dataStruct) as ObnizBleBeaconStruct<
+        Record<'macAddress_', unknown>
+      > | null;
       if (defDataStruct !== undefined) {
         // TODO: macAddress_ -> macAddress
         if (defDataStruct && defDataStruct.macAddress_?.type === 'check') {
@@ -526,10 +568,13 @@ export abstract class ObnizPartsBle<S> {
 
         if (defDataStruct === null && data === null) {
           // OK
-        } else if (defDataStruct === null || data === null) {
+        } else if (defDataStruct !== null && data === null) {
+          // defDataStructではNULLであるべきかどうかを
+          // AdvertisementDataとScanResponseData別に明記できないため、判定をスキップ
+        } else if (defDataStruct === null && data !== null) {
           // どちらかが明示的に空なのに存在するため、ミスマッチ
           return false;
-        } else {
+        } else if (defDataStruct !== null && data !== null) {
           // チェック対象となる設定を抽出
           const configs: (ObnizBleBeaconStructCheckWithData &
             ObnizBleBeaconStructCheckWithFunc)[] = Object.values(
@@ -749,10 +794,29 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
   constructor(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode) {
     super(peripheral, mode);
 
-    this.peripheral.ondisconnect = async (reason: unknown) => {
-      await this.beforeOnDisconnectWait(reason);
-      if (this.ondisconnect) await this.ondisconnect(reason);
+    this.peripheral.ondisconnect = (reason: unknown) => {
+      this.disconnectedListeners.forEach((func) => func(reason));
+      if (this.ondisconnect) this.ondisconnect(reason);
     };
+  }
+
+  protected readonly disconnectedListeners: ((
+    reason: unknown
+  ) => void | Promise<void>)[] = [];
+
+  /**
+   * Register functions to be called on disconnection.
+   *
+   * Note: Registration is reset upon connection, so please register after connection.
+   *
+   * 切断時に呼ばれる関数を登録
+   *
+   * 注意: 接続時に登録がリセットされるため、接続後に登録してください
+   *
+   * @param func Function to be registered 登録したい関数
+   */
+  protected registerDisconnected(func: () => void) {
+    this.disconnectedListeners.push(func);
   }
 
   /**
@@ -761,8 +825,19 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * バリデーションのあるペリフェラルへの接続
    *
    * @param keys: Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+   * @param setting: Additional settings when connecting 接続時の追加設定
    */
-  public async connectWait(keys?: string): Promise<void> {
+  public async connectWait(
+    keys?: string,
+    setting?: BleConnectSetting
+  ): Promise<void> {
+    if (this.peripheral.connected) {
+      return;
+    }
+
+    // 切断時に呼ぶ関数一覧を全て削除
+    this.disconnectedListeners.splice(0);
+
     // TODO: Enable Validation
     // if (this.mode !== 'Connectable')
     //   throw new Error(
@@ -771,7 +846,9 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
     await this.peripheral.connectWait({
       pairingOption: {
         keys,
+        ...(setting?.pairingOption ?? {}),
       },
+      ...(setting ?? {}),
     });
   }
 
@@ -781,7 +858,14 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * ペリフェラルから切断
    */
   public async disconnectWait(): Promise<void> {
+    if (!this.peripheral.connected) {
+      return;
+    }
+
     await this.peripheral.disconnectWait();
+
+    // 切断時に呼ぶ関数一覧を全て削除
+    this.disconnectedListeners.splice(0);
   }
 
   /**
@@ -799,15 +883,6 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    * @param reason Reason for being disconnected 切断された理由
    */
   public ondisconnect?: (reason: unknown) => void | Promise<void>;
-
-  /**
-   * Initialization processing before calling this.ondisconnect().
-   *
-   * this.ondisconnect()を呼ぶ前の初期化処理
-   *
-   * @param reason Reason for being disconnected
-   */
-  protected abstract beforeOnDisconnectWait(reason: unknown): Promise<void>;
 
   /**
    * Check if connected.
@@ -878,17 +953,20 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    *
    * @param serviceUuid Service UUID
    * @param characteristicUuid Characteristic UUID
-   * @param data Write data
-   * @returns Data write result
+   * @param data Write data 書き込むデータ
+   * @returns Data write result データ書き込み結果
    */
   protected async writeCharWait(
     serviceUuid: string,
     characteristicUuid: string,
-    data?: number[],
+    data?: number[] | Uint8Array,
     needResponse?: boolean
   ): Promise<boolean> {
     const characteristic = this.getChar(serviceUuid, characteristicUuid);
-    return await characteristic.writeWait(data, needResponse);
+    return await characteristic.writeWait(
+      data instanceof Uint8Array ? Array.from(data) : data,
+      needResponse
+    );
   }
 
   /**
@@ -898,7 +976,7 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
    *
    * @param serviceUuid Service UUID
    * @param characteristicUuid Characteristic UUID
-   * @param callback It is called when data comes
+   * @param callback Function called when data arrives データが来たときに呼ばれる関数
    */
   protected async subscribeWait(
     serviceUuid: string,
@@ -928,6 +1006,88 @@ export abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
   ): Promise<void> {
     const characteristic = this.getChar(serviceUuid, characteristicUuid);
     await characteristic.unregisterNotifyWait();
+  }
+}
+
+export abstract class ObnizPartsBlePairable<
+  S,
+  T
+> extends ObnizPartsBleConnectable<S, T> {
+  /**
+   * Disconnect request after pairing
+   *
+   * ペアリング後に切断要求を行う
+   */
+  protected requestDisconnectAfterPairing = true;
+
+  /**
+   * Wait for disconnect event at the end of pairing
+   *
+   * ペアリングの終了時には切断イベントを待つ
+   */
+  protected waitDisconnectAfterPairing = true;
+
+  /**
+   * After pairing and before disconnect
+   *
+   * ペアリング後、切断前に行う操作
+   */
+  protected async afterPairingWait(): Promise<void> {
+    // do nothing
+  }
+
+  /**
+   * Perform pairing
+   *
+   * ペアリングを実行
+   *
+   * @returns Pairing key ペアリングキー
+   */
+  public async pairingWait(): Promise<string | null> {
+    // 接続と同時にペアリングを実行
+    await this.connectWait(undefined, {
+      waitUntilPairing: true,
+    });
+
+    // ペアリングキーを取得
+    const keys = await this.peripheral.getPairingKeysWait();
+
+    /**
+      以下の実装と同じ
+      await this._peripheral.connectWait({
+        pairingOption: {
+          onPairedCallback: (keys) => {
+            gotKeys = keys;
+          },
+          onPairingFailed: (e) => {
+            throw e;
+          },
+        },
+      });
+     */
+
+    // 任意のコードを実行
+    await this.afterPairingWait();
+
+    const promise = new Promise<string | null>((resolve) => {
+      this.registerDisconnected(() => {
+        // ペアリングキーを返す
+        resolve(keys);
+      });
+    });
+
+    // 切断要求を送信
+    if (this.requestDisconnectAfterPairing) {
+      await this.disconnectWait();
+    }
+
+    if (this.waitDisconnectAfterPairing) {
+      // 切断完了を待つ
+      return await promise;
+    } else {
+      // 切断完了を待たずにペアリングキーを返す
+      return keys;
+    }
   }
 }
 
