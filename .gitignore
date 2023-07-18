@@ -26,3 +26,5 @@ log
 
 dist
 obniz.js
+
+src/obniz/ObnizPartsBleUuids.ts
