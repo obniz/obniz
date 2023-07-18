@@ -20,7 +20,7 @@ import { Triaxial } from './ObnizParts';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
 
-const debugFlag = true;
+const debugFlag = false;
 
 const debug = (...objects: unknown[]) => {
   if (!debugFlag) return;
