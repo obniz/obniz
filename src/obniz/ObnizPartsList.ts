@@ -314,6 +314,7 @@ import TM2101_SR, { TM2101_SROptions } from '../parts/Ble/TM2101_SR';
 import Skinos, { SkinosOptions } from '../parts/Ble/skinos';
 import Agx_SkinTemp, { Agx_SkinTempOptions } from '../parts/Ble/agx_skin_temp';
 import TA_temp01, { TA_temp01Options } from '../parts/Ble/TA_temp01';
+import ZAICON, { ZAICONOptions } from '../parts/Ble/ZAICON';
 
 export type PartsType = keyof PartsList;
 
@@ -773,4 +774,5 @@ export interface PartsList {
     typeof Agx_SkinTemp
   >;
   'TA-temp01': PartsInterface<TA_temp01, TA_temp01Options, typeof TA_temp01>;
+  ZAICON: PartsInterface<ZAICON, ZAICONOptions, typeof ZAICON>;
 }
