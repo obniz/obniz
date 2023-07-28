@@ -36,14 +36,14 @@ export default class ZAICON implements ObnizPartsBleInterface {
 
   /**
    */
-  public static getData(peripheral: BleRemotePeripheral) {
+  public static getData(peripheral: BleRemotePeripheral): ZAICON_Data {
     const data = this.analyzeData(peripheral);
     return data;
   }
 
   /**
    */
-  public static analyzeData(peripheral: BleRemotePeripheral) {
+  public static analyzeData(peripheral: BleRemotePeripheral): ZAICON_Data {
     const major = Number(peripheral.iBeacon?.major);
     const version = major >> 11; // bit12-16
     const temp_flag = major & 1024; // bit11
@@ -69,7 +69,7 @@ export default class ZAICON implements ObnizPartsBleInterface {
     ];
 
     const data = {
-      uuid: peripheral.iBeacon?.uuid,
+      uuid: peripheral.iBeacon?.uuid ? peripheral.iBeacon?.uuid : '',
       version: version === 1 ? '10Kg' : '50Kg',
       teperature: temp,
       weight: Number(peripheral.iBeacon?.minor),
