@@ -1,6 +1,8 @@
 # BST_01A
 This is a temperature, humidity sensor.
 
+![](./image.jpg)
+
 It starts sending data 20 secdonds after power up.
 Advertisements every 2 seconds.
 1.5 year battery life time.

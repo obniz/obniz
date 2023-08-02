@@ -89,19 +89,27 @@ export default class BST_01A implements ObnizPartsBleInterface {
     while (index < data.length) {
       switch (data[index++]) {
         case 0x01:
-          result.id = 'BST-01A'; // only this
+          if (index + 1 <= data.length) {
+            result.id = 'BST-01A'; // only this
+          }
           index += 1;
           break;
         case 0x0f:
-          result.battery = data.readUInt16LE(index) / 100;
+          if (index + 2 <= data.length) {
+            result.battery = data.readUInt16LE(index) / 100;
+          }
           index += 2;
           break;
         case 0x10:
-          result.temperature = data.readInt16LE(index) / 100;
+          if (index + 2 <= data.length) {
+            result.temperature = data.readInt16LE(index) / 100;
+          }
           index += 2;
           break;
         case 0x11:
-          result.humidity = data.readUInt16LE(index) / 100;
+          if (index + 2 <= data.length) {
+            result.humidity = data.readUInt16LE(index) / 100;
+          }
           index += 2;
           break;
         case 0x03:
