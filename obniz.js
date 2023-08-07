@@ -26543,13 +26543,25 @@ class BST_01A {
                     break;
                 case 0x10:
                     if (index + 2 <= data.length) {
-                        result.temperature = data.readInt16LE(index) / 100;
+                        const temp = data.readInt16LE(index);
+                        if (temp === 0x7fff) {
+                            result.temperature = 'error';
+                        }
+                        else {
+                            result.temperature = temp / 100;
+                        }
                     }
                     index += 2;
                     break;
                 case 0x11:
                     if (index + 2 <= data.length) {
-                        result.humidity = data.readUInt16LE(index) / 100;
+                        const humidity = data.readUInt16LE(index);
+                        if (humidity === 0x7fff) {
+                            result.humidity = 'error';
+                        }
+                        else {
+                            result.humidity = humidity / 100;
+                        }
                     }
                     index += 2;
                     break;

@@ -43,14 +43,14 @@ await obniz.ble.scan.startWait();
 ```
 
 The format of the return value is as follows.
-327.67 degree or 327.67% is a error.
+If a sensor detect an error, then a value becomes string with `'error'`.
 
 ```javascript
 {
   id: string
   battery: number;
-  temperature: number;
-  humidity: number;
+  temperature: number | 'error';
+  humidity: number | 'error';
 }
 ```
 

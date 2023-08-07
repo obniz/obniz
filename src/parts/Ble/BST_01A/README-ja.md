@@ -42,14 +42,14 @@ await obniz.ble.scan.startWait();
 ```
 
 返り値は以下の通り。
-327.67 度と 327.67% はエラーを意味します。
+センサー側でエラーを検出している場合は`'error'`という文字列が返ります
 
 ```javascript
 {
   id: string
   battery: number;
-  temperature: number;
-  humidity: number;
+  temperature: number | 'error';
+  humidity: number | 'error';
 }
 ```
 
