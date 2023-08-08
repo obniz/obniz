@@ -9,6 +9,7 @@ import Puls08M5stickcS, {
   Puls08M5stickcSOptions,
 } from '../parts/Biological/PULSE08-M5STICKC-S';
 import OMRON_2JCIE, { OMRON_2JCIEOptions } from '../parts/Ble/2JCIE';
+import BST_01A, { BST_01AOptions } from '../parts/Ble/BST_01A';
 import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from '../parts/Ble/ENERTALK';
 import HEM_6233T, { HEM_6233TOptions } from '../parts/Ble/HEM_6233T';
 import HEM_9200T, { HEM_9200TOptions } from '../parts/Ble/HEM_9200T';
@@ -294,6 +295,7 @@ import DR_MARK, { DR_MARKOptions } from '../parts/Ble/DR_MARK';
 import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
 import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
 import EMDCB, { EMDCBOptions } from '../parts/Ble/EMDCB';
+import { Parts } from '.';
 
 export type PartsType = keyof PartsList;
 
@@ -615,7 +617,7 @@ export interface PartsList {
     typeof Keyestudio_HT16K33
   >;
   '2JCIE': PartsInterface<OMRON_2JCIE, OMRON_2JCIEOptions, typeof OMRON_2JCIE>;
-
+  BST_01A: PartsInterface<BST_01A, BST_01AOptions, typeof BST_01A>;
   Logtta_CO2: PartsInterface<Logtta_CO2, Logtta_CO2Options, typeof Logtta_CO2>;
   Logtta_TH: PartsInterface<Logtta_TH, Logtta_THOptions, typeof Logtta_TH>;
   Logtta_AD: PartsInterface<Logtta_AD, Logtta_ADOptions, typeof Logtta_AD>;
