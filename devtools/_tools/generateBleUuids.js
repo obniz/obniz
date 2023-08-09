@@ -4,9 +4,9 @@ const fs = require('fs').promises;
 
 const UuidsDefinitionOutputPath = 'src/obniz/ObnizPartsBleUuids.ts';
 const BluetoothSigServiceUuidsYamlUrl =
-  'https://bitbucket.org/bluetooth-SIG/public/raw/main/assigned_numbers/uuids/service_uuids.yaml';
+  'https://bitbucket.org/bluetooth-SIG/public/raw/1adacb47983ad0ff8fb2ffb7c4461f03d3d74ab4/assigned_numbers/uuids/service_uuids.yaml';
 const BluetoothSigCharUuidsYamlUrl =
-  'https://bitbucket.org/bluetooth-SIG/public/raw/main/assigned_numbers/uuids/characteristic_uuids.yaml';
+  'https://bitbucket.org/bluetooth-SIG/public/raw/1adacb47983ad0ff8fb2ffb7c4461f03d3d74ab4/assigned_numbers/uuids/characteristic_uuids.yaml';
 
 const parseUuid = (type) => (u) => {
   const rawVarName = u.id.split('.').slice(-1)[0];
