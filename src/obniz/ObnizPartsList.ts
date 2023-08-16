@@ -41,6 +41,7 @@ import MINEW_S1, { MINEW_S1Options } from '../parts/Ble/MINEW_S1';
 import MiniBreeze, { MiniBreezeOptions } from '../parts/Ble/MiniBreeze';
 import MT_500BT, { MT_500BTOptions } from '../parts/Ble/MT_500BT';
 import PLS_01BT, { PLS_01BTOptions } from '../parts/Ble/PLS_01BT';
+import Polar, { PolarOptions } from '../parts/Ble/Polar';
 import REX_BTPM25V, { REX_BTPM25VOptions } from '../parts/Ble/REX_BTPM25V';
 import RS_BTEVS1, { RS_BTEVS1Options } from '../parts/Ble/RS_BTEVS1';
 import RS_BTWATTCH2, { RS_BTWATTCH2Options } from '../parts/Ble/RS_BTWATTCH2';
@@ -689,6 +690,7 @@ export interface PartsList {
     typeof REX_BTPM25V
   >;
   PLS_01BT: PartsInterface<PLS_01BT, PLS_01BTOptions, typeof PLS_01BT>;
+  Polar: PartsInterface<Polar, PolarOptions, typeof Polar>;
   ENERTALK_TOUCH: PartsInterface<
     ENERTALK_TOUCH,
     ENERTALK_TOUCHOptions,
