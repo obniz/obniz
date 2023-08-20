@@ -85,7 +85,6 @@ export default class Polar implements ObnizPartsBleInterface {
 
       return null
     }
-    let result: PolarData;
 
     // 3byte mode
     // 0byte 0bit batteryStatus
@@ -104,7 +103,7 @@ export default class Polar implements ObnizPartsBleInterface {
     // 2byte fastAverageHr
     // 3byte slowAverageHr
 
-    result = {
+    const result: PolarData = {
       batteryStatus: ((payload[0] >> 0) & 0b1) ? true : false,
       sensorContact: ((payload[0] >> 1) & 0b1) ? true : false,
       advFrameCounter: (payload[0] >> 2) & 0b111,
