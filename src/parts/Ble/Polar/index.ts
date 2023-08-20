@@ -25,6 +25,8 @@ export interface PolarData {
 
 export default class Polar implements ObnizPartsBleInterface {
 
+  public _peripheral: BleRemotePeripheral | null = null;
+
   public static info(): ObnizPartsBleInfo {
     return {
       name: 'Polar',
