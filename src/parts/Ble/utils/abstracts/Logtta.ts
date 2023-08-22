@@ -35,14 +35,12 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
     Beacon: /null/,
   };
 
-  public static readonly BeaconDataLength: ObnizPartsBleCompare<
-    number | null
-  > = {
+  public static readonly BeaconDataLength: ObnizPartsBleCompare<number> = {
     Connectable: null,
     Beacon: 0x1b,
   };
 
-  public static readonly CompanyID: ObnizPartsBleCompare<number[] | null> = {
+  public static readonly CompanyID: ObnizPartsBleCompare<number[]> = {
     Connectable: null,
     Beacon: [0x10, 0x05],
   };
