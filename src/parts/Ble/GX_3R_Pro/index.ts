@@ -139,6 +139,8 @@ export default class GX_3R_Pro extends ObnizPartsBleInterface {
 
     const packet = [...payload, ...this.calcChecksum(payload), this.code.EOT];
 
+    const trace1 = new Error('trace');
+
     return await this.serialExecutor.execute(async () => {
       if (!this._peripheral.connected || !this.gasCharTx) {
         throw new Error('peripheral is not connected');
@@ -157,7 +159,22 @@ export default class GX_3R_Pro extends ObnizPartsBleInterface {
           timeoutFunc = reject;
           this.event.once('data', resolve);
         });
-        await this.gasCharTx.writeWait(packet);
+        const writePromise = this.gasCharTx.writeWait(packet);
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore for ES2022 Error Cause
+        const trace2 = new Error('trace', { cause: trace1 });
+        const timeoutPromise = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore for ES2022 Error Cause
+            reject(new Error('Timed out for waiting', { cause: trace2 }));
+          }, 30 * 1000);
+        });
+        await Promise.race([
+          timeoutPromise,
+          Promise.all([writePromise, responsePromise]),
+        ]);
         const response = await responsePromise;
         clearTimeout(timeout);
         return response;
