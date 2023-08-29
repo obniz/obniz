@@ -33,6 +33,11 @@ export interface BST_01A_InfoData {
    * 湿度
    */
   humidity?: number | 'error';
+
+  /**
+   * デバイスアドレス
+   */
+  bluetooth_device_address?: string;
 }
 
 export interface BST_01AOptions {}
@@ -123,7 +128,12 @@ export default class BST_01A implements ObnizPartsBleInterface {
           index += 2;
           break;
         case 0x03:
-          index += 7;
+          if (index + 6 <= data.length) {
+            //
+            const deviceAddress = data.slice(index, index + 6);
+            result.bluetooth_device_address = deviceAddress.toString('hex');
+          }
+          index += 6;
           break;
         default:
           // unknown. force break

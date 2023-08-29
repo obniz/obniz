@@ -51,6 +51,7 @@ If a sensor detect an error, then a value becomes string with `'error'`.
   battery: number;
   temperature: number | 'error';
   humidity: number | 'error';
+  bluetooth_device_address: string;
 }
 ```
 

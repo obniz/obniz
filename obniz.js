@@ -26566,7 +26566,12 @@ class BST_01A {
                     index += 2;
                     break;
                 case 0x03:
-                    index += 7;
+                    if (index + 6 <= data.length) {
+                        //
+                        const deviceAddress = data.slice(index, index + 6);
+                        result.bluetooth_device_address = deviceAddress.toString('hex');
+                    }
+                    index += 6;
                     break;
                 default:
                     // unknown. force break

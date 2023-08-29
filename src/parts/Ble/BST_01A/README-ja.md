@@ -50,6 +50,7 @@ await obniz.ble.scan.startWait();
   battery: number;
   temperature: number | 'error';
   humidity: number | 'error';
+  bluetooth_device_address: string;
 }
 ```
 
