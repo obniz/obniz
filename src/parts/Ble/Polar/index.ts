@@ -9,22 +9,21 @@ import {
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
 
-export interface PolarOptions { }
+export interface PolarOptions {}
 
 export interface PolarData {
-  batteryStatus: boolean,
-  sensorContact: boolean,
-  advFrameCounter: number,
-  broadcastBit: boolean,
-  sensorDataType: boolean,
-  statusFlags: boolean,
-  khzCode: number,
-  fastAverageHr: number,
-  slowAverageHr?: number
+  batteryStatus: boolean;
+  sensorContact: boolean;
+  advFrameCounter: number;
+  broadcastBit: boolean;
+  sensorDataType: boolean;
+  statusFlags: boolean;
+  khzCode: number;
+  fastAverageHr: number;
+  slowAverageHr?: number;
 }
 
 export default class Polar implements ObnizPartsBleInterface {
-
   public _peripheral: BleRemotePeripheral | null = null;
 
   public static info(): ObnizPartsBleInfo {
@@ -44,8 +43,11 @@ export default class Polar implements ObnizPartsBleInterface {
     if (manufacturerSpecificData.length < 2) {
       return false;
     }
-    let offset = 0;
-    if (manufacturerSpecificData[offset] !== 0x6B || manufacturerSpecificData[offset + 1] !== 0x00) {
+    const offset = 0;
+    if (
+      manufacturerSpecificData[offset] !== 0x6b ||
+      manufacturerSpecificData[offset + 1] !== 0x00
+    ) {
       return false;
     }
     return true;
@@ -67,7 +69,7 @@ export default class Polar implements ObnizPartsBleInterface {
       const gpbDataBit = payload[offset] & 0x40;
       console.log('gpbDataBit', gpbDataBit);
       if (gpbDataBit === 0) {
-        if ((offset + 3) <= payload.length) {
+        if (offset + 3 <= payload.length) {
           lastData = this.buildFromPayload(payload.slice(offset));
         }
         offset += 3;
@@ -84,8 +86,7 @@ export default class Polar implements ObnizPartsBleInterface {
   private static buildFromPayload(payload: number[]): PolarData | null {
     console.log('build', payload);
     if (payload.length < 3) {
-
-      return null
+      return null;
     }
 
     // 3byte mode
@@ -106,15 +107,15 @@ export default class Polar implements ObnizPartsBleInterface {
     // 3byte slowAverageHr
 
     const result: PolarData = {
-      batteryStatus: ((payload[0] >> 0) & 0b1) ? true : false,
-      sensorContact: ((payload[0] >> 1) & 0b1) ? true : false,
+      batteryStatus: (payload[0] >> 0) & 0b1 ? true : false,
+      sensorContact: (payload[0] >> 1) & 0b1 ? true : false,
       advFrameCounter: (payload[0] >> 2) & 0b111,
-      broadcastBit: ((payload[0] >> 5) & 0b1) ? true : false,
-      sensorDataType: ((payload[0] >> 6) & 0b1) ? true : false,
-      statusFlags: ((payload[0] >> 7) & 0b1) ? true : false,
+      broadcastBit: (payload[0] >> 5) & 0b1 ? true : false,
+      sensorDataType: (payload[0] >> 6) & 0b1 ? true : false,
+      statusFlags: (payload[0] >> 7) & 0b1 ? true : false,
       khzCode: payload[1],
       fastAverageHr: payload[2],
-    }
+    };
 
     if (payload.length > 3) {
       result.slowAverageHr = payload[3];

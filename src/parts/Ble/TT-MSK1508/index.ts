@@ -23,6 +23,7 @@ export interface TT_MSK1508Data {
   totalDoseVolume: number;
   totalDoseTime: number;
   infusionType: typeof TT_MSK1508['InfusionType'][keyof typeof TT_MSK1508['InfusionType']];
+  flow: number;
   sensorId: number;
   errors: typeof TT_MSK1508['Errors'][keyof typeof TT_MSK1508['Errors']][];
   battery: number;
@@ -32,6 +33,7 @@ export interface TT_MSK1508Data {
 export default class TT_MSK1508 implements ObnizPartsBleInterface {
   public static OperatingMode = {
     0: 'initial',
+    1: 'checking',
     2: 'dosing',
   };
   public static FlowRateStatus = {
@@ -112,22 +114,42 @@ export default class TT_MSK1508 implements ObnizPartsBleInterface {
       return null;
     }
 
-    const patientId = Number(Buffer.from(sendData.slice(0, 6)).toString('hex'));
+    let patientId = 0;
+    patientId += ((sendData[5] >> 0) & 0b1111) * 1;
+    patientId += ((sendData[5] >> 4) & 0b1111) * 10;
+    patientId += ((sendData[4] >> 0) & 0b1111) * 100;
+    patientId += ((sendData[4] >> 4) & 0b1111) * 1000;
+    patientId += ((sendData[3] >> 0) & 0b1111) * 10000;
+    patientId += ((sendData[3] >> 4) & 0b1111) * 100000;
+    patientId += ((sendData[2] >> 0) & 0b1111) * 1000000;
+    patientId += ((sendData[2] >> 4) & 0b1111) * 10000000;
+    patientId += ((sendData[1] >> 0) & 0b1111) * 100000000;
+    patientId += ((sendData[1] >> 4) & 0b1111) * 1000000000;
+    patientId += ((sendData[0] >> 0) & 0b1111) * 10000000000;
+    patientId += ((sendData[0] >> 4) & 0b1111) * 100000000000;
+
     const operatingMode = sendData[6] & 0x03;
     const flowRateStatus = (sendData[6] >>> 2) & 0x03;
-    const batteryStatus = (sendData[6] >>> 4) & 0x03;
+    const batteryStatus = (sendData[6] >>> 4) & 0x01;
     const model = (sendData[6] >>> 6) & 0x03;
     const totalDoseVolume = Buffer.from(sendData.slice(7, 9)).readUInt16LE(0);
     const totalDoseTime = Buffer.from(sendData.slice(9, 11)).readUInt16LE(0);
     const infusionType = sendData[11] & 0xc0;
-    const sensorId = Number(
-      Buffer.from(sendData.slice(12, 14)).toString('hex')
-    );
+    const flow = ((sendData[11] >> 2) & 0x3f) * 5;
+    let sensorId = 0;
+    sensorId += ((sendData[13] >> 0) & 0b1111) * 1;
+    sensorId += ((sendData[13] >> 4) & 0b1111) * 10;
+    sensorId += ((sendData[12] >> 0) & 0b1111) * 100;
+    sensorId += ((sendData[12] >> 4) & 0b1111) * 1000;
+    sensorId += ((sendData[14] >> 4) & 0b1111) * 10000;
 
     const errors: typeof TT_MSK1508.Errors[number][] = [];
-    const error = sendData[14];
+    const error = sendData[14] & 0x03;
     if (error & 0x1) errors.push('drip_detection_error');
     if ((error >>> 1) & 0x1) errors.push('device_internal_error');
+
+    // extra id
+    const extraId = (sendData[14] >> 4) & 0b1111;
 
     const battery = sendData[15];
 
@@ -139,13 +161,14 @@ export default class TT_MSK1508 implements ObnizPartsBleInterface {
 
     return {
       patientId,
-      operatingMode: this.OperatingMode[operatingMode as 0 | 2],
+      operatingMode: this.OperatingMode[operatingMode as 0 | 1 | 2],
       flowRateStatus: this.FlowRateStatus[flowRateStatus as 0 | 1 | 2 | 3],
       batteryStatus: this.BatteryStatus[batteryStatus as 0 | 1],
       model: this.Model[model as 0 | 1],
       totalDoseVolume,
       totalDoseTime,
       infusionType: this.InfusionType[infusionType as 0],
+      flow,
       sensorId,
       errors,
       battery,
