@@ -4,7 +4,6 @@
  */
 /* eslint rulesdir/non-ascii: 0 */
 
-import roundTo from 'round-to';
 import {
   checkEquals,
   fixByRange,
@@ -332,7 +331,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
             const elapsed_time = uint(data.slice(5, 8));
             // First, store the UNIX time of the last measurement of body temperature
             // 初めに体温の最終計測時のUNIX時間を格納
-            let time = roundTo(Date.now() / 1000 - diff, 0);
+            let time = Math.round(Date.now() / 1000 - diff);
             const result: TM2101_SR_Data = {
               data: {},
               elapsed_time,
@@ -355,7 +354,7 @@ export default class TM2101_SR extends ObnizPartsBleConnectable<
           .fill(0)
           .map((_val, i) => {
             i *= 2;
-            return [data[i] * 60, roundTo(25 + data[i + 1] * 0.0625, 1)];
+            return [data[i] * 60, 25 + data[i + 1] * 0.0625];
           });
         results.push(...newData);
         // Since the data will continue after this この後もデータが続くため
