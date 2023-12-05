@@ -52,7 +52,7 @@ matrix.draw(ctx);
  // Javascript Example
  const matrix = obniz.wired("Keyestudio_HT16K33", { gnd:0, vcc:1, sda:2, scl:3 });
  const dots = [1,2,4,8,16,32,64,128]
- matrix.draw(dots);
+ matrix.dots(dots);
  ```
 
 ## clear()

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Grove_DistanceSensorOptionsB | obniz</title>
+	<title>BST_01A_InfoData | obniz</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,27 +59,32 @@
 					<a href="../modules/parts.html">Parts</a>
 				</li>
 				<li>
-					<a href="../modules/parts.reflection-26501.html"></a>
+					<a href="../modules/parts.bst_01a.html">BST_01A</a>
 				</li>
 				<li>
-					<a href="../modules/parts.reflection-26501.grove_distancesensor.html">Grove_DistanceSensor</a>
-				</li>
-				<li>
-					<a href="parts.reflection-26501.grove_distancesensor.grove_distancesensoroptionsb.html">Grove_DistanceSensorOptionsB</a>
+					<a href="parts.bst_01a.bst_01a_infodata.html">BST_01A_InfoData</a>
 				</li>
 			</ul>
-			<h1>Interface Grove_DistanceSensorOptionsB</h1>
+			<h1>Interface BST_01A_InfoData</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>advertisement data from BST_01A</p>
+					</div>
+					<p>BST_01Aからのadvertisementデータ</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Grove_DistanceSensorOptionsB</span>
+						<span class="target">BST_01A_InfoData</span>
 					</li>
 				</ul>
 			</section>
@@ -87,26 +92,79 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="parts.reflection-26501.grove_distancesensor.grove_distancesensoroptionsb.html#grove" class="tsd-kind-icon">grove</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.bst_01a.bst_01a_infodata.html#battery" class="tsd-kind-icon">battery</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.bst_01a.bst_01a_infodata.html#humidity" class="tsd-kind-icon">humidity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.bst_01a.bst_01a_infodata.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="parts.bst_01a.bst_01a_infodata.html#temperature" class="tsd-kind-icon">temperature</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="grove" class="tsd-anchor"></a>
-					<h3>grove</h3>
-					<div class="tsd-signature tsd-kind-icon">grove<span class="tsd-signature-symbol">:</span> <a href="../classes/obnizcore.components.peripheralgrove.html" class="tsd-signature-type">PeripheralGrove</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="battery" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> battery</h3>
+					<div class="tsd-signature tsd-kind-icon">battery<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/parts/Grove/Grove_DistanceSensor/index.ts:18</li>
+							<li>Defined in src/parts/Ble/BST_01A/index.ts:25</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>電池電圧(v)</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="humidity" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> humidity</h3>
+					<div class="tsd-signature tsd-kind-icon">humidity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"error"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/BST_01A/index.ts:35</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>湿度</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="id" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/BST_01A/index.ts:20</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>機種ID</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="temperature" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> temperature</h3>
+					<div class="tsd-signature tsd-kind-icon">temperature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"error"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/parts/Ble/BST_01A/index.ts:30</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>温度</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -121,26 +179,32 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/parts.reflection-26501.grove_distancesensor.grove_distancesensor.html" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor</a>
+						<a href="../classes/parts.bst_01a.bst_01a.html" class="tsd-kind-icon">BST_<wbr>01A</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="parts.reflection-26501.grove_distancesensor.grove_distancesensoroptionsa.html" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor<wbr>OptionsA</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.bst_01a.bst_01aoptions.html" class="tsd-kind-icon">BST_<wbr>01AOptions</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="parts.reflection-26501.grove_distancesensor.grove_distancesensoroptionsb.html" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor<wbr>OptionsB</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="parts.bst_01a.bst_01a_infodata.html" class="tsd-kind-icon">BST_<wbr>01<wbr>A_<wbr><wbr>Info<wbr>Data</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="parts.reflection-26501.grove_distancesensor.grove_distancesensoroptionsb.html#grove" class="tsd-kind-icon">grove</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.bst_01a.bst_01a_infodata.html#battery" class="tsd-kind-icon">battery</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.bst_01a.bst_01a_infodata.html#humidity" class="tsd-kind-icon">humidity</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.bst_01a.bst_01a_infodata.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="parts.bst_01a.bst_01a_infodata.html#temperature" class="tsd-kind-icon">temperature</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/parts.reflection-26501.grove_distancesensor.html#grove_distancesensoroptions" class="tsd-kind-icon">Grove_<wbr><wbr>Distance<wbr>Sensor<wbr>Options</a>
-					</li>
 				</ul>
 			</nav>
 		</div>
