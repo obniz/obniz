@@ -47,6 +47,16 @@ export default class Talia implements ObnizPartsBleInterface {
   }
 
   /**
+   * UIDフレームのみ検知可能
+   *
+   * @param peripheral ble remote peripheral
+   * @returns boolean
+   */
+  public static isDevice(peripheral: BleRemotePeripheral): boolean {
+    return this.isDeviceFromUid(peripheral);
+  }
+
+  /**
    * TLMフレームからデータを取得する。
    * getMode()で先にUIDかTLMか判断した方が良い。
    */
