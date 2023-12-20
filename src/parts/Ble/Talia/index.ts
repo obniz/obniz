@@ -49,7 +49,7 @@ export default class Talia implements ObnizPartsBleInterface {
   /**
    * UIDフレームのみ検知可能
    *
-   * @param peripheral ble remote peripheral
+   * @param peripheral bleremoteperipheral
    * @returns boolean
    */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
