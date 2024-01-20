@@ -14,6 +14,11 @@ Extract the data from an advertisement.
 Result format:
 ```
 {
+  deviceSerial: DeviceSerial
+  controlCode: Control Code
+  counter: Counter
+  statusCode1: Status Code1
+  statusCode2: Status Code2
   temperature: Temperature [degC];
   humidity: Humidity [Percentage];
 }
