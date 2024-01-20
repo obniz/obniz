@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.27.0",
+  "version": "3.28.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -33167,6 +33167,11 @@ class TR7 {
      *
      * ```
      * {
+     *    deviceSerial: デバイスシリアル
+     *    controlCode: コントロールコード
+     *    counter: カウンタ
+     *    statusCode1: ステータスコード1
+     *    statusCode2: ステータスコード2
      *    temperature: temperature 温度 (Unit: 0.1 degC)
      *    humidity: humidity 湿度 (Unit: 0.1 %)
      * }
@@ -33175,21 +33180,40 @@ class TR7 {
     static getData(peripheral) {
         if (!this.isDevice(peripheral))
             return null;
+        const deviceSerialBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'deviceSerial');
+        const controlCodeBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'controlCode');
+        const counterBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'counter');
+        const statusCode1Bytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'statusCode1');
+        const statusCode2Bytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'statusCode2');
         const temperatureBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measuredDataCh1');
         const humidityBytes = this._deviceAdvAnalyzer.getData(peripheral.adv_data, 'manufacture', 'measuredDataCh2');
-        if (!temperatureBytes || !humidityBytes)
+        if (!deviceSerialBytes ||
+            !controlCodeBytes ||
+            !counterBytes ||
+            !statusCode1Bytes ||
+            !statusCode2Bytes ||
+            !temperatureBytes ||
+            !humidityBytes) {
             return null;
-        const rawTemperature = (temperatureBytes === null || temperatureBytes === void 0 ? void 0 : temperatureBytes[0]) === 0xee && (temperatureBytes === null || temperatureBytes === void 0 ? void 0 : temperatureBytes[1]) === 0xee // error
-            ? null
-            : Buffer.from(temperatureBytes).readInt16LE(0);
-        const rawHumidity = (humidityBytes === null || humidityBytes === void 0 ? void 0 : humidityBytes[0]) === 0xee && (humidityBytes === null || humidityBytes === void 0 ? void 0 : humidityBytes[1]) === 0xee // error
-            ? null
-            : Buffer.from(humidityBytes).readInt16LE(0);
-        if (!rawTemperature || !rawHumidity)
-            return null;
+        }
+        let temperature = null;
+        if ((temperatureBytes === null || temperatureBytes === void 0 ? void 0 : temperatureBytes[0]) !== 0xee || (temperatureBytes === null || temperatureBytes === void 0 ? void 0 : temperatureBytes[1]) !== 0xee) {
+            // NOTE: Document says we have to do this mathmatics.
+            temperature = (Buffer.from(temperatureBytes).readInt16LE(0) - 1000) / 10;
+        }
+        let humidity = null;
+        if ((humidityBytes === null || humidityBytes === void 0 ? void 0 : humidityBytes[0]) !== 0xee || (humidityBytes === null || humidityBytes === void 0 ? void 0 : humidityBytes[1]) !== 0xee) {
+            // NOTE: Document says we have to do this mathmatics.
+            humidity = (Buffer.from(humidityBytes).readInt16LE(0) - 1000) / 10;
+        }
         return {
-            temperature: (rawTemperature - 1000) / 10,
-            humidity: (rawHumidity - 1000) / 10, // NOTE: Document says we have to do this mathmatics.
+            deviceSerial: Buffer.from(deviceSerialBytes).toString('hex'),
+            controlCode: controlCodeBytes[0],
+            counter: counterBytes[0],
+            statusCode1: statusCode1Bytes[0],
+            statusCode2: statusCode2Bytes[0],
+            temperature,
+            humidity,
         };
     }
 }
