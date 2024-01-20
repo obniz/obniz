@@ -7,8 +7,13 @@ import { ObnizPartsBleInterface, ObnizPartsBleInfo } from '../../../obniz/ObnizP
 export interface TR7Options {
 }
 export interface TR7Data {
-    temperature: number;
-    humidity: number;
+    deviceSerial: string;
+    controlCode: number;
+    counter: number;
+    statusCode1: number;
+    statusCode2: number;
+    temperature: number | null;
+    humidity: number | null;
 }
 /**
  * Class that manages TR7 series.
@@ -40,6 +45,11 @@ export default class TR7 implements ObnizPartsBleInterface {
      *
      * ```
      * {
+     *    deviceSerial: デバイスシリアル
+     *    controlCode: コントロールコード
+     *    counter: カウンタ
+     *    statusCode1: ステータスコード1
+     *    statusCode2: ステータスコード2
      *    temperature: temperature 温度 (Unit: 0.1 degC)
      *    humidity: humidity 湿度 (Unit: 0.1 %)
      * }
