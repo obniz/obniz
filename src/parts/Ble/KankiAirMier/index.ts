@@ -89,6 +89,9 @@ export default class KankiAirMier implements ObnizPartsBleInterface {
     const allData = KankiAirMier._deviceAdvAnalyzer.getAllData(
       peripheral.adv_data
     );
+    if (!allData) {
+      return null;
+    }
 
     const temperatureRaw = Buffer.from(
       allData.manufacture.temperature
