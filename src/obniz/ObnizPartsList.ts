@@ -306,6 +306,9 @@ import Switchbot_Bot, {
 import PLAYBULB_candle, {
   PLAYBULB_candleOptions,
 } from '../parts/Ble/PLAYBULB_candle';
+import Switchbot_Meter_Plus, {
+  Switchbot_Meter_PlusOptions,
+} from '../parts/Ble/Switchbot_Meter_Plus';
 
 export type PartsType = keyof PartsList;
 
@@ -743,6 +746,11 @@ export interface PartsList {
     Switchbot_Meter,
     Switchbot_MeterOptions,
     typeof Switchbot_Meter
+  >;
+  Switchbot_Meter_Plus: PartsInterface<
+    Switchbot_Meter_Plus,
+    Switchbot_Meter_PlusOptions,
+    typeof Switchbot_Meter_Plus
   >;
   Switchbot_Bot: PartsInterface<
     Switchbot_Bot,
