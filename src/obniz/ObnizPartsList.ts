@@ -309,6 +309,9 @@ import PLAYBULB_candle, {
 import Switchbot_Meter_Plus, {
   Switchbot_Meter_PlusOptions,
 } from '../parts/Ble/Switchbot_Meter_Plus';
+import Switchbot_IOSensorTH, {
+  Switchbot_IOSensorTHOptions,
+} from '../parts/Ble/Switchbot_IOSensorTH';
 
 export type PartsType = keyof PartsList;
 
@@ -751,6 +754,11 @@ export interface PartsList {
     Switchbot_Meter_Plus,
     Switchbot_Meter_PlusOptions,
     typeof Switchbot_Meter_Plus
+  >;
+  Switchbot_IOSensorTH: PartsInterface<
+    Switchbot_IOSensorTH,
+    Switchbot_IOSensorTHOptions,
+    typeof Switchbot_IOSensorTH
   >;
   Switchbot_Bot: PartsInterface<
     Switchbot_Bot,
