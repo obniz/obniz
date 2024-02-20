@@ -9,6 +9,7 @@ export class WSCommandPlugin extends WSCommandAbstract {
 
   _CommandSend = 0;
   _CommandReceive = 1;
+  _CommandFrame = 2;
 
   public send(params: any, index: any) {
     const buf = new Uint8Array(params.send);
@@ -45,6 +46,31 @@ export class WSCommandPlugin extends WSCommandAbstract {
         objToSend.plugin = {
           receive: arr,
         };
+        break;
+      }
+      case this._CommandFrame: {
+        // convert buffer to array
+        if (payload.length === 5 && payload[0] === 0) {
+          let length = 0;
+          length += payload[1] << (3 * 8);
+          length += payload[2] << (2 * 8);
+          length += payload[3] << (1 * 8);
+          length += payload[4] << (0 * 8);
+
+          objToSend.plugin = {
+            frame: {
+              start: {
+                length,
+              },
+            },
+          };
+        } else if (payload.length === 1 && payload[0] === 1) {
+          objToSend.plugin = {
+            frame: {
+              end: {},
+            },
+          };
+        }
         break;
       }
     }

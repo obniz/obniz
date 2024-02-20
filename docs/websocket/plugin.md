@@ -54,6 +54,37 @@ plugin command
 ```
 
 
+##  response: <a name="-response-plugin-frame">frame</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `plugin.frame.start.length` |  number  | <ul><li>required</li></ul> | Frame Total length&nbsp; |
+| `plugin.frame.end.length` |  number  | &nbsp; | &nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "plugin": {
+            "frame": {
+                "start": {
+                    "length": 10000
+                },
+                "end": {
+                    "length": 500
+                }
+            }
+        }
+    }
+]
+```
+
+
 
 
 

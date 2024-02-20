@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.28.0",
+  "version": "3.29.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -423,6 +423,7 @@ var map = {
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
 	"./response/message/receive.yml": "./dist/src/json_schema/response/message/receive.yml",
+	"./response/plugin/frame.yml": "./dist/src/json_schema/response/plugin/frame.yml",
 	"./response/plugin/index.yml": "./dist/src/json_schema/response/plugin/index.yml",
 	"./response/plugin/receive.yml": "./dist/src/json_schema/response/plugin/receive.yml",
 	"./response/spi/index.yml": "./dist/src/json_schema/response/spi/index.yml",
@@ -1601,10 +1602,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/plugin/frame.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/frame","type":"object","required":["frame"],"properties":{"frame":{"type":"object","required":[],"additionalProperties":false,"properties":{"start":{"type":"object","required":["length"],"additionalProperties":false,"properties":{"length":{"type":"number"}}},"end":{"type":"object","required":[],"additionalProperties":true,"properties":{"length":{"type":"number"}}}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/plugin/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin","basePath":"plugin","anyOf":[{"$ref":"/response/plugin/receive"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin","basePath":"plugin","anyOf":[{"$ref":"/response/plugin/receive"},{"$ref":"/response/plugin/frame"}]}
 
 /***/ }),
 
@@ -19635,6 +19643,15 @@ class Plugin {
             const string = util_1.ObnizUtil.dataArray2string(obj.receive);
             this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
         }
+        else if (obj.frame) {
+            if (obj.frame.start) {
+                const length = obj.frame.start.length;
+                this.Obniz._runUserCreatedFunction(this.onFrameStart, length);
+            }
+            else if (obj.frame.end) {
+                this.Obniz._runUserCreatedFunction(this.onFrameEnd);
+            }
+        }
     }
 }
 exports.Plugin = Plugin;
@@ -24524,6 +24541,7 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
         this.module = 15;
         this._CommandSend = 0;
         this._CommandReceive = 1;
+        this._CommandFrame = 2;
     }
     send(params, index) {
         const buf = new Uint8Array(params.send);
@@ -24556,6 +24574,31 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
                 objToSend.plugin = {
                     receive: arr,
                 };
+                break;
+            }
+            case this._CommandFrame: {
+                // convert buffer to array
+                if (payload.length === 5 && payload[0] === 0) {
+                    let length = 0;
+                    length += payload[1] << (3 * 8);
+                    length += payload[2] << (2 * 8);
+                    length += payload[3] << (1 * 8);
+                    length += payload[4] << (0 * 8);
+                    objToSend.plugin = {
+                        frame: {
+                            start: {
+                                length,
+                            },
+                        },
+                    };
+                }
+                else if (payload.length === 1 && payload[0] === 1) {
+                    objToSend.plugin = {
+                        frame: {
+                            end: {},
+                        },
+                    };
+                }
                 break;
             }
         }

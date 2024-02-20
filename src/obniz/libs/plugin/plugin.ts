@@ -30,6 +30,32 @@ export class Plugin {
    */
   public onreceive?: PluginReceiveCallbackFunction;
 
+  /**
+   * Callback function is called when Frame Information Received
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.plugin.onFrameStart = length => {
+   *   console.log(`${length} bytes will be start`);
+   * };
+   * ```
+   *
+   */
+  public onFrameStart?: (length: number) => void;
+
+  /**
+   * Callback function is called when Frame Information Received
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.plugin.onFrameEnd = length => {
+   *   console.log(`frame ended`);
+   * };
+   * ```
+   *
+   */
+  public onFrameEnd?: () => void;
+
   private Obniz: Obniz;
 
   constructor(obniz: Obniz, id: number) {
@@ -88,6 +114,13 @@ export class Plugin {
       /* Connectino state update. response of connect(), close from destination, response from */
       const string = ObnizUtil.dataArray2string(obj.receive);
       this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
+    } else if (obj.frame) {
+      if (obj.frame.start) {
+        const length: number = obj.frame.start.length;
+        this.Obniz._runUserCreatedFunction(this.onFrameStart, length);
+      } else if (obj.frame.end) {
+        this.Obniz._runUserCreatedFunction(this.onFrameEnd);
+      }
     }
   }
 }
