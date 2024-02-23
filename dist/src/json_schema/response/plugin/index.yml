@@ -6,3 +6,4 @@ basePath: "plugin"
 
 "anyOf":
   - {$ref:  "/response/plugin/receive"}
+  - {$ref:  "/response/plugin/frame"}

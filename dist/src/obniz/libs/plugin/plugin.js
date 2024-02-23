@@ -65,6 +65,16 @@ class Plugin {
             const string = util_1.ObnizUtil.dataArray2string(obj.receive);
             this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
         }
+        else if (obj.frame) {
+            if (obj.frame.start) {
+                const id = obj.frame.start.id;
+                const length = obj.frame.start.length;
+                this.Obniz._runUserCreatedFunction(this.onFrameStart, id, length);
+            }
+            else if (obj.frame.end) {
+                this.Obniz._runUserCreatedFunction(this.onFrameEnd);
+            }
+        }
     }
 }
 exports.Plugin = Plugin;

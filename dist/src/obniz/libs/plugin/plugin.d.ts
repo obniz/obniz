@@ -23,6 +23,30 @@ export declare class Plugin {
      *
      */
     onreceive?: PluginReceiveCallbackFunction;
+    /**
+     * Callback function is called when Frame Information Received
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.plugin.onFrameStart = length => {
+     *   console.log(`${length} bytes will be start`);
+     * };
+     * ```
+     *
+     */
+    onFrameStart?: (length: number) => void;
+    /**
+     * Callback function is called when Frame Information Received
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.plugin.onFrameEnd = length => {
+     *   console.log(`frame ended`);
+     * };
+     * ```
+     *
+     */
+    onFrameEnd?: () => void;
     private Obniz;
     constructor(obniz: Obniz, id: number);
     /**
