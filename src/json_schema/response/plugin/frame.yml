@@ -17,6 +17,11 @@ properties:
         required: [length]
         additionalProperties: false
         properties:
+          id:
+            type: number
+            example: 100
+            description: "Frame Identifer number"
+
           length:
             type: number
             example: 10000

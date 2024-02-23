@@ -1605,7 +1605,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/plugin/frame.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/frame","type":"object","required":["frame"],"properties":{"frame":{"type":"object","required":[],"additionalProperties":false,"properties":{"start":{"type":"object","required":["length"],"additionalProperties":false,"properties":{"length":{"type":"number"}}},"end":{"type":"object","required":[],"additionalProperties":true,"properties":{"length":{"type":"number"}}}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/frame","type":"object","required":["frame"],"properties":{"frame":{"type":"object","required":[],"additionalProperties":false,"properties":{"start":{"type":"object","required":["length"],"additionalProperties":false,"properties":{"id":{"type":"number"},"length":{"type":"number"}}},"end":{"type":"object","required":[],"additionalProperties":true,"properties":{"length":{"type":"number"}}}}}}}
 
 /***/ }),
 
@@ -19645,8 +19645,9 @@ class Plugin {
         }
         else if (obj.frame) {
             if (obj.frame.start) {
+                const id = obj.frame.start.id;
                 const length = obj.frame.start.length;
-                this.Obniz._runUserCreatedFunction(this.onFrameStart, length);
+                this.Obniz._runUserCreatedFunction(this.onFrameStart, id, length);
             }
             else if (obj.frame.end) {
                 this.Obniz._runUserCreatedFunction(this.onFrameEnd);
@@ -24578,15 +24579,17 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
             }
             case this._CommandFrame: {
                 // convert buffer to array
-                if (payload.length === 5 && payload[0] === 0) {
+                if (payload.length === 6 && payload[0] === 0) {
                     let length = 0;
-                    length += payload[1] << (3 * 8);
-                    length += payload[2] << (2 * 8);
-                    length += payload[3] << (1 * 8);
-                    length += payload[4] << (0 * 8);
+                    const id = payload[1];
+                    length += payload[2] << (3 * 8);
+                    length += payload[3] << (2 * 8);
+                    length += payload[4] << (1 * 8);
+                    length += payload[5] << (0 * 8);
                     objToSend.plugin = {
                         frame: {
                             start: {
+                                id,
                                 length,
                             },
                         },

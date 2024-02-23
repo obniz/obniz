@@ -61,6 +61,7 @@ plugin command
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
+| `plugin.frame.start.id` |  number  | &nbsp; | Frame Identifer number&nbsp; |
 | `plugin.frame.start.length` |  number  | <ul><li>required</li></ul> | Frame Total length&nbsp; |
 | `plugin.frame.end.length` |  number  | &nbsp; | &nbsp; |
 
@@ -73,6 +74,7 @@ plugin command
         "plugin": {
             "frame": {
                 "start": {
+                    "id": 100,
                     "length": 10000
                 },
                 "end": {

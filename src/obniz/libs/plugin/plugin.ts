@@ -116,8 +116,9 @@ export class Plugin {
       this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
     } else if (obj.frame) {
       if (obj.frame.start) {
+        const id: number = obj.frame.start.id;
         const length: number = obj.frame.start.length;
-        this.Obniz._runUserCreatedFunction(this.onFrameStart, length);
+        this.Obniz._runUserCreatedFunction(this.onFrameStart, id, length);
       } else if (obj.frame.end) {
         this.Obniz._runUserCreatedFunction(this.onFrameEnd);
       }

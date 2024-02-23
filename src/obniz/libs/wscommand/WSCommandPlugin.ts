@@ -50,16 +50,18 @@ export class WSCommandPlugin extends WSCommandAbstract {
       }
       case this._CommandFrame: {
         // convert buffer to array
-        if (payload.length === 5 && payload[0] === 0) {
+        if (payload.length === 6 && payload[0] === 0) {
           let length = 0;
-          length += payload[1] << (3 * 8);
-          length += payload[2] << (2 * 8);
-          length += payload[3] << (1 * 8);
-          length += payload[4] << (0 * 8);
+          const id = payload[1];
+          length += payload[2] << (3 * 8);
+          length += payload[3] << (2 * 8);
+          length += payload[4] << (1 * 8);
+          length += payload[5] << (0 * 8);
 
           objToSend.plugin = {
             frame: {
               start: {
+                id,
                 length,
               },
             },
