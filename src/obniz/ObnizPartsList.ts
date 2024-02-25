@@ -14,6 +14,7 @@ import ENERTALK_TOUCH, { ENERTALK_TOUCHOptions } from '../parts/Ble/ENERTALK';
 import HEM_6233T, { HEM_6233TOptions } from '../parts/Ble/HEM_6233T';
 import HEM_9200T, { HEM_9200TOptions } from '../parts/Ble/HEM_9200T';
 
+import iBeacon, { iBeaconOptions } from '../parts/Ble/iBeacon';
 import IBS01, { iBS01Options } from '../parts/Ble/iBS01';
 import IBS01G, { iBS01GOptions } from '../parts/Ble/iBS01G';
 import IBS01H, { iBS01HOptions } from '../parts/Ble/iBS01H';
@@ -630,6 +631,7 @@ export interface PartsList {
   Linking: PartsInterface<Linking, LinkingOptions, typeof Linking>;
   uPRISM: PartsInterface<uPRISM, uPRISMOptions, typeof uPRISM>;
   SCBTGAAAC: PartsInterface<SCBTGAAAC, SCBTGAAACOptions, typeof SCBTGAAAC>;
+  iBeacon: PartsInterface<iBeacon, iBeaconOptions, typeof iBeacon>;
   iBS01: PartsInterface<IBS01, iBS01Options, typeof IBS01>;
   iBS01G: PartsInterface<IBS01G, iBS01GOptions, typeof IBS01G>;
   iBS01H: PartsInterface<IBS01H, iBS01HOptions, typeof IBS01H>;

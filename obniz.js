@@ -25771,6 +25771,7 @@ var map = {
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
 	"./Ble/iBS05G/index.js": "./dist/src/parts/Ble/iBS05G/index.js",
 	"./Ble/iBS05H/index.js": "./dist/src/parts/Ble/iBS05H/index.js",
+	"./Ble/iBeacon/index.js": "./dist/src/parts/Ble/iBeacon/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
 	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
@@ -35715,6 +35716,68 @@ exports.default = iBS05H;
 iBS05H.PartsName = 'iBS05H';
 iBS05H.CompanyID = [0x2c, 0x08];
 iBS05H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, hall_sensor: iBS_1.BaseiBS.Config.event, count: iBS_1.BaseiBS.Config.count }, iBS_1.BaseiBS.getUniqueData(5, 0x31));
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBeacon/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBeacon
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+/** iBeacon management class iBeacon管理クラス */
+class iBeacon {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'iBeacon',
+        };
+    }
+    /**
+     * Verify that the received peripheral is iBeacon
+     *
+     * 受け取ったPeripheralがiBeaconのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBeacon
+     *
+     * iBeaconかどうか
+     */
+    static isDevice(peripheral) {
+        return peripheral.iBeacon != null;
+    }
+    /**
+     * Get a data from the iBeacon
+     *
+     * iBeaconからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBeacon
+     */
+    static getData(peripheral) {
+        if (!peripheral.iBeacon) {
+            return null;
+        }
+        const iBeaconData = peripheral.iBeacon;
+        return {
+            uuid: iBeaconData.uuid,
+            major: iBeaconData.major,
+            minor: iBeaconData.minor,
+            power: iBeaconData.power,
+        };
+    }
+}
+exports.default = iBeacon;
 
 
 /***/ }),
