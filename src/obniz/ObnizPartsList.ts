@@ -20,6 +20,7 @@ import IBS01H, { iBS01HOptions } from '../parts/Ble/iBS01H';
 import IBS01RG, { iBS01RGOptions } from '../parts/Ble/iBS01RG';
 import IBS01T, { iBS01TOptions } from '../parts/Ble/iBS01T';
 import IBS02IR, { iBS02IROptions } from '../parts/Ble/iBS02IR';
+import IBS02M2, { iBS02M2Options } from '../parts/Ble/iBS02M2';
 import IBS02PIR, { iBS02PIROptions } from '../parts/Ble/iBS02PIR';
 import IBS03, { iBS03Options } from '../parts/Ble/iBS03';
 import IBS03G, { iBS03GOptions } from '../parts/Ble/iBS03G';
@@ -635,6 +636,7 @@ export interface PartsList {
   iBS01RG: PartsInterface<IBS01RG, iBS01RGOptions, typeof IBS01RG>;
   iBS01T: PartsInterface<IBS01T, iBS01TOptions, typeof IBS01T>;
   iBS02IR: PartsInterface<IBS02IR, iBS02IROptions, typeof IBS02IR>;
+  iBS02M2: PartsInterface<IBS02M2, iBS02M2Options, typeof IBS02M2>;
   iBS02PIR: PartsInterface<IBS02PIR, iBS02PIROptions, typeof IBS02PIR>;
   iBS03: PartsInterface<IBS03, iBS03Options, typeof IBS03>;
   iBS03G: PartsInterface<IBS03G, iBS03GOptions, typeof IBS03G>;

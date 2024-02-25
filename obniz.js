@@ -25759,6 +25759,7 @@ var map = {
 	"./Ble/iBS01RG/index.js": "./dist/src/parts/Ble/iBS01RG/index.js",
 	"./Ble/iBS01T/index.js": "./dist/src/parts/Ble/iBS01T/index.js",
 	"./Ble/iBS02IR/index.js": "./dist/src/parts/Ble/iBS02IR/index.js",
+	"./Ble/iBS02M2/index.js": "./dist/src/parts/Ble/iBS02M2/index.js",
 	"./Ble/iBS02PIR/index.js": "./dist/src/parts/Ble/iBS02PIR/index.js",
 	"./Ble/iBS03/index.js": "./dist/src/parts/Ble/iBS03/index.js",
 	"./Ble/iBS03G/index.js": "./dist/src/parts/Ble/iBS03G/index.js",
@@ -35318,6 +35319,32 @@ iBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/iBS02M2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS02M2
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS02M2 management class iBS02M2を管理するクラス */
+class iBS02M2 extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS02M2;
+    }
+}
+exports.default = iBS02M2;
+iBS02M2.PartsName = 'iBS02M2';
+iBS02M2.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, input_trigger: iBS_1.BaseiBS.Config.input_trigger }, iBS_1.BaseiBS.getUniqueData(3, 0x04));
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/iBS02PIR/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -42531,6 +42558,10 @@ BaseiBS.Config = {
     event: {
         index: 4,
         type: 'bool0100',
+    },
+    input_trigger: {
+        index: 4,
+        type: 'bool01000000',
     },
     fall: {
         index: 4,
