@@ -6,7 +6,7 @@ iBeaconフォーマットのビーコンです
 
 アドバタイズされているデータを取得
 
-- uuid: UUID of iBeacon
+- uuid: UUID of iBeacon. like "44444444-e1a5-4838-a62a-22d35d00c35b"
 - major: 0x0000 to 0xFFFF
 - minor: 0x0000 to 0xFFFF
 - power: power of iBeacon(not rssi)
