@@ -17,6 +17,7 @@ export interface Switchbot_IOSensorTHOptions {}
  */
 export interface Switchbot_IOSensorTH_Data {
   temperature: number;
+  fahrenheit: boolean;
   humidity: number;
   battery: number;
 }
@@ -41,7 +42,7 @@ export default class Switchbot_IOSensorTH extends Switchbot {
    * Switchbot_WoSensorHTかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
-    return Switchbot.isSwitchbotDevice(peripheral, 0x73, 5);
+    return Switchbot.isSwitchbotDevice(peripheral, 0x77, 2);
   }
 
   /**
@@ -59,7 +60,7 @@ export default class Switchbot_IOSensorTH extends Switchbot {
     if (!Switchbot_IOSensorTH.isDevice(peripheral)) {
       return null;
     }
-    const serviceData = Switchbot.getServiceDataPayload(peripheral, 0x73, 5);
+    const serviceData = Switchbot.getServiceDataPayload(peripheral, 0x77, 2);
 
     if (!serviceData) return null; // not target device
     if (peripheral.manufacturerSpecificData?.length !== 14) return null; // not target device
