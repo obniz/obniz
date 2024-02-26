@@ -1,0 +1,37 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/plugin/frame"
+
+type: object
+required: [frame]
+properties:
+  frame:
+    type: object
+    required: []
+    additionalProperties: false
+    properties:
+      start:
+        type: object
+        description: "Indicate Start Point of Frame"
+        required: [length]
+        additionalProperties: false
+        properties:
+          id:
+            type: number
+            example: 100
+            description: "Frame Identifer number"
+
+          length:
+            type: number
+            example: 10000
+            description: "Frame Total length"
+
+      end:
+        type: object
+        description: "Indicate End Point of Frame"
+        required: []
+        additionalProperties: true
+        properties:
+          length:
+            type: number

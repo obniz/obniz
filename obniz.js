@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.28.0",
+  "version": "3.29.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -423,6 +423,7 @@ var map = {
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
 	"./response/message/receive.yml": "./dist/src/json_schema/response/message/receive.yml",
+	"./response/plugin/frame.yml": "./dist/src/json_schema/response/plugin/frame.yml",
 	"./response/plugin/index.yml": "./dist/src/json_schema/response/plugin/index.yml",
 	"./response/plugin/receive.yml": "./dist/src/json_schema/response/plugin/receive.yml",
 	"./response/spi/index.yml": "./dist/src/json_schema/response/spi/index.yml",
@@ -1601,10 +1602,17 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/plugin/frame.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/frame","type":"object","required":["frame"],"properties":{"frame":{"type":"object","required":[],"additionalProperties":false,"properties":{"start":{"type":"object","required":["length"],"additionalProperties":false,"properties":{"id":{"type":"number"},"length":{"type":"number"}}},"end":{"type":"object","required":[],"additionalProperties":true,"properties":{"length":{"type":"number"}}}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/plugin/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin","basePath":"plugin","anyOf":[{"$ref":"/response/plugin/receive"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin","basePath":"plugin","anyOf":[{"$ref":"/response/plugin/receive"},{"$ref":"/response/plugin/frame"}]}
 
 /***/ }),
 
@@ -19635,6 +19643,16 @@ class Plugin {
             const string = util_1.ObnizUtil.dataArray2string(obj.receive);
             this.Obniz._runUserCreatedFunction(this.onreceive, obj.receive, string);
         }
+        else if (obj.frame) {
+            if (obj.frame.start) {
+                const id = obj.frame.start.id;
+                const length = obj.frame.start.length;
+                this.Obniz._runUserCreatedFunction(this.onFrameStart, id, length);
+            }
+            else if (obj.frame.end) {
+                this.Obniz._runUserCreatedFunction(this.onFrameEnd);
+            }
+        }
     }
 }
 exports.Plugin = Plugin;
@@ -24524,6 +24542,7 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
         this.module = 15;
         this._CommandSend = 0;
         this._CommandReceive = 1;
+        this._CommandFrame = 2;
     }
     send(params, index) {
         const buf = new Uint8Array(params.send);
@@ -24556,6 +24575,33 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
                 objToSend.plugin = {
                     receive: arr,
                 };
+                break;
+            }
+            case this._CommandFrame: {
+                // convert buffer to array
+                if (payload.length === 6 && payload[0] === 0) {
+                    let length = 0;
+                    const id = payload[1];
+                    length += payload[2] << (3 * 8);
+                    length += payload[3] << (2 * 8);
+                    length += payload[4] << (1 * 8);
+                    length += payload[5] << (0 * 8);
+                    objToSend.plugin = {
+                        frame: {
+                            start: {
+                                id,
+                                length,
+                            },
+                        },
+                    };
+                }
+                else if (payload.length === 1 && payload[0] === 1) {
+                    objToSend.plugin = {
+                        frame: {
+                            end: {},
+                        },
+                    };
+                }
                 break;
             }
         }
@@ -25713,6 +25759,7 @@ var map = {
 	"./Ble/iBS01RG/index.js": "./dist/src/parts/Ble/iBS01RG/index.js",
 	"./Ble/iBS01T/index.js": "./dist/src/parts/Ble/iBS01T/index.js",
 	"./Ble/iBS02IR/index.js": "./dist/src/parts/Ble/iBS02IR/index.js",
+	"./Ble/iBS02M2/index.js": "./dist/src/parts/Ble/iBS02M2/index.js",
 	"./Ble/iBS02PIR/index.js": "./dist/src/parts/Ble/iBS02PIR/index.js",
 	"./Ble/iBS03/index.js": "./dist/src/parts/Ble/iBS03/index.js",
 	"./Ble/iBS03G/index.js": "./dist/src/parts/Ble/iBS03G/index.js",
@@ -25724,6 +25771,7 @@ var map = {
 	"./Ble/iBS04i/index.js": "./dist/src/parts/Ble/iBS04i/index.js",
 	"./Ble/iBS05G/index.js": "./dist/src/parts/Ble/iBS05G/index.js",
 	"./Ble/iBS05H/index.js": "./dist/src/parts/Ble/iBS05H/index.js",
+	"./Ble/iBeacon/index.js": "./dist/src/parts/Ble/iBeacon/index.js",
 	"./Ble/linking/index.js": "./dist/src/parts/Ble/linking/index.js",
 	"./Ble/linking/modules/advertising.js": "./dist/src/parts/Ble/linking/modules/advertising.js",
 	"./Ble/linking/modules/device.js": "./dist/src/parts/Ble/linking/modules/device.js",
@@ -35272,6 +35320,32 @@ iBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/iBS02M2/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS02M2
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS02M2 management class iBS02M2を管理するクラス */
+class iBS02M2 extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS02M2;
+    }
+}
+exports.default = iBS02M2;
+iBS02M2.PartsName = 'iBS02M2';
+iBS02M2.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, input_trigger: iBS_1.BaseiBS.Config.input_trigger }, iBS_1.BaseiBS.getUniqueData(3, 0x04));
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/iBS02PIR/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -35642,6 +35716,68 @@ exports.default = iBS05H;
 iBS05H.PartsName = 'iBS05H';
 iBS05H.CompanyID = [0x2c, 0x08];
 iBS05H.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, hall_sensor: iBS_1.BaseiBS.Config.event, count: iBS_1.BaseiBS.Config.count }, iBS_1.BaseiBS.getUniqueData(5, 0x31));
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBeacon/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBeacon
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+/** iBeacon management class iBeacon管理クラス */
+class iBeacon {
+    constructor() {
+        this._peripheral = null;
+    }
+    static info() {
+        return {
+            name: 'iBeacon',
+        };
+    }
+    /**
+     * Verify that the received peripheral is iBeacon
+     *
+     * 受け取ったPeripheralがiBeaconのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the iBeacon
+     *
+     * iBeaconかどうか
+     */
+    static isDevice(peripheral) {
+        return peripheral.iBeacon != null;
+    }
+    /**
+     * Get a data from the iBeacon
+     *
+     * iBeaconからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the iBeacon
+     */
+    static getData(peripheral) {
+        if (!peripheral.iBeacon) {
+            return null;
+        }
+        const iBeaconData = peripheral.iBeacon;
+        return {
+            uuid: iBeaconData.uuid,
+            major: iBeaconData.major,
+            minor: iBeaconData.minor,
+            power: iBeaconData.power,
+        };
+    }
+}
+exports.default = iBeacon;
 
 
 /***/ }),
@@ -42485,6 +42621,10 @@ BaseiBS.Config = {
     event: {
         index: 4,
         type: 'bool0100',
+    },
+    input_trigger: {
+        index: 4,
+        type: 'bool01000000',
     },
     fall: {
         index: 4,
