@@ -19,22 +19,24 @@ const magic = {
   5: [0x83, 0xbc],
 };
 
-// battery:     [9, 11, false, 0.01]
-// button:      [11, 0b0001]
-// moving:      [11, 0b0010]
-// hall_sensor: [11, 0b0100]
-// reed:        [11, 0b0100]
-// event:       [11, 0b0100]
-// fall:        [11, 0b1000]
-// accel:       [11, 29, true, 1] 6*3 ???
-// temperature: [12, 14, true, 0.01]
-// humidity:    [14, 16, true, 1]
+// battery:       [9, 11, false, 0.01]
+// button:        [11, 0b0001]
+// moving:        [11, 0b0010]
+// hall_sensor:   [11, 0b0100]
+// reed:          [11, 0b0100]
+// event:         [11, 0b0100]
+// fall:          [11, 0b1000]
+// input_trigger: [11, 0x40]
+// accel:         [11, 29, true, 1] 6*3 ???
+// temperature:   [12, 14, true, 0.01]
+// humidity:      [14, 16, true, 1]
 
 type PresetConfigName =
   | 'battery'
   | 'button'
   | 'moving'
   | 'event'
+  | 'input_trigger'
   | 'fall'
   | 'acceleration'
   | 'temperature'
@@ -95,6 +97,10 @@ export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
     event: {
       index: 4,
       type: 'bool0100',
+    },
+    input_trigger: {
+      index: 4,
+      type: 'bool01000000',
     },
     fall: {
       index: 4,

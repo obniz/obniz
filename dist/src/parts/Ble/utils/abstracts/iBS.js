@@ -60,6 +60,10 @@ BaseiBS.Config = {
         index: 4,
         type: 'bool0100',
     },
+    input_trigger: {
+        index: 4,
+        type: 'bool01000000',
+    },
     fall: {
         index: 4,
         type: 'bool1000',

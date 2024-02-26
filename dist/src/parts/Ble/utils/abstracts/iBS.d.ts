@@ -11,7 +11,7 @@ declare const magic: {
     4: number[];
     5: number[];
 };
-declare type PresetConfigName = 'battery' | 'button' | 'moving' | 'event' | 'fall' | 'acceleration' | 'temperature' | 'humidity' | 'count' | 'user';
+declare type PresetConfigName = 'battery' | 'button' | 'moving' | 'event' | 'input_trigger' | 'fall' | 'acceleration' | 'temperature' | 'humidity' | 'count' | 'user';
 /** abstract class common to the iBS series iBSシリーズ共通の抽象クラス */
 export declare abstract class BaseiBS<S> extends ObnizPartsBle<S> {
     static readonly AvailableBleMode = "Beacon";
