@@ -316,6 +316,8 @@ import Skinos, { SkinosOptions } from '../parts/Ble/skinos';
 import Agx_SkinTemp, { Agx_SkinTempOptions } from '../parts/Ble/agx_skin_temp';
 import TA_temp01, { TA_temp01Options } from '../parts/Ble/TA_temp01';
 import ZAICON, { ZAICONOptions } from '../parts/Ble/ZAICON';
+import D101 from '../parts/Ble/RICOH/D101';
+import D201, { D201Options } from '../parts/Ble/RICOH/D201';
 
 export type PartsType = keyof PartsList;
 
@@ -777,4 +779,6 @@ export interface PartsList {
   >;
   'TA-temp01': PartsInterface<TA_temp01, TA_temp01Options, typeof TA_temp01>;
   ZAICON: PartsInterface<ZAICON, ZAICONOptions, typeof ZAICON>;
+  D101: PartsInterface<D201, D201Options, typeof D101>;
+  D201: PartsInterface<D201, D201Options, typeof D201>;
 }
