@@ -338,7 +338,7 @@ export class BleRemotePeripheral {
   public manufacturerSpecificData: number[] | null;
 
   public manufacturerSpecificDataInScanResponse: number[] | null;
-  public service_data: { uuid: number; data: number[] }[] | null;
+  public service_data: { uuid: string; data: number[] }[] | null;
   /**
    * Ad Type: 0x16 (16bit UUID)
    */

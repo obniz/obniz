@@ -104,7 +104,10 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     // do nothing.
   };
 
-  public addPeripheralData(uuid: UUID, addressType: BleDeviceAddressType) {
+  public addPeripheralData(
+    uuid: BleDeviceAddress,
+    addressType: BleDeviceAddressType
+  ) {
     if (!this._addresses[uuid]) {
       const address: any = BleHelper.addColon(uuid);
       this._addresses[uuid] = address;

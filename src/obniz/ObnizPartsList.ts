@@ -297,7 +297,23 @@ import DR_MARK, { DR_MARKOptions } from '../parts/Ble/DR_MARK';
 import Tr4A, { Tr4AOptions } from '../parts/Ble/TR4A';
 import RTR500B, { RTR500BOptions } from '../parts/Ble/RTR500B';
 import EMDCB, { EMDCBOptions } from '../parts/Ble/EMDCB';
+import Switchbot_Meter, {
+  Switchbot_MeterOptions,
+} from '../parts/Ble/Switchbot_Meter';
+
 import { Parts } from '.';
+import Switchbot_Bot, {
+  Switchbot_BotOptions,
+} from '../parts/Ble/Switchbot_Bot';
+import PLAYBULB_candle, {
+  PLAYBULB_candleOptions,
+} from '../parts/Ble/PLAYBULB_candle';
+import Switchbot_Meter_Plus, {
+  Switchbot_Meter_PlusOptions,
+} from '../parts/Ble/Switchbot_Meter_Plus';
+import Switchbot_IOSensorTH, {
+  Switchbot_IOSensorTHOptions,
+} from '../parts/Ble/Switchbot_IOSensorTH';
 
 export type PartsType = keyof PartsList;
 
@@ -733,4 +749,29 @@ export interface PartsList {
   MM_BLEBC5: PartsInterface<MM_BLEBC5, MM_BLEBC5_Options, typeof MM_BLEBC5>;
   DR_MARK: PartsInterface<DR_MARK, DR_MARKOptions, typeof DR_MARK>;
   EMDCB: PartsInterface<EMDCB, EMDCBOptions, typeof EMDCB>;
+  Switchbot_Meter: PartsInterface<
+    Switchbot_Meter,
+    Switchbot_MeterOptions,
+    typeof Switchbot_Meter
+  >;
+  Switchbot_Meter_Plus: PartsInterface<
+    Switchbot_Meter_Plus,
+    Switchbot_Meter_PlusOptions,
+    typeof Switchbot_Meter_Plus
+  >;
+  Switchbot_IOSensorTH: PartsInterface<
+    Switchbot_IOSensorTH,
+    Switchbot_IOSensorTHOptions,
+    typeof Switchbot_IOSensorTH
+  >;
+  Switchbot_Bot: PartsInterface<
+    Switchbot_Bot,
+    Switchbot_BotOptions,
+    typeof Switchbot_Bot
+  >;
+  PLAYBULB_candle: PartsInterface<
+    PLAYBULB_candle,
+    PLAYBULB_candleOptions,
+    typeof PLAYBULB_candle
+  >;
 }
