@@ -24,7 +24,7 @@ class BleAdvBinaryAnalyzer {
     }
     groupStart(name) {
         const filter = new BleAdvBinaryAnalyzer(this);
-        this._target.push({ name, filter });
+        this._target.push({ name, filter: filter });
         return filter;
     }
     groupEnd() {

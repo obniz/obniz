@@ -1,0 +1,46 @@
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_IOSensorTH
+ */
+import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
+import { ObnizPartsBleInfo } from '../../../obniz/ObnizPartsBleInterface';
+import { Switchbot } from '../utils/abstracts/Switchbot';
+export interface Switchbot_IOSensorTHOptions {
+}
+/**
+ * advertisement data from Switchbot_IOSensorTH
+ *
+ * Switchbot_IOSensorTHからのadvertisementデータ
+ */
+export interface Switchbot_IOSensorTH_Data {
+    temperature: number;
+    fahrenheit: boolean;
+    humidity: number;
+    battery: number;
+}
+/** Switchbot_WoSensor management class Switchbot_WoIOSensorTHを管理するクラス */
+export default class Switchbot_IOSensorTH extends Switchbot {
+    static info(): ObnizPartsBleInfo;
+    /**
+     * Verify that the received peripheral is from the Switchbot_WoSensor
+     *
+     * 受け取ったPeripheralがSwitchbot_WoSensorHTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_WoSensorHT
+     *
+     * Switchbot_WoSensorHTかどうか
+     */
+    static isDevice(peripheral: BleRemotePeripheral): boolean;
+    /**
+     * Get a data from the Switchbot_WoSensor
+     *
+     * Switchbot_IOSensorTHからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_WoSensorHT Switchbot_WoSensorHTから受け取ったデータ
+     */
+    static getData(peripheral: BleRemotePeripheral): Switchbot_IOSensorTH_Data | null;
+}

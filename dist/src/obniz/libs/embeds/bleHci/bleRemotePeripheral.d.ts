@@ -300,7 +300,7 @@ export declare class BleRemotePeripheral {
     manufacturerSpecificData: number[] | null;
     manufacturerSpecificDataInScanResponse: number[] | null;
     service_data: {
-        uuid: number;
+        uuid: string;
         data: number[];
     }[] | null;
     /**

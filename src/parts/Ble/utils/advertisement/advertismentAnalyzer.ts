@@ -3,50 +3,64 @@
  * @module Parts.utils.advertisement
  */
 
-export interface BleAdvBinaryAnalyzerRow {
-  name: string;
+export interface BleAdvBinaryAnalyzerRow<Key extends string> {
+  name: Key;
   filter: number[] | BleAdvBinaryAnalyzer;
 }
 
-export class BleAdvBinaryAnalyzer {
-  private _target: BleAdvBinaryAnalyzerRow[] = [];
+export class BleAdvBinaryAnalyzer<
+  Keys extends string = '',
+  Groups extends string = ''
+> {
+  private _target: BleAdvBinaryAnalyzerRow<Keys | string>[] = [];
   private readonly _parent?: BleAdvBinaryAnalyzer;
 
   constructor(parent?: BleAdvBinaryAnalyzer) {
     this._parent = parent;
   }
 
-  addTarget(name: string, filter: number[]): this {
+  addTarget<N extends string>(
+    name: N,
+    filter: number[]
+  ): BleAdvBinaryAnalyzer<Keys | N, Groups> {
     this._target.push({ name, filter });
-    return this;
+    return this as BleAdvBinaryAnalyzer<Keys | N, Groups>;
   }
 
-  addTargetByLength(name: string, length: number): this {
+  addTargetByLength<N extends string>(
+    name: N,
+    length: number
+  ): BleAdvBinaryAnalyzer<Keys | N, Groups> {
     this._target.push({ name, filter: new Array(length).fill(-1) });
-    return this;
+    return this as BleAdvBinaryAnalyzer<Keys | N, Groups>;
   }
 
-  addGroup(name: string, group: BleAdvBinaryAnalyzer): this {
+  addGroup<N extends string>(
+    name: N,
+    group: BleAdvBinaryAnalyzer
+  ): BleAdvBinaryAnalyzer<Keys, Groups | N> {
     this._target.push({ name, filter: group });
-    return this;
+    return this as BleAdvBinaryAnalyzer<Keys, Groups | N>;
   }
 
-  groupStart(name: string): BleAdvBinaryAnalyzer {
-    const filter = new BleAdvBinaryAnalyzer(this);
-    this._target.push({ name, filter });
-    return filter;
+  groupStart<N extends string>(
+    name: N
+  ): BleAdvBinaryAnalyzer<Keys, Groups | N> {
+    const filter = new BleAdvBinaryAnalyzer(this as BleAdvBinaryAnalyzer);
+    this._target.push({ name, filter: filter as any });
+    return filter as BleAdvBinaryAnalyzer<Keys, Groups | N>;
   }
 
-  groupEnd(): BleAdvBinaryAnalyzer {
+  groupEnd(): BleAdvBinaryAnalyzer<Keys, Groups> {
     if (!this._parent) {
       throw new Error('Cannot call parent of root');
     }
-    return this._parent;
+    return this._parent as BleAdvBinaryAnalyzer<Keys, Groups>;
   }
 
   flat(): number[] {
     return this._target.reduce(
-      (acc: number[], val: BleAdvBinaryAnalyzerRow) => {
+      (acc: number[], val: BleAdvBinaryAnalyzerRow<Keys | string>) => {
         if (val.filter instanceof BleAdvBinaryAnalyzer) {
           return [...acc, ...val.filter.flat()];
         }
@@ -77,7 +91,7 @@ export class BleAdvBinaryAnalyzer {
     return true;
   }
 
-  getData(target: number[], ...names: string[]): number[] | null {
+  getData(target: number[], ...names: (Groups | Keys)[]): number[] | null {
     if (!this.validate(target)) {
       return null;
     }
@@ -89,7 +103,7 @@ export class BleAdvBinaryAnalyzer {
       if (one.name === names[0]) {
         if (one.filter instanceof BleAdvBinaryAnalyzer) {
           const newTarget = target.slice(index, index + one.filter.length());
-          return one.filter.getData(newTarget, ...names.slice(1));
+          return one.filter.getData(newTarget, ...(names.slice(1) as any));
         } else {
           const newTarget = target.slice(index, index + one.filter.length);
           return newTarget;
@@ -105,7 +119,12 @@ export class BleAdvBinaryAnalyzer {
     return null;
   }
 
-  getAllData(target: number[]): any | null {
+  getAllData(
+    target: number[]
+  ):
+    | ({ [key in Keys]: number[] } &
+        { [group in Groups]: { [key in Keys]: number[] } })
+    | null {
     if (!this.validate(target)) {
       return null;
     }

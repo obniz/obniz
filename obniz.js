@@ -8163,6 +8163,72 @@ exports.BleRemoteCharacteristic = BleRemoteCharacteristic;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/bleHci/bleRemoteCommandSequence.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BleRemoteCommandSequence = void 0;
+const p_limit_1 = __importDefault(__webpack_require__("./node_modules/p-limit/index.js"));
+class BleRemoteCommandSequence {
+    constructor(_toTargetCharacteristic, _fromTargetCharacteristic) {
+        this._toTargetCharacteristic = _toTargetCharacteristic;
+        this._fromTargetCharacteristic = _fromTargetCharacteristic;
+        this._commandCallback = null;
+        this._setupFinishd = false;
+        this._transactionLimit = (0, p_limit_1.default)(1);
+    }
+    async setupWait() {
+        if (this._setupFinishd) {
+            return;
+        }
+        await this._fromTargetCharacteristic.registerNotifyWait((data) => {
+            if (this._commandCallback) {
+                this._commandCallback(data);
+            }
+        });
+        this._setupFinishd = true;
+    }
+    async transactionWait(data, timeout = 30 * 1000) {
+        await this.setupWait();
+        let timeoutFunc = null;
+        const timeoutError = new Error('Timed out for waiting');
+        const limitError = new Error('Cannot multi command send at once');
+        const timeoutHandle = setTimeout(() => {
+            if (timeoutFunc)
+                timeoutFunc(timeoutError);
+        }, timeout * 1000);
+        return await this._transactionLimit(async () => {
+            try {
+                const waitData = new Promise((resolve, reject) => {
+                    if (this._commandCallback) {
+                        reject(limitError);
+                    }
+                    timeoutFunc = reject;
+                    this._commandCallback = resolve;
+                });
+                await this._toTargetCharacteristic.writeWait(data);
+                const result = await waitData;
+                this._commandCallback = null;
+                return result;
+            }
+            catch (e) {
+                this._commandCallback = null;
+                clearTimeout(timeoutHandle);
+                throw e;
+            }
+        });
+    }
+}
+exports.BleRemoteCommandSequence = BleRemoteCommandSequence;
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/bleHci/bleRemoteDescriptor.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25737,6 +25803,7 @@ var map = {
 	"./Ble/MM_BLEBC5/index.js": "./dist/src/parts/Ble/MM_BLEBC5/index.js",
 	"./Ble/MT_500BT/index.js": "./dist/src/parts/Ble/MT_500BT/index.js",
 	"./Ble/MiniBreeze/index.js": "./dist/src/parts/Ble/MiniBreeze/index.js",
+	"./Ble/PLAYBULB_candle/index.js": "./dist/src/parts/Ble/PLAYBULB_candle/index.js",
 	"./Ble/PLS_01BT/index.js": "./dist/src/parts/Ble/PLS_01BT/index.js",
 	"./Ble/REX_BTPM25V/index.js": "./dist/src/parts/Ble/REX_BTPM25V/index.js",
 	"./Ble/RS_BTEVS1/index.js": "./dist/src/parts/Ble/RS_BTEVS1/index.js",
@@ -25745,6 +25812,10 @@ var map = {
 	"./Ble/RS_SEEK3/index.js": "./dist/src/parts/Ble/RS_SEEK3/index.js",
 	"./Ble/RTR500B/index.js": "./dist/src/parts/Ble/RTR500B/index.js",
 	"./Ble/STM550B/index.js": "./dist/src/parts/Ble/STM550B/index.js",
+	"./Ble/Switchbot_Bot/index.js": "./dist/src/parts/Ble/Switchbot_Bot/index.js",
+	"./Ble/Switchbot_IOSensorTH/index.js": "./dist/src/parts/Ble/Switchbot_IOSensorTH/index.js",
+	"./Ble/Switchbot_Meter/index.js": "./dist/src/parts/Ble/Switchbot_Meter/index.js",
+	"./Ble/Switchbot_Meter_Plus/index.js": "./dist/src/parts/Ble/Switchbot_Meter_Plus/index.js",
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
 	"./Ble/TR4A/index.js": "./dist/src/parts/Ble/TR4A/index.js",
 	"./Ble/TR7/index.js": "./dist/src/parts/Ble/TR7/index.js",
@@ -25799,6 +25870,7 @@ var map = {
 	"./Ble/utils/abstracts/MESHjs/block/TempHumid.js": "./dist/src/parts/Ble/utils/abstracts/MESHjs/block/TempHumid.js",
 	"./Ble/utils/abstracts/MESHjs/util/Error.js": "./dist/src/parts/Ble/utils/abstracts/MESHjs/util/Error.js",
 	"./Ble/utils/abstracts/MINEW.js": "./dist/src/parts/Ble/utils/abstracts/MINEW.js",
+	"./Ble/utils/abstracts/Switchbot.js": "./dist/src/parts/Ble/utils/abstracts/Switchbot.js",
 	"./Ble/utils/abstracts/iBS.js": "./dist/src/parts/Ble/utils/abstracts/iBS.js",
 	"./Ble/utils/advertisement/advertismentAnalyzer.js": "./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js",
 	"./Ble/utils/services/batteryService.js": "./dist/src/parts/Ble/utils/services/batteryService.js",
@@ -28417,6 +28489,9 @@ class KankiAirMier {
             return null;
         }
         const allData = KankiAirMier._deviceAdvAnalyzer.getAllData(peripheral.adv_data);
+        if (!allData) {
+            return null;
+        }
         const temperatureRaw = Buffer.from(allData.manufacture.temperature).readInt16LE(0);
         const co2Raw = Buffer.from(allData.manufacture.co2).readInt16LE(0);
         const humidityRaw = Buffer.from(allData.manufacture.humidity).readInt16LE(0);
@@ -30955,6 +31030,208 @@ exports.default = MiniBreeze;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/PLAYBULB_candle/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.PLAYBULB_candle
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PLAYBULB_candle_SPEED = exports.PLAYBULB_candle_MODE = void 0;
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+const batteryService_1 = __webpack_require__("./dist/src/parts/Ble/utils/services/batteryService.js");
+exports.PLAYBULB_candle_MODE = {
+    Fade: 0x01,
+    JumpRGB: 0x02,
+    FadeRGB: 0x03,
+    CandleEffect: 0x04,
+    NoEffect: 0x05,
+};
+exports.PLAYBULB_candle_SPEED = {
+    ReallySlow: 0x00,
+    ReallyFast: 0x01,
+    Slower: 0x02,
+    Faster: 0xff,
+};
+/** PLAYBULB_candle management class PLAYBULB_candleを管理するクラス */
+class PLAYBULB_candle {
+    constructor(_peripheral) {
+        this._peripheral = _peripheral;
+        this._candleDeviceNameCharacteristics = null;
+        this._candleColorCharacteristics = null;
+        this._candleEffectCharacteristics = null;
+    }
+    static info() {
+        return {
+            name: 'PLAYBULB_candle',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the PLAYBULB_candle
+     *
+     * 受け取ったPeripheralがPLAYBULB_candleのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the PLAYBULB_candle
+     *
+     * PLAYBULB_candleかどうか
+     */
+    static isDevice(peripheral) {
+        // [
+        //   2, 1, 6,
+        //   3, 3, 2, 255,
+        //   3,
+        //   25,
+        //   64,
+        //   3,
+        //   2,
+        //   10,
+        //   254,
+        //   6,
+        //   255,
+        //   77,
+        //   73,
+        //   80,
+        //   79,
+        //   87
+        // ]
+        var _a;
+        // scan resp
+        // [
+        //   16,
+        //   9,
+        //   80,
+        //   76,
+        //   65,
+        //   89,
+        //   66,
+        //   85,
+        //   76,
+        //   66,
+        //   32,
+        //   67,
+        //   65,
+        //   78,
+        //   68,
+        //   76,
+        //   69
+        // ]
+        const isNameMatched = (_a = peripheral.localName) === null || _a === void 0 ? void 0 : _a.startsWith('PLAYBULB CANDLE');
+        const advData = PLAYBULB_candle._deviceAdvAnalyzerType.getAllData(peripheral.adv_data);
+        return advData != null;
+    }
+    async connectWait(setting) {
+        await this._peripheral.connectWait(setting);
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        const service = this._peripheral.getService(PLAYBULB_candle.CANDLE_SERVICE_UUID);
+        if (!service) {
+            throw new Error(`no service found`);
+        }
+        this._candleDeviceNameCharacteristics = service.getCharacteristic(PLAYBULB_candle.CANDLE_DEVICE_NAME_UUID);
+        this._candleColorCharacteristics = service.getCharacteristic(PLAYBULB_candle.CANDLE_COLOR_UUID);
+        this._candleEffectCharacteristics = service.getCharacteristic(PLAYBULB_candle.CANDLE_EFFECT_UUID);
+        const service180F = this._peripheral.getService('180F');
+        if (service180F) {
+            this.batteryService = new batteryService_1.BleBatteryService(service180F);
+        }
+    }
+    getBatteryLevelWait() {
+        if (!this._peripheral.connected) {
+            throw new Error(`Device is not connected`);
+        }
+        if (!this.batteryService) {
+            throw new Error(`no batteryService found`);
+        }
+        return this.batteryService.getBatteryLevelWait();
+    }
+    getDeviceNameWait() {
+        if (!this._peripheral.connected) {
+            throw new Error(`Device is not connected`);
+        }
+        if (!this._candleDeviceNameCharacteristics) {
+            throw new Error(`no characteristic found`);
+        }
+        const deviceName = this._candleDeviceNameCharacteristics.readTextWait();
+        return deviceName;
+    }
+    setCandleEffectColorWait(red, green, blue) {
+        return this.setEffectWait({
+            red,
+            green,
+            blue,
+            white: 0x00,
+        }, exports.PLAYBULB_candle_MODE.CandleEffect, exports.PLAYBULB_candle_SPEED.ReallyFast);
+    }
+    setFlashingColorWait(red, green, blue) {
+        return this.setEffectWait({
+            red,
+            green,
+            blue,
+            white: 0x00,
+        }, exports.PLAYBULB_candle_MODE.FadeRGB, exports.PLAYBULB_candle_SPEED.Faster);
+    }
+    setEffectWait(color, mode, speed) {
+        if (!this._peripheral.connected) {
+            throw new Error(`Device is not connected`);
+        }
+        if (!this._candleEffectCharacteristics) {
+            throw new Error(`no characteristic found`);
+        }
+        const data = [
+            color.white,
+            color.red,
+            color.green,
+            color.blue,
+            mode,
+            0x00,
+            speed,
+            0x00,
+        ];
+        return this._candleEffectCharacteristics.writeWait(data, false);
+    }
+    // 単色
+    setColorWait(r, g, b) {
+        if (!this._peripheral.connected) {
+            throw new Error(`Device is not connected`);
+        }
+        if (!this._candleColorCharacteristics) {
+            throw new Error(`no characteristic found`);
+        }
+        const data = [0x00, r, g, b];
+        this.setEffectWait({
+            white: 0,
+            red: r,
+            green: g,
+            blue: b,
+        }, exports.PLAYBULB_candle_MODE.NoEffect, exports.PLAYBULB_candle_SPEED.ReallyFast);
+        return this._candleColorCharacteristics.writeWait(data, false);
+    }
+}
+exports.default = PLAYBULB_candle;
+PLAYBULB_candle.CANDLE_SERVICE_UUID = 'FF02';
+PLAYBULB_candle.CANDLE_DEVICE_NAME_UUID = 'FFFF';
+PLAYBULB_candle.CANDLE_COLOR_UUID = 'FFFC';
+PLAYBULB_candle.CANDLE_EFFECT_UUID = 'FFFB';
+PLAYBULB_candle._deviceAdvAnalyzerType = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06])
+    .groupStart('manufacture')
+    .addTarget('length', [3])
+    .addTarget('type', [3])
+    .addTarget('candle_service_uuid', [0x02, 0xff]) // この後にも続いてる
+    .groupEnd();
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/PLS_01BT/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32947,6 +33224,358 @@ STM550B.BeaconDataStruct = {
 STM550B.CompanyID = {
     Beacon: [0xda, 0x03],
 };
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Switchbot_Bot/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_Bot
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+const SWITCHBOT_BOT_ACTION = {
+    PushAndPullBack: 0x00,
+    LightSwitchOn: 0x01,
+    LightSwitchOff: 0x02,
+    PushStop: 0x03,
+    Back: 0x04,
+};
+/** Switchbot_WoSensor management class Switchbot_Botを管理するクラス */
+class Switchbot_Bot extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_Bot',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_WoSensor
+     *
+     * 受け取ったPeripheralがSwitchbot_Botのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_Bot
+     *
+     * Switchbot_Botかどうか
+     */
+    static isDevice(peripheral) {
+        return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, [0x48, 0xc8], // bot : 0x48(no encryption) or 0xC8(encryption algorithm 1)
+        2);
+    }
+    /**
+     * Get a data from the Switchbot_WoSensor
+     *
+     * Switchbot_Botらデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_Bot Switchbot_Botから受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!Switchbot_Bot.isDevice(peripheral)) {
+            return null;
+        }
+        const serviceData = Switchbot_1.Switchbot.getServiceDataPayload(peripheral, [0x48, 0xc8], // bot : 0x48(no encryption) or 0xC8(encryption algorithm 1)
+        2);
+        if (!serviceData)
+            return null; // not target device
+        const buf = Buffer.from(serviceData);
+        const byte1 = buf.readUInt8(0);
+        const byte2 = buf.readUInt8(1);
+        const mode = !!(byte1 & 0b10000000); // Whether the light switch Add-on is used or not
+        const state = !!(byte1 & 0b01000000); // Whether the switch status is ON or OFF
+        const battery = byte2 & 0b01111111; // %
+        const data = {
+            mode,
+            state,
+            battery,
+        };
+        return data;
+    }
+    wired(obniz) {
+        // do nothing.
+    }
+    async getDeviceInfoWait() {
+        const rand = Math.random();
+        console.log(rand, 'start');
+        if (!this._peripheral.connected || !this._commandSequence) {
+            throw new Error('connect device at first');
+        }
+        const results = await this._commandSequence.transactionWait(this._createCommand(0x02, []));
+        const commandResponseDeviceInfoAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+            // status
+            // 0x01 - OK Action executed
+            // 0x02 - ERROR Error while executing an Action
+            // 0x03 - BUSY Device is busy now, please try later
+            // 0x04 - Communication protocol version incompatible
+            // 0x05 - Device does not support this Command
+            // 0x06 - Device low battery
+            // 0x07 - Device is encrypted
+            // 0x08 - Device is unencrypted
+            // 0x09 - Password error
+            // 0x0A - Device does not support this encription method
+            // 0x0B - Failed to locate a nearby mesh Device
+            // 0x0C - Failed to connect to the network
+            .addTarget('status', [-1])
+            .addTarget('battery', [-1])
+            .addTarget('firmware_version', [-1])
+            .addTarget('nc', [-1, -1, -1, -1, -1])
+            .addTarget('timer_num', [-1])
+            .addTarget('act_mode', [-1])
+            .addTarget('hold_times', [-1])
+            .addTarget('service_data', [-1, -1]);
+        console.log(rand, commandResponseDeviceInfoAnalyzer.getAllData(results));
+    }
+    async executeActionWait(action) {
+        if (!this._peripheral.connected || !this._commandSequence) {
+            throw new Error('connect device at first');
+        }
+        const results = await this._commandSequence.transactionWait(this._createCommand(0x01, [action]));
+        if (results[0] !== 0x01) {
+            throw new Error('execute action failed ' + results[0]);
+        }
+        return results;
+    }
+    async pressWait() {
+        return await this.executeActionWait(SWITCHBOT_BOT_ACTION.PushAndPullBack);
+    }
+    async turnOnWait() {
+        return await this.executeActionWait(SWITCHBOT_BOT_ACTION.LightSwitchOn);
+    }
+    async turnOffWait() {
+        return await this.executeActionWait(SWITCHBOT_BOT_ACTION.LightSwitchOff);
+    }
+    async downWait() {
+        return await this.executeActionWait(SWITCHBOT_BOT_ACTION.PushStop);
+    }
+    async upWait() {
+        return await this.executeActionWait(SWITCHBOT_BOT_ACTION.Back);
+    }
+}
+exports.default = Switchbot_Bot;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Switchbot_IOSensorTH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_IOSensorTH
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+/** Switchbot_WoSensor management class Switchbot_WoIOSensorTHを管理するクラス */
+class Switchbot_IOSensorTH extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_IOSensorTH',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_WoSensor
+     *
+     * 受け取ったPeripheralがSwitchbot_WoSensorHTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_WoSensorHT
+     *
+     * Switchbot_WoSensorHTかどうか
+     */
+    static isDevice(peripheral) {
+        return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, 0x77, 2);
+    }
+    /**
+     * Get a data from the Switchbot_WoSensor
+     *
+     * Switchbot_IOSensorTHからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_WoSensorHT Switchbot_WoSensorHTから受け取ったデータ
+     */
+    static getData(peripheral) {
+        var _a;
+        if (!Switchbot_IOSensorTH.isDevice(peripheral)) {
+            return null;
+        }
+        const serviceData = Switchbot_1.Switchbot.getServiceDataPayload(peripheral, 0x77, 2);
+        if (!serviceData)
+            return null; // not target device
+        if (((_a = peripheral.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== 14)
+            return null; // not target device
+        const manufacturerDataBuf = Buffer.from(peripheral.manufacturerSpecificData);
+        const mdByte10 = manufacturerDataBuf.readUInt8(10);
+        const mdByte11 = manufacturerDataBuf.readUInt8(11);
+        const mdByte12 = manufacturerDataBuf.readUInt8(12);
+        const sdByte2 = Buffer.from(serviceData).readUInt8(1);
+        const temp_sign = mdByte11 & 0b10000000 ? 1 : -1;
+        const temp_c = temp_sign * ((mdByte11 & 0b01111111) + (mdByte10 & 0b00001111) / 10);
+        const data = {
+            temperature: temp_c,
+            fahrenheit: mdByte12 & 0b10000000 ? true : false,
+            humidity: mdByte12 & 0b01111111,
+            battery: sdByte2 & 0b01111111,
+        };
+        return data;
+    }
+}
+exports.default = Switchbot_IOSensorTH;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Switchbot_Meter/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_Meter
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+/** Switchbot_WoSensor management class Switchbot_WoSensorHTを管理するクラス */
+class Switchbot_Meter extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_Meter',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_WoSensor
+     *
+     * 受け取ったPeripheralがSwitchbot_WoSensorHTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_WoSensorHT
+     *
+     * Switchbot_WoSensorHTかどうか
+     */
+    static isDevice(peripheral) {
+        return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, 0x54, 5);
+    }
+    /**
+     * Get a data from the Switchbot_WoSensor
+     *
+     * Switchbot_Meterらデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_WoSensorHT Switchbot_WoSensorHTから受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!Switchbot_Meter.isDevice(peripheral)) {
+            return null;
+        }
+        const serviceData = Switchbot_1.Switchbot.getServiceDataPayload(peripheral, 0x54, 5);
+        if (!serviceData)
+            return null; // not target device
+        const buf = Buffer.from(serviceData);
+        const byte2 = buf.readUInt8(1);
+        const byte3 = buf.readUInt8(2);
+        const byte4 = buf.readUInt8(3);
+        const byte5 = buf.readUInt8(4);
+        const temp_sign = byte4 & 0b10000000 ? 1 : -1;
+        const temp_c = temp_sign * ((byte4 & 0b01111111) + (byte3 & 0b00001111) / 10);
+        const data = {
+            temperature: temp_c,
+            humidity: byte5 & 0b01111111,
+            battery: byte2 & 0b01111111,
+        };
+        return data;
+    }
+}
+exports.default = Switchbot_Meter;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Switchbot_Meter_Plus/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_Meter_Plus
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+/** Switchbot_WoSensor management class Switchbot_WoSensorHTを管理するクラス */
+class Switchbot_Meter_Plus extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_Meter_Plus',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_WoSensor
+     *
+     * 受け取ったPeripheralがSwitchbot_WoSensorHTのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_WoSensorHT
+     *
+     * Switchbot_WoSensorHTかどうか
+     */
+    static isDevice(peripheral) {
+        return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, 0x69, 5);
+    }
+    /**
+     * Get a data from the Switchbot_WoSensor
+     *
+     * Switchbot_Meter_Plusからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_WoSensorHT Switchbot_WoSensorHTから受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!Switchbot_Meter_Plus.isDevice(peripheral)) {
+            return null;
+        }
+        const serviceData = Switchbot_1.Switchbot.getServiceDataPayload(peripheral, 0x69, 5);
+        if (!serviceData)
+            return null; // not target device
+        const buf = Buffer.from(serviceData);
+        const byte2 = buf.readUInt8(1);
+        const byte3 = buf.readUInt8(2);
+        const byte4 = buf.readUInt8(3);
+        const byte5 = buf.readUInt8(4);
+        const temp_sign = byte4 & 0b10000000 ? 1 : -1;
+        const temp_c = temp_sign * ((byte4 & 0b01111111) + (byte3 & 0b00001111) / 10);
+        const data = {
+            temperature: temp_c,
+            humidity: byte5 & 0b01111111,
+            battery: byte2 & 0b01111111,
+        };
+        return data;
+    }
+}
+exports.default = Switchbot_Meter_Plus;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -42556,6 +43185,93 @@ MINEW.getServiceDataStruct = (macAddressIndex, versionNumber, additonalData) => 
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/utils/abstracts/Switchbot.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Switchbot = void 0;
+const advertismentAnalyzer_1 = __webpack_require__("./dist/src/parts/Ble/utils/advertisement/advertismentAnalyzer.js");
+const bleRemoteCommandSequence_1 = __webpack_require__("./dist/src/obniz/libs/embeds/bleHci/bleRemoteCommandSequence.js");
+class Switchbot {
+    constructor(peripheral) {
+        this._peripheral = peripheral;
+    }
+    static getServiceDataPayload(peripheral, deviceType, serviceDataPayloadLength) {
+        var _a;
+        const deviceTypeArray = typeof deviceType === 'number' ? [deviceType] : deviceType;
+        // ex  020106 09ff 5900 dddad5bd529a
+        const deviceAdvAnalyzerType = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+            .addTarget('flag', [0x02, 0x01, 0x06])
+            .groupStart('manufacture')
+            .addTarget('length', [-1])
+            .addTarget('type', [0xff])
+            .addTarget('companyId', [-1, -1]) // [0x59, 0x00] or [0x69, 0x09]
+            .addTargetByLength('deviceAddress', 6)
+            .groupEnd();
+        // ex 000d481064
+        const deviceServiceDataAnalyzer = new advertismentAnalyzer_1.BleAdvBinaryAnalyzer()
+            .addTarget('uuid', [-1, -1]) // [0x3d, 0xfd] or [0x0d, 0x00]
+            .addTarget('deviceType', [-1])
+            .addTargetByLength('payload', serviceDataPayloadLength);
+        const advData = deviceAdvAnalyzerType.getAllData(peripheral.adv_data);
+        const serviceData = deviceServiceDataAnalyzer.getAllData((_a = peripheral.serviceData) !== null && _a !== void 0 ? _a : []);
+        // companyId : [0x59, 0x00] or [0x69, 0x09]
+        const isAdvDataValid = !!advData &&
+            ((advData.manufacture.companyId[0] === 0x59 &&
+                advData.manufacture.companyId[1] === 0x00) ||
+                (advData.manufacture.companyId[0] === 0x69 &&
+                    advData.manufacture.companyId[1] === 0x09));
+        // uuid:  [0x3d, 0xfd] or [ 0x00, 0x0d]
+        // bot : 0x48(no encryption) or 0xC8(encryption algorithm 1)
+        const isValidServiceData = !!serviceData &&
+            ((serviceData.uuid[0] === 0x3d && serviceData.uuid[1] === 0xfd) ||
+                (serviceData.uuid[0] === 0x00 && serviceData.uuid[1] === 0x0d)) &&
+            deviceTypeArray.includes(serviceData.deviceType[0]);
+        if (isAdvDataValid && isValidServiceData) {
+            return serviceData.payload;
+        }
+        return null;
+    }
+    static isSwitchbotDevice(peripheral, deviceType, serviceDataPayloadLength) {
+        const payload = Switchbot.getServiceDataPayload(peripheral, deviceType, serviceDataPayloadLength);
+        return payload !== null;
+    }
+    async connectWait(setting) {
+        await this._peripheral.connectWait(setting);
+        this._peripheral.ondisconnect = (reason) => {
+            if (typeof this.ondisconnect === 'function') {
+                this.ondisconnect(reason);
+            }
+        };
+        const service = this._peripheral.getService('cba20d00-224d-11e6-9fb8-0002a5d5c51b');
+        if (!service) {
+            throw new Error(`no service found`);
+        }
+        const rxFromTargetCharacteristic = service.getCharacteristic('cba20003-224d-11e6-9fb8-0002a5d5c51b');
+        const txToTargetCharacteristic = service.getCharacteristic('cba20002-224d-11e6-9fb8-0002a5d5c51b');
+        this._commandSequence = new bleRemoteCommandSequence_1.BleRemoteCommandSequence(txToTargetCharacteristic, rxFromTargetCharacteristic);
+        await this._commandSequence.setupWait();
+    }
+    _createCommand(command, payload) {
+        return [
+            0x57,
+            command,
+            ...payload,
+        ];
+    }
+}
+exports.Switchbot = Switchbot;
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/utils/abstracts/iBS.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -42698,7 +43414,7 @@ class BleAdvBinaryAnalyzer {
     }
     groupStart(name) {
         const filter = new BleAdvBinaryAnalyzer(this);
-        this._target.push({ name, filter });
+        this._target.push({ name, filter: filter });
         return filter;
     }
     groupEnd() {
@@ -107222,6 +107938,83 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 	return to;
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/p-limit/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+const pTry = __webpack_require__("./node_modules/p-try/index.js");
+
+const pLimit = concurrency => {
+	if (!((Number.isInteger(concurrency) || concurrency === Infinity) && concurrency > 0)) {
+		return Promise.reject(new TypeError('Expected `concurrency` to be a number from 1 and up'));
+	}
+
+	const queue = [];
+	let activeCount = 0;
+
+	const next = () => {
+		activeCount--;
+
+		if (queue.length > 0) {
+			queue.shift()();
+		}
+	};
+
+	const run = (fn, resolve, ...args) => {
+		activeCount++;
+
+		const result = pTry(fn, ...args);
+
+		resolve(result);
+
+		result.then(next, next);
+	};
+
+	const enqueue = (fn, resolve, ...args) => {
+		if (activeCount < concurrency) {
+			run(fn, resolve, ...args);
+		} else {
+			queue.push(run.bind(null, fn, resolve, ...args));
+		}
+	};
+
+	const generator = (fn, ...args) => new Promise(resolve => enqueue(fn, resolve, ...args));
+	Object.defineProperties(generator, {
+		activeCount: {
+			get: () => activeCount
+		},
+		pendingCount: {
+			get: () => queue.length
+		}
+	});
+
+	return generator;
+};
+
+module.exports = pLimit;
+module.exports.default = pLimit;
+
+
+/***/ }),
+
+/***/ "./node_modules/p-try/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const pTry = (fn, ...arguments_) => new Promise(resolve => {
+	resolve(fn(...arguments_));
+});
+
+module.exports = pTry;
+// TODO: remove this in the next major version
+module.exports.default = pTry;
 
 
 /***/ }),

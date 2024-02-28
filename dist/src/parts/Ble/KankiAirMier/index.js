@@ -48,6 +48,9 @@ class KankiAirMier {
             return null;
         }
         const allData = KankiAirMier._deviceAdvAnalyzer.getAllData(peripheral.adv_data);
+        if (!allData) {
+            return null;
+        }
         const temperatureRaw = Buffer.from(allData.manufacture.temperature).readInt16LE(0);
         const co2Raw = Buffer.from(allData.manufacture.co2).readInt16LE(0);
         const humidityRaw = Buffer.from(allData.manufacture.humidity).readInt16LE(0);
