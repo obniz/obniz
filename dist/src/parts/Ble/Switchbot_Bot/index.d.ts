@@ -26,11 +26,11 @@ declare const SWITCHBOT_BOT_ACTION: {
     readonly Back: 4;
 };
 declare type SwitchbotBotAction = typeof SWITCHBOT_BOT_ACTION[keyof typeof SWITCHBOT_BOT_ACTION];
-/** Switchbot_WoSensor management class Switchbot_Botを管理するクラス */
+/** Switchbot_Bot management class Switchbot_Botを管理するクラス */
 export default class Switchbot_Bot extends Switchbot {
     static info(): ObnizPartsBleInfo;
     /**
-     * Verify that the received peripheral is from the Switchbot_WoSensor
+     * Verify that the received peripheral is from the Switchbot_Bot
      *
      * 受け取ったPeripheralがSwitchbot_Botのものかどうかを確認する
      *
@@ -42,7 +42,7 @@ export default class Switchbot_Bot extends Switchbot {
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean;
     /**
-     * Get a data from the Switchbot_WoSensor
+     * Get a data from the Switchbot_Bot
      *
      * Switchbot_Botらデータを取得
      *

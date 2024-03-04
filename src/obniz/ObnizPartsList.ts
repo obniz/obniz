@@ -314,6 +314,15 @@ import Switchbot_Meter_Plus, {
 import Switchbot_IOSensorTH, {
   Switchbot_IOSensorTHOptions,
 } from '../parts/Ble/Switchbot_IOSensorTH';
+import Switchbot_MotionSensor, {
+  Switchbot_MotionSensorOptions,
+} from '../parts/Ble/Switchbot_MotionSensor';
+import Switchbot_ContactSensor, {
+  Switchbot_ContactSensorOptions,
+} from '../parts/Ble/Switchbot_ContactSensor';
+import Switchbot_PlugMini, {
+  Switchbot_PlugMiniOptions,
+} from '../parts/Ble/Switchbot_PlugMini';
 
 export type PartsType = keyof PartsList;
 
@@ -768,6 +777,21 @@ export interface PartsList {
     Switchbot_Bot,
     Switchbot_BotOptions,
     typeof Switchbot_Bot
+  >;
+  Switchbot_MotionSensor: PartsInterface<
+    Switchbot_MotionSensor,
+    Switchbot_MotionSensorOptions,
+    typeof Switchbot_MotionSensor
+  >;
+  Switchbot_ContactSensor: PartsInterface<
+    Switchbot_ContactSensor,
+    Switchbot_ContactSensorOptions,
+    typeof Switchbot_ContactSensor
+  >;
+  Switchbot_PlugMini: PartsInterface<
+    Switchbot_PlugMini,
+    Switchbot_PlugMiniOptions,
+    typeof Switchbot_PlugMini
   >;
   PLAYBULB_candle: PartsInterface<
     PLAYBULB_candle,

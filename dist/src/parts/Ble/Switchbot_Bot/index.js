@@ -14,7 +14,7 @@ const SWITCHBOT_BOT_ACTION = {
     PushStop: 0x03,
     Back: 0x04,
 };
-/** Switchbot_WoSensor management class Switchbot_Botを管理するクラス */
+/** Switchbot_Bot management class Switchbot_Botを管理するクラス */
 class Switchbot_Bot extends Switchbot_1.Switchbot {
     static info() {
         return {
@@ -22,7 +22,7 @@ class Switchbot_Bot extends Switchbot_1.Switchbot {
         };
     }
     /**
-     * Verify that the received peripheral is from the Switchbot_WoSensor
+     * Verify that the received peripheral is from the Switchbot_Bot
      *
      * 受け取ったPeripheralがSwitchbot_Botのものかどうかを確認する
      *
@@ -37,7 +37,7 @@ class Switchbot_Bot extends Switchbot_1.Switchbot {
         2);
     }
     /**
-     * Get a data from the Switchbot_WoSensor
+     * Get a data from the Switchbot_Bot
      *
      * Switchbot_Botらデータを取得
      *

@@ -29,7 +29,7 @@ export interface Switchbot_Meter_Data {
   battery: number;
 }
 
-/** Switchbot_WoSensor management class Switchbot_WoSensorHTを管理するクラス */
+/** Switchbot_Meter management class Switchbot_Meterを管理するクラス */
 export default class Switchbot_Meter extends Switchbot {
   public static info(): ObnizPartsBleInfo {
     return {
@@ -38,28 +38,28 @@ export default class Switchbot_Meter extends Switchbot {
   }
 
   /**
-   * Verify that the received peripheral is from the Switchbot_WoSensor
+   * Verify that the received peripheral is from the Switchbot_Meter
    *
-   * 受け取ったPeripheralがSwitchbot_WoSensorHTのものかどうかを確認する
+   * 受け取ったPeripheralがSwitchbot_Meterのものかどうかを確認する
    *
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    *
-   * @returns Whether it is the Switchbot_WoSensorHT
+   * @returns Whether it is the Switchbot_Meter
    *
-   * Switchbot_WoSensorHTかどうか
+   * Switchbot_Meterかどうか
    */
   public static isDevice(peripheral: BleRemotePeripheral): boolean {
     return Switchbot.isSwitchbotDevice(peripheral, 0x54, 5);
   }
 
   /**
-   * Get a data from the Switchbot_WoSensor
+   * Get a data from the Switchbot_Meter
    *
    * Switchbot_Meterらデータを取得
    *
    * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
    *
-   * @returns received data from the Switchbot_WoSensorHT Switchbot_WoSensorHTから受け取ったデータ
+   * @returns received data from the Switchbot_Meter Switchbot_Meterから受け取ったデータ
    */
   public static getData(
     peripheral: BleRemotePeripheral

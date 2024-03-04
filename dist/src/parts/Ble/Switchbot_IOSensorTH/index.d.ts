@@ -18,29 +18,29 @@ export interface Switchbot_IOSensorTH_Data {
     humidity: number;
     battery: number;
 }
-/** Switchbot_WoSensor management class Switchbot_WoIOSensorTHを管理するクラス */
+/** Switchbot_IOSensorTH management class Switchbot_WoIOSensorTHを管理するクラス */
 export default class Switchbot_IOSensorTH extends Switchbot {
     static info(): ObnizPartsBleInfo;
     /**
-     * Verify that the received peripheral is from the Switchbot_WoSensor
+     * Verify that the received peripheral is from the Switchbot_IOSensorTH
      *
-     * 受け取ったPeripheralがSwitchbot_WoSensorHTのものかどうかを確認する
+     * 受け取ったPeripheralがSwitchbot_IOSensorTHのものかどうかを確認する
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns Whether it is the Switchbot_WoSensorHT
+     * @returns Whether it is the Switchbot_IOSensorTH
      *
-     * Switchbot_WoSensorHTかどうか
+     * Switchbot_IOSensorTHかどうか
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean;
     /**
-     * Get a data from the Switchbot_WoSensor
+     * Get a data from the Switchbot_IOSensorTH
      *
      * Switchbot_IOSensorTHからデータを取得
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns received data from the Switchbot_WoSensorHT Switchbot_WoSensorHTから受け取ったデータ
+     * @returns received data from the Switchbot_IOSensorTH Switchbot_IOSensorTHから受け取ったデータ
      */
     static getData(peripheral: BleRemotePeripheral): Switchbot_IOSensorTH_Data | null;
 }

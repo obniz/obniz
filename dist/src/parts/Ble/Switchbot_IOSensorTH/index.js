@@ -6,7 +6,7 @@
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const Switchbot_1 = require("../utils/abstracts/Switchbot");
-/** Switchbot_WoSensor management class Switchbot_WoIOSensorTHを管理するクラス */
+/** Switchbot_IOSensorTH management class Switchbot_WoIOSensorTHを管理するクラス */
 class Switchbot_IOSensorTH extends Switchbot_1.Switchbot {
     static info() {
         return {
@@ -14,27 +14,27 @@ class Switchbot_IOSensorTH extends Switchbot_1.Switchbot {
         };
     }
     /**
-     * Verify that the received peripheral is from the Switchbot_WoSensor
+     * Verify that the received peripheral is from the Switchbot_IOSensorTH
      *
-     * 受け取ったPeripheralがSwitchbot_WoSensorHTのものかどうかを確認する
+     * 受け取ったPeripheralがSwitchbot_IOSensorTHのものかどうかを確認する
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns Whether it is the Switchbot_WoSensorHT
+     * @returns Whether it is the Switchbot_IOSensorTH
      *
-     * Switchbot_WoSensorHTかどうか
+     * Switchbot_IOSensorTHかどうか
      */
     static isDevice(peripheral) {
         return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, 0x77, 2);
     }
     /**
-     * Get a data from the Switchbot_WoSensor
+     * Get a data from the Switchbot_IOSensorTH
      *
      * Switchbot_IOSensorTHからデータを取得
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns received data from the Switchbot_WoSensorHT Switchbot_WoSensorHTから受け取ったデータ
+     * @returns received data from the Switchbot_IOSensorTH Switchbot_IOSensorTHから受け取ったデータ
      */
     static getData(peripheral) {
         var _a;
