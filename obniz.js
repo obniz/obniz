@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.29.0",
+  "version": "3.30.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -230,6 +230,7 @@ module.exports = {
     "@9wick/serial-executor": "^1.0.0",
     "@types/tv4": "^1.2.29",
     "@types/ws": "^6.0.4",
+    "binary-analyzer": "^1.0.0",
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "moment": "^2.29.3",
@@ -25813,7 +25814,12 @@ var map = {
 	"./Ble/RTR500B/index.js": "./dist/src/parts/Ble/RTR500B/index.js",
 	"./Ble/STM550B/index.js": "./dist/src/parts/Ble/STM550B/index.js",
 	"./Ble/Switchbot_Bot/index.js": "./dist/src/parts/Ble/Switchbot_Bot/index.js",
+	"./Ble/Switchbot_ContactSensor/index.js": "./dist/src/parts/Ble/Switchbot_ContactSensor/index.js",
+	"./Ble/Switchbot_IOSensorTH/index.js": "./dist/src/parts/Ble/Switchbot_IOSensorTH/index.js",
 	"./Ble/Switchbot_Meter/index.js": "./dist/src/parts/Ble/Switchbot_Meter/index.js",
+	"./Ble/Switchbot_Meter_Plus/index.js": "./dist/src/parts/Ble/Switchbot_Meter_Plus/index.js",
+	"./Ble/Switchbot_MotionSensor/index.js": "./dist/src/parts/Ble/Switchbot_MotionSensor/index.js",
+	"./Ble/Switchbot_PlugMini/index.js": "./dist/src/parts/Ble/Switchbot_PlugMini/index.js",
 	"./Ble/TR4/index.js": "./dist/src/parts/Ble/TR4/index.js",
 	"./Ble/TR4A/index.js": "./dist/src/parts/Ble/TR4A/index.js",
 	"./Ble/TR7/index.js": "./dist/src/parts/Ble/TR7/index.js",
@@ -33247,7 +33253,7 @@ const SWITCHBOT_BOT_ACTION = {
     PushStop: 0x03,
     Back: 0x04,
 };
-/** Switchbot_WoSensor management class Switchbot_Botを管理するクラス */
+/** Switchbot_Bot management class Switchbot_Botを管理するクラス */
 class Switchbot_Bot extends Switchbot_1.Switchbot {
     static info() {
         return {
@@ -33255,7 +33261,7 @@ class Switchbot_Bot extends Switchbot_1.Switchbot {
         };
     }
     /**
-     * Verify that the received peripheral is from the Switchbot_WoSensor
+     * Verify that the received peripheral is from the Switchbot_Bot
      *
      * 受け取ったPeripheralがSwitchbot_Botのものかどうかを確認する
      *
@@ -33270,7 +33276,7 @@ class Switchbot_Bot extends Switchbot_1.Switchbot {
         2);
     }
     /**
-     * Get a data from the Switchbot_WoSensor
+     * Get a data from the Switchbot_Bot
      *
      * Switchbot_Botらデータを取得
      *
@@ -33365,6 +33371,180 @@ exports.default = Switchbot_Bot;
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/Switchbot_ContactSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_ContactSensor
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+/** Switchbot_ContactSensor management class Switchbot_ContactSensorを管理するクラス */
+class Switchbot_ContactSensor extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_ContactSensor',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_ContactSensor
+     *
+     * 受け取ったPeripheralがSwitchbot_ContactSensorのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_ContactSensor
+     *
+     * Switchbot_ContactSensorかどうか
+     */
+    static isDevice(peripheral) {
+        return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, [0x44, 0x64], // 0x53(Pair Mode) or 0x73(Const Adv Mode) with no encryption
+        8);
+    }
+    /**
+     * Get a data from the Switchbot_ContactSensor
+     *
+     * Switchbot_ContactSensorからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_ContactSensor Switchbot_ContactSensorから受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!Switchbot_ContactSensor.isDevice(peripheral)) {
+            return null;
+        }
+        const serviceData = Switchbot_1.Switchbot.getServiceDataPayload(peripheral, [0x44, 0x64], // 0x53(Pair Mode) or 0x73(Const Adv Mode) with no encryption
+        8);
+        if (!serviceData)
+            return null; // not target device
+        const buf = Buffer.from(serviceData);
+        const byte1 = buf.readUInt8(0);
+        const byte2 = buf.readUInt8(1);
+        const byte3 = buf.readUInt8(2);
+        const pirUTC = buf.readUInt16BE(3);
+        const halUTC = buf.readUInt16BE(5);
+        const byte8 = buf.readUInt8(7);
+        const scopeTested = byte1 & 0b10000000 ? true : false;
+        const pirState = byte1 & 0b01000000 ? true : false;
+        const battery = byte2 & 0b01111111;
+        const highestPIR = (byte3 & 0b10000000) >> 7;
+        const highestHAL = (byte3 & 0b01000000) >> 6;
+        const doorStatusBit = (byte3 & 0b00000110) >> 1;
+        const halState = doorStatusBit === 0
+            ? 'close'
+            : doorStatusBit === 1
+                ? 'open'
+                : doorStatusBit === 2
+                    ? 'timeoutNotClose'
+                    : null;
+        if (halState === null)
+            return null; // unknown door status
+        const lightLevel = byte3 & 0b00000001 ? 'light' : 'dark';
+        const numberOfEntrances = (byte8 & 0b11000000) >> 6;
+        const numberOfGoOutCounter = (byte8 & 0b00110000) >> 3;
+        const buttonPushCounter = byte8 & 0b00000111;
+        const pir = highestPIR * 65536 + pirUTC;
+        const hal = highestHAL * 65536 + halUTC;
+        const data = {
+            scopeTested,
+            someoneIsMoving: pirState,
+            battery,
+            pir,
+            hal,
+            halState,
+            lightLevel,
+            numberOfEntrances,
+            numberOfGoOutCounter,
+            buttonPushCounter,
+        };
+        return data;
+    }
+}
+exports.default = Switchbot_ContactSensor;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Switchbot_IOSensorTH/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_IOSensorTH
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+/** Switchbot_IOSensorTH management class Switchbot_WoIOSensorTHを管理するクラス */
+class Switchbot_IOSensorTH extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_IOSensorTH',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_IOSensorTH
+     *
+     * 受け取ったPeripheralがSwitchbot_IOSensorTHのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_IOSensorTH
+     *
+     * Switchbot_IOSensorTHかどうか
+     */
+    static isDevice(peripheral) {
+        return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, 0x77, 2);
+    }
+    /**
+     * Get a data from the Switchbot_IOSensorTH
+     *
+     * Switchbot_IOSensorTHからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_IOSensorTH Switchbot_IOSensorTHから受け取ったデータ
+     */
+    static getData(peripheral) {
+        var _a;
+        if (!Switchbot_IOSensorTH.isDevice(peripheral)) {
+            return null;
+        }
+        const serviceData = Switchbot_1.Switchbot.getServiceDataPayload(peripheral, 0x77, 2);
+        if (!serviceData)
+            return null; // not target device
+        if (((_a = peripheral.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== 14)
+            return null; // not target device
+        const manufacturerDataBuf = Buffer.from(peripheral.manufacturerSpecificData);
+        const mdByte10 = manufacturerDataBuf.readUInt8(10);
+        const mdByte11 = manufacturerDataBuf.readUInt8(11);
+        const mdByte12 = manufacturerDataBuf.readUInt8(12);
+        const sdByte2 = Buffer.from(serviceData).readUInt8(1);
+        const temp_sign = mdByte11 & 0b10000000 ? 1 : -1;
+        const temp_c = temp_sign * ((mdByte11 & 0b01111111) + (mdByte10 & 0b00001111) / 10);
+        const data = {
+            temperature: temp_c,
+            fahrenheit: mdByte12 & 0b10000000 ? true : false,
+            humidity: mdByte12 & 0b01111111,
+            battery: sdByte2 & 0b01111111,
+        };
+        return data;
+    }
+}
+exports.default = Switchbot_IOSensorTH;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/Switchbot_Meter/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -33377,7 +33557,7 @@ exports.default = Switchbot_Bot;
 /* eslint rulesdir/non-ascii: 0 */
 Object.defineProperty(exports, "__esModule", { value: true });
 const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
-/** Switchbot_WoSensor management class Switchbot_WoSensorHTを管理するクラス */
+/** Switchbot_Meter management class Switchbot_Meterを管理するクラス */
 class Switchbot_Meter extends Switchbot_1.Switchbot {
     static info() {
         return {
@@ -33385,27 +33565,27 @@ class Switchbot_Meter extends Switchbot_1.Switchbot {
         };
     }
     /**
-     * Verify that the received peripheral is from the Switchbot_WoSensor
+     * Verify that the received peripheral is from the Switchbot_Meter
      *
-     * 受け取ったPeripheralがSwitchbot_WoSensorHTのものかどうかを確認する
+     * 受け取ったPeripheralがSwitchbot_Meterのものかどうかを確認する
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns Whether it is the Switchbot_WoSensorHT
+     * @returns Whether it is the Switchbot_Meter
      *
-     * Switchbot_WoSensorHTかどうか
+     * Switchbot_Meterかどうか
      */
     static isDevice(peripheral) {
         return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, 0x54, 5);
     }
     /**
-     * Get a data from the Switchbot_WoSensor
+     * Get a data from the Switchbot_Meter
      *
      * Switchbot_Meterらデータを取得
      *
      * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
      *
-     * @returns received data from the Switchbot_WoSensorHT Switchbot_WoSensorHTから受け取ったデータ
+     * @returns received data from the Switchbot_Meter Switchbot_Meterから受け取ったデータ
      */
     static getData(peripheral) {
         if (!Switchbot_Meter.isDevice(peripheral)) {
@@ -33432,6 +33612,274 @@ class Switchbot_Meter extends Switchbot_1.Switchbot {
 exports.default = Switchbot_Meter;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Switchbot_Meter_Plus/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_Meter_Plus
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+/** Switchbot_Meter_PLus management class Switchbot_Meter_PLusを管理するクラス */
+class Switchbot_Meter_Plus extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_Meter_Plus',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_Meter_PLus
+     *
+     * 受け取ったPeripheralがSwitchbot_Meter_PLusのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_Meter_PLus
+     *
+     * Switchbot_Meter_PLusかどうか
+     */
+    static isDevice(peripheral) {
+        return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, 0x69, 5);
+    }
+    /**
+     * Get a data from the Switchbot_Meter_PLus
+     *
+     * Switchbot_Meter_Plusからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_Meter_PLus Switchbot_Meter_PLusから受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!Switchbot_Meter_Plus.isDevice(peripheral)) {
+            return null;
+        }
+        const serviceData = Switchbot_1.Switchbot.getServiceDataPayload(peripheral, 0x69, 5);
+        if (!serviceData)
+            return null; // not target device
+        const buf = Buffer.from(serviceData);
+        const byte2 = buf.readUInt8(1);
+        const byte3 = buf.readUInt8(2);
+        const byte4 = buf.readUInt8(3);
+        const byte5 = buf.readUInt8(4);
+        const temp_sign = byte4 & 0b10000000 ? 1 : -1;
+        const temp_c = temp_sign * ((byte4 & 0b01111111) + (byte3 & 0b00001111) / 10);
+        const data = {
+            temperature: temp_c,
+            humidity: byte5 & 0b01111111,
+            battery: byte2 & 0b01111111,
+        };
+        return data;
+    }
+}
+exports.default = Switchbot_Meter_Plus;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Switchbot_MotionSensor/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_MotionSensor
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+/** Switchbot_MotionSensor management class Switchbot_MotionSensorを管理するクラス */
+class Switchbot_MotionSensor extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_MotionSensor',
+        };
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_MotionSensor
+     *
+     * 受け取ったPeripheralがSwitchbot_MotionSensorのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_MotionSensor
+     *
+     * Switchbot_MotionSensorかどうか
+     */
+    static isDevice(peripheral) {
+        return Switchbot_1.Switchbot.isSwitchbotDevice(peripheral, [0x53, 0x73], // Motion Sensor: 0x53(Pair Mode) or 0x73(Const Adv Mode)
+        5);
+    }
+    /**
+     * Get a data from the Switchbot_MotionSensor
+     *
+     * Switchbot_MotionSensorからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_MotionSensor Switchbot_MotionSensorから受け取ったデータ
+     */
+    static getData(peripheral) {
+        if (!Switchbot_MotionSensor.isDevice(peripheral)) {
+            return null;
+        }
+        const serviceData = Switchbot_1.Switchbot.getServiceDataPayload(peripheral, [0x53, 0x73], // Motion Sensor: 0x53(Pair Mode) or 0x73(Const Adv Mode)
+        5);
+        if (!serviceData)
+            return null; // not target device
+        const buf = Buffer.from(serviceData);
+        const byte1 = buf.readUInt8(0);
+        const byte2 = buf.readUInt8(1);
+        const lowPIR = buf.readUInt16BE(2);
+        const byte5 = buf.readUInt8(4);
+        const scopeTested = byte1 & 0b10000000 ? true : false;
+        const pirState = byte1 & 0b01000000 ? true : false;
+        const battery = byte2 & 0b01111111;
+        const pirUtc = ((byte5 & 0x10000000) >> 7) * 65536 + lowPIR;
+        const ledState = byte5 & 0b00100000 ? 'enable' : 'disable';
+        const iotState = byte5 & 0b00010000 ? 'enable' : 'disable';
+        const sensingDistanceBit = (byte5 & 0b00001100) >> 2;
+        const sensingDistance = sensingDistanceBit === 0b00
+            ? 'long'
+            : sensingDistanceBit === 0b01
+                ? 'middle'
+                : sensingDistanceBit === 0b10
+                    ? 'short'
+                    : null;
+        if (sensingDistance === null)
+            return null; // unknown distance
+        const lightIntensityBit = byte5 & 0b00000011;
+        const lightIntensity = lightIntensityBit === 0b01
+            ? 'dark'
+            : lightIntensityBit === 0b10
+                ? 'bright'
+                : null;
+        if (lightIntensity === null)
+            return null; // unknown intensity
+        const data = {
+            battery,
+            scopeTested,
+            someoneIsMoving: pirState,
+            pirUtc,
+            ledState,
+            iotState,
+            sensingDistance,
+            lightIntensity,
+        };
+        return data;
+    }
+}
+exports.default = Switchbot_MotionSensor;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/Switchbot_PlugMini/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.Switchbot_PlugMini
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const binary_analyzer_1 = __webpack_require__("./node_modules/binary-analyzer/dist/src/index.js");
+const Switchbot_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/Switchbot.js");
+/** Switchbot_PlugMini management class Switchbot_PlugMiniを管理するクラス */
+class Switchbot_PlugMini extends Switchbot_1.Switchbot {
+    static info() {
+        return {
+            name: 'Switchbot_PlugMini',
+        };
+    }
+    static getPayload(peripheral) {
+        const payload = this.parser.getAllData(peripheral.adv_data);
+        return payload;
+    }
+    /**
+     * Verify that the received peripheral is from the Switchbot_PlugMini
+     *
+     * 受け取ったPeripheralがSwitchbot_PlugMiniのものかどうかを確認する
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns Whether it is the Switchbot_PlugMini
+     *
+     * Switchbot_PlugMiniかどうか
+     */
+    static isDevice(peripheral) {
+        const payload = Switchbot_PlugMini.getPayload(peripheral);
+        return payload !== null;
+    }
+    /**
+     * Get a data from the Switchbot_PlugMini
+     *
+     * Switchbot_PlugMiniからデータを取得
+     *
+     * @param peripheral instance of BleRemotePeripheral BleRemotePeripheralのインスタンス
+     *
+     * @returns received data from the Switchbot_PlugMini Switchbot_PlugMiniから受け取ったデータ
+     */
+    static getData(peripheral) {
+        const data = Switchbot_PlugMini.getPayload(peripheral);
+        if (data === null)
+            return null;
+        return {
+            sequenceNumber: data.manufacture.sequenceNumber,
+            powerState: data.manufacture.powerState,
+            hasDelay: data.manufacture.byte10.hasDelay,
+            hasTimer: data.manufacture.byte10.hasTimer,
+            alreadySyncTime: data.manufacture.byte10.alreadySyncTime,
+            wifiRssi: data.manufacture.wifiRssi,
+            overload: data.manufacture.byte12_13.overload,
+            power: data.manufacture.byte12_13.power,
+        };
+    }
+}
+exports.default = Switchbot_PlugMini;
+Switchbot_PlugMini.parser = new binary_analyzer_1.BinaryAnalyzer()
+    .addTarget('flag', [0x02, 0x01, 0x06], 'RawArray')
+    .addGroup('manufacture', new binary_analyzer_1.BinaryAnalyzer()
+    .addTarget('length', [-1], 'RawArray')
+    .addTarget('type', [0xff], 'RawArray')
+    .addTarget('companyId', [0x69, 0x09], 'RawArray')
+    .addTargetByLength('macAddress', 6, 'RawArray')
+    .addTargetByLength('sequenceNumber', 1, 'RawArray', ([v]) => v)
+    .addTargetByLength('powerState', 1, 'RawArray', ([v]) => v === 0x00 ? 'off' : v === 0x80 ? 'on' : null)
+    .addTargetByLength('byte10', 1, 'RawArray', ([v]) => {
+    const hasDelay = v & 0b00000001 ? true : false;
+    const hasTimer = v & 0b00000010 ? true : false;
+    const alreadySyncTime = v & 0b00000100 ? true : false;
+    return {
+        hasDelay,
+        hasTimer,
+        alreadySyncTime,
+    };
+})
+    .addTargetByLength('wifiRssi', 1, 'RawArray', ([v]) => -v)
+    .addTargetByLength('byte12_13', 2, 'RawArray', ([_12, _13]) => {
+    const overload = _12 & 0b10000000 ? true : false;
+    const msb = _12 & 0b01111111;
+    const lsb = _13;
+    const power = ((msb << 8) + lsb) / 10;
+    return {
+        overload,
+        power,
+    };
+}));
+
 
 /***/ }),
 
@@ -65994,6 +66442,140 @@ function fromByteArray (uint8) {
 
   return parts.join('')
 }
+
+
+/***/ }),
+
+/***/ "./node_modules/binary-analyzer/dist/src/binaryAnalyzer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BinaryAnalyzer = void 0;
+class BinaryAnalyzer {
+    constructor() {
+        this._target = [];
+    }
+    addTarget(name, filter, type, postProcess) {
+        this._target.push({ name, filter, type, postProcess });
+        return this;
+    }
+    addTargetByLength(name, length, type, postProcess) {
+        return this.addTarget(name, new Array(length).fill(-1), type, postProcess);
+    }
+    addGroup(name, fnOrAnalyzer) {
+        const analyzer = fnOrAnalyzer instanceof BinaryAnalyzer
+            ? fnOrAnalyzer
+            : fnOrAnalyzer(new BinaryAnalyzer());
+        this._target.push({ name, filter: analyzer });
+        return this;
+    }
+    /**
+     * 登録済みbinaryAnarlyzerのGroupを解除して、Flatな条件Arrayを作る
+     */
+    flat() {
+        return this._target.reduce((acc, val) => {
+            if (val.filter instanceof BinaryAnalyzer) {
+                return [...acc, ...val.filter.flat()];
+            }
+            return [...acc, ...val.filter];
+        }, []);
+    }
+    length() {
+        return this.flat().length;
+    }
+    validate(target) {
+        const targetArray = this._convertToNumberArray(target);
+        const flat = this.flat();
+        if (flat.length > targetArray.length) {
+            return false;
+        }
+        for (let index = 0; index < flat.length; index++) {
+            if (flat[index] === -1) {
+                continue;
+            }
+            if (targetArray[index] === flat[index]) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+    getAllData(target) {
+        const targetArray = this._convertToNumberArray(target);
+        if (!this.validate(targetArray)) {
+            return null;
+        }
+        const result = {};
+        let index = 0;
+        for (const one of this._target) {
+            if (one.filter instanceof BinaryAnalyzer) {
+                const newTarget = targetArray.slice(index, index + one.filter.length());
+                result[one.name] = one.filter.getAllData(newTarget);
+            }
+            else {
+                const row = one;
+                const numberArray = targetArray.slice(index, index + one.filter.length);
+                const value = this._convertToValue(row.type, numberArray);
+                result[one.name] = row.postProcess ? row.postProcess(value) : value;
+            }
+            if (one.filter instanceof BinaryAnalyzer) {
+                index += one.filter.length();
+            }
+            else {
+                index += one.filter.length;
+            }
+        }
+        return result;
+    }
+    _convertToValue(type, numberArray) {
+        if (type === 'Ascii') {
+            return String.fromCharCode(...numberArray);
+        }
+        else if (type === 'UIntBE') {
+            return numberArray.reduce((acc, val) => (acc << 8) + val, 0);
+        }
+        else if (type === 'UIntLE') {
+            return numberArray.reverse().reduce((acc, val) => (acc << 8) + val, 0);
+        }
+        return numberArray;
+    }
+    _convertToNumberArray(target) {
+        var _a;
+        if (Array.isArray(target)) {
+            return target;
+        }
+        const tokens = target.match(/[0-9a-z]{2}/gi); // splits the string into segments of two including a remainder => {1,2}
+        return (_a = tokens === null || tokens === void 0 ? void 0 : tokens.map(t => parseInt(t, 16))) !== null && _a !== void 0 ? _a : [];
+    }
+}
+exports.BinaryAnalyzer = BinaryAnalyzer;
+
+
+/***/ }),
+
+/***/ "./node_modules/binary-analyzer/dist/src/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+__exportStar(__webpack_require__("./node_modules/binary-analyzer/dist/src/binaryAnalyzer.js"), exports);
 
 
 /***/ }),
