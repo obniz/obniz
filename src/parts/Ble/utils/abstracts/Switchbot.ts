@@ -64,7 +64,7 @@ export class Switchbot implements ObnizPartsBleInterface {
         (serviceData.uuid[0] === 0x00 && serviceData.uuid[1] === 0x0d)) &&
       deviceTypeArray.includes(serviceData.deviceType[0]);
 
-    if (isAdvDataValid && isValidServiceData) {
+    if (serviceData && isAdvDataValid && isValidServiceData) {
       return serviceData.payload;
     }
     return null;

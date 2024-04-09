@@ -93,6 +93,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.plugin.html#onframeend" class="tsd-kind-icon">on<wbr>Frame<wbr>End</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.plugin.html#onframestart" class="tsd-kind-icon">on<wbr>Frame<wbr>Start</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.components.plugin.html#onreceive" class="tsd-kind-icon">onreceive</a></li>
 							</ul>
 						</section>
@@ -117,7 +119,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/plugin/plugin.ts:33</li>
+									<li>Defined in src/obniz/libs/plugin/plugin.ts:59</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -136,6 +138,44 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="onframeend" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Frame<wbr>End</h3>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Frame<wbr>End<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/plugin/plugin.ts:57</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Callback function is called when Frame Information Received</p>
+						</div>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.plugin.onFrameEnd = <span class="hljs-function"><span class="hljs-params">length</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`frame ended`</span>);
+};</code></pre>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="onframestart" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Frame<wbr>Start</h3>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Frame<wbr>Start<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in src/obniz/libs/plugin/plugin.ts:44</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Callback function is called when Frame Information Received</p>
+						</div>
+						<pre><code class="language-javascript"><span class="hljs-comment">// Javascript Example</span>
+obniz.plugin.onFrameStart = <span class="hljs-function"><span class="hljs-params">length</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`<span class="hljs-subst">${length}</span> bytes will be start`</span>);
+};</code></pre>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="onreceive" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> onreceive</h3>
@@ -168,7 +208,7 @@ obniz.plugin.onreceive = <span class="hljs-function"><span class="hljs-params">d
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/obniz/libs/plugin/plugin.ts:50</li>
+									<li>Defined in src/obniz/libs/plugin/plugin.ts:76</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -209,6 +249,12 @@ obniz.plugin.send([<span class="hljs-number">0x00</span>, <span class="hljs-numb
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="obnizcore.components.plugin.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="obnizcore.components.plugin.html#onframeend" class="tsd-kind-icon">on<wbr>Frame<wbr>End</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="obnizcore.components.plugin.html#onframestart" class="tsd-kind-icon">on<wbr>Frame<wbr>Start</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="obnizcore.components.plugin.html#onreceive" class="tsd-kind-icon">onreceive</a>
