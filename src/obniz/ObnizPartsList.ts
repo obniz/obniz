@@ -323,6 +323,7 @@ import Switchbot_ContactSensor, {
 import Switchbot_PlugMini, {
   Switchbot_PlugMiniOptions,
 } from '../parts/Ble/Switchbot_PlugMini';
+import DHT20, { DHT20Options } from '../parts/TemperatureSensor/i2c/DHT20';
 
 export type PartsType = keyof PartsList;
 
@@ -488,6 +489,7 @@ export interface PartsList {
   BME280: PartsInterface<BME280, BME280Options, typeof BME280>;
   D6T44L: PartsInterface<D6T44L, D6T44LOptions, typeof D6T44L>;
   DHT12: PartsInterface<DHT12, DHT12Options, typeof DHT12>;
+  DHT20: PartsInterface<DHT20, DHT20Options, typeof DHT20>;
   // 'S5851A':{instance: S5851A,options: S5851AOptions},
   SHT31: PartsInterface<SHT31, SHT31Options, typeof SHT31>;
   SHT20: PartsInterface<SHT20, SHT20Options, typeof SHT20>;

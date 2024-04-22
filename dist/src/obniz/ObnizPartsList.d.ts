@@ -201,6 +201,7 @@ import Switchbot_IOSensorTH, { Switchbot_IOSensorTHOptions } from '../parts/Ble/
 import Switchbot_MotionSensor, { Switchbot_MotionSensorOptions } from '../parts/Ble/Switchbot_MotionSensor';
 import Switchbot_ContactSensor, { Switchbot_ContactSensorOptions } from '../parts/Ble/Switchbot_ContactSensor';
 import Switchbot_PlugMini, { Switchbot_PlugMiniOptions } from '../parts/Ble/Switchbot_PlugMini';
+import DHT20, { DHT20Options } from '../parts/TemperatureSensor/i2c/DHT20';
 export declare type PartsType = keyof PartsList;
 interface PartsInterface<P, O, C extends {
     new (...args: any[]): P;
@@ -286,6 +287,7 @@ export interface PartsList {
     BME280: PartsInterface<BME280, BME280Options, typeof BME280>;
     D6T44L: PartsInterface<D6T44L, D6T44LOptions, typeof D6T44L>;
     DHT12: PartsInterface<DHT12, DHT12Options, typeof DHT12>;
+    DHT20: PartsInterface<DHT20, DHT20Options, typeof DHT20>;
     SHT31: PartsInterface<SHT31, SHT31Options, typeof SHT31>;
     SHT20: PartsInterface<SHT20, SHT20Options, typeof SHT20>;
     ADT7310: PartsInterface<ADT7310, ADT7310Options, typeof ADT7310>;

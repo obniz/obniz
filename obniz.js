@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.30.0",
+  "version": "3.30.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -236,6 +236,7 @@ module.exports = {
     "moment": "^2.29.3",
     "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
+    "p-limit": "^3.1.0",
     "round-to": "^5.0.0",
     "semver": "^5.7.0",
     "strict-event-emitter": "^0.2.6",
@@ -26000,6 +26001,7 @@ var map = {
 	"./TemperatureSensor/i2c/BME280/index.js": "./dist/src/parts/TemperatureSensor/i2c/BME280/index.js",
 	"./TemperatureSensor/i2c/D6T44L/index.js": "./dist/src/parts/TemperatureSensor/i2c/D6T44L/index.js",
 	"./TemperatureSensor/i2c/DHT12/index.js": "./dist/src/parts/TemperatureSensor/i2c/DHT12/index.js",
+	"./TemperatureSensor/i2c/DHT20/index.js": "./dist/src/parts/TemperatureSensor/i2c/DHT20/index.js",
 	"./TemperatureSensor/i2c/S-5851A/index.js": "./dist/src/parts/TemperatureSensor/i2c/S-5851A/index.js",
 	"./TemperatureSensor/i2c/SHT20/index.js": "./dist/src/parts/TemperatureSensor/i2c/SHT20/index.js",
 	"./TemperatureSensor/i2c/SHT31/index.js": "./dist/src/parts/TemperatureSensor/i2c/SHT31/index.js",
@@ -43536,7 +43538,7 @@ class Switchbot {
             ((serviceData.uuid[0] === 0x3d && serviceData.uuid[1] === 0xfd) ||
                 (serviceData.uuid[0] === 0x00 && serviceData.uuid[1] === 0x0d)) &&
             deviceTypeArray.includes(serviceData.deviceType[0]);
-        if (isAdvDataValid && isValidServiceData) {
+        if (serviceData && isAdvDataValid && isValidServiceData) {
             return serviceData.payload;
         }
         return null;
@@ -62220,6 +62222,69 @@ class DHT12 extends i2cParts_1.default {
     }
 }
 exports.default = DHT12;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/TemperatureSensor/i2c/DHT20/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @packageDocumentation
+ * @module Parts.DHT20
+ */
+const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
+const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
+class DHT20 extends i2cParts_1.default {
+    constructor() {
+        super();
+        this.i2cinfo = {
+            address: 0x38,
+            clock: 100000,
+            voltage: '3v',
+            pull: '3v',
+        };
+    }
+    static info() {
+        return {
+            name: 'DHT20',
+        };
+    }
+    i2cInfo() {
+        return this.i2cinfo;
+    }
+    async getAllDataWait() {
+        this.i2c.write(this.i2cinfo.address, [0xac, 0x33, 0x00]);
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        this.obniz.wait(100).then(() => { });
+        const val = await this.i2c.readWait(this.i2cinfo.address, 6);
+        const state = val[0];
+        const flg = state & 0x80;
+        // 連続20bit
+        const humidityData = (val[1] << 12) | (val[2] << 4) | ((val[3] & 0x0f) >> 4);
+        const humidity = (0, round_to_1.default)(humidityData / 10485.76, 2);
+        // その後20bit
+        const temperatureData = ((val[3] & 0x0f) << 16) | (val[4] << 8) | val[5];
+        const temperature = (0, round_to_1.default)(temperatureData / 5242.88 - 50, 2);
+        return {
+            humidity,
+            temperature,
+        };
+    }
+    async getTemperatureWait() {
+        return (await this.getAllDataWait()).temperature;
+    }
+    async getHumidityWait() {
+        return (await this.getAllDataWait()).humidity;
+    }
+}
+exports.default = DHT20;
 
 
 /***/ }),
@@ -108383,49 +108448,69 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 "use strict";
 
-const pTry = __webpack_require__("./node_modules/p-try/index.js");
+const Queue = __webpack_require__("./node_modules/yocto-queue/index.js");
 
 const pLimit = concurrency => {
 	if (!((Number.isInteger(concurrency) || concurrency === Infinity) && concurrency > 0)) {
-		return Promise.reject(new TypeError('Expected `concurrency` to be a number from 1 and up'));
+		throw new TypeError('Expected `concurrency` to be a number from 1 and up');
 	}
 
-	const queue = [];
+	const queue = new Queue();
 	let activeCount = 0;
 
 	const next = () => {
 		activeCount--;
 
-		if (queue.length > 0) {
-			queue.shift()();
+		if (queue.size > 0) {
+			queue.dequeue()();
 		}
 	};
 
-	const run = (fn, resolve, ...args) => {
+	const run = async (fn, resolve, ...args) => {
 		activeCount++;
 
-		const result = pTry(fn, ...args);
+		const result = (async () => fn(...args))();
 
 		resolve(result);
 
-		result.then(next, next);
+		try {
+			await result;
+		} catch {}
+
+		next();
 	};
 
 	const enqueue = (fn, resolve, ...args) => {
-		if (activeCount < concurrency) {
-			run(fn, resolve, ...args);
-		} else {
-			queue.push(run.bind(null, fn, resolve, ...args));
-		}
+		queue.enqueue(run.bind(null, fn, resolve, ...args));
+
+		(async () => {
+			// This function needs to wait until the next microtask before comparing
+			// `activeCount` to `concurrency`, because `activeCount` is updated asynchronously
+			// when the run function is dequeued and called. The comparison in the if-statement
+			// needs to happen asynchronously as well to get an up-to-date value for `activeCount`.
+			await Promise.resolve();
+
+			if (activeCount < concurrency && queue.size > 0) {
+				queue.dequeue()();
+			}
+		})();
 	};
 
-	const generator = (fn, ...args) => new Promise(resolve => enqueue(fn, resolve, ...args));
+	const generator = (fn, ...args) => new Promise(resolve => {
+		enqueue(fn, resolve, ...args);
+	});
+
 	Object.defineProperties(generator, {
 		activeCount: {
 			get: () => activeCount
 		},
 		pendingCount: {
-			get: () => queue.length
+			get: () => queue.size
+		},
+		clearQueue: {
+			value: () => {
+				queue.clear();
+			}
 		}
 	});
 
@@ -108433,24 +108518,6 @@ const pLimit = concurrency => {
 };
 
 module.exports = pLimit;
-module.exports.default = pLimit;
-
-
-/***/ }),
-
-/***/ "./node_modules/p-try/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const pTry = (fn, ...arguments_) => new Promise(resolve => {
-	resolve(fn(...arguments_));
-});
-
-module.exports = pTry;
-// TODO: remove this in the next major version
-module.exports.default = pTry;
 
 
 /***/ }),
@@ -117583,6 +117650,81 @@ module.exports = function(module) {
 	}
 	return module;
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/yocto-queue/index.js":
+/***/ (function(module, exports) {
+
+class Node {
+	/// value;
+	/// next;
+
+	constructor(value) {
+		this.value = value;
+
+		// TODO: Remove this when targeting Node.js 12.
+		this.next = undefined;
+	}
+}
+
+class Queue {
+	// TODO: Use private class fields when targeting Node.js 12.
+	// #_head;
+	// #_tail;
+	// #_size;
+
+	constructor() {
+		this.clear();
+	}
+
+	enqueue(value) {
+		const node = new Node(value);
+
+		if (this._head) {
+			this._tail.next = node;
+			this._tail = node;
+		} else {
+			this._head = node;
+			this._tail = node;
+		}
+
+		this._size++;
+	}
+
+	dequeue() {
+		const current = this._head;
+		if (!current) {
+			return;
+		}
+
+		this._head = this._head.next;
+		this._size--;
+		return current.value;
+	}
+
+	clear() {
+		this._head = undefined;
+		this._tail = undefined;
+		this._size = 0;
+	}
+
+	get size() {
+		return this._size;
+	}
+
+	* [Symbol.iterator]() {
+		let current = this._head;
+
+		while (current) {
+			yield current.value;
+			current = current.next;
+		}
+	}
+}
+
+module.exports = Queue;
 
 
 /***/ }),
