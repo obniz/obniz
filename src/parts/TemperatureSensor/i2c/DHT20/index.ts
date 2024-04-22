@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Parts.DHT12
+ * @module Parts.DHT20
  */
 import roundTo from 'round-to';
 import {

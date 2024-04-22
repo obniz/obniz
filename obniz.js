@@ -62237,7 +62237,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @packageDocumentation
- * @module Parts.DHT12
+ * @module Parts.DHT20
  */
 const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 const i2cParts_1 = __importDefault(__webpack_require__("./dist/src/parts/i2cParts.js"));
