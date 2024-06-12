@@ -5,16 +5,34 @@
 let baseDir: any;
 import fs = require('fs');
 import yaml = require('js-yaml');
-import nodeDir = require('node-dir');
 import path = require('path');
 
-export default (directory: string, recursive: boolean, regExp: RegExp): any => {
+const readdirRecursively = (
+  dir: string,
+  files: string[] = [],
+  recursive = true
+) => {
+  const dirents = fs.readdirSync(dir, { withFileTypes: true });
+  const dirs = [];
+  for (const dirent of dirents) {
+    if (dirent.isDirectory()) dirs.push(`${dir}/${dirent.name}`);
+    if (dirent.isFile()) files.push(`${dir}/${dirent.name}`);
+  }
+  if (recursive) {
+    for (const d of dirs) {
+      files = readdirRecursively(d, files);
+    }
+  }
+  return files;
+};
+
+export default (directory: string, recursive: boolean, regExp: RegExp) => {
   // Assume absolute path by default
-  let basepath: any = directory;
+  let basepath = directory;
 
   if (directory[0] === '.') {
     // Relative path
-    let dir: any = __dirname;
+    let dir = __dirname;
     if (baseDir) {
       dir = baseDir;
     }
@@ -24,11 +42,7 @@ export default (directory: string, recursive: boolean, regExp: RegExp): any => {
     basepath = require.resolve(directory);
   }
 
-  const keys: any = (nodeDir as any)
-    .files(basepath, {
-      sync: true,
-      recursive: recursive || false,
-    })
+  const keys = readdirRecursively(basepath, [], recursive)
     .filter((file: string) => {
       return file.match(regExp || /\.(json|js)$/);
     })
