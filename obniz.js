@@ -234,7 +234,6 @@ module.exports = {
     "eventemitter3": "^3.1.2",
     "js-yaml": "^3.13.1",
     "moment": "^2.29.3",
-    "node-dir": "^0.1.17",
     "node-fetch": "^2.3.0",
     "p-limit": "^3.1.0",
     "round-to": "^5.0.0",

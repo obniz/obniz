@@ -8,8 +8,23 @@ exports.setBaseDir = void 0;
 let baseDir;
 const fs = require("fs");
 const yaml = require("js-yaml");
-const nodeDir = require("node-dir");
 const path = require("path");
+const readdirRecursively = (dir, files = [], recursive = true) => {
+    const dirents = fs.readdirSync(dir, { withFileTypes: true });
+    const dirs = [];
+    for (const dirent of dirents) {
+        if (dirent.isDirectory())
+            dirs.push(`${dir}/${dirent.name}`);
+        if (dirent.isFile())
+            files.push(`${dir}/${dirent.name}`);
+    }
+    if (recursive) {
+        for (const d of dirs) {
+            files = readdirRecursively(d, files);
+        }
+    }
+    return files;
+};
 exports.default = (directory, recursive, regExp) => {
     // Assume absolute path by default
     let basepath = directory;
@@ -25,11 +40,7 @@ exports.default = (directory, recursive, regExp) => {
         // Module path
         basepath = require.resolve(directory);
     }
-    const keys = nodeDir
-        .files(basepath, {
-        sync: true,
-        recursive: recursive || false,
-    })
+    const keys = readdirRecursively(basepath, [], recursive)
         .filter((file) => {
         return file.match(regExp || /\.(json|js)$/);
     })
