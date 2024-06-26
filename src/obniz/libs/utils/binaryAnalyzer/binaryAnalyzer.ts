@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 export type BinaryAnalyzerKey = keyof any;
 
 export type BinaryAnalyzerParserResultType = {
   Ascii: string;
+  Hex: string;
   UIntBE: number;
   UIntLE: number;
   RawArray: number[];
@@ -18,6 +20,7 @@ export interface BinaryAnalyzerParserRow<
   Key extends BinaryAnalyzerKey,
   Type extends BinaryAnalyzerParserType
 > {
+  __type: 'BinaryAnalyzerParserRow';
   name: Key;
   filter: number[];
   type: Type;
@@ -25,6 +28,7 @@ export interface BinaryAnalyzerParserRow<
 }
 
 export interface BinaryAnalyzerNestRow<Key extends BinaryAnalyzerKey> {
+  __type: 'BinaryAnalyzerNestRow';
   name: Key;
   filter: BinaryAnalyzer<any>;
 }
@@ -69,7 +73,13 @@ export class BinaryAnalyzer<
     type: Type,
     postProcess?: BinaryAnalyzerParserPostProcessFunc<Type, Result>
   ): BinaryAnalyzer<{ [key in N]: Result } & OUTPUT> {
-    this._target.push({ name, filter, type, postProcess });
+    this._target.push({
+      name,
+      filter,
+      type,
+      postProcess,
+      __type: 'BinaryAnalyzerParserRow',
+    });
     return this as BinaryAnalyzer<{ [key in N]: number[] } & OUTPUT>;
   }
 
@@ -126,7 +136,11 @@ export class BinaryAnalyzer<
       fnOrAnalyzer instanceof BinaryAnalyzer
         ? fnOrAnalyzer
         : fnOrAnalyzer(new BinaryAnalyzer());
-    this._target.push({ name, filter: analyzer });
+    this._target.push({
+      name,
+      filter: analyzer,
+      __type: 'BinaryAnalyzerNestRow',
+    });
     return this as BinaryAnalyzer<
       { [key in N]: ReturnType<BinaryAnalyzer<NEST>['getAllData']> } & OUTPUT
     >;
@@ -178,11 +192,13 @@ export class BinaryAnalyzer<
 
     let index = 0;
     for (const one of this._target) {
-      if (one.filter instanceof BinaryAnalyzer) {
+      if (one.__type === 'BinaryAnalyzerNestRow') {
         const newTarget = targetArray.slice(index, index + one.filter.length());
         result[one.name] = one.filter.getAllData(newTarget);
       } else {
-        result[one.name] = targetArray.slice(index, index + one.filter.length);
+        const raw = targetArray.slice(index, index + one.filter.length);
+        const data = this._doTypeConvertProcess(one, raw);
+        result[one.name] = one.postProcess ? one.postProcess(data) : data;
       }
       if (one.filter instanceof BinaryAnalyzer) {
         index += one.filter.length();
@@ -201,5 +217,40 @@ export class BinaryAnalyzer<
     const buf =
       typeof target === 'string' ? Buffer.from(target, 'hex') : target;
     return Array.from(buf);
+  }
+
+  // number[]を解析して、各Typeに変換する
+  private _doTypeConvertProcess<
+    Key extends BinaryAnalyzerKey,
+    Type extends BinaryAnalyzerParserType
+  >(
+    config: BinaryAnalyzerParserRow<Key, Type>,
+    data: number[]
+  ): BinaryAnalyzerParserResultType[Type] {
+    switch (config.type) {
+      case 'Ascii':
+        return Buffer.from(data).toString(
+          'ascii'
+        ) as BinaryAnalyzerParserResultType[Type];
+      case 'UIntBE':
+        return data.reduce(
+          (acc, val) => (acc << 8) | val,
+          0
+        ) as BinaryAnalyzerParserResultType[Type];
+      case 'UIntLE':
+        return data
+          .reverse()
+          .reduce(
+            (acc, val) => (acc << 8) | val,
+            0
+          ) as BinaryAnalyzerParserResultType[Type];
+      case 'RawArray':
+        return data as BinaryAnalyzerParserResultType[Type];
+      case 'Hex':
+        return Buffer.from(data).toString(
+          'hex'
+        ) as BinaryAnalyzerParserResultType[Type];
+    }
+    throw new Error();
   }
 }
