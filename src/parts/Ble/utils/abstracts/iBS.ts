@@ -36,6 +36,8 @@ type PresetConfigName =
   | 'button'
   | 'moving'
   | 'event'
+  | 'proximity'
+  | 'pir'
   | 'input_trigger'
   | 'fall'
   | 'acceleration'
@@ -97,6 +99,14 @@ export abstract class BaseiBS<S> extends ObnizPartsBle<S> {
     event: {
       index: 4,
       type: 'bool0100',
+    },
+    pir: {
+      index: 4,
+      type: 'bool00010000',
+    },
+    proximity: {
+      index: 4,
+      type: 'bool00100000',
     },
     input_trigger: {
       index: 4,

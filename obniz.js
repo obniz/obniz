@@ -25833,7 +25833,10 @@ var map = {
 	"./Ble/iBS01H/index.js": "./dist/src/parts/Ble/iBS01H/index.js",
 	"./Ble/iBS01RG/index.js": "./dist/src/parts/Ble/iBS01RG/index.js",
 	"./Ble/iBS01T/index.js": "./dist/src/parts/Ble/iBS01T/index.js",
+	"./Ble/iBS02IR/base.js": "./dist/src/parts/Ble/iBS02IR/base.js",
 	"./Ble/iBS02IR/index.js": "./dist/src/parts/Ble/iBS02IR/index.js",
+	"./Ble/iBS02IR/ingics.js": "./dist/src/parts/Ble/iBS02IR/ingics.js",
+	"./Ble/iBS02IR/ranger.js": "./dist/src/parts/Ble/iBS02IR/ranger.js",
 	"./Ble/iBS02M2/index.js": "./dist/src/parts/Ble/iBS02M2/index.js",
 	"./Ble/iBS02PIR/index.js": "./dist/src/parts/Ble/iBS02PIR/index.js",
 	"./Ble/iBS03/index.js": "./dist/src/parts/Ble/iBS03/index.js",
@@ -36226,7 +36229,72 @@ iBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
 
 /***/ }),
 
+/***/ "./dist/src/parts/Ble/iBS02IR/base.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS02IR
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+
+
+/***/ }),
+
 /***/ "./dist/src/parts/Ble/iBS02IR/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS02IR
+ */
+/* eslint rulesdir/non-ascii: 0 */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ingics_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/iBS02IR/ingics.js"));
+const ranger_1 = __importDefault(__webpack_require__("./dist/src/parts/Ble/iBS02IR/ranger.js"));
+const ObnizPartsBleInterface_1 = __webpack_require__("./dist/src/obniz/ObnizPartsBleInterface.js");
+/** iBS02IR management class iBS02IRを管理するクラス */
+class iBS02IR extends ObnizPartsBleInterface_1.ObnizPartsBleInterface {
+    static info() {
+        return {
+            name: 'iBS02IR',
+        };
+    }
+    static isDevice(peripheral) {
+        return (ingics_1.default.isDevice(peripheral) || ranger_1.default.isDevice(peripheral));
+    }
+    static isDeviceWithMode(peripheral, mode) {
+        return (ingics_1.default.isDeviceWithMode(peripheral, mode) ||
+            ranger_1.default.isDeviceWithMode(peripheral, mode));
+    }
+    static getData(peripheral) {
+        var _a, _b;
+        return ((_b = (_a = ingics_1.default.getData(peripheral)) !== null && _a !== void 0 ? _a : ranger_1.default.getData(peripheral)) !== null && _b !== void 0 ? _b : null);
+    }
+    static getManufacturer(peripheral) {
+        if (ingics_1.default.getData(peripheral)) {
+            return 'ingics';
+        }
+        if (ranger_1.default.getData(peripheral)) {
+            return 'ranger';
+        }
+        return null;
+    }
+}
+exports.default = iBS02IR;
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS02IR/ingics.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36239,15 +36307,41 @@ iBS01T.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS01.Config.batter
 Object.defineProperty(exports, "__esModule", { value: true });
 const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
 /** iBS02IR management class iBS02IRを管理するクラス */
-class iBS02IR extends iBS_1.BaseiBS {
+class iBS02IR_Ingics extends iBS_1.BaseiBS {
     constructor() {
         super(...arguments);
-        this.staticClass = iBS02IR;
+        this.staticClass = iBS02IR_Ingics;
     }
 }
-exports.default = iBS02IR;
-iBS02IR.PartsName = 'iBS02IR';
-iBS02IR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x02));
+exports.default = iBS02IR_Ingics;
+iBS02IR_Ingics.PartsName = 'iBS02IR_Ingics';
+iBS02IR_Ingics.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.proximity }, iBS_1.BaseiBS.getUniqueData(3, 0x02));
+
+
+/***/ }),
+
+/***/ "./dist/src/parts/Ble/iBS02IR/ranger.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module Parts.iBS02IR
+ */
+/* eslint rulesdir/non-ascii: 0 */
+Object.defineProperty(exports, "__esModule", { value: true });
+const iBS_1 = __webpack_require__("./dist/src/parts/Ble/utils/abstracts/iBS.js");
+/** iBS02IR management class iBS02IRを管理するクラス */
+class iBS02IR_Ranger extends iBS_1.BaseiBS {
+    constructor() {
+        super(...arguments);
+        this.staticClass = iBS02IR_Ranger;
+    }
+}
+exports.default = iBS02IR_Ranger;
+iBS02IR_Ranger.PartsName = 'iBS02IR_Ranger';
+iBS02IR_Ranger.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x02));
 
 
 /***/ }),
@@ -43640,6 +43734,14 @@ BaseiBS.Config = {
     event: {
         index: 4,
         type: 'bool0100',
+    },
+    pir: {
+        index: 4,
+        type: 'bool00010000',
+    },
+    proximity: {
+        index: 4,
+        type: 'bool00100000',
     },
     input_trigger: {
         index: 4,

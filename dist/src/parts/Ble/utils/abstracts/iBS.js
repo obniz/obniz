@@ -60,6 +60,14 @@ BaseiBS.Config = {
         index: 4,
         type: 'bool0100',
     },
+    pir: {
+        index: 4,
+        type: 'bool00010000',
+    },
+    proximity: {
+        index: 4,
+        type: 'bool00100000',
+    },
     input_trigger: {
         index: 4,
         type: 'bool01000000',
