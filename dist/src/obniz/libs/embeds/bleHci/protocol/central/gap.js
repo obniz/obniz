@@ -322,9 +322,16 @@ class Gap extends eventemitter3_1.default {
                 // legacy advertising PDU
                 if (type === LegacyAdvertising_ADV_SCAN_RESP_TO_ADV_IND ||
                     type === LegacyAdvertising_ADV_SCAN_RESP_TO_SCAN_IND) {
-                    connectable = this._discoveries[address].connectable;
+                    // legacy scan response
+                    if (previouslyDiscovered) {
+                        connectable = this._discoveries[address].connectable;
+                    }
+                    else {
+                        connectable = true; // not specified. fallback to true
+                    }
                 }
                 else {
+                    // legacy advertising
                     connectable = type !== LegacyAdvertising_ADV_NONCONN_IND;
                 }
             }
@@ -333,11 +340,22 @@ class Gap extends eventemitter3_1.default {
             }
         }
         else {
-            if (type === 0x04 && previouslyDiscovered) {
-                connectable = this._discoveries[address].connectable;
+            if (type === 0x04) {
+                // SCAN_RSP
+                if (previouslyDiscovered) {
+                    connectable = this._discoveries[address].connectable;
+                }
+                else {
+                    connectable = true; // not specified. fallback to true
+                }
+            }
+            else if (type === 0x03) {
+                // ADV_NONCONN_IND
+                connectable = false;
             }
             else {
-                connectable = type !== 0x03;
+                // ADV_IND, ADV_DIRECT_IND, ADV_SCAN_IND
+                connectable = true;
             }
         }
         this._discoveries[address] = {
