@@ -1436,7 +1436,6 @@ class W5500Socket {
             if (this.allInterruptHandler !== undefined) {
                 await this.allInterruptHandler(this, msg, extra);
             }
-            return true;
         }
         return this.protocol !== null && this.ethernet.getSpiStatus();
     }
