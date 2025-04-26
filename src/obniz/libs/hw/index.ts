@@ -25,6 +25,12 @@ export class HW {
       return require('./cc3235mod.json');
     } else if (hw === 'esp32c3') {
       return require('./esp32c3.json');
+    } else if (hw === 'esp32c6') {
+      return require('./esp32c6.json');
+    } else if (hw === 'iemicro1') {
+      return require('./iemicro1.json');
+    } else if (hw === 'iekilo1') {
+      return require('./iekilo1.json');
     } else if (hw === 'blewifi_gw2') {
       return require('./blewifi_gw2.json');
     } else if (hw === 'blelte_gw2') {

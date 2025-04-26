@@ -33,7 +33,7 @@ jobs:
 
       - name: Cache node_modules
         id: node_modules-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ matrix.os }}-node-v${{ matrix.node }}-npm-${{ hashFiles('package-lock.json') }}
