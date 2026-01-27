@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/location/init"
+description: "starting location service"
+
+type: object
+required: [start]
+properties:
+  start:
+    type: object
+    additionalProperties: false

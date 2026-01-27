@@ -39,8 +39,11 @@ import { Handle as _Handle } from './libs/embeds/bleHci/bleTypes';
 import { UUID as _UUID } from './libs/embeds/bleHci/bleTypes';
 import { ObnizBLEHci as _ObnizBLEHci } from './libs/embeds/bleHci/hci';
 import { Display as _Display } from './libs/embeds/display';
+import { Storage as _Storage } from './libs/embeds/storage';
 import { ObnizSwitch as _ObnizSwitch } from './libs/embeds/switch';
 import { M5StackBasic as _M5StackBasic } from './libs/hw/m5stack_basic';
+import { IntelligentEdgeKiloComponent as _IntelligentEdgeKiloComponent } from './libs/hw/iekilo1_components';
+import { KiloInterface as _KiloInterface } from './libs/hw/iekilo1_components';
 import { M5StickC as _M5StickC } from './libs/hw/m5stickc';
 import { ObnizBoard as _ObnizBoard } from './libs/hw/obnizBoard';
 import { PeripheralAD as _PeripheralAD } from './libs/io_peripherals/ad';
@@ -99,6 +102,8 @@ import { ObnizTimeoutError as _ObnizTimeoutError } from './ObnizError';
 import { ObnizPartsInterface as _ObnizPartsInterface } from './ObnizPartsInterface';
 import { ObnizPartsInfo as _ObnizPartsInfo } from './ObnizPartsInterface';
 import { PartsList } from './ObnizPartsList';
+import { WsCommandModules, createCommandManager } from './libs/wscommand';
+import { WSCommandManager } from './libs/wscommand/WSCommandManager';
 
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
@@ -147,6 +152,10 @@ export class Obniz extends ObnizDevice {
   public static get App() {
     return _ObnizApp;
   }
+
+  public static getWsCommandModule() {
+    return createCommandManager();
+  }
 }
 
 /**
@@ -184,11 +193,15 @@ export namespace Obniz {
   export type Directive = _Directive;
   export type DirectiveAnimationFrame = _DirectiveAnimationFrame;
   export type Display = _Display;
+  export type Storage = _Storage;
   export type IBeacon = _IBeacon;
   export type LogicAnalyzer = _LogicAnalyzer;
   export type LogicAnalyzerOptions = _LogicAnalyzerOptions;
   export type LogicAnalyzerOptionsExt = _LogicAnalyzerOptionsExt;
   export type M5StackBasic = _M5StackBasic;
+  export type IntelligentEdgeKiloComponent = _IntelligentEdgeKiloComponent;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  export import KiloInterface = _KiloInterface;
   export type M5StickC = _M5StickC;
   export type ObnizBLE = _ObnizBLE;
   export type ObnizBleAttError = _ObnizBleAttError;

@@ -54,6 +54,12 @@ await socket.initWait({
 
 第1引数はソケットのインスタンスです。一部のみ第2引数があります。**ハンドラー登録関数のみ、非同期(async)関数ではありません。**
 
+dataについて
+- TCP: payload
+- UDP: Destination(送信元)データ8byteを含むpayload
+
+[https://docs.wiznet.io/Product/iEthernet/W5500/Application/udp#receiving-process](https://docs.wiznet.io/Product/iEthernet/W5500/Application/udp#receiving-process)
+
 ```javascript
 socket.setInterruptHandler('ReceiveData', async (socket, data) => {
   console.log(`ソケット${socket.id}[受信]`, data);
@@ -179,6 +185,7 @@ await socket.initWait({
 
 socket.setInterruptHandler('ReceiveData', async (socket, data) => {
   console.log(`ソケット${socket.id}[受信]`, data);
+  // data includes header 8 bytes.
   await ethernet.finalizeWait();
   console.log('終了');
 });

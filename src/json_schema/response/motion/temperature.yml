@@ -1,0 +1,10 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/motion/temperature"
+
+required: [temperature]
+temperature:
+  type: number
+  description: "temperature in degrees"
+  example: 25.02

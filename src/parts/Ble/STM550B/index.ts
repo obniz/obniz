@@ -10,10 +10,7 @@ import {
   ObnizBleBeaconStruct,
   ObnizBleBeaconStructNormal,
   ObnizPartsBle,
-  ObnizPartsBleCompare,
-  ObnizPartsBleMode,
 } from '../../../obniz/ObnizPartsBleAbstract';
-import { BaseiBS01 } from '../utils/abstracts/iBS';
 import roundTo from 'round-to';
 
 export interface STM550B_Options {}
@@ -162,8 +159,13 @@ const t: ObnizBleBeaconStructNormal<STM550B_Data, 'temperature'> = {
   func: findType('temperature', 0.01),
 };
 export default class STM550B extends ObnizPartsBle<STM550B_Data> {
+  protected readonly staticClass = STM550B;
+
   public static readonly PartsName = 'STM550B';
-  public static AvailableBleMode = 'Beacon' as const;
+
+  public static readonly AvailableBleMode = 'Beacon';
+
+  public static readonly CompanyID = [0xda, 0x03];
 
   public static readonly BeaconDataStruct: ObnizBleBeaconStruct<STM550B_Data> = {
     temperature: {
@@ -215,13 +217,4 @@ export default class STM550B extends ObnizPartsBle<STM550B_Data> {
       func: findType('acceleration_vector'),
     },
   };
-
-  public static readonly CompanyID = {
-    Beacon: [0xda, 0x03],
-  };
-  protected readonly staticClass = STM550B;
-
-  constructor(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode) {
-    super(peripheral, mode);
-  }
 }

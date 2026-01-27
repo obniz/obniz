@@ -11,7 +11,28 @@ const gulp_yaml = require('gulp-yaml');
 const concatWith = require('./concatWith');
 const gulp_sort = require('gulp-sort');
 const docGenerator = require('./wsDocGenerator');
-const ts = require('gulp-typescript');
+
+const disableFetchForSourceMap = () => {
+  const globalRef = global;
+  if (typeof globalRef.fetch !== 'function') {
+    return () => {};
+  }
+  const originalFetch = globalRef.fetch;
+  globalRef.fetch = undefined;
+  return () => {
+    globalRef.fetch = originalFetch;
+  };
+};
+
+const ts = (() => {
+  // Force source-map to use its Node.js path while gulp-typescript is loaded.
+  const restoreFetch = disableFetchForSourceMap();
+  try {
+    return require('gulp-typescript');
+  } finally {
+    restoreFetch();
+  }
+})();
 
 const app = express();
 const port = 3100;
@@ -72,6 +93,7 @@ gulp.task('jsonSchemaDoc', (callback) => {
     'uart',
     'spi',
     'i2c',
+    'canbus',
     'logicAnalyzer',
     'measure',
     'display',

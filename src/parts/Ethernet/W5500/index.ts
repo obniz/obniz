@@ -329,13 +329,13 @@ export namespace W5500Parts {
      */
     fdm?: boolean;
     /** IPv4 address of default gateway デフォルトゲートウェイのIPv4アドレス */
-    gatewayIP: string;
+    gatewayIP?: string;
     /** Subnet mask サブネットマスク */
-    subnetMask: string;
+    subnetMask?: string;
     /** MAC address MACアドレス */
-    macAddress: string;
+    macAddress?: string;
     /** Local IPv4 address ローカルIPv4アドレス */
-    localIP: string;
+    localIP?: string;
     /** Retry interval 再試行間隔 */
     retryTime?: number;
     /** Retry count 再試行回数 */

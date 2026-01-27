@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/plugin/exec_lua"
+desccription: "Executing Lua instantly"
+
+type: object
+required: [exec_lua]
+properties:
+  exec_lua:
+    type: string
+    description: "Lua script to be run on target device"
+    example: "duration = 3"
+

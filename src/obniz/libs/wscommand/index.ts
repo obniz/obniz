@@ -19,28 +19,42 @@ import { WSCommandSystem } from './WSCommandSystem';
 import { WSCommandTcp } from './WSCommandTcp';
 import { WSCommandUart } from './WSCommandUart';
 import { WSCommandWiFi } from './WSCommandWiFi';
+import { WSCommandStorage } from './WSCommandStorage';
+import { WSCommandMotion } from './WSCommandMotion';
+import { WSCommandLocation } from './WSCommandLocation';
+import { WSCommandCANBus } from './WSCommandCANBus';
+
+const commandClasses = {
+  WSCommandSystem,
+  WSCommandDirective,
+  WSCommandIO,
+  WSCommandPWM,
+  WSCommandUart,
+  WSCommandAD,
+  WSCommandSPI,
+  WSCommandI2C,
+  WSCommandLogicAnalyzer,
+  WSCommandDisplay,
+  WSCommandSwitch,
+  WSCommandBle,
+  WSCommandMeasurement,
+  WSCommandTcp,
+  WSCommandWiFi,
+  WSCommandPlugin,
+  WSCommandCANBus,
+  WSCommandLocation,
+  WSCommandMotion,
+  WSCommandStorage,
+};
+
+type CommandClassMap = typeof commandClasses;
+
+export type WsCommandModules = {
+  [K in keyof CommandClassMap]: InstanceType<CommandClassMap[K]>;
+};
 
 export const createCommandManager = () => {
-  const instance = new WSCommandManager();
-
-  /* eslint-disable */
-  instance.addCommandClass("WSCommandSystem", WSCommandSystem);
-  instance.addCommandClass("WSCommandDirective", WSCommandDirective);
-  instance.addCommandClass("WSCommandIO", WSCommandIO);
-  instance.addCommandClass("WSCommandPWM", WSCommandPWM);
-  instance.addCommandClass("WSCommandUart", WSCommandUart);
-  instance.addCommandClass("WSCommandAD", WSCommandAD);
-  instance.addCommandClass("WSCommandSPI", WSCommandSPI);
-  instance.addCommandClass("WSCommandI2C", WSCommandI2C);
-  instance.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer);
-  instance.addCommandClass("WSCommandDisplay", WSCommandDisplay);
-  instance.addCommandClass("WSCommandSwitch", WSCommandSwitch);
-  instance.addCommandClass("WSCommandBle", WSCommandBle);
-  instance.addCommandClass("WSCommandMeasurement", WSCommandMeasurement);
-  instance.addCommandClass("WSCommandTcp", WSCommandTcp);
-  instance.addCommandClass("WSCommandWiFi", WSCommandWiFi);
-  instance.addCommandClass("WSCommandPlugin", WSCommandPlugin);
-
+  const instance = new WSCommandManager<WsCommandModules>(commandClasses);
   return instance;
 };
 

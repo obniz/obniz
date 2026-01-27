@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/uart/de"
+description: "setting DE IO for automatic DE(TX Enable) Control"
+
+type: object
+required: [de]
+uniqueKeys: [de]
+properties:
+  de:  {$ref: "/pinSetting"}

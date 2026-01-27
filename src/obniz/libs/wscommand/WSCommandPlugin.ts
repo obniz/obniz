@@ -10,10 +10,26 @@ export class WSCommandPlugin extends WSCommandAbstract {
   _CommandSend = 0;
   _CommandReceive = 1;
   _CommandFrame = 2;
+  _CommandExec = 3;
+  _CommandDirective = 4;
 
   public send(params: any, index: any) {
     const buf = new Uint8Array(params.send);
     this.sendCommand(this._CommandSend, buf);
+  }
+
+  public exec_lua(json: { exec_lua: string }) {
+    const buf = Buffer.from(json.exec_lua, 'utf8');
+    const result = new Uint8Array(buf);
+    this.sendCommand(this._CommandExec, result);
+  }
+
+  public reload_lua(json: { reload: boolean }) {
+    if (json.reload) {
+      const buf = new Uint8Array(1);
+      buf[0] = 1;
+      this.sendCommand(this._CommandDirective, buf);
+    }
   }
 
   public parseFromJson(json: any) {
@@ -22,7 +38,11 @@ export class WSCommandPlugin extends WSCommandAbstract {
       return;
     }
 
-    const schemaData = [{ uri: '/request/plugin/send', onValid: this.send }];
+    const schemaData = [
+      { uri: '/request/plugin/send', onValid: this.send },
+      { uri: '/request/plugin/exec_lua', onValid: this.exec_lua },
+      { uri: '/request/plugin/reload_lua', onValid: this.reload_lua },
+    ];
     const res = this.validateCommandSchema(schemaData, module, 'plugin');
 
     if (res.valid === 0) {

@@ -14,10 +14,6 @@ describe('obniz.libs.uart', function () {
 
   it('start', function () {
     this.obniz.uart0.start({ tx: 1, rx: 2, baud: 9600, bits: 7 });
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
 
     expect(this.obniz).send([{ uart0: { tx: 1, rx: 2, baud: 9600, bits: 7 } }]);
 
@@ -29,10 +25,6 @@ describe('obniz.libs.uart', function () {
 
   it('startWithGnd', function () {
     this.obniz.uart0.start({ tx: 1, rx: 2, baud: 9600, bits: 7, gnd: 3 });
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ io3: false }]);
     expect(this.obniz).send([
       {
@@ -57,10 +49,6 @@ describe('obniz.libs.uart', function () {
 
   it('send', function () {
     this.obniz.uart0.start({ tx: 1, rx: 2 }); // 1 is output, 2 is input
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
 
     expect(this.obniz).send([{ uart0: { tx: 1, rx: 2 } }]);
 
@@ -75,10 +63,6 @@ describe('obniz.libs.uart', function () {
 
   it('end', function () {
     this.obniz.uart0.start({ tx: 1, rx: 2 }); // 1 is output, 2 is input
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ uart0: { tx: 1, rx: 2 } }]);
 
     this.obniz.uart0.send('Hi');
@@ -91,10 +75,6 @@ describe('obniz.libs.uart', function () {
 
   it('onreceive', function () {
     this.obniz.uart0.start({ tx: 0, rx: 1 }); // 0 is output, 1 is input
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ uart0: { tx: 0, rx: 1 } }]);
     const stub = sinon.stub();
     this.obniz.uart0.onreceive = stub;
@@ -108,10 +88,6 @@ describe('obniz.libs.uart', function () {
 
   it('readBytes', function () {
     this.obniz.uart0.start({ tx: 0, rx: 1 }); // 0 is output, 1 is input
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ uart0: { tx: 0, rx: 1 } }]);
 
     testUtil.receiveJson(this.obniz, [{ uart0: { data: [78, 105, 99, 101] } }]);
@@ -132,10 +108,6 @@ describe('obniz.libs.uart', function () {
 
   it('readText', function () {
     this.obniz.uart0.start({ tx: 0, rx: 1 }); // 0 is output, 1 is input
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ uart0: { tx: 0, rx: 1 } }]);
 
     testUtil.receiveJson(this.obniz, [{ uart0: { data: [78, 105, 99, 101] } }]);

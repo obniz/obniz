@@ -213,6 +213,56 @@ reset obniz Board when obniz Board gone to offline.
 ```
 
 
+##  request: <a name="-request-system-set_clock">set_clock</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.clock` |  integer  | <ul><li>required</li></ul> | Set the clock (Unix timestamp in milliseconds). This will be set to device immediately and used as device timestamp&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "system": {
+            "clock": 1592171234567
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-system-queue_mode">queue_mode</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.queue_mode.interval` |  integer  | &nbsp; | Set interval of transmission queue of device. Unit is milliseconds. Default is 0ms&nbsp; |
+| `system.queue_mode.timestamp` |  string  | <ul><li>enum <ul><li>`"none"`</li><li>`"unix_seconds"`</li><li>`"unix_milliseconds"`</li></ul></li></ul> | Set timestamp mode. In timestamp mode, device add timestamp to every commands. Default is none. sec use 4 bytes and millisec use 8 bytes&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "system": {
+            "queue_mode": {
+                "interval": 1000,
+                "timestamp": "none"
+            }
+        }
+    }
+]
+```
+
+
 
 
 
@@ -236,6 +286,29 @@ reset obniz Board when obniz Board gone to offline.
             "pong": {
                 "key": [16, 34, 242]
             }
+        }
+    }
+]
+```
+
+
+##  response: <a name="-response-system-timestamp">timestamp</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `system.timestamp` |  number  | <ul><li>required</li></ul> | The timestamp in milliseconds since epoch (1970-01-01T00:00:00Z).&nbsp; |
+
+
+
+```
+//Response Example
+[
+    {
+        "system": {
+            "timestamp": 1592171234567
         }
     }
 ]

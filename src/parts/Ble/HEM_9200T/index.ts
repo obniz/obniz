@@ -109,8 +109,8 @@ export default class HEM_9200T implements ObnizPartsBleInterface {
   public static isDevice(peripheral: BleRemotePeripheral) {
     if (
       peripheral.localName &&
-      (peripheral.localName.startsWith('BLESmart_') ||
-        peripheral.localName.startsWith('BLEsmart_'))
+      (peripheral.localName.startsWith('BLESmart_00000116') ||
+        peripheral.localName.startsWith('BLEsmart_00000116'))
     ) {
       return true;
     }

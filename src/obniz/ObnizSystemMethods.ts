@@ -7,8 +7,13 @@ import { ObnizComponents } from './ObnizComponents';
 import { ObnizOptions } from './ObnizOptions';
 
 export class ObnizSystemMethods extends ObnizComponents {
+  protected pongObservers: any;
+
+  public deviceTimestamp: number | null = null;
+
   constructor(id: string, options?: ObnizOptions) {
     super(id, options);
+    this.pongObservers = [];
   }
 
   /**
@@ -217,6 +222,51 @@ export class ObnizSystemMethods extends ObnizComponents {
   }
 
   /**
+   * Set the internal clock of the obniz device.
+   * This will be set to device immediately and used as device timestamp.
+   *
+   * ```javascript
+   * // JavaScript example
+   * obniz.setClock();
+   * ```
+   *
+   * @param unix_milliseconds number of milliseconds since January 1, 1970 00:00:00 UTC. If not specified, the current time will be used.
+   */
+  public setClock(unix_milliseconds?: number) {
+    let clock = unix_milliseconds;
+    if (typeof clock !== 'number') {
+      clock = new Date().getTime();
+    }
+    this.send({ system: { clock } });
+  }
+
+  public setQueueMode(params: {
+    timestamp: 'none' | 'unix_seconds' | 'unix_milliseconds';
+    interval: number;
+  }) {
+    if (
+      params.timestamp !== 'none' &&
+      params.timestamp !== 'unix_seconds' &&
+      params.timestamp !== 'unix_milliseconds'
+    ) {
+      throw new Error(
+        `mode must be 'none' | 'unix_seconds' | 'unix_milliseconds'`
+      );
+    }
+    if (typeof params.interval !== 'number' || params.interval < 0) {
+      throw new Error('interval must be a positive number');
+    }
+    if (params.interval > 60 * 60 * 1000) {
+      throw new Error('interval max value is 3600000');
+    }
+    this.send({
+      system: {
+        queue_mode: { timestamp: params.timestamp, interval: params.interval },
+      },
+    });
+  }
+
+  /**
    * Action only with obniz Board 1Y.
    *
    * It returns from sleep depending on the pin state of IO0.
@@ -322,5 +372,30 @@ export class ObnizSystemMethods extends ObnizComponents {
       };
       this.addPongObserver(callback);
     });
+  }
+
+  private addPongObserver(callback: any) {
+    if (callback) {
+      this.pongObservers.push(callback);
+    }
+  }
+
+  private removePongObserver(callback: any) {
+    if (this.pongObservers.includes(callback)) {
+      const index = this.pongObservers.indexOf(callback);
+      this.pongObservers.splice(index, 1);
+    }
+  }
+
+  protected _handleSystemCommand(wsObj: any) {
+    super._handleSystemCommand(wsObj);
+    // ping pong
+    if (wsObj.pong) {
+      for (const callback of this.pongObservers) {
+        callback(wsObj);
+      }
+    } else if (wsObj.timestamp) {
+      this.deviceTimestamp = wsObj.timestamp;
+    }
   }
 }

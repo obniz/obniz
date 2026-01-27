@@ -15,6 +15,7 @@ clk, miso, mosi are optional, but at least one are required
 | `spiX.clk` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
 | `spiX.mosi` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
 | `spiX.miso` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
+| `spiX.cs` | [pinSetting](#pinsetting)  | &nbsp; | &nbsp; |
 | `spiX.clock` |  integer  | <ul><li>required</li><li>1 &le; value &le; 26000000</li></ul> | &nbsp; |
 
 
@@ -28,6 +29,7 @@ clk, miso, mosi are optional, but at least one are required
             "clk": 0,
             "mosi": 1,
             "miso": 2,
+            "cs": 3,
             "clock": 115200
         }
     }

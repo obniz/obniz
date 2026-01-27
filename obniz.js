@@ -92,7 +92,7 @@ var Obniz =
 
 module.exports = {
   "name": "obniz",
-  "version": "3.30.1",
+  "version": "3.32.0-beta.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -116,9 +116,9 @@ module.exports = {
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "watch": "tsc -w & webpack --watch --config ./devtools/webpack.config.js  ",
     "watch:debug": "tsc -w -p tsconfig.debug.json & webpack --watch --config ./devtools/webpack.config.js  ",
-    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
-    "doc": "typedoc --includes ./src/ --exclude '**/*.json' --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
-    "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "build": "npm run clean && npm run generate:ble-uuid && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
+    "doc": "typedoc --plugin ./devtools/typedoc-plugins/external-module-name.js --tsconfig ./tsconfig.json --entryPointStrategy expand --entryPoints ./src --includes ./src/ --exclude '**/*.json' --theme default --excludeInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected --media ./docs/images",
+    "build-ts": "npm run clean && npm run generate:ble-uuid && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "eslint --fix . --rulesdir devtools/eslint/rule --quiet",
     "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule --quiet",
@@ -128,7 +128,8 @@ module.exports = {
     "prepublishOnly": "npm run build",
     "code-quality": "docker run --rm -it -v $PWD:/data/project/ -p 8080:8080 jetbrains/qodana-js:2022.2-eap --show-report",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "generate:ble-uuid": "node devtools/_tools/generateBleUuids.js"
   },
   "lint-staged": {
     "src/**/*.ts": [
@@ -215,9 +216,7 @@ module.exports = {
     "sinon": "^7.5.0",
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
-    "typedoc": "^0.16.9",
-    "typedoc-plugin-external-module-name": "^4.0.6",
-    "typedoc-plugin-internal-external": "^2.1.1",
+    "typedoc": "0.24.8",
     "typescript": "^4.7.4",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
@@ -252,6 +251,9 @@ module.exports = {
     "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
+  },
+  "volta": {
+    "node": "16.15.0"
   }
 }
 ;
@@ -303,6 +305,10 @@ var map = {
 	"./request/ble/security/indicate_security_level.yml": "./dist/src/json_schema/request/ble/security/indicate_security_level.yml",
 	"./request/ble/security/key_max_size.yml": "./dist/src/json_schema/request/ble/security/key_max_size.yml",
 	"./request/ble/security/key_type.yml": "./dist/src/json_schema/request/ble/security/key_type.yml",
+	"./request/canbus/deinit.yml": "./dist/src/json_schema/request/canbus/deinit.yml",
+	"./request/canbus/index.yml": "./dist/src/json_schema/request/canbus/index.yml",
+	"./request/canbus/init.yml": "./dist/src/json_schema/request/canbus/init.yml",
+	"./request/canbus/send.yml": "./dist/src/json_schema/request/canbus/send.yml",
 	"./request/display/clear.yml": "./dist/src/json_schema/request/display/clear.yml",
 	"./request/display/index.yml": "./dist/src/json_schema/request/display/index.yml",
 	"./request/display/pin_assign.yml": "./dist/src/json_schema/request/display/pin_assign.yml",
@@ -327,6 +333,9 @@ var map = {
 	"./request/ioAnimation/changeState.yml": "./dist/src/json_schema/request/ioAnimation/changeState.yml",
 	"./request/ioAnimation/index.yml": "./dist/src/json_schema/request/ioAnimation/index.yml",
 	"./request/ioAnimation/init.yml": "./dist/src/json_schema/request/ioAnimation/init.yml",
+	"./request/location/deinit.yml": "./dist/src/json_schema/request/location/deinit.yml",
+	"./request/location/index.yml": "./dist/src/json_schema/request/location/index.yml",
+	"./request/location/init.yml": "./dist/src/json_schema/request/location/init.yml",
 	"./request/logicAnalyzer/deinit.yml": "./dist/src/json_schema/request/logicAnalyzer/deinit.yml",
 	"./request/logicAnalyzer/index.yml": "./dist/src/json_schema/request/logicAnalyzer/index.yml",
 	"./request/logicAnalyzer/init.yml": "./dist/src/json_schema/request/logicAnalyzer/init.yml",
@@ -334,7 +343,12 @@ var map = {
 	"./request/measure/index.yml": "./dist/src/json_schema/request/measure/index.yml",
 	"./request/message/index.yml": "./dist/src/json_schema/request/message/index.yml",
 	"./request/message/send.yml": "./dist/src/json_schema/request/message/send.yml",
+	"./request/motion/deinit.yml": "./dist/src/json_schema/request/motion/deinit.yml",
+	"./request/motion/index.yml": "./dist/src/json_schema/request/motion/index.yml",
+	"./request/motion/init.yml": "./dist/src/json_schema/request/motion/init.yml",
+	"./request/plugin/exec_lua.yml": "./dist/src/json_schema/request/plugin/exec_lua.yml",
 	"./request/plugin/index.yml": "./dist/src/json_schema/request/plugin/index.yml",
+	"./request/plugin/reload_lua.yml": "./dist/src/json_schema/request/plugin/reload_lua.yml",
 	"./request/plugin/send.yml": "./dist/src/json_schema/request/plugin/send.yml",
 	"./request/pwm/deinit.yml": "./dist/src/json_schema/request/pwm/deinit.yml",
 	"./request/pwm/freq.yml": "./dist/src/json_schema/request/pwm/freq.yml",
@@ -346,14 +360,19 @@ var map = {
 	"./request/spi/index.yml": "./dist/src/json_schema/request/spi/index.yml",
 	"./request/spi/init_master.yml": "./dist/src/json_schema/request/spi/init_master.yml",
 	"./request/spi/write.yml": "./dist/src/json_schema/request/spi/write.yml",
+	"./request/storage/index.yml": "./dist/src/json_schema/request/storage/index.yml",
+	"./request/storage/read.yml": "./dist/src/json_schema/request/storage/read.yml",
+	"./request/storage/save.yml": "./dist/src/json_schema/request/storage/save.yml",
 	"./request/switch/get.yml": "./dist/src/json_schema/request/switch/get.yml",
 	"./request/switch/index.yml": "./dist/src/json_schema/request/switch/index.yml",
 	"./request/system/index.yml": "./dist/src/json_schema/request/system/index.yml",
 	"./request/system/keep_working_at_offline.yml": "./dist/src/json_schema/request/system/keep_working_at_offline.yml",
 	"./request/system/ping.yml": "./dist/src/json_schema/request/system/ping.yml",
+	"./request/system/queue_mode.yml": "./dist/src/json_schema/request/system/queue_mode.yml",
 	"./request/system/reboot.yml": "./dist/src/json_schema/request/system/reboot.yml",
 	"./request/system/reset.yml": "./dist/src/json_schema/request/system/reset.yml",
 	"./request/system/self_check.yml": "./dist/src/json_schema/request/system/self_check.yml",
+	"./request/system/set_clock.yml": "./dist/src/json_schema/request/system/set_clock.yml",
 	"./request/system/sleep_io_trigger.yml": "./dist/src/json_schema/request/system/sleep_io_trigger.yml",
 	"./request/system/sleep_minute.yml": "./dist/src/json_schema/request/system/sleep_minute.yml",
 	"./request/system/sleep_seconds.yml": "./dist/src/json_schema/request/system/sleep_seconds.yml",
@@ -362,6 +381,7 @@ var map = {
 	"./request/tcp/disconnect.yml": "./dist/src/json_schema/request/tcp/disconnect.yml",
 	"./request/tcp/index.yml": "./dist/src/json_schema/request/tcp/index.yml",
 	"./request/tcp/write.yml": "./dist/src/json_schema/request/tcp/write.yml",
+	"./request/uart/de.yml": "./dist/src/json_schema/request/uart/de.yml",
 	"./request/uart/deinit.yml": "./dist/src/json_schema/request/uart/deinit.yml",
 	"./request/uart/index.yml": "./dist/src/json_schema/request/uart/index.yml",
 	"./request/uart/init.yml": "./dist/src/json_schema/request/uart/init.yml",
@@ -403,6 +423,8 @@ var map = {
 	"./response/ble/peripheral/descriptor_write.yml": "./dist/src/json_schema/response/ble/peripheral/descriptor_write.yml",
 	"./response/ble/peripheral/index.yml": "./dist/src/json_schema/response/ble/peripheral/index.yml",
 	"./response/ble/peripheral/status.yml": "./dist/src/json_schema/response/ble/peripheral/status.yml",
+	"./response/canbus/index.yml": "./dist/src/json_schema/response/canbus/index.yml",
+	"./response/canbus/receive.yml": "./dist/src/json_schema/response/canbus/receive.yml",
 	"./response/debug/error.yml": "./dist/src/json_schema/response/debug/error.yml",
 	"./response/debug/index.yml": "./dist/src/json_schema/response/debug/index.yml",
 	"./response/debug/warning.yml": "./dist/src/json_schema/response/debug/warning.yml",
@@ -418,21 +440,30 @@ var map = {
 	"./response/io/warning.yml": "./dist/src/json_schema/response/io/warning.yml",
 	"./response/ioanimation/index.yml": "./dist/src/json_schema/response/ioanimation/index.yml",
 	"./response/ioanimation/notify.yml": "./dist/src/json_schema/response/ioanimation/notify.yml",
+	"./response/location/index.yml": "./dist/src/json_schema/response/location/index.yml",
+	"./response/location/update.yml": "./dist/src/json_schema/response/location/update.yml",
 	"./response/logicanalyzer/data.yml": "./dist/src/json_schema/response/logicanalyzer/data.yml",
 	"./response/logicanalyzer/index.yml": "./dist/src/json_schema/response/logicanalyzer/index.yml",
 	"./response/measure/echo.yml": "./dist/src/json_schema/response/measure/echo.yml",
 	"./response/measure/index.yml": "./dist/src/json_schema/response/measure/index.yml",
 	"./response/message/index.yml": "./dist/src/json_schema/response/message/index.yml",
 	"./response/message/receive.yml": "./dist/src/json_schema/response/message/receive.yml",
+	"./response/motion/acceleration.yml": "./dist/src/json_schema/response/motion/acceleration.yml",
+	"./response/motion/index.yml": "./dist/src/json_schema/response/motion/index.yml",
+	"./response/motion/recognition.yml": "./dist/src/json_schema/response/motion/recognition.yml",
+	"./response/motion/temperature.yml": "./dist/src/json_schema/response/motion/temperature.yml",
 	"./response/plugin/frame.yml": "./dist/src/json_schema/response/plugin/frame.yml",
 	"./response/plugin/index.yml": "./dist/src/json_schema/response/plugin/index.yml",
 	"./response/plugin/receive.yml": "./dist/src/json_schema/response/plugin/receive.yml",
 	"./response/spi/index.yml": "./dist/src/json_schema/response/spi/index.yml",
 	"./response/spi/read.yml": "./dist/src/json_schema/response/spi/read.yml",
+	"./response/storage/index.yml": "./dist/src/json_schema/response/storage/index.yml",
+	"./response/storage/read.yml": "./dist/src/json_schema/response/storage/read.yml",
 	"./response/switch/change.yml": "./dist/src/json_schema/response/switch/change.yml",
 	"./response/switch/index.yml": "./dist/src/json_schema/response/switch/index.yml",
 	"./response/system/index.yml": "./dist/src/json_schema/response/system/index.yml",
 	"./response/system/pong.yml": "./dist/src/json_schema/response/system/pong.yml",
+	"./response/system/timestamp.yml": "./dist/src/json_schema/response/system/timestamp.yml",
 	"./response/tcp/connect.yml": "./dist/src/json_schema/response/tcp/connect.yml",
 	"./response/tcp/connection.yml": "./dist/src/json_schema/response/tcp/connection.yml",
 	"./response/tcp/index.yml": "./dist/src/json_schema/response/tcp/index.yml",
@@ -756,6 +787,34 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/canbus/deinit.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/canbus/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/canbus/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/canbus","basePath":"canbus0","anyOf":[{"$ref":"/request/canbus/init"},{"$ref":"/request/canbus/deinit"},{"$ref":"/request/canbus/send"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/canbus/init.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/canbus/init","type":"object","required":["tx","rx","kbps","mode","filter_code","filter_mask"],"uniqueKeys":["tx","rx"],"properties":{"mode":{"type":"string","enum":["normal","noack","listen"]},"tx":{"$ref":"/pinSetting"},"rx":{"$ref":"/pinSetting"},"kbps":{"type":"integer","minimum":1,"maximum":1000,"desription":"bus speed. options are different in MCUs"},"filter_code":{"type":"integer","minimum":0,"maximum":4294967295,"desription":"Accept Data Fields"},"filter_mask":{"type":"integer","minimum":0,"maximum":4294967295,"desription":"Accept Filter Mask. 0 means accept all."}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/canbus/send.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/canbus/send","related":"/response/canbus/read","type":"object","required":["id","data"],"properties":{"id":{"type":"integer","desription":"message identifier"},"data":{"$ref":"/dataArray1024"},"extended":{"type":"boolean","default":false,"desription":"indicate extended format or not"},"rtr":{"type":"boolean","default":false,"desription":"message is remote frame"},"single_shot":{"type":"boolean","default":false,"desription":"message is single shot"},"self_reception":{"type":"boolean","default":false,"desription":"message is self reception request"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/display/clear.yml":
 /***/ (function(module, exports) {
 
@@ -843,7 +902,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/request/io"},"^io1[0-1]$":{"$ref":"/request/io"},"^ad[0-9]$":{"$ref":"/request/ad"},"^ad1[0-1]$":{"$ref":"/request/ad"},"^pwm[0-5]$":{"$ref":"/request/pwm"},"^uart[0-1]$":{"$ref":"/request/uart"},"^spi[0-1]$":{"$ref":"/request/spi"},"^i2c[0-1]$":{"$ref":"/request/i2c"},"^tcp[0-7]$":{"$ref":"/request/tcp"},"^canbus[0-1]$":{"$ref":"/request/canbus"}},"properties":{"io":{"$ref":"/request/ioAnimation"},"ble":{"$ref":"/request/ble"},"switch":{"$ref":"/request/switch"},"display":{"$ref":"/request/display"},"measure":{"$ref":"/request/measure"},"message":{"$ref":"/request/message"},"logic_analyzer":{"$ref":"/request/logicAnalyzer"},"system":{"$ref":"/request/system"},"ws":{"$ref":"/request/ws"},"wifi":{"$ref":"/request/wifi"},"plugin":{"$ref":"/request/plugin"},"storage":{"$ref":"/request/storage"},"motion":{"$ref":"/request/motion"},"location":{"$ref":"/request/location"}}}}
 
 /***/ }),
 
@@ -924,6 +983,27 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/location/deinit.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/location/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/location/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/location","basePath":"location","anyOf":[{"$ref":"/request/location/init"},{"$ref":"/request/location/deinit"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/location/init.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/location/init","type":"object","required":["start"],"properties":{"start":{"type":"object","additionalProperties":false}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/logicAnalyzer/deinit.yml":
 /***/ (function(module, exports) {
 
@@ -973,10 +1053,45 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/motion/deinit.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/motion/deinit","type":"null"}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/motion/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/motion","basePath":"motion","anyOf":[{"$ref":"/request/motion/init"},{"$ref":"/request/motion/deinit"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/motion/init.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/motion/init","type":"object","required":[],"uniqueKeys":[],"properties":{"temperature":{"type":"object","required":["mode"],"additionalProperties":true,"properties":{"mode":{"type":"string","enum":["oneshot","sensitive"]},"sensitivity":{"type":"number","minimum":0,"maximum":1}}},"acceleration":{"type":"object","required":["mode"],"additionalProperties":true,"properties":{"mode":{"type":"string","enum":["oneshot","sensitive"]},"sensitivity":{"type":"number","minimum":0,"maximum":1}}},"recognition":{"type":"object","required":["mode"],"additionalProperties":true,"properties":{"mode":{"type":"string","enum":["oneshot","sensitive"]},"sensitivity":{"type":"number","minimum":0,"maximum":1}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/plugin/exec_lua.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin/exec_lua","desccription":"Executing Lua instantly","type":"object","required":["exec_lua"],"properties":{"exec_lua":{"type":"string"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/plugin/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin","basePath":"plugin","anyOf":[{"$ref":"/request/plugin/send"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin","basePath":"plugin","anyOf":[{"$ref":"/request/plugin/send"},{"$ref":"/request/plugin/exec_lua"},{"$ref":"/request/plugin/reload_lua"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/plugin/reload_lua.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin/reload_lua","desccription":"Load from storage and run Lua.","type":"object","required":["reload"],"properties":{"reload":{"type":"boolean"}}}
 
 /***/ }),
 
@@ -1046,7 +1161,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/spi/init_master.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","type":"object","required":["mode","clock"],"uniqueKeys":["mosi","miso","clk"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"clock":{"type":"integer","default":115200,"minimum":1,"maximum":26000000,"desription":"frequency (Hz)"}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/init_master","type":"object","required":["mode","clock"],"uniqueKeys":["mosi","miso","clk"],"properties":{"mode":{"type":"string","enum":["master"]},"clk":{"$ref":"/pinSetting"},"mosi":{"$ref":"/pinSetting"},"miso":{"$ref":"/pinSetting"},"cs":{"$ref":"/pinSetting"},"clock":{"type":"integer","default":115200,"minimum":1,"maximum":26000000,"desription":"frequency (Hz)"}}}
 
 /***/ }),
 
@@ -1054,6 +1169,27 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/spi/write","related":"/response/spi/read","type":"object","required":["data","read"],"properties":{"data":{"$ref":"/dataArray1024"},"read":{"type":"boolean","default":true}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/storage/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage","basePath":"storage","anyOf":[{"$ref":"/request/storage/save"},{"$ref":"/request/storage/read"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/storage/read.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage/read","related":"/response/storage/read","desription":"Read file data by file name from obniz storage.","type":"object","required":["read"],"properties":{"read":{"type":"object","required":["fileName"],"properties":{"fileName":{"type":"string"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/storage/save.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/storage/save","type":"object","required":["save"],"properties":{"save":{"type":"object","required":["fileName","data"],"properties":{"fileName":{"type":"string"},"data":{"$ref":"/dataArray"}}}}}
 
 /***/ }),
 
@@ -1074,7 +1210,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/system/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"},{"$ref":"/request/system/sleepSeconds"},{"$ref":"/request/system/sleepMinute"},{"$ref":"/request/system/sleepIoTrigger"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system","basePath":"system","anyOf":[{"$ref":"/request/system/wait"},{"$ref":"/request/system/reset"},{"$ref":"/request/system/reboot"},{"$ref":"/request/system/selfCheck"},{"$ref":"/request/system/keepWorkingAtOffline"},{"$ref":"/request/system/ping"},{"$ref":"/request/system/sleepSeconds"},{"$ref":"/request/system/sleepMinute"},{"$ref":"/request/system/sleepIoTrigger"},{"$ref":"/request/system/set_clock"},{"$ref":"/request/system/queue_mode"}]}
 
 /***/ }),
 
@@ -1089,6 +1225,13 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/ping","response":"/response/system/pong","type":"object","required":["ping"],"properties":{"ping":{"type":"object","required":["key"],"properties":{"key":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/system/queue_mode.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/queue_mode","type":"object","required":["queue_mode"],"properties":{"queue_mode":{"type":"object","properties":{"interval":{"type":"integer"},"timestamp":{"type":"string","enum":["none","unix_seconds","unix_milliseconds"]}}}}}
 
 /***/ }),
 
@@ -1110,6 +1253,13 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/selfCheck","type":"object","required":["self_check"],"properties":{"self_check":{"type":"boolean","enum":[true]}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/system/set_clock.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/system/set_clock","type":"object","required":["clock"],"properties":{"clock":{"type":"integer"}}}
 
 /***/ }),
 
@@ -1166,6 +1316,13 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/tcp/write","type":"object","required":["write"],"properties":{"write":{"type":"object","required":["data"],"additionalProperties":false,"properties":{"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/uart/de.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/uart/de","type":"object","required":["de"],"uniqueKeys":["de"],"properties":{"de":{"$ref":"/pinSetting"}}}
 
 /***/ }),
 
@@ -1456,6 +1613,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/canbus/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/canbus","basePath":"canbus0","anyOf":[{"$ref":"/response/canbus/receive"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/canbus/receive.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/canbus/receive","type":"object","properties":{"id":{"type":"integer","desription":"message identifier"},"data":{"$ref":"/dataArray"},"extended":{"type":"boolean","default":false,"desription":"indicate extended format or not"},"rtr":{"type":"boolean","default":false,"desription":"message is remote frame"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/debug/error.yml":
 /***/ (function(module, exports) {
 
@@ -1515,7 +1686,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"},"plugin":{"$ref":"/response/plugin"}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response","type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"patternProperties":{"^io[0-9]$":{"$ref":"/response/io"},"^io1[0-1]$":{"$ref":"/response/io"},"^ad[0-9]$":{"$ref":"/response/ad"},"^ad1[0-1]$":{"$ref":"/response/ad"},"^uart[0-1]$":{"$ref":"/response/uart"},"^spi[0-1]$":{"$ref":"/response/spi"},"^i2c[0-1]$":{"$ref":"/response/i2c"},"^tcp[0-7]$":{"$ref":"/response/tcp"},"^canbus[0-1]$":{"$ref":"/response/canbus"}},"properties":{"io":{"$ref":"/response/ioAnimation"},"switch":{"$ref":"/response/switch"},"ble":{"$ref":"/response/ble"},"measure":{"$ref":"/response/measure"},"message":{"$ref":"/response/message"},"logic_analyzer":{"$ref":"/response/logicAnalyzer"},"system":{"$ref":"/response/system"},"debug":{"$ref":"/response/debug"},"ws":{"$ref":"/response/ws"},"wifi":{"$ref":"/response/wifi"},"plugin":{"$ref":"/response/plugin"},"storage":{"$ref":"/response/storage"},"motion":{"$ref":"/response/motion"},"location":{"$ref":"/response/location"}}}}
 
 /***/ }),
 
@@ -1561,6 +1732,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/location/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/location","basePath":"location","anyOf":[{"$ref":"/response/location/update"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/location/update.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/location/update","type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"},"altitude":{"type":"number"},"accuracy":{"type":"number"},"speed":{"type":"number"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/logicanalyzer/data.yml":
 /***/ (function(module, exports) {
 
@@ -1603,6 +1788,34 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/motion/acceleration.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/motion/acceleration","type":"object","required":["acceleration"],"properties":{"acceleration":{"type":"object","required":["r","t","p"],"additionalProperties":true,"properties":{"r":{"type":"number"},"t":{"type":"number"},"p":{"type":"number"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/motion/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/motion","basePath":"motion","anyOf":[{"$ref":"/response/motion/temperature"},{"$ref":"/response/motion/acceleration"},{"$ref":"/response/motion/recognition"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/motion/recognition.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/motion/recognition","type":"object","required":["recognition"],"properties":{"recognition":{"type":"object","required":["motion","possibility"],"additionalProperties":true,"properties":{"motion":{"type":"string","enum":["none","moving"]},"possibility":{"type":"number"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/motion/temperature.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/motion/temperature","required":["temperature"],"temperature":{"type":"number"}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/plugin/frame.yml":
 /***/ (function(module, exports) {
 
@@ -1638,6 +1851,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/storage/index.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/storage","basePath":"storage","anyOf":[{"$ref":"/response/storage/read"}]}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/storage/read.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/storage/read","type":"object","required":["read"],"properties":{"read":{"$ref":"/dataArray"}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/switch/change.yml":
 /***/ (function(module, exports) {
 
@@ -1655,7 +1882,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/system/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system","basePath":"system","anyOf":[{"$ref":"/response/system/pong"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system","basePath":"system","anyOf":[{"$ref":"/response/system/pong"},{"$ref":"/response/system/timestamp"}]}
 
 /***/ }),
 
@@ -1663,6 +1890,13 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ (function(module, exports) {
 
 module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system/pong","desccription":"pong response with same key of ping request","type":"object","required":["pong"],"properties":{"pong":{"type":"object","required":["key"],"properties":{"key":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/system/timestamp.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/system/timestamp","desccription":"timestamp of the device.","type":"object","required":["timestamp"],"properties":{"timestamp":{"type":"number"}}}
 
 /***/ }),
 
@@ -1773,10 +2007,12 @@ webpackEmptyContext.id = "./dist/src/obniz sync recursive";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Obniz = void 0;
 const m5stack_basic_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stack_basic.js");
+const iekilo1_components_1 = __webpack_require__("./dist/src/obniz/libs/hw/iekilo1_components.js");
 const m5stickc_1 = __webpack_require__("./dist/src/obniz/libs/hw/m5stickc.js");
 const ObnizApi_1 = __webpack_require__("./dist/src/obniz/ObnizApi.js");
 const ObnizApp_1 = __webpack_require__("./dist/src/obniz/ObnizApp.js");
 const ObnizDevice_1 = __webpack_require__("./dist/src/obniz/ObnizDevice.js");
+const wscommand_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/index.js");
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
  *
@@ -1817,6 +2053,9 @@ class Obniz extends ObnizDevice_1.ObnizDevice {
     static get App() {
         return ObnizApp_1.ObnizApp;
     }
+    static getWsCommandModule() {
+        return (0, wscommand_1.createCommandManager)();
+    }
 }
 exports.Obniz = Obniz;
 /**
@@ -1824,6 +2063,15 @@ exports.Obniz = Obniz;
  */
 Obniz.M5StickC = m5stickc_1.M5StickC;
 Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
+/**
+ * types
+ */
+// eslint-disable-next-line no-redeclare
+// eslint-disable-next-line @typescript-eslint/no-namespace
+(function (Obniz) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Obniz.KiloInterface = iekilo1_components_1.KiloInterface;
+})(Obniz = exports.Obniz || (exports.Obniz = {}));
 
 
 /***/ }),
@@ -2045,6 +2293,7 @@ const io_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/io.js");
 const pwm_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/pwm.js");
 const spi_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/spi.js");
 const uart_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/uart.js");
+const canbus_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/canbus.js");
 const logicanalyzer_1 = __webpack_require__("./dist/src/obniz/libs/measurements/logicanalyzer.js");
 const measure_1 = __webpack_require__("./dist/src/obniz/libs/measurements/measure.js");
 const wifi_1 = __webpack_require__("./dist/src/obniz/libs/network/wifi.js");
@@ -2054,10 +2303,13 @@ const ObnizParts_1 = __webpack_require__("./dist/src/obniz/ObnizParts.js");
 const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
 const hw_1 = __webpack_require__("./dist/src/obniz/libs/hw/index.js");
 const grove_1 = __webpack_require__("./dist/src/obniz/libs/io_peripherals/grove.js");
+const storage_1 = __webpack_require__("./dist/src/obniz/libs/embeds/storage.js");
+const motion_1 = __webpack_require__("./dist/src/obniz/libs/embeds/motion.js");
+const location_1 = __webpack_require__("./dist/src/obniz/libs/embeds/location.js");
+const iekilo1_components_1 = __webpack_require__("./dist/src/obniz/libs/hw/iekilo1_components.js");
 class ObnizComponents extends ObnizParts_1.ObnizParts {
     constructor(id, options) {
         super(id, options);
-        this.pongObservers = [];
         this._allComponentKeys = [];
     }
     /**
@@ -2214,12 +2466,16 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
             i2c: i2c_1.PeripheralI2C,
             pwm: pwm_1.PeripheralPWM,
             grove: grove_1.PeripheralGrove,
+            canbus: canbus_1.PeripheralCANBus,
         };
         const ble = ble_1.ObnizBLE;
         const embeds_map = {
             display: display_1.Display,
             switch: switch_1.ObnizSwitch,
             ble,
+            storage: storage_1.Storage,
+            motion: motion_1.Motion,
+            location: location_1.Location,
         };
         const protocol_map = {
             tcp: tcp_1.Tcp,
@@ -2249,6 +2505,7 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
+                    // 'this' must be an instance of Obniz class since it's the only class that gets instantiated by user.
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                     if (typeof this[key].debugHandler === 'function') {
@@ -2280,6 +2537,13 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
                     this._allComponentKeys.push(key);
                 }
             }
+        }
+        // hw specific components
+        if (this.hw === 'iekilo1') {
+            this.components = new iekilo1_components_1.IntelligentEdgeKiloComponent(this);
+        }
+        else {
+            delete this.components;
         }
     }
     _resetComponents() {
@@ -2313,26 +2577,6 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
                     targetComponent.notified(obj[key]);
                 }
             }
-        }
-    }
-    _handleSystemCommand(wsObj) {
-        super._handleSystemCommand(wsObj);
-        // ping pong
-        if (wsObj.pong) {
-            for (const callback of this.pongObservers) {
-                callback(wsObj);
-            }
-        }
-    }
-    addPongObserver(callback) {
-        if (callback) {
-            this.pongObservers.push(callback);
-        }
-    }
-    removePongObserver(callback) {
-        if (this.pongObservers.includes(callback)) {
-            const index = this.pongObservers.indexOf(callback);
-            this.pongObservers.splice(index, 1);
         }
     }
     _getFreePeripheralUnit(peripheral) {
@@ -2380,6 +2624,11 @@ class ObnizConnection extends eventemitter3_1.default {
     constructor(id, options) {
         super();
         this._measureTraffic = null;
+        /**
+         * This variable sets interval time to check connection state to obniz Device.
+         *
+         */
+        this.connectionCheckLoopInterval = null;
         this.socket = null;
         this.socket_local = null;
         this.wsCommandManager = wscommand_1.WSCommandManagerInstance;
@@ -2419,7 +2668,6 @@ class ObnizConnection extends eventemitter3_1.default {
             reset_obniz_on_ws_disconnection: options.reset_obniz_on_ws_disconnection === false ? false : true,
             obnizid_dialog: options.obnizid_dialog === false ? false : true,
         };
-        this.wsCommandManager.createCommandInstances();
         if (this.autoConnect) {
             this._startAutoConnectLoopInBackground();
         }
@@ -2652,7 +2900,7 @@ class ObnizConnection extends eventemitter3_1.default {
                     if (compressed) {
                         sendData = compressed;
                         if (this.debugprintBinary) {
-                            this.log('binalized: ' + new Uint8Array(compressed).toString());
+                            this.log('binalized(send): ' + new Uint8Array(compressed).toString());
                         }
                     }
                 }
@@ -2949,6 +3197,7 @@ class ObnizConnection extends eventemitter3_1.default {
     }
     _connectLocalWait() {
         const host = this._localConnectIp;
+        this.connectionCheckLoopInterval = null; // local connectしないのであれば OSとの通信確認は不要
         if (!host || !this.options.binary || !this.options.local_connect) {
             return;
             // cannot local connect
@@ -2988,7 +3237,10 @@ class ObnizConnection extends eventemitter3_1.default {
         });
         this.socket_local = ws;
         return new Promise((resolve, reject) => {
-            this.once('_localConnectReady', resolve);
+            this.once('_localConnectReady', () => {
+                this.connectionCheckLoopInterval = 60 * 1000; // local connectするのであればOSとの通信確認は必要
+                resolve();
+            });
             this.once('_localConnectClose', () => {
                 reject(new Error('Cannot use local_connect because the connection was rejected'));
             });
@@ -3150,6 +3402,8 @@ class ObnizConnection extends eventemitter3_1.default {
         if (wsObj.ready) {
             const wsObniz = wsObj.obniz;
             this.firmware_ver = wsObniz.firmware;
+            this.plugin_name = wsObniz.plugin_name;
+            this.boot_reason = wsObniz.boot_reason;
             this.hw = wsObniz.hw;
             if (!this.hw) {
                 this.hw = 'obnizb1';
@@ -3266,47 +3520,53 @@ class ObnizConnection extends eventemitter3_1.default {
             clearTimeout(this._nextPingTimeout);
         }
         this._nextPingTimeout = setTimeout(async () => {
-            const loopInterval = 60 * 1000; // 60 sec
-            const loopTimeout = 30 * 1000; // 30 sec
+            var _a;
             if (this._nextPingTimeout) {
                 clearTimeout(this._nextPingTimeout);
             }
             this._nextPingTimeout = null;
+            const enablePingPong = this.connectionCheckLoopInterval !== null;
+            const loopInterval = (_a = this.connectionCheckLoopInterval) !== null && _a !== void 0 ? _a : 60 * 1000;
+            const loopTimeout = 30 * 1000; // 30 sec
+            if (!enablePingPong) {
+                return;
+            }
+            if (this.connectionState !== 'connected') {
+                return;
+            }
+            const currentTime = new Date().getTime();
+            // after 15 sec from last data received
+            if (this._lastDataReceivedAt + loopTimeout < currentTime) {
+                const time = this._lastDataReceivedAt;
+                try {
+                    const p = this.pingWait();
+                    const wait = new Promise((resolve, reject) => {
+                        setTimeout(reject, loopTimeout);
+                    });
+                    await Promise.race([p, wait]);
+                    // this.log("ping/pong success");
+                }
+                catch (e) {
+                    if (this.connectionState !== 'connected') {
+                        // already closed
+                    }
+                    else if (time !== this._lastDataReceivedAt) {
+                        // this will be disconnect -> reconnect while pingWait
+                    }
+                    else {
+                        // ping error or timeout
+                        // this.error("ping/pong response timeout error");
+                        this.wsOnClose('ping/pong response timeout error');
+                        return;
+                    }
+                }
+            }
+            else {
+                // this.log("ping/pong not need");
+            }
             if (this.connectionState === 'connected') {
-                const currentTime = new Date().getTime();
-                // after 15 sec from last data received
-                if (this._lastDataReceivedAt + loopTimeout < currentTime) {
-                    const time = this._lastDataReceivedAt;
-                    try {
-                        const p = this.pingWait();
-                        const wait = new Promise((resolve, reject) => {
-                            setTimeout(reject, loopTimeout);
-                        });
-                        await Promise.race([p, wait]);
-                        // this.log("ping/pong success");
-                    }
-                    catch (e) {
-                        if (this.connectionState !== 'connected') {
-                            // already closed
-                        }
-                        else if (time !== this._lastDataReceivedAt) {
-                            // this will be disconnect -> reconnect while pingWait
-                        }
-                        else {
-                            // ping error or timeout
-                            // this.error("ping/pong response timeout error");
-                            this.wsOnClose('ping/pong response timeout error');
-                            return;
-                        }
-                    }
-                }
-                else {
-                    // this.log("ping/pong not need");
-                }
-                if (this.connectionState === 'connected') {
-                    if (!this._nextPingTimeout) {
-                        this._nextPingTimeout = setTimeout(this._startPingLoopInBackground.bind(this), loopInterval);
-                    }
+                if (!this._nextPingTimeout) {
+                    this._nextPingTimeout = setTimeout(this._startPingLoopInBackground.bind(this), loopInterval);
                 }
             }
         }, 0);
@@ -4022,9 +4282,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.iBeaconData = exports.iBeaconCompanyID = exports.ObnizPartsBleConnectable = exports.ObnizPartsBle = exports.uintToArray = exports.intBE = exports.uintBE = exports.int = exports.uint = exports.fixedPoint = exports.notMatchDeviceError = void 0;
+exports.iBeaconData = exports.iBeaconDataWithStrict = exports.iBeaconCompanyID = exports.ObnizPartsBlePairable = exports.ObnizPartsBleConnectable = exports.ObnizPartsBle = exports.checkEquals = exports.fixByRange = exports.uintToArrayWithBE = exports.uintToArray = exports.intBE = exports.uintBE = exports.int = exports.uint = exports.fixedPoint = exports.notMatchDeviceError = void 0;
 const round_to_1 = __importDefault(__webpack_require__("./node_modules/round-to/index.js"));
 const ObnizError_1 = __webpack_require__("./dist/src/obniz/ObnizError.js");
+const debugFlag = false;
+const debug = (...objects) => {
+    if (!debugFlag)
+        return;
+    console.debug(...objects);
+};
 const ObnizPartsBleModeList = ['Beacon', 'Connectable', 'Pairing'];
 exports.notMatchDeviceError = new Error('Is NOT target device.');
 const fixedPoint = (value, integerBytes) => {
@@ -4041,7 +4307,9 @@ const fixedPoint = (value, integerBytes) => {
 exports.fixedPoint = fixedPoint;
 const uint = (value) => {
     let val = 0;
-    value.forEach((v, i) => (val += v << (i * 8)));
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_operators#bitwise_logical_operators
+    // eslint-disable-next-line prettier/prettier
+    value.forEach((v, i) => (val += v * (2 ** (i * 8))));
     return val;
 };
 exports.uint = uint;
@@ -4059,10 +4327,26 @@ const uintBE = (value) => (0, exports.uint)(value.reverse());
 exports.uintBE = uintBE;
 const intBE = (value) => (0, exports.int)(value.reverse());
 exports.intBE = intBE;
-const uintToArray = (value, length = 2) => new Array(length)
+const uintToArray = (value, length = 2) => new Uint8Array(length)
     .fill(0)
     .map((v, i) => value % (1 << ((i + 1) * 8)) >> (i * 8));
 exports.uintToArray = uintToArray;
+const uintToArrayWithBE = (value, length = 2) => (0, exports.uintToArray)(value, length).reverse();
+exports.uintToArrayWithBE = uintToArrayWithBE;
+const fixByRange = (name, value, min, max) => {
+    if (value < min) {
+        console.warn(`Since ${name} ranges from ${min} to ${max}, ${min} is used.`);
+        return min;
+    }
+    if (value > max) {
+        console.warn(`Since ${name} ranges from ${min} to ${max}, ${max} is used.`);
+        return max;
+    }
+    return value;
+};
+exports.fixByRange = fixByRange;
+const checkEquals = (base, target) => base.filter((v, i) => v !== target[i]).length === 0;
+exports.checkEquals = checkEquals;
 class ObnizPartsBle {
     constructor(peripheral, mode) {
         this._mode = mode;
@@ -4121,10 +4405,16 @@ class ObnizPartsBle {
      * @returns If the corresponding device is that mode, it must be null if not applicable 該当するデバイスならばそのモード、該当しなければnull
      */
     static getDeviceMode(peripheral) {
-        var _a;
-        return ((_a = this.getAvailableBleMode()
-            .map((mode) => this.isDeviceWithMode(peripheral, mode) ? mode : undefined)
-            .find((mode) => mode)) !== null && _a !== void 0 ? _a : null);
+        debug('getAvailableBleMode()', this.getAvailableBleMode());
+        for (const mode of this.getAvailableBleMode()) {
+            const check = this.isDeviceWithMode(peripheral, mode);
+            if (check) {
+                debug(`getDeviceMode(p) => ${mode}`, peripheral.address);
+                return mode;
+            }
+        }
+        debug('getDeviceMode(p) => null', peripheral.address);
+        return null;
     }
     /**
      * Check if peripherals and modes match the library.
@@ -4137,46 +4427,64 @@ class ObnizPartsBle {
      */
     static isDeviceWithMode(peripheral, mode) {
         var _a;
+        debug(`isDeviceWithMode(peripheral, ${mode})`);
         if (!this.getAvailableBleMode().includes(mode))
             return false;
         if (this.Address) {
             const defaultAddress = this.Address instanceof RegExp ? this.Address : this.Address[mode];
+            debug('defaultAddress', defaultAddress);
             if (defaultAddress !== undefined &&
-                !defaultAddress.test(peripheral.address))
+                !defaultAddress.test(peripheral.address)) {
+                debug(`defaultAddress.test(${peripheral.address}) === false`);
                 return false;
+            }
         }
         if (this.LocalName) {
             const defaultLocalName = this.LocalName instanceof RegExp
                 ? this.LocalName
                 : this.LocalName[mode];
+            debug('defaultLocalName', defaultLocalName);
             if (defaultLocalName !== undefined &&
-                !defaultLocalName.test((_a = peripheral.localName) !== null && _a !== void 0 ? _a : 'null'))
+                !defaultLocalName.test((_a = peripheral.localName) !== null && _a !== void 0 ? _a : 'null')) {
+                debug(`defaultLocalName.test(${peripheral.localName} ?? 'null') === false`);
                 return false;
+            }
         }
         if (this.ServiceUuids) {
             const defaultServiceUuids = this.getServiceUuids(mode);
+            debug('defaultServiceUuids', defaultServiceUuids);
             if (defaultServiceUuids !== undefined) {
                 const uuids = peripheral.advertisementServiceUuids();
+                debug('uuids', uuids);
                 if (defaultServiceUuids === null && uuids.length !== 0)
                     return false;
                 if (defaultServiceUuids !== null && uuids.length === 0)
                     return false;
                 if (defaultServiceUuids !== null &&
-                    defaultServiceUuids.filter((u) => !uuids.includes(u.toLowerCase()))
-                        .length !== 0)
+                    defaultServiceUuids.some((u) => !uuids.includes(u.toLowerCase()))) {
+                    debug('defaultServiceUuids.some((u) => !uuids.includes(u.toLowerCase())) === true');
                     return false;
+                }
             }
         }
-        if (!this.checkCustomData(mode, peripheral.address, peripheral.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, this.BeaconDataStruct))
+        if (!this.checkCustomData(mode, peripheral.address, peripheral.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, this.BeaconDataStruct)) {
+            debug('this.checkCustomData(mode, p.address, p.manufacturerSpecificData, this.BeaconDataLength, this.CompanyID, this.BeaconDataStruct) === false');
             return false;
-        if (!this.checkCustomData(mode, peripheral.address, peripheral.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, this.BeaconDataStruct))
+        }
+        if (!this.checkCustomData(mode, peripheral.address, peripheral.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, this.BeaconDataStruct, true)) {
+            debug('this.checkCustomData(mode, p.address, p.manufacturerSpecificDataInScanResponse, this.BeaconDataLength_ScanResponse, this.CompanyID_ScanResponse, this.BeaconDataStruct, true) === false');
             return false;
-        if (!this.checkCustomData(mode, peripheral.address, peripheral.serviceData, this.ServiceDataLength, this.ServiceDataUUID, this.ServiceDataStruct))
+        }
+        if (!this.checkCustomData(mode, peripheral.address, peripheral.serviceData, this.ServiceDataLength, this.ServiceDataUUID, this.ServiceDataStruct)) {
+            debug('this.checkCustomData(mode, p.address, p.serviceData, this.ServiceDataLength, this.ServiceDataUUID, this.ServiceDataStruct) === false');
             return false;
+        }
         return true;
     }
-    static checkCustomData(mode, address, data, dataLength, headID, dataStruct, inScanResponse = false) {
-        var _a;
+    static checkCustomData(mode, address, rawData, dataLength, headID, dataStruct, inScanResponse = false) {
+        var _a, _b, _c;
+        debug(`checkCustomData(mode, address, ${rawData}, ${dataLength}, ${headID}, ${dataStruct}, ${inScanResponse})`);
+        const data = rawData ? new Uint8Array(rawData) : null;
         if (headID !== undefined) {
             const defHeadID = headID instanceof Array || headID === null || headID === undefined
                 ? headID
@@ -4209,36 +4517,61 @@ class ObnizPartsBle {
                     return false;
             }
         }
-        if (dataStruct !== undefined) {
-            const defDataStruct = (dataStruct !== null &&
-                (dataStruct.Beacon || dataStruct.Connectable || dataStruct.Pairing)
-                ? dataStruct[mode]
+        if (typeof dataStruct === 'object' && dataStruct !== null) {
+            // ひとまずモードで選択してみる
+            const defDataStructByMode = dataStruct[mode];
+            // モードで選択した変数がオブジェクトまたはnullならばそのまま使い、そうでなければモードで選択せずに使用
+            const defDataStruct = (typeof defDataStructByMode === 'object'
+                ? defDataStructByMode
                 : dataStruct);
             if (defDataStruct !== undefined) {
                 // TODO: macAddress_ -> macAddress
                 if (defDataStruct && ((_a = defDataStruct.macAddress_) === null || _a === void 0 ? void 0 : _a.type) === 'check') {
-                    defDataStruct.macAddress_.data = new Array(6)
-                        .fill(0)
-                        .map((v, i) => parseInt(address.slice(i * 2, (i + 1) * 2), 16))
-                        .reverse();
+                    defDataStruct.macAddress_ = Object.assign(Object.assign({}, defDataStruct.macAddress_), { data: new Array(6)
+                            .fill(0)
+                            .map((v, i) => parseInt(address.slice(i * 2, (i + 1) * 2), 16))
+                            .reverse() });
                 }
-                if (defDataStruct !== null &&
-                    data !== null &&
-                    Object.values(defDataStruct).filter((config) => {
-                        var _a, _b;
-                        return inScanResponse === ((_a = config.scanResponse) !== null && _a !== void 0 ? _a : false) &&
-                            config.type === 'check' &&
-                            data
-                                .slice(2 + config.index, 2 + config.index + ((_b = config.length) !== null && _b !== void 0 ? _b : 1))
-                                .filter((d, i) => {
-                                var _a;
-                                return d !==
-                                    (typeof config.data === 'number'
-                                        ? [config.data]
-                                        : (_a = config.data) !== null && _a !== void 0 ? _a : [])[i];
-                            }).length !== 0;
-                    }).length !== 0)
+                if (defDataStruct === null && data === null) {
+                    // OK
+                }
+                else if (defDataStruct !== null && data === null) {
+                    // defDataStructではNULLであるべきかどうかを
+                    // AdvertisementDataとScanResponseData別に明記できないため、判定をスキップ
+                }
+                else if (defDataStruct === null && data !== null) {
+                    // どちらかが明示的に空なのに存在するため、ミスマッチ
                     return false;
+                }
+                else if (defDataStruct !== null && data !== null) {
+                    // チェック対象となる設定を抽出
+                    const configs = Object.values(defDataStruct).filter((config) => {
+                        var _a;
+                        return inScanResponse === ((_a = config.scanResponse) !== null && _a !== void 0 ? _a : false) &&
+                            config.type === 'check';
+                    });
+                    for (const config of configs) {
+                        // チェック対象となるバイト列
+                        const targetData = data.slice(2 + config.index, 2 + config.index + ((_b = config.length) !== null && _b !== void 0 ? _b : 1));
+                        if (typeof config.func === 'function') {
+                            // funcが関数ならば、実行して確認
+                            const result = config.func(targetData);
+                            if (!result) {
+                                return false;
+                            }
+                        }
+                        else if (typeof config.data === 'number' ||
+                            Array.isArray(config.data)) {
+                            // dataに値や配列があれば、それらを比較
+                            const baseData = typeof config.data === 'number'
+                                ? [config.data]
+                                : (_c = config.data) !== null && _c !== void 0 ? _c : [];
+                            if (!(0, exports.checkEquals)(baseData, targetData)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
             }
         }
         return true;
@@ -4276,8 +4609,11 @@ class ObnizPartsBle {
     }
     /**
      * アドバタイジングデータを連想配列に成形
+     *
      * 利用可能なモード: Beacon, Connectable(一部のみ)
+     *
      * Form advertising data into an associative array
+     *
      * Available modes: Beacon, Connectable(only part)
      */
     getData() {
@@ -4293,19 +4629,19 @@ class ObnizPartsBle {
                 : null;
         if (!data)
             throw new Error('Manufacturer specific data is null.');
-        const defDataStruct = (dataStruct.Beacon ||
-            dataStruct.Connectable ||
-            dataStruct.Pairing
-            ? dataStruct[this.mode]
+        // ひとまずモードで選択してみる
+        const defDataStructByMode = dataStruct[this.mode];
+        // モードで選択した変数がオブジェクトまたはnullならばそのまま使い、そうでなければモードで選択せずに使用
+        const defDataStruct = (typeof defDataStructByMode === 'object'
+            ? defDataStructByMode
             : dataStruct);
         if (defDataStruct === null)
             throw new Error('Data analysis is not defined.');
         return Object.fromEntries(Object.entries(defDataStruct)
-            .map(([name, c]) => {
-            var _a, _b, _c;
-            if (c.type === 'check')
+            .map(([name, config]) => {
+            var _a, _b, _c, _d;
+            if (config.type === 'check')
                 return [];
-            const config = c;
             if (!(config.scanResponse ? this.beaconDataInScanResponse : data))
                 throw new Error('manufacturerSpecificData is null.');
             const vals = ((_a = (config.scanResponse ? this.beaconDataInScanResponse : data)) !== null && _a !== void 0 ? _a : []).slice(config.index, config.index + ((_b = config.length) !== null && _b !== void 0 ? _b : 1));
@@ -4338,11 +4674,12 @@ class ObnizPartsBle {
                 else
                     return [name, config.func(vals, this.peripheral)];
             else {
-                const multi = (_c = config.multiple) !== null && _c !== void 0 ? _c : 1;
+                const base = (_c = config.base) !== null && _c !== void 0 ? _c : 0;
+                const multi = (_d = config.multiple) !== null && _d !== void 0 ? _d : 1;
                 const f = (d) => config.fixedIntegerBytes !== undefined
                     ? (0, exports.fixedPoint)(d, config.fixedIntegerBytes)
                     : (config.type.indexOf('u') === 0 ? exports.uint : exports.int)(config.type.indexOf('BE') >= 0 ? d.reverse() : d);
-                const num = f(vals) * multi;
+                const num = base + f(vals) * multi;
                 return [
                     name,
                     config.round !== undefined ? (0, round_to_1.default)(num, config.round) : num,
@@ -4389,8 +4726,10 @@ ObnizPartsBle.ServiceUuids = undefined;
  */
 ObnizPartsBle.BeaconDataLength = undefined;
 /**
+ * Overall length of manufacturer-specific data.
  * Used as a condition of isDevice() by default.
  *
+ * 製造者固有データ全体の長さ
  * 標準でisDevice()の条件として使用
  */
 ObnizPartsBle.BeaconDataLength_ScanResponse = undefined;
@@ -4421,11 +4760,26 @@ ObnizPartsBle.ServiceDataUUID = undefined;
 class ObnizPartsBleConnectable extends ObnizPartsBle {
     constructor(peripheral, mode) {
         super(peripheral, mode);
-        this.peripheral.ondisconnect = async (reason) => {
-            await this.beforeOnDisconnectWait(reason);
+        this.disconnectedListeners = [];
+        this.peripheral.ondisconnect = (reason) => {
+            this.disconnectedListeners.forEach((func) => func(reason));
             if (this.ondisconnect)
-                await this.ondisconnect(reason);
+                this.ondisconnect(reason);
         };
+    }
+    /**
+     * Register functions to be called on disconnection.
+     *
+     * Note: Registration is reset upon connection, so please register after connection.
+     *
+     * 切断時に呼ばれる関数を登録
+     *
+     * 注意: 接続時に登録がリセットされるため、接続後に登録してください
+     *
+     * @param func Function to be registered 登録したい関数
+     */
+    registerDisconnected(func) {
+        this.disconnectedListeners.push(func);
     }
     /**
      * Connect to peripherals with validation.
@@ -4433,18 +4787,21 @@ class ObnizPartsBleConnectable extends ObnizPartsBle {
      * バリデーションのあるペリフェラルへの接続
      *
      * @param keys: Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+     * @param setting: Additional settings when connecting 接続時の追加設定
      */
-    async connectWait(keys) {
+    async connectWait(keys, setting) {
+        var _a;
+        if (this.peripheral.connected) {
+            return;
+        }
+        // 切断時に呼ぶ関数一覧を全て削除
+        this.disconnectedListeners.splice(0);
         // TODO: Enable Validation
         // if (this.mode !== 'Connectable')
         //   throw new Error(
         //     `Connection can only be used in connectable mode, the current mode is ${this.mode}`
         //   );
-        await this.peripheral.connectWait({
-            pairingOption: {
-                keys,
-            },
-        });
+        await this.peripheral.connectWait(Object.assign({ pairingOption: Object.assign({ keys }, ((_a = setting === null || setting === void 0 ? void 0 : setting.pairingOption) !== null && _a !== void 0 ? _a : {})) }, (setting !== null && setting !== void 0 ? setting : {})));
     }
     /**
      * Disconnect from peripheral.
@@ -4452,7 +4809,12 @@ class ObnizPartsBleConnectable extends ObnizPartsBle {
      * ペリフェラルから切断
      */
     async disconnectWait() {
+        if (!this.peripheral.connected) {
+            return;
+        }
         await this.peripheral.disconnectWait();
+        // 切断時に呼ぶ関数一覧を全て削除
+        this.disconnectedListeners.splice(0);
     }
     /**
      * Check if connected.
@@ -4505,12 +4867,12 @@ class ObnizPartsBleConnectable extends ObnizPartsBle {
      *
      * @param serviceUuid Service UUID
      * @param characteristicUuid Characteristic UUID
-     * @param data Write data
-     * @returns Data write result
+     * @param data Write data 書き込むデータ
+     * @returns Data write result データ書き込み結果
      */
     async writeCharWait(serviceUuid, characteristicUuid, data, needResponse) {
         const characteristic = this.getChar(serviceUuid, characteristicUuid);
-        return await characteristic.writeWait(data, needResponse);
+        return await characteristic.writeWait(data instanceof Uint8Array ? Array.from(data) : data, needResponse);
     }
     /**
      * Register notification to any characteristic of any service.
@@ -4519,7 +4881,7 @@ class ObnizPartsBleConnectable extends ObnizPartsBle {
      *
      * @param serviceUuid Service UUID
      * @param characteristicUuid Characteristic UUID
-     * @param callback It is called when data comes
+     * @param callback Function called when data arrives データが来たときに呼ばれる関数
      */
     async subscribeWait(serviceUuid, characteristicUuid, callback) {
         const characteristic = this.getChar(serviceUuid, characteristicUuid);
@@ -4541,8 +4903,82 @@ class ObnizPartsBleConnectable extends ObnizPartsBle {
     }
 }
 exports.ObnizPartsBleConnectable = ObnizPartsBleConnectable;
+class ObnizPartsBlePairable extends ObnizPartsBleConnectable {
+    constructor() {
+        super(...arguments);
+        /**
+         * Disconnect request after pairing
+         *
+         * ペアリング後に切断要求を行う
+         */
+        this.requestDisconnectAfterPairing = true;
+        /**
+         * Wait for disconnect event at the end of pairing
+         *
+         * ペアリングの終了時には切断イベントを待つ
+         */
+        this.waitDisconnectAfterPairing = true;
+    }
+    /**
+     * After pairing and before disconnect
+     *
+     * ペアリング後、切断前に行う操作
+     */
+    async afterPairingWait() {
+        // do nothing
+    }
+    /**
+     * Perform pairing
+     *
+     * ペアリングを実行
+     *
+     * @returns Pairing key ペアリングキー
+     */
+    async pairingWait() {
+        // 接続と同時にペアリングを実行
+        await this.connectWait(undefined, {
+            waitUntilPairing: true,
+        });
+        // ペアリングキーを取得
+        const keys = await this.peripheral.getPairingKeysWait();
+        /**
+          以下の実装と同じ
+          await this._peripheral.connectWait({
+            pairingOption: {
+              onPairedCallback: (keys) => {
+                gotKeys = keys;
+              },
+              onPairingFailed: (e) => {
+                throw e;
+              },
+            },
+          });
+         */
+        // 任意のコードを実行
+        await this.afterPairingWait();
+        const promise = new Promise((resolve) => {
+            this.registerDisconnected(() => {
+                // ペアリングキーを返す
+                resolve(keys);
+            });
+        });
+        // 切断要求を送信
+        if (this.requestDisconnectAfterPairing) {
+            await this.disconnectWait();
+        }
+        if (this.waitDisconnectAfterPairing) {
+            // 切断完了を待つ
+            return await promise;
+        }
+        else {
+            // 切断完了を待たずにペアリングキーを返す
+            return keys;
+        }
+    }
+}
+exports.ObnizPartsBlePairable = ObnizPartsBlePairable;
 exports.iBeaconCompanyID = [0x4c, 0x00];
-exports.iBeaconData = 
+exports.iBeaconDataWithStrict = 
 // length !== 25
 {
     type: {
@@ -4580,6 +5016,7 @@ exports.iBeaconData =
         func: (d, p) => { var _a; return (_a = p.rssi) !== null && _a !== void 0 ? _a : 0; },
     },
 };
+exports.iBeaconData = exports.iBeaconDataWithStrict;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
@@ -4662,6 +5099,8 @@ const ObnizComponents_1 = __webpack_require__("./dist/src/obniz/ObnizComponents.
 class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
     constructor(id, options) {
         super(id, options);
+        this.deviceTimestamp = null;
+        this.pongObservers = [];
     }
     /**
      * This pauses obniz Board for a period given in terms of ms (millisecond).
@@ -4861,6 +5300,42 @@ class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
         }
     }
     /**
+     * Set the internal clock of the obniz device.
+     * This will be set to device immediately and used as device timestamp.
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.setClock();
+     * ```
+     *
+     * @param unix_milliseconds number of milliseconds since January 1, 1970 00:00:00 UTC. If not specified, the current time will be used.
+     */
+    setClock(unix_milliseconds) {
+        let clock = unix_milliseconds;
+        if (typeof clock !== 'number') {
+            clock = new Date().getTime();
+        }
+        this.send({ system: { clock } });
+    }
+    setQueueMode(params) {
+        if (params.timestamp !== 'none' &&
+            params.timestamp !== 'unix_seconds' &&
+            params.timestamp !== 'unix_milliseconds') {
+            throw new Error(`mode must be 'none' | 'unix_seconds' | 'unix_milliseconds'`);
+        }
+        if (typeof params.interval !== 'number' || params.interval < 0) {
+            throw new Error('interval must be a positive number');
+        }
+        if (params.interval > 60 * 60 * 1000) {
+            throw new Error('interval max value is 3600000');
+        }
+        this.send({
+            system: {
+                queue_mode: { timestamp: params.timestamp, interval: params.interval },
+            },
+        });
+    }
+    /**
      * Action only with obniz Board 1Y.
      *
      * It returns from sleep depending on the pin state of IO0.
@@ -4950,6 +5425,29 @@ class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
             };
             this.addPongObserver(callback);
         });
+    }
+    addPongObserver(callback) {
+        if (callback) {
+            this.pongObservers.push(callback);
+        }
+    }
+    removePongObserver(callback) {
+        if (this.pongObservers.includes(callback)) {
+            const index = this.pongObservers.indexOf(callback);
+            this.pongObservers.splice(index, 1);
+        }
+    }
+    _handleSystemCommand(wsObj) {
+        super._handleSystemCommand(wsObj);
+        // ping pong
+        if (wsObj.pong) {
+            for (const callback of this.pongObservers) {
+                callback(wsObj);
+            }
+        }
+        else if (wsObj.timestamp) {
+            this.deviceTimestamp = wsObj.timestamp;
+        }
     }
 }
 exports.ObnizSystemMethods = ObnizSystemMethods;
@@ -8582,6 +9080,9 @@ class BleRemotePeripheral {
             this.connected = true;
             this.connected_at = new Date();
             try {
+                if (this._connectSetting.connectionParameterUpdateAccept === false) {
+                    this.obnizBle.centralBindings._signalings[this.address].connectionParameterUpdateAccept = false;
+                }
                 if (this._connectSetting.waitUntilPairing &&
                     !(await this.isPairingFinishedWait())) {
                     // console.log('waitUntilPairing');
@@ -12005,6 +12506,7 @@ const SIGNALING_CID = 0x0005;
 class Signaling extends eventemitter3_1.default {
     constructor(handle, aclStream) {
         super();
+        this.connectionParameterUpdateAccept = true;
         this._handle = handle;
         this._aclStream = aclStream;
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
@@ -12045,9 +12547,16 @@ class Signaling extends eventemitter3_1.default {
         response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
         response.writeUInt8(identifier, 1); // identifier
         response.writeUInt16LE(2, 2); // length
-        response.writeUInt16LE(0, 4);
+        if (this.connectionParameterUpdateAccept) {
+            response.writeUInt16LE(0, 4); // accept
+        }
+        else {
+            response.writeUInt16LE(1, 4); // reject
+        }
         this._aclStream.write(SIGNALING_CID, response);
-        this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
+        if (this.connectionParameterUpdateAccept) {
+            this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
+        }
     }
 }
 exports.Signaling = Signaling;
@@ -17170,6 +17679,478 @@ exports.Display = Display;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/embeds/location.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Location = void 0;
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
+/**
+ * GPS/GNSS Service
+ *
+ * @category Embeds
+ */
+class Location extends ComponentAbstact_1.ComponentAbstract {
+    constructor(obniz, info) {
+        super(obniz);
+        this.on('/response/location/update', (obj) => {
+            this.Obniz._runUserCreatedFunction(this.onupdate, obj);
+        });
+        this._reset();
+    }
+    _reset() {
+        // No Need to reset
+    }
+    schemaBasePath() {
+        return 'location';
+    }
+    start() {
+        const obj = {
+            location: {
+                start: {},
+            },
+        };
+        this.Obniz.send(obj);
+    }
+}
+exports.Location = Location;
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/mcp23s08.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MCP23S08 = void 0;
+const mcp23s08_io_1 = __webpack_require__("./dist/src/obniz/libs/embeds/mcp23s08_io.js");
+class MCP23S08 {
+    constructor() {
+        this.ios = [];
+        this.keys = ['vcc', 'gnd', 'frequency', 'mosi', 'miso', 'clk', 'spi', 'cs'];
+        this.requiredKeys = ['cs'];
+    }
+    wired(obniz, spi) {
+        this.obniz = obniz;
+        this.spi = spi;
+        this.readSlaveAddress = 0b01000001;
+        this.writeSlaveAddress = 0b01000000;
+        this.ios = [];
+        for (let i = 0; i < 8; i++) {
+            const io = new mcp23s08_io_1.MCP23S08_IO(this, i);
+            this.ios.push(io);
+            this['io' + i] = io;
+        }
+    }
+    /**
+     * Initialize all ios. set direction=input.
+     */
+    async initWait(obniz) {
+        await this.writeWait(MCP23S08.MCP23S08_REGISTER.IODIR, 0xff); // input
+        for (let i = MCP23S08.MCP23S08_REGISTER.IPOL; i <= MCP23S08.MCP23S08_REGISTER.OLAT; i++) {
+            await this.writeWait(i, 0x00);
+        }
+        await this.flushWait('direction');
+        await this.flushWait('gpio');
+    }
+    /**
+     * Read byte from address
+     *
+     * @param address internal register address
+     * @returns readed value of address
+     */
+    async readWait(address) {
+        await this.spi.writeWait([this.readSlaveAddress, address]);
+        const ret = await this.spi.writeWait([0x00]);
+        return ret[0];
+    }
+    /**
+     * Write byte to address. It will wait until success response receive
+     *
+     * @param address internal register address
+     * @param data
+     */
+    async writeWait(address, data) {
+        await this.spi.writeWait([this.writeSlaveAddress, address, data]);
+    }
+    /**
+     * Write byte to address without wait.
+     *
+     * @param address internal register address
+     * @param data
+     */
+    write(address, data) {
+        this.spi.write([this.writeSlaveAddress, address, data]);
+    }
+    /**
+     * Bulk write to addresses
+     *
+     * @param address start address
+     * @param data
+     */
+    async writeBulkWait(address, data) {
+        await this.spi.writeWait([this.writeSlaveAddress, address, ...data]);
+    }
+    /**
+     * set output value for io. It will apply immidiately.
+     * This function never change direction. set direction output before.
+     * If you want to hold some changes and flush once.
+     * ```
+     * use following examle steps
+     * this.io0.value = true;
+     * this.io1.value = true;
+     * this.flush("gpio");
+     * ```
+     *
+     * @param id io address. 0-7
+     * @param value boolean. true or false
+     */
+    output(id, value) {
+        value = value === true;
+        this.ios[id].value = value;
+        this.flush();
+    }
+    /**
+     * async version of output();
+     *
+     * @param id
+     * @param value
+     */
+    async outputWait(id, value) {
+        value = value === true;
+        this.ios[id].value = value;
+        await this.flushWait();
+    }
+    /**
+     * Read current all GPIO value.
+     */
+    async readAllGPIOWait() {
+        const ret = await this.readWait(MCP23S08.MCP23S08_REGISTER.GPIO);
+        for (let i = 0; i < 8; i++) {
+            if (this.ios[i].direction === MCP23S08.MCP23S08_IO_DIRECTION.INPUT) {
+                this.ios[i].value = (ret & (1 << i)) !== 0;
+            }
+        }
+    }
+    /**
+     * Read current all GPIO value and return single io value.
+     *
+     * @param id io 0-7
+     * @returns GPIO value
+     */
+    async inputWait(id) {
+        await this.readAllGPIOWait();
+        return this.ios[id].value;
+    }
+    async flushWait(type = 'gpio') {
+        const keys = {
+            gpio: { key: 'value', address: MCP23S08.MCP23S08_REGISTER.GPIO },
+            direction: {
+                key: 'direction',
+                address: MCP23S08.MCP23S08_REGISTER.IODIR,
+            },
+        };
+        const key = keys[type].key;
+        const address = keys[type].address;
+        let value = 0;
+        for (let i = 0; i < 8; i++) {
+            if (this.ios[i][key]) {
+                value = value | (1 << i);
+            }
+        }
+        await this.writeWait(address, value);
+    }
+    flush(type = 'gpio') {
+        const keys = {
+            gpio: { key: 'value', address: MCP23S08.MCP23S08_REGISTER.GPIO },
+            direction: {
+                key: 'direction',
+                address: MCP23S08.MCP23S08_REGISTER.IODIR,
+            },
+        };
+        const key = keys[type].key;
+        const address = keys[type].address;
+        let value = 0;
+        for (let i = 0; i < 8; i++) {
+            if (this.ios[i][key]) {
+                value = value | (1 << i);
+            }
+        }
+        this.write(address, value);
+    }
+}
+exports.MCP23S08 = MCP23S08;
+MCP23S08.MCP23S08_IO_DIRECTION = {
+    OUTPUT: false,
+    INPUT: true,
+};
+MCP23S08.MCP23S08_REGISTER = {
+    IODIR: 0x00,
+    IPOL: 0x01,
+    GPINTEN: 0x02,
+    DEFVAL: 0x03,
+    INTCON: 0x04,
+    IOCON: 0x05,
+    GPPU: 0x06,
+    INTF: 0x07,
+    INTCAP: 0x08,
+    GPIO: 0x09,
+    OLAT: 0x0a,
+};
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/mcp23s08_io.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MCP23S08_IO = void 0;
+class MCP23S08_IO {
+    constructor(chip, id) {
+        this.chip = chip;
+        this.id = id;
+        this.value = false;
+        this.direction = true; // true is input. false is output
+    }
+    output(value) {
+        this.chip.output(this.id, value);
+    }
+    async outputWait(value) {
+        await this.chip.outputWait(this.id, value);
+    }
+    async inputWait(obniz) {
+        return await this.chip.inputWait(this.id);
+    }
+}
+exports.MCP23S08_IO = MCP23S08_IO;
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/motion.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Motion = void 0;
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
+var MotionType;
+(function (MotionType) {
+    MotionType["None"] = "none";
+    MotionType["Moving"] = "moving";
+})(MotionType || (MotionType = {}));
+/**
+ * GPS/GNSS Service
+ *
+ * @category Embeds
+ */
+class Motion extends ComponentAbstact_1.ComponentAbstract {
+    constructor(obniz, info) {
+        super(obniz);
+        this.on('/response/motion/temperature', (obj) => {
+            this.Obniz._runUserCreatedFunction(this.onTemperatureUpdate, obj.temperature);
+        });
+        this.on('/response/motion/acceleration', (obj) => {
+            this.Obniz._runUserCreatedFunction(this.onAccelerationUpdate, obj.acceleration.r, obj.acceleration.t, obj.acceleration.p);
+        });
+        this.on('/response/motion/recognition', (obj) => {
+            this.Obniz._runUserCreatedFunction(this.onRecognitionUpdate, obj.recognition.motion, obj.recognition.possibility);
+        });
+        this._reset();
+    }
+    _reset() {
+        // No Need to reset
+    }
+    schemaBasePath() {
+        return 'motion';
+    }
+    start(temp_sensitivity = 0, acceleration_sensitivity = 0, recognition_sensitivity = 0) {
+        const motion = {};
+        if (temp_sensitivity > 0) {
+            motion.temperature = {
+                mode: 'sensitive',
+                sensitivity: temp_sensitivity,
+            };
+        }
+        if (acceleration_sensitivity > 0) {
+            motion.acceleration = {
+                mode: 'sensitive',
+                sensitivity: acceleration_sensitivity,
+            };
+        }
+        if (recognition_sensitivity > 0) {
+            motion.recognition = {
+                mode: 'sensitive',
+                sensitivity: recognition_sensitivity,
+            };
+        }
+        const obj = {
+            motion,
+        };
+        this.Obniz.send(obj);
+    }
+    /**
+     * One shot getting
+     *
+     * ```javascript
+     * var value = obniz.motion.getTemperatureWait();
+     * // 25.0
+     * ```
+     *
+     * @return temperature in degree Celsius
+     *
+     */
+    async getTemperatureWait() {
+        const obj = {};
+        obj.motion = {
+            temperature: {
+                mode: 'oneshot',
+                sensitivity: 1,
+            },
+        };
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/motion/temperature');
+        return data.temperature;
+    }
+    /**
+     * One shot getting
+     *
+     * ```javascript
+     * var value = obniz.motion.getAccelerationWait();
+     * // { r: 0.1, theta: 90, phi: 90 }
+     * ```
+     *
+     * @return acceleration
+     *
+     */
+    async getAccelerationWait() {
+        const obj = {};
+        obj.motion = {
+            acceleration: {
+                mode: 'oneshot',
+                sensitivity: 1,
+            },
+        };
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/motion/acceleration');
+        return data.acceleration;
+    }
+    /**
+     * One shot getting
+     *
+     * ```javascript
+     * var value = obniz.motion.getRecognitionWait();
+     * // { motion: 'moving', possibility: 0.5 }
+     * ```
+     *
+     * @return recognition
+     *
+     */
+    async getRecognitionWait() {
+        const obj = {};
+        obj.motion = {
+            recognition: {
+                mode: 'oneshot',
+                sensitivity: 1,
+            },
+        };
+        const data = await this.sendAndReceiveJsonWait(obj, '/response/motion/recognition');
+        return data.recognition;
+    }
+}
+exports.Motion = Motion;
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/embeds/storage.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Storage = void 0;
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
+const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
+class Storage extends ComponentAbstact_1.ComponentAbstract {
+    schemaBasePath() {
+        return 'storage';
+    }
+    _reset() {
+        // What should I do?
+    }
+    constructor(obniz, info) {
+        super(obniz);
+    }
+    save(fileName, data) {
+        if (semver_1.default.major(this.Obniz.firmware_ver) < 4) {
+            throw new Error(`Please update obniz firmware >= 4.0.0`);
+        }
+        const obj = {
+            storage: {
+                save: {
+                    fileName,
+                    data,
+                },
+            },
+        };
+        this.Obniz.send(obj);
+    }
+    savePluginLua(lua_script) {
+        if (semver_1.default.major(this.Obniz.firmware_ver) < 7) {
+            throw new Error(`Please update obniz firmware >= 7.0.0`);
+        }
+        let send_data = null;
+        if (this.Obniz.isNode && lua_script instanceof Buffer) {
+            send_data = [...lua_script];
+        }
+        else if (lua_script.constructor === Array) {
+            send_data = lua_script;
+        }
+        else if (typeof lua_script === 'string') {
+            const buf = Buffer.from(lua_script);
+            send_data = [...buf];
+        }
+        if (!send_data) {
+            throw new Error(`no correct lua_script supplied`);
+        }
+        this.save('plua', send_data);
+    }
+    async readWait(fileName) {
+        const obj = {
+            storage: {
+                read: {
+                    fileName,
+                },
+            },
+        };
+        const json = await this.sendAndReceiveJsonWait(obj, '/response/storage/read');
+        return json.read;
+    }
+}
+exports.Storage = Storage;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/embeds/switch.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17258,7 +18239,7 @@ exports.ObnizSwitch = ObnizSwitch;
 /***/ "./dist/src/obniz/libs/hw/blelte_gw2.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":true}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"encored_lte\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"2\":{},\"4\":{},\"16\":{},\"17\":{},\"18\":{},\"19\":{},\"21\":{},\"25\":{},\"26\":{},\"33\":{}}},\"ad\":{\"units\":{}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{},\"1\":{}}},\"i2c\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":true},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -17321,14 +18302,202 @@ module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"esp32w\",\"peripherals\":{\
 /***/ "./dist/src/obniz/libs/hw/iekilo1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"iekilo1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"15\":{},\"18\":{},\"19\":{},\"20\":{},\"21\":{},\"22\":{},\"23\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"canbus\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":true},\"motion\":{},\"location\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"iekilo1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"15\":{},\"18\":{},\"19\":{},\"20\":{},\"21\":{},\"22\":{},\"23\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"canbus\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":true},\"motion\":{},\"location\":{},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/hw/iekilo1_components.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Hardware
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IntelligentEdgeKiloComponent = exports.KiloInterface = void 0;
+const mcp23s08_1 = __webpack_require__("./dist/src/obniz/libs/embeds/mcp23s08.js");
+var KiloInterface;
+(function (KiloInterface) {
+    KiloInterface[KiloInterface["None"] = 0] = "None";
+    KiloInterface[KiloInterface["Relay_On"] = 1] = "Relay_On";
+    KiloInterface[KiloInterface["RS232_On"] = 2] = "RS232_On";
+    KiloInterface[KiloInterface["RS485_On"] = 4] = "RS485_On";
+    KiloInterface[KiloInterface["CANBus_On"] = 8] = "CANBus_On";
+})(KiloInterface = exports.KiloInterface || (exports.KiloInterface = {}));
+class IntelligentEdgeKiloComponent {
+    constructor(obniz) {
+        this.isDirectionFlashed = false;
+        this.RS232_TX = 3;
+        this.RS232_RX = 4;
+        this.RS485_TX = 4;
+        this.RS485_RX = 3;
+        this.RS485_DE = 7;
+        this.CANBUS_TX = 5;
+        this.CANBUS_RX = 6;
+        this.obniz = obniz;
+    }
+    prepare() {
+        if (this.obniz.hw !== 'iekilo1') {
+            throw new Error('Obniz.IntelligentEdgeKilo only support ObnizOS for Intelligent Edge Kilo Your device is not ObnizOS for Intelligent Edge Kilo.');
+        }
+        const firstTime = !this.mcp23s08;
+        const reconnected = this.mcp23s08 && this.obniz.spi0.isUsed() === false;
+        if (firstTime || reconnected) {
+            const spi = this.obniz.spi0;
+            spi.start({
+                mode: 'master',
+                mosi: 20,
+                miso: 21,
+                clk: 19,
+                cs: 8,
+                frequency: 100 * 1000,
+            });
+            this.mcp23s08 = new mcp23s08_1.MCP23S08();
+            this.mcp23s08.wired(this.obniz, spi);
+            // Initial values
+            this.mcp23s08.io0.value = false;
+            this.mcp23s08.io1.value = false;
+            this.mcp23s08.io2.value = true;
+            this.mcp23s08.io3.value = true;
+            this.mcp23s08.io4.value = true;
+            this.mcp23s08.io5.value = false;
+        }
+    }
+    /**
+     * Powering on Each Interface.
+     * RS232, RS485, CANBus, Relay. But RS232 and RS485 cannot be enabled at the same time.
+     *
+     * @param mode Powring on each interface.
+     */
+    powerOnInterface(mode) {
+        const mcp = this.mcp23s08;
+        const is232On = mcp.io1.value === true;
+        const is485On = mcp.io3.value === false;
+        if (is232On && (mode & KiloInterface.RS485_On) !== 0) {
+            throw new Error('RS232 and RS485 cannot be enabled at the same time');
+        }
+        if (is485On && (mode & KiloInterface.RS232_On) !== 0) {
+            throw new Error('RS232 and RS485 cannot be enabled at the same time');
+        }
+        // IO0: RS232FORCEON H: normal operation without autodown
+        // IO1: RS232FORCEOFF L: PowerOFF H: Operation
+        // IO2: RS232EN  L: Operation H:OFF
+        // IO3: 485RE   L: work H: Standby
+        // IO4: CANSTBY L: work H: Standby
+        // IO5: RELAY
+        // IO6: x
+        // IO7: (input)RS232INV
+        if (!this.isDirectionFlashed) {
+            // Everything Off State
+            mcp.io0.direction = mcp23s08_1.MCP23S08.MCP23S08_IO_DIRECTION.OUTPUT;
+            mcp.io1.direction = mcp23s08_1.MCP23S08.MCP23S08_IO_DIRECTION.OUTPUT;
+            mcp.io2.direction = mcp23s08_1.MCP23S08.MCP23S08_IO_DIRECTION.OUTPUT;
+            mcp.io3.direction = mcp23s08_1.MCP23S08.MCP23S08_IO_DIRECTION.OUTPUT;
+            mcp.io4.direction = mcp23s08_1.MCP23S08.MCP23S08_IO_DIRECTION.OUTPUT;
+            mcp.io5.direction = mcp23s08_1.MCP23S08.MCP23S08_IO_DIRECTION.OUTPUT;
+            mcp.io6.direction = mcp23s08_1.MCP23S08.MCP23S08_IO_DIRECTION.INPUT;
+            mcp.io7.direction = mcp23s08_1.MCP23S08.MCP23S08_IO_DIRECTION.INPUT;
+            mcp.flush('direction'); // or mcp.flush("direction"); for no wait.
+            this.isDirectionFlashed = true;
+        }
+        if (mode & KiloInterface.Relay_On) {
+            mcp.io5.value = true;
+        }
+        // rs485 recevei Enable
+        if (mode & KiloInterface.RS485_On) {
+            mcp.io0.value = false;
+            mcp.io1.value = false;
+            mcp.io2.value = true;
+            mcp.io3.value = false;
+        }
+        else if (mode & KiloInterface.RS232_On) {
+            mcp.io0.value = true;
+            mcp.io1.value = true;
+            mcp.io2.value = false;
+            mcp.io3.value = true;
+        }
+        // CAN Enable
+        if (mode & KiloInterface.CANBus_On) {
+            mcp.io4.value = false;
+        }
+        // flash
+        mcp.flush('gpio'); // or mcp.flush("direction"); for no wait.
+    }
+    /**
+     * Powering off all interfaces.
+     */
+    powerOffAllInterfaces() {
+        const mcp = this.mcp23s08;
+        mcp.io0.value = false;
+        mcp.io1.value = false;
+        mcp.io2.value = true;
+        mcp.io3.value = true;
+        mcp.io4.value = true;
+        mcp.io5.value = false;
+        mcp.flush('gpio'); // or mcp.flush("direction"); for no wait.
+    }
+    /**
+     * Check RS232 is having 232 leve linput.
+     * Attention! This function never works with FORCE ON. this is standard situation.
+     *
+     * @returns true: RS232 is having rs232 leve signal. false: RS232 is not having target wait.
+     */
+    async isRS232HavingTargetWait() {
+        const mcp = this.mcp23s08;
+        await mcp.readAllGPIOWait();
+        return mcp.io7.value;
+    }
+    /**
+     * Conversion method from ad0 voltage to input supply voltage.
+     *
+     * @param inputVoltage ad0 voltage.
+     * @returns Input Supply Voltage.
+     */
+    inputVoltageToVoltage(inputVoltage) {
+        return parseFloat(((inputVoltage / 11.0) * 111.0).toFixed(3));
+    }
+    /**
+     * Step is 8.12mV(12bit)
+     * voltage. measurable range is 0 to 33.3v.
+     */
+    startMonitoringPowerSupply(callbaack) {
+        // 100kohm + 11kohm for 1%.
+        this.obniz.ad0.start((ad0Level) => {
+            const inputVoltage = this.inputVoltageToVoltage(ad0Level);
+            callbaack(inputVoltage);
+        });
+    }
+    /**
+     * Step is 8.12mV(12bit)
+     *
+     * @returns voltage. measurable range is 0 to 33.3v.
+     */
+    async getPowerSupplyVoltageWait() {
+        const ad0Level = await this.obniz.ad0.getWait();
+        return this.inputVoltageToVoltage(ad0Level);
+    }
+    /**
+     * Setting relay state.
+     *
+     * @param state true for on.
+     */
+    setRelay(state) {
+        const mcp = this.mcp23s08;
+        mcp.io5.value = state;
+        mcp.flush('gpio');
+    }
+}
+exports.IntelligentEdgeKiloComponent = IntelligentEdgeKiloComponent;
+
 
 /***/ }),
 
 /***/ "./dist/src/obniz/libs/hw/iemicro1.json":
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"iemicro1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"15\":{},\"18\":{},\"19\":{},\"20\":{},\"21\":{},\"22\":{},\"23\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"canbus\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":true},\"motion\":{},\"location\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
+module.exports = JSON.parse("{\"rev\":\"2\",\"hw\":\"iemicro1\",\"peripherals\":{\"io\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{},\"8\":{},\"9\":{},\"10\":{},\"11\":{},\"12\":{},\"13\":{},\"15\":{},\"18\":{},\"19\":{},\"20\":{},\"21\":{},\"22\":{},\"23\":{}}},\"ad\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{}}},\"pwm\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{}}},\"uart\":{\"units\":{\"0\":{},\"1\":{}}},\"spi\":{\"units\":{\"0\":{}}},\"i2c\":{\"units\":{\"0\":{},\"1\":{}}},\"canbus\":{\"units\":{\"0\":{}}}},\"embeds\":{\"ble\":{\"extended\":true},\"motion\":{},\"location\":{},\"storage\":{}},\"protocol\":{\"tcp\":{\"units\":{\"0\":{},\"1\":{},\"2\":{},\"3\":{},\"4\":{},\"5\":{},\"6\":{},\"7\":{}}}},\"network\":{\"wifi\":{}},\"extraInterface\":{}}");
 
 /***/ }),
 
@@ -17655,6 +18824,151 @@ class PeripheralAD extends ComponentAbstact_1.ComponentAbstract {
     }
 }
 exports.PeripheralAD = PeripheralAD;
+
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/io_peripherals/canbus.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @packageDocumentation
+ * @module ObnizCore.Components
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeripheralCANBus = void 0;
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
+const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
+/**
+ * CAN Bus
+ *
+ * @category Peripherals
+ */
+class PeripheralCANBus extends ComponentAbstact_1.ComponentAbstract {
+    constructor(obniz, id) {
+        super(obniz);
+        this.id = id;
+        this.on('/response/canbus/receive', (obj) => {
+            if (this.onreceive) {
+                this.Obniz._runUserCreatedFunction(this.onreceive, obj.extended, obj.rtr, obj.id, obj.data);
+            }
+        });
+        this._reset();
+    }
+    /**
+     * Start CAN Bus
+     *
+     *
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.canbus0.start({mode:"normal", tx :0, rx:1, kbps:100, filter_code: 0, filter_mask: 0});
+     * ```
+     *
+     * @param params CAN Bus parameters
+     */
+    start(params) {
+        const err = util_1.ObnizUtil._requiredKeys(params, ['tx', 'rx', 'kbps', 'mode']);
+        if (err) {
+            throw new Error("canbus start param '" + err + "' required, but not found ");
+        }
+        this.params = util_1.ObnizUtil._keyFilter(params, [
+            'tx',
+            'rx',
+            'mode',
+            'kbps',
+            'filter_code',
+            'filter_mask',
+        ]);
+        const modes = ['normal', 'noack', 'listen'];
+        if (!modes.includes(params.mode)) {
+            throw new Error(`invalid mode ${params.mode}`);
+        }
+        const ioKeys = ['tx', 'rx'];
+        for (const key of ioKeys) {
+            if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
+                throw new Error("CAN Bus start param '" + key + "' are to be valid io no");
+            }
+        }
+        const obj = {};
+        obj['canbus' + this.id] = {
+            mode: params.mode,
+            tx: params.tx,
+            rx: params.rx,
+            kbps: params.kbps,
+            filter_code: params.filter_code,
+            filter_mask: params.filter_mask,
+        };
+        this.used = true;
+        this.Obniz.send(obj);
+    }
+    /**
+     * It only sends data to canbus and does not receive it.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.canbus0.start({mode:"normal", tx :0, rx:1, kbps:100, filter_code: 0, filter_mask: 0});
+     * obniz.canbus0.send({}, 0x700, [0x12, 0x98]);
+     * ```
+     *
+     * @param data Max length is 1024 bytes.
+     */
+    send(modes, id, data) {
+        if (!this.used) {
+            throw new Error(`canbus${this.id} is not started`);
+        }
+        const obj = {};
+        obj['canbus' + this.id] = {
+            data,
+            id,
+            extended: modes.extended === true,
+            rtr: modes.rtr === true,
+            single_shot: modes.single_shot === true,
+            self_reception: modes.self_reception === true,
+        };
+        this.Obniz.send(obj);
+    }
+    /**
+     * @ignore
+     */
+    isUsed() {
+        return this.used;
+    }
+    /**
+     * It ends canbus
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.canbus0.start({mode:"normal", tx :0, rx:1, kbps:100, filter_code: 0, filter_mask: 0});
+     * obniz.canbus0.end();
+     * ```
+     *
+     */
+    end() {
+        const obj = {};
+        obj['canbus' + this.id] = null;
+        this.params = null;
+        this.Obniz.send(obj);
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    schemaBasePath() {
+        return 'canbus' + this.id;
+    }
+    /**
+     * @ignore
+     * @private
+     */
+    _reset() {
+        this.used = false;
+        this.params = null;
+    }
+}
+exports.PeripheralCANBus = PeripheralCANBus;
 
 
 /***/ }),
@@ -18186,10 +19500,6 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
         if (this.state.pull) {
             this.Obniz.getIO(this.state.sda).pull(this.state.pull);
             this.Obniz.getIO(this.state.scl).pull(this.state.pull);
-        }
-        else {
-            this.Obniz.getIO(this.state.sda).pull(null);
-            this.Obniz.getIO(this.state.scl).pull(null);
         }
         if (this.state.gnd !== undefined) {
             this.Obniz.getIO(this.state.gnd).output(false);
@@ -18857,6 +20167,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
             'clk',
             'mosi',
             'miso',
+            'cs',
             'frequency',
             'drive',
             'pull',
@@ -18868,6 +20179,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
             'mosi',
             'miso',
             'gnd',
+            'cs',
         ];
         for (const key of ioKeys) {
             if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
@@ -18887,6 +20199,9 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         if (this.params.miso !== undefined) {
             obj['spi' + this.id].miso = this.params.miso;
         }
+        if (this.params.cs !== undefined) {
+            obj['spi' + this.id].cs = this.params.cs;
+        }
         if (this.params.drive) {
             if (this.params.clk !== undefined) {
                 this.Obniz.getIO(this.params.clk).drive(this.params.drive);
@@ -18897,16 +20212,8 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
             if (this.params.miso !== undefined) {
                 this.Obniz.getIO(this.params.miso).drive(this.params.drive);
             }
-        }
-        else {
-            if (this.params.clk !== undefined) {
-                this.Obniz.getIO(this.params.clk).drive('5v');
-            }
-            if (this.params.mosi !== undefined) {
-                this.Obniz.getIO(this.params.mosi).drive('5v');
-            }
-            if (this.params.miso !== undefined) {
-                this.Obniz.getIO(this.params.miso).drive('5v');
+            if (this.params.cs !== undefined) {
+                this.Obniz.getIO(this.params.cs).drive(this.params.drive);
             }
         }
         if (this.params.pull) {
@@ -18919,16 +20226,8 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
             if (this.params.miso !== undefined) {
                 this.Obniz.getIO(this.params.miso).pull(this.params.pull);
             }
-        }
-        else {
-            if (this.params.clk !== undefined) {
-                this.Obniz.getIO(this.params.clk).pull(null);
-            }
-            if (this.params.mosi !== undefined) {
-                this.Obniz.getIO(this.params.mosi).pull(null);
-            }
-            if (this.params.miso !== undefined) {
-                this.Obniz.getIO(this.params.miso).pull(null);
+            if (this.params.cs !== undefined) {
+                this.Obniz.getIO(this.params.cs).pull(this.params.pull);
             }
         }
         if (this.params.gnd !== undefined) {
@@ -19120,18 +20419,10 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.getIO(this.params.rx).drive(this.params.drive);
             this.Obniz.getIO(this.params.tx).drive(this.params.drive);
         }
-        else {
-            this.Obniz.getIO(this.params.rx).drive('5v');
-            this.Obniz.getIO(this.params.tx).drive('5v');
-        }
         // eslint-disable-next-line no-prototype-builtins
         if (this.params.hasOwnProperty('pull')) {
             this.Obniz.getIO(this.params.rx).pull(this.params.pull);
             this.Obniz.getIO(this.params.tx).pull(this.params.pull);
-        }
-        else {
-            this.Obniz.getIO(this.params.rx).pull(null);
-            this.Obniz.getIO(this.params.tx).pull(null);
         }
         // eslint-disable-next-line no-prototype-builtins
         if (this.params.hasOwnProperty('gnd')) {
@@ -19158,6 +20449,21 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         this.Obniz.send(obj);
         this.received = [];
         this.used = true;
+    }
+    /**
+     * Setting DE IO. IF DE is set, then OS will automatically HIGH when start transmitting and LOW on end of transmitting.
+     *
+     * @param io_de IO of DE(TX Enable)
+     */
+    setDE(io_de) {
+        if (!this.used) {
+            throw new Error(`uart${this.id} is not started`);
+        }
+        const obj = {};
+        obj['uart' + this.id] = {
+            de: io_de,
+        };
+        this.Obniz.send(obj);
     }
     /**
      * This sends data.
@@ -19740,6 +21046,41 @@ class Plugin {
             send_data = [...buf];
         }
         this.Obniz.send({ plugin: { send: send_data } });
+    }
+    /**
+     * Executing Lua on target device instantly.
+     * Lua script never be saved on a device.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.plugin.execLua("duration = 60")
+     * ```
+     *
+     */
+    execLua(lua_script) {
+        if (semver_1.default.major(this.Obniz.firmware_ver) < 7) {
+            throw new Error(`Please update obniz firmware >= 7.0.0`);
+        }
+        if (typeof lua_script !== 'string') {
+            throw new Error(`Lua Script must be a string`);
+        }
+        this.Obniz.send({ plugin: { exec_lua: lua_script } });
+    }
+    /**
+     * Executing Lua on target device and save to it's flash memory.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.storage.savePluginLua(`os.log("Hello World")`);
+     * obniz.plugin.reloadLua();
+     * ```
+     *
+     */
+    reloadLua() {
+        if (semver_1.default.major(this.Obniz.firmware_ver) < 7) {
+            throw new Error(`Please update obniz firmware >= 7.0.0`);
+        }
+        this.Obniz.send({ plugin: { reload: true } });
     }
     /**
      * @ignore
@@ -21963,6 +23304,7 @@ class WSCommandAbstract {
     setHw(obj) {
         this._hw = obj;
     }
+    // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
     sendCommand(func, payload) {
         if (this.parsed) {
             this.parsed(this.module, func, payload);
@@ -23455,6 +24797,155 @@ exports.WSCommandBleHci = WSCommandBleHci;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandCANBus.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandCANBus = void 0;
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandCANBus extends WSCommandAbstract_1.WSCommandAbstract {
+    constructor() {
+        super(...arguments);
+        this.module = 18;
+        this._CommandInit = 0;
+        this._CommandDeinit = 1;
+        this._CommandWrite = 2;
+        this._CommandRead = 3;
+    }
+    // Commands
+    init(params, module) {
+        const tx = params.tx;
+        const rx = params.rx;
+        const kbps = Math.floor(params.kbps);
+        if (tx === null || rx === null) {
+            throw new Error('canbus: tx, rx is required');
+        }
+        let mode = 0b00000000;
+        if (params.mode === 'normal') {
+            mode = 0b00000000;
+        }
+        else if (params.mode === 'noack') {
+            mode = 0b01000000;
+        }
+        else if (params.mode === 'listen') {
+            mode = 0b10000000;
+        }
+        else {
+            throw new Error(`unknown mode`);
+        }
+        const buf = new Uint8Array(14);
+        buf[0] = module;
+        buf[1] = tx;
+        buf[2] = rx;
+        buf[3] = kbps >> 8;
+        buf[4] = kbps;
+        buf[5] = mode;
+        buf[6] = params.filter_code >> (3 * 8);
+        buf[7] = params.filter_code >> (2 * 8);
+        buf[8] = params.filter_code >> (1 * 8);
+        buf[9] = params.filter_code >> (0 * 8);
+        buf[10] = params.filter_mask >> (3 * 8);
+        buf[11] = params.filter_mask >> (2 * 8);
+        buf[12] = params.filter_mask >> (1 * 8);
+        buf[13] = params.filter_mask >> (0 * 8);
+        this.sendCommand(this._CommandInit, buf);
+    }
+    deinit(params, module) {
+        const buf = new Uint8Array([module]);
+        this.sendCommand(this._CommandDeinit, buf);
+    }
+    send(params, module) {
+        const buf = new Uint8Array(6 + params.data.length);
+        buf[0] = module;
+        let mode = 0;
+        if (params.extended) {
+            mode |= 0b10000000;
+        }
+        if (params.rtr) {
+            mode |= 0b01000000;
+        }
+        if (params.single_shot) {
+            mode |= 0b00100000;
+        }
+        if (params.self_reception) {
+            mode |= 0b00010000;
+        }
+        buf[1] = mode;
+        buf[2] = params.id >> (3 * 8);
+        buf[3] = params.id >> (2 * 8);
+        buf[4] = params.id >> (1 * 8);
+        buf[5] = params.id >> (0 * 8);
+        if (params.data.length) {
+            buf.set(params.data, 6);
+        }
+        this.sendCommand(this._CommandWrite, buf);
+    }
+    parseFromJson(json) {
+        for (let i = 0; i < 1; i++) {
+            const module = json['canbus' + i];
+            if (module === undefined) {
+                continue;
+            }
+            const schemaData = [
+                { uri: '/request/canbus/init', onValid: this.init },
+                { uri: '/request/canbus/send', onValid: this.send },
+                { uri: '/request/canbus/deinit', onValid: this.deinit },
+            ];
+            const res = this.validateCommandSchema(schemaData, module, 'canbus' + i, i);
+            if (res.valid === 0) {
+                if (res.invalidButLike.length > 0) {
+                    throw new Error(res.invalidButLike[0].message);
+                }
+                else {
+                    throw new this.WSCommandNotFoundError(`[canbus${i}]unknown command`);
+                }
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        if (func === this._CommandRead && payload.byteLength >= 6) {
+            const module_index = payload[0];
+            const mode = payload[1];
+            let extended = false;
+            let rtr = false;
+            if (mode & 0b10000000) {
+                extended = true;
+            }
+            if (mode & 0b01000000) {
+                rtr = true;
+            }
+            let id = 0;
+            id |= payload[2] << (3 * 8);
+            id |= payload[3] << (2 * 8);
+            id |= payload[4] << (1 * 8);
+            id |= payload[5] << (0 * 8);
+            const arr = new Array(payload.byteLength - 6);
+            for (let i = 0; i < arr.length; i++) {
+                arr[i] = payload[6 + i];
+            }
+            objToSend['canbus' + module_index] = {
+                id,
+                extended,
+                rtr,
+                data: arr,
+            };
+        }
+        else {
+            super.notifyFromBinary(objToSend, func, payload);
+        }
+    }
+}
+exports.WSCommandCANBus = WSCommandCANBus;
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandDirective.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -23480,10 +24971,10 @@ class WSCommandDirective extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandPause = 1;
         this._CommandResume = 2;
         this._CommandNotify = 3;
-        this.subCommandManager = new WSCommandManager_1.WSCommandManager();
-        this.subCommandManager.addCommandClass('WSCommandIO', WSCommandIO_1.WSCommandIO);
-        this.subCommandManager.addCommandClass('WSCommandPWM', WSCommandPWM_1.WSCommandPWM);
-        this.subCommandManager.createCommandInstances();
+        this.subCommandManager = new WSCommandManager_1.WSCommandManager({
+            WSCommandIO: WSCommandIO_1.WSCommandIO,
+            WSCommandPWM: WSCommandPWM_1.WSCommandPWM,
+        });
     }
     // Commands
     init(params, originalParams) {
@@ -23676,7 +25167,7 @@ class WSCommandDisplay extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandDrawCampusRawColors = 6;
     }
     // Commands
-    clear(params) {
+    clear() {
         this.sendCommand(this._CommandClear, null);
     }
     print(buf) {
@@ -24151,6 +25642,79 @@ exports.WSCommandIO = WSCommandIO;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandLocation.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandLocation = void 0;
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandLocation extends WSCommandAbstract_1.WSCommandAbstract {
+    constructor() {
+        super(...arguments);
+        this.module = 20;
+        this._CommandInit = 0;
+        this._CommandDeinit = 1;
+        this._CommandNotify = 2;
+    }
+    // Commands
+    init(params) {
+        const buf = new Uint8Array(0);
+        this.sendCommand(this._CommandInit, buf);
+    }
+    deinit(params) {
+        const buf = new Uint8Array(0);
+        this.sendCommand(this._CommandDeinit, buf);
+    }
+    parseFromJson(json) {
+        const module = json.location;
+        if (!module)
+            return;
+        const schemaData = [
+            { uri: '/request/location/init', onValid: this.init },
+            { uri: '/request/location/deinit', onValid: this.deinit },
+        ];
+        const res = this.validateCommandSchema(schemaData, module, 'location');
+        if (res.valid === 0) {
+            if (res.invalidButLike.length > 0) {
+                throw new Error(res.invalidButLike[0].message);
+            }
+            else {
+                throw new this.WSCommandNotFoundError('[location]unknown commnad');
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        if (func === this._CommandNotify && payload.length === 4 * 5) {
+            const view = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+            const latitude = view.getFloat32(0, false);
+            const longitude = view.getFloat32(4, false);
+            const altitude = view.getFloat32(8, false);
+            const accuracy = view.getFloat32(12, false);
+            const speed = view.getFloat32(16, false);
+            objToSend.location = {
+                latitude,
+                longitude,
+                altitude,
+                accuracy,
+                speed,
+            };
+        }
+        else {
+            super.notifyFromBinary(objToSend, func, payload);
+        }
+    }
+}
+exports.WSCommandLocation = WSCommandLocation;
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandLogicAnalyzer.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24258,23 +25822,27 @@ exports.WSCommandManager = void 0;
 const WSSchema_1 = __importDefault(__webpack_require__("./dist/src/obniz/libs/wscommand/WSSchema.js"));
 const strict_event_emitter_1 = __webpack_require__("./node_modules/strict-event-emitter/lib/index.js");
 class WSCommandManager {
-    constructor() {
+    constructor(commandClasses) {
         this.moduleNo2Name = {};
-        this.commandClasses = {};
-        this.commands = {};
         this.events = new strict_event_emitter_1.StrictEventEmitter();
+        this.commandClasses = commandClasses;
+        this.commands = {};
+        this.createCommandInstances();
     }
     static get schema() {
         return WSSchema_1.default;
     }
-    addCommandClass(name, classObj) {
-        this.commandClasses[name] = classObj;
-    }
     createCommandInstances() {
-        for (const [name, classObj] of Object.entries(this.commandClasses)) {
-            this.commands[name] = new classObj();
-            this.moduleNo2Name[this.commands[name].module] = name;
-            this.commands[name].parsed = (module, func, payload) => {
+        for (const name in this.commandClasses) {
+            if (!Object.prototype.hasOwnProperty.call(this.commandClasses, name)) {
+                continue;
+            }
+            const key = name;
+            const classObj = this.commandClasses[key];
+            const instance = new classObj();
+            this.commands[key] = instance;
+            this.moduleNo2Name[instance.module] = name;
+            instance.parsed = (module, func, payload) => {
                 this.events.emit('binaryGenerated', module, func, payload);
             };
         }
@@ -24522,6 +26090,160 @@ exports.WSCommandMeasurement = WSCommandMeasurement;
 
 /***/ }),
 
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandMotion.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandMotion = void 0;
+/**
+ * @packageDocumentation
+ * @ignore
+ */
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandMotion extends WSCommandAbstract_1.WSCommandAbstract {
+    constructor() {
+        super(...arguments);
+        this.module = 19;
+        this._CommandInit = 0;
+        this._CommandDeinit = 1;
+        this._CommandNotifyRawTemp = 2;
+        this._CommandNotifyRawAcc = 3;
+        this._CommandNotifyRecognition = 4;
+    }
+    // Commands
+    init(params) {
+        const buf = new Uint8Array(6);
+        for (let i = 0; i < 6; i++) {
+            buf[i] = 0;
+        }
+        // mode // 0 not change // 1 oneshot // 2 sensitive
+        // param
+        const modes = ['oneshot', 'sensitive'];
+        if (params.temperature && typeof params.temperature === 'object') {
+            const temperature = params.temperature;
+            if (!modes.includes(temperature.mode)) {
+                throw new Error('motion: temperature.mode is required');
+            }
+            if (temperature.mode === 'oneshot') {
+                buf[0] = 1;
+            }
+            else {
+                buf[0] = 2;
+                buf[1] = clip100(temperature.sensitivity * 100);
+            }
+        }
+        if (params.acceleration && typeof params.acceleration === 'object') {
+            const acceleration = params.acceleration;
+            if (!modes.includes(acceleration.mode)) {
+                throw new Error('motion: acceleration.mode is required');
+            }
+            if (acceleration.mode === 'oneshot') {
+                buf[2] = 1;
+            }
+            else {
+                buf[2] = 2;
+                buf[3] = clip100(acceleration.sensitivity * 100);
+            }
+        }
+        if (params.recognition && typeof params.recognition === 'object') {
+            const recognition = params.recognition;
+            if (!modes.includes(recognition.mode)) {
+                throw new Error('motion: recognition.mode is required');
+            }
+            if (recognition.mode === 'oneshot') {
+                buf[4] = 1;
+            }
+            else {
+                buf[4] = 2;
+                buf[5] = clip100(recognition.sensitivity * 100);
+            }
+        }
+        this.sendCommand(this._CommandInit, buf);
+    }
+    deinit(params) {
+        const buf = new Uint8Array(0);
+        this.sendCommand(this._CommandDeinit, buf);
+    }
+    parseFromJson(json) {
+        const module = json.motion;
+        if (!module)
+            return;
+        const schemaData = [
+            { uri: '/request/motion/init', onValid: this.init },
+            { uri: '/request/motion/deinit', onValid: this.deinit },
+        ];
+        const res = this.validateCommandSchema(schemaData, module, 'motion');
+        if (res.valid === 0) {
+            if (res.invalidButLike.length > 0) {
+                throw new Error(res.invalidButLike[0].message);
+            }
+            else {
+                throw new this.WSCommandNotFoundError('[motion]unknown commnad');
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        if (func === this._CommandNotifyRawTemp && payload.byteLength === 4) {
+            const view = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+            const temperature = view.getFloat32(0, false); // big endigan
+            objToSend.motion = {
+                temperature,
+            };
+        }
+        else if (func === this._CommandNotifyRawAcc &&
+            payload.byteLength === 4 * 3) {
+            const view = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+            const r = view.getFloat32(0, false); // big endigan
+            const t = view.getFloat32(4, false); // big endigan
+            const p = view.getFloat32(8, false); // big endigan
+            objToSend.motion = {
+                acceleration: {
+                    r,
+                    t,
+                    p,
+                },
+            };
+        }
+        else if (func === this._CommandNotifyRecognition &&
+            payload.byteLength === 2) {
+            const recognition_id = payload[0];
+            const possibility = payload[1];
+            const RecognitionTable = {
+                '0': 'none',
+                '1': 'moving',
+            };
+            let recognition = RecognitionTable[recognition_id];
+            if (recognition === undefined) {
+                recognition = 'unknown';
+            }
+            objToSend.motion = {
+                recognition: {
+                    motion: recognition,
+                    possibility: clip100(possibility) / 100,
+                },
+            };
+        }
+        else {
+            super.notifyFromBinary(objToSend, func, payload);
+        }
+    }
+}
+exports.WSCommandMotion = WSCommandMotion;
+const clip100 = (value) => {
+    if (value > 100) {
+        return 100;
+    }
+    if (value < 0) {
+        return 0;
+    }
+    return value;
+};
+
+
+/***/ }),
+
 /***/ "./dist/src/obniz/libs/wscommand/WSCommandPWM.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24643,7 +26365,7 @@ exports.WSCommandPWM = WSCommandPWM;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(Buffer) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WSCommandPlugin = void 0;
 /**
@@ -24658,17 +26380,35 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandSend = 0;
         this._CommandReceive = 1;
         this._CommandFrame = 2;
+        this._CommandExec = 3;
+        this._CommandDirective = 4;
     }
     send(params, index) {
         const buf = new Uint8Array(params.send);
         this.sendCommand(this._CommandSend, buf);
+    }
+    exec_lua(json) {
+        const buf = Buffer.from(json.exec_lua, 'utf8');
+        const result = new Uint8Array(buf);
+        this.sendCommand(this._CommandExec, result);
+    }
+    reload_lua(json) {
+        if (json.reload) {
+            const buf = new Uint8Array(1);
+            buf[0] = 1;
+            this.sendCommand(this._CommandDirective, buf);
+        }
     }
     parseFromJson(json) {
         const module = json.plugin;
         if (module === undefined) {
             return;
         }
-        const schemaData = [{ uri: '/request/plugin/send', onValid: this.send }];
+        const schemaData = [
+            { uri: '/request/plugin/send', onValid: this.send },
+            { uri: '/request/plugin/exec_lua', onValid: this.exec_lua },
+            { uri: '/request/plugin/reload_lua', onValid: this.reload_lua },
+        ];
         const res = this.validateCommandSchema(schemaData, module, 'plugin');
         if (res.valid === 0) {
             if (res.invalidButLike.length > 0) {
@@ -24724,6 +26464,7 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
 }
 exports.WSCommandPlugin = WSCommandPlugin;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -24768,10 +26509,10 @@ class WSCommandSPI extends WSCommandAbstract_1.WSCommandAbstract {
         if (miso === null) {
             miso = this.ioNotUsed;
         }
-        if (cs === null) {
+        if (typeof cs !== 'number') {
             cs = this.ioNotUsed;
         }
-        const buf = new Uint8Array(11);
+        const buf = new Uint8Array(12);
         buf[0] = module;
         buf[1] = mode;
         buf[2] = clk;
@@ -24842,6 +26583,99 @@ class WSCommandSPI extends WSCommandAbstract_1.WSCommandAbstract {
 }
 exports.WSCommandSPI = WSCommandSPI;
 
+
+/***/ }),
+
+/***/ "./dist/src/obniz/libs/wscommand/WSCommandStorage.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSCommandStorage = void 0;
+const WSCommandAbstract_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandAbstract.js");
+class WSCommandStorage extends WSCommandAbstract_1.WSCommandAbstract {
+    constructor() {
+        super(...arguments);
+        this.module = 17;
+        this._CommandSave = 0;
+        this._CommandRead = 1;
+    }
+    // public _CommandErase = 2; // TODO: Implement this in the future.
+    save(json) {
+        // request payload format
+        // length of filename | filename | data
+        const { fileName, data } = json.save;
+        const buf = Buffer.from(fileName);
+        const fileNameUintArr = new Uint8Array(buf);
+        const joined = new Uint8Array(1 /* this 1 byte indicates length of filename */ +
+            fileNameUintArr.length +
+            data.length);
+        const iLenFileName = 0;
+        const iFileName = iLenFileName + 1;
+        const iData = iFileName + fileNameUintArr.length;
+        joined.set(new Uint8Array([fileNameUintArr.length]), iLenFileName);
+        joined.set(fileNameUintArr, iFileName);
+        joined.set(data, iData);
+        this.sendCommand(this._CommandSave, joined);
+    }
+    read(json) {
+        // request payload format
+        // length of filename | filename
+        const { fileName } = json.read;
+        const buf = Buffer.from(fileName);
+        const fileNameUintArr = new Uint8Array(buf);
+        const joined = new Uint8Array(1 /* this 1 byte indicates length of filename */ + fileNameUintArr.length);
+        const iLenFileName = 0;
+        const iFileName = iLenFileName + 1;
+        joined.set(new Uint8Array([fileNameUintArr.length]), iLenFileName);
+        joined.set(fileNameUintArr, iFileName);
+        this.sendCommand(this._CommandRead, joined);
+    }
+    parseFromJson(json) {
+        const module = json.storage;
+        if (!module)
+            return;
+        const schemaData = [
+            { uri: '/request/storage/save', onValid: this.save },
+            { uri: '/request/storage/read', onValid: this.read },
+        ];
+        const res = this.validateCommandSchema(schemaData, module, 'storage');
+        if (res.valid === 0) {
+            if (res.invalidButLike.length > 0) {
+                throw new Error(res.invalidButLike[0].message);
+            }
+            else {
+                throw new this.WSCommandNotFoundError('[storage]unknown commnad');
+            }
+        }
+    }
+    notifyFromBinary(objToSend, func, payload) {
+        switch (func) {
+            case this._CommandSave: {
+                super.notifyFromBinary(objToSend, func, payload);
+                break;
+            }
+            case this._CommandRead: {
+                // parse binary and build up json out of it
+                // binary format: lenFileName | bytesFileName | bytesData
+                const lenFileName = payload[0];
+                const bytesFileName = payload.slice(1, lenFileName + 1);
+                const uBytesData = payload.slice(1 + bytesFileName.length);
+                objToSend.storage = {
+                    read: Array.from(uBytesData),
+                };
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+}
+exports.WSCommandStorage = WSCommandStorage;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
 
 /***/ }),
 
@@ -24933,15 +26767,19 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandSleepSeconds = 10;
         this._CommandSleepMinute = 11;
         this._CommandSleepIoTrigger = 12;
+        this._CommandUpdatePingCheckInterval = 18;
+        this._CommandNotifyTimeStamp = 20;
+        this._CommandSetQueueMode = 21;
+        this._CommandSetClock = 22;
     }
     // Commands
-    reboot(params) {
+    reboot() {
         this.sendCommand(this._CommandReboot, null);
     }
-    reset(params) {
+    reset() {
         this.sendCommand(this._CommandReset, null);
     }
-    selfCheck(params) {
+    selfCheck() {
         this.sendCommand(this._CommandSelfCheck, null);
     }
     wait(params) {
@@ -24974,6 +26812,19 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         const buf = new Uint8Array([mustReset ? 1 : 0]);
         this.sendCommand(this._CommandResetOnDisconnect, buf);
     }
+    /**
+     * デバイスのpingの間隔を更新します。これはクラウドから一度切り離されると再度もとに戻ります。
+     *
+     * @param {number} intervalMilliSec
+     */
+    updatePingCheckInterval(intervalMilliSec) {
+        const buf = new Uint8Array(4);
+        buf[0] = intervalMilliSec >> (8 * 3);
+        buf[1] = intervalMilliSec >> (8 * 2);
+        buf[2] = intervalMilliSec >> (8 * 1);
+        buf[3] = intervalMilliSec >> (8 * 0);
+        this.sendCommand(this._CommandUpdatePingCheckInterval, buf);
+    }
     parseFromJson(json) {
         const module = json.system;
         if (module === undefined) {
@@ -24992,6 +26843,8 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
             { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
             { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
             { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
+            { uri: '/request/system/queue_mode', onValid: this.setQueueMode },
+            { uri: '/request/system/set_clock', onValid: this.setClock },
         ];
         const res = this.validateCommandSchema(schemaData, module, 'system');
         if (res.valid === 0) {
@@ -25007,12 +26860,12 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         objToSend.system = objToSend.system || {};
         const pongServerTime = new Date().getTime();
         if (payload.length >= 16) {
-            payload = Buffer.from(payload);
-            const obnizTime = payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
-            const pingServerTime = payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
+            const buf = Buffer.from(payload);
+            const obnizTime = buf.readUIntBE(0, 4) * Math.pow(2, 32) + buf.readUIntBE(4, 4);
+            const pingServerTime = buf.readUIntBE(8, 4) * Math.pow(2, 32) + buf.readUIntBE(12, 4);
             const key = [];
-            for (let i = 16; i < payload.length; i++) {
-                key.push(payload[i]);
+            for (let i = 16; i < buf.length; i++) {
+                key.push(buf.readUInt8(i));
             }
             objToSend.system.pong = {
                 key,
@@ -25025,6 +26878,19 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
             objToSend.system.pong = {
                 pongServerTime,
             };
+        }
+    }
+    timestamp(objToSend, payload) {
+        objToSend.system = objToSend.system || {};
+        if (payload.length === 4) {
+            const buf = Buffer.from(payload);
+            const unixSeconds = buf.readUIntBE(0, 4);
+            objToSend.system.timestamp = unixSeconds * 1000;
+        }
+        else if (payload.length === 8) {
+            const buf = Buffer.from(payload);
+            const milliseconds = buf.readUIntBE(0, 4) * Math.pow(2, 32) + buf.readUIntBE(4, 4);
+            objToSend.system.timestamp = milliseconds;
         }
     }
     notifyFromBinary(objToSend, func, payload) {
@@ -25040,6 +26906,9 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
                 break;
             case this._CommandPingPong:
                 this.pong(objToSend, payload);
+                break;
+            case this._CommandNotifyTimeStamp:
+                this.timestamp(objToSend, payload);
                 break;
             default:
                 super.notifyFromBinary(objToSend, func, payload);
@@ -25057,15 +26926,46 @@ class WSCommandSystem extends WSCommandAbstract_1.WSCommandAbstract {
         this.sendCommand(this._CommandSleepMinute, buf);
     }
     sleepIoTrigger(params) {
-        let trigger = params.sleep_io_trigger;
-        if (trigger === true) {
-            trigger = 1;
-        }
-        else {
-            trigger = 0;
-        }
-        const buf = new Uint8Array([trigger]);
+        const trigger = params.sleep_io_trigger;
+        const triggerNum = trigger === true ? 1 : 0;
+        const buf = new Uint8Array([triggerNum]);
         this.sendCommand(this._CommandSleepIoTrigger, buf);
+    }
+    setQueueMode(params) {
+        const interval = params.queue_mode.interval;
+        const timestamp = params.queue_mode.timestamp;
+        const buf = new Uint8Array(9);
+        buf[0] = 0;
+        if (timestamp === 'none') {
+            buf[0] = 0;
+        }
+        else if (timestamp === 'unix_seconds') {
+            buf[0] = 1;
+        }
+        else if (timestamp === 'unix_milliseconds') {
+            buf[0] = 2;
+        }
+        // interval
+        buf[1] = interval >> (8 * 3);
+        buf[2] = interval >> (8 * 2);
+        buf[3] = interval >> (8 * 1);
+        buf[4] = interval >> (8 * 0);
+        this.sendCommand(this._CommandSetQueueMode, buf);
+    }
+    setClock(params) {
+        const unixtime = params.clock;
+        const buf = new Uint8Array(8);
+        const upper = Math.floor(unixtime / Math.pow(2, 32));
+        const lower = unixtime - upper * Math.pow(2, 32);
+        buf[0] = upper >> (8 * 3);
+        buf[1] = upper >> (8 * 2);
+        buf[2] = upper >> (8 * 1);
+        buf[3] = upper >> (8 * 0);
+        buf[4] = lower >> (8 * 3);
+        buf[5] = lower >> (8 * 2);
+        buf[6] = lower >> (8 * 1);
+        buf[7] = lower >> (8 * 0);
+        this.sendCommand(this._CommandSetClock, buf);
     }
 }
 exports.WSCommandSystem = WSCommandSystem;
@@ -25235,6 +27135,7 @@ class WSCommandUart extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandDeinit = 1;
         this._CommandSend = 2;
         this._CommandRecv = 3;
+        this._CommandSetDE = 4;
     }
     // Commands
     init(params, module) {
@@ -25296,6 +27197,12 @@ class WSCommandUart extends WSCommandAbstract_1.WSCommandAbstract {
         buf.set(params.data, 1);
         this.sendCommand(this._CommandSend, buf);
     }
+    de(params, module) {
+        const buf = new Uint8Array(2);
+        buf[0] = module;
+        buf[1] = params.de;
+        this.sendCommand(this._CommandSetDE, buf);
+    }
     parseFromJson(json) {
         // 0~2
         for (let i = 0; i < 3; i++) {
@@ -25307,6 +27214,7 @@ class WSCommandUart extends WSCommandAbstract_1.WSCommandAbstract {
                 { uri: '/request/uart/init', onValid: this.init },
                 { uri: '/request/uart/send', onValid: this.send },
                 { uri: '/request/uart/deinit', onValid: this.deinit },
+                { uri: '/request/uart/de', onValid: this.de },
             ];
             const res = this.validateCommandSchema(schemaData, module, 'uart' + i, i);
             if (res.valid === 0) {
@@ -25533,25 +27441,34 @@ const WSCommandSystem_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/W
 const WSCommandTcp_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandTcp.js");
 const WSCommandUart_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandUart.js");
 const WSCommandWiFi_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandWiFi.js");
+const WSCommandStorage_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandStorage.js");
+const WSCommandMotion_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandMotion.js");
+const WSCommandLocation_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandLocation.js");
+const WSCommandCANBus_1 = __webpack_require__("./dist/src/obniz/libs/wscommand/WSCommandCANBus.js");
+const commandClasses = {
+    WSCommandSystem: WSCommandSystem_1.WSCommandSystem,
+    WSCommandDirective: WSCommandDirective_1.WSCommandDirective,
+    WSCommandIO: WSCommandIO_1.WSCommandIO,
+    WSCommandPWM: WSCommandPWM_1.WSCommandPWM,
+    WSCommandUart: WSCommandUart_1.WSCommandUart,
+    WSCommandAD: WSCommandAD_1.WSCommandAD,
+    WSCommandSPI: WSCommandSPI_1.WSCommandSPI,
+    WSCommandI2C: WSCommandI2C_1.WSCommandI2C,
+    WSCommandLogicAnalyzer: WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer,
+    WSCommandDisplay: WSCommandDisplay_1.WSCommandDisplay,
+    WSCommandSwitch: WSCommandSwitch_1.WSCommandSwitch,
+    WSCommandBle: WSCommandBle_1.WSCommandBle,
+    WSCommandMeasurement: WSCommandMeasurement_1.WSCommandMeasurement,
+    WSCommandTcp: WSCommandTcp_1.WSCommandTcp,
+    WSCommandWiFi: WSCommandWiFi_1.WSCommandWiFi,
+    WSCommandPlugin: WSCommandPlugin_1.WSCommandPlugin,
+    WSCommandCANBus: WSCommandCANBus_1.WSCommandCANBus,
+    WSCommandLocation: WSCommandLocation_1.WSCommandLocation,
+    WSCommandMotion: WSCommandMotion_1.WSCommandMotion,
+    WSCommandStorage: WSCommandStorage_1.WSCommandStorage,
+};
 const createCommandManager = () => {
-    const instance = new WSCommandManager_1.WSCommandManager();
-    /* eslint-disable */
-    instance.addCommandClass("WSCommandSystem", WSCommandSystem_1.WSCommandSystem);
-    instance.addCommandClass("WSCommandDirective", WSCommandDirective_1.WSCommandDirective);
-    instance.addCommandClass("WSCommandIO", WSCommandIO_1.WSCommandIO);
-    instance.addCommandClass("WSCommandPWM", WSCommandPWM_1.WSCommandPWM);
-    instance.addCommandClass("WSCommandUart", WSCommandUart_1.WSCommandUart);
-    instance.addCommandClass("WSCommandAD", WSCommandAD_1.WSCommandAD);
-    instance.addCommandClass("WSCommandSPI", WSCommandSPI_1.WSCommandSPI);
-    instance.addCommandClass("WSCommandI2C", WSCommandI2C_1.WSCommandI2C);
-    instance.addCommandClass("WSCommandLogicAnalyzer", WSCommandLogicAnalyzer_1.WSCommandLogicAnalyzer);
-    instance.addCommandClass("WSCommandDisplay", WSCommandDisplay_1.WSCommandDisplay);
-    instance.addCommandClass("WSCommandSwitch", WSCommandSwitch_1.WSCommandSwitch);
-    instance.addCommandClass("WSCommandBle", WSCommandBle_1.WSCommandBle);
-    instance.addCommandClass("WSCommandMeasurement", WSCommandMeasurement_1.WSCommandMeasurement);
-    instance.addCommandClass("WSCommandTcp", WSCommandTcp_1.WSCommandTcp);
-    instance.addCommandClass("WSCommandWiFi", WSCommandWiFi_1.WSCommandWiFi);
-    instance.addCommandClass("WSCommandPlugin", WSCommandPlugin_1.WSCommandPlugin);
+    const instance = new WSCommandManager_1.WSCommandManager(commandClasses);
     return instance;
 };
 exports.createCommandManager = createCommandManager;
@@ -28327,8 +30244,8 @@ class HEM_9200T {
      */
     static isDevice(peripheral) {
         if (peripheral.localName &&
-            (peripheral.localName.startsWith('BLESmart_') ||
-                peripheral.localName.startsWith('BLEsmart_'))) {
+            (peripheral.localName.startsWith('BLESmart_00000116') ||
+                peripheral.localName.startsWith('BLEsmart_00000116'))) {
             return true;
         }
         return false;
@@ -31310,11 +33227,11 @@ class PLS_01BT {
          * 計測結果を受け取ったときにコールバック
          */
         this.onmeasured = null;
+        this._peripheral = null;
         this._uuids = {
             service: 'CDEACB80-5235-4C07-8846-93A37EE6B86D',
             rxChar: 'CDEACB81-5235-4C07-8846-93A37EE6B86D',
         };
-        this._peripheral = null;
         this._rxCharacteristic = null;
         this._txCharacteristic = null;
         if (peripheral && !PLS_01BT.isDevice(peripheral)) {
@@ -31802,6 +33719,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
                 pm1_0: Buffer.from(measureData).readUInt8(2),
                 pm2_5: Buffer.from(measureData).readUInt8(3),
                 pm4_0: Buffer.from(measureData).readUInt8(4),
+                pm5_0: Buffer.from(measureData).readUInt8(4),
                 pm10_0: Buffer.from(measureData).readUInt8(5),
                 temp: Buffer.from(measureData).readUInt8(6),
                 humid: Buffer.from(measureData).readUInt8(7),
@@ -31812,6 +33730,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             pm1_0: Buffer.from(measureData).readUInt8(2),
             pm2_5: Buffer.from(measureData).readUInt8(3),
             pm4_0: Buffer.from(measureData).readUInt8(4),
+            pm5_0: Buffer.from(measureData).readUInt8(4),
             pm10_0: Buffer.from(measureData).readUInt8(5),
             temp: Buffer.from(measureData).readInt16LE(6) / 10,
             humid: Buffer.from(measureData).readUInt8(8),
@@ -32065,8 +33984,8 @@ RS_BTEVS1.BeaconDataStruct = {
         index: 6,
         length: 2,
         type: 'custom',
-        multiple: 0.1,
-        round: 1,
+        // multiple: 0.1,
+        // round: 1,
         func: (data, p) => {
             var _a, _b, _c;
             return ((_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + 1 === 0x0b &&
@@ -33219,14 +35138,15 @@ const t = {
     func: findType('temperature', 0.01),
 };
 class STM550B extends ObnizPartsBleAbstract_1.ObnizPartsBle {
-    constructor(peripheral, mode) {
-        super(peripheral, mode);
+    constructor() {
+        super(...arguments);
         this.staticClass = STM550B;
     }
 }
 exports.default = STM550B;
 STM550B.PartsName = 'STM550B';
 STM550B.AvailableBleMode = 'Beacon';
+STM550B.CompanyID = [0xda, 0x03];
 STM550B.BeaconDataStruct = {
     temperature: {
         index: 4,
@@ -33276,9 +35196,6 @@ STM550B.BeaconDataStruct = {
         type: 'custom',
         func: findType('acceleration_vector'),
     },
-};
-STM550B.CompanyID = {
-    Beacon: [0xda, 0x03],
 };
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("./node_modules/buffer/index.js").Buffer))
@@ -36441,7 +38358,7 @@ class iBS02PIR extends iBS_1.BaseiBS {
 }
 exports.default = iBS02PIR;
 iBS02PIR.PartsName = 'iBS02PIR';
-iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x01));
+iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.pir }, iBS_1.BaseiBS.getUniqueData(3, 0x01));
 
 
 /***/ }),
@@ -36735,7 +38652,7 @@ iBS04i.CompanyID = ObnizPartsBleAbstract_1.iBeaconCompanyID;
 iBS04i.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
 iBS04i.BeaconDataLength = 0x1a;
 iBS04i.BeaconDataLength_ScanResponse = iBS_1.BaseiBS.BeaconDataLength;
-iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconData);
+iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconDataWithStrict);
 
 
 /***/ }),
@@ -43815,6 +45732,31 @@ BaseiBS.Config = {
         index: 7,
         length: 2,
         type: 'numLE',
+    },
+    flood: {
+        index: 4,
+        type: 'bool01000000',
+    },
+    voltage: {
+        index: 7,
+        length: 2,
+        multiple: 0.001,
+        type: 'numLE',
+    },
+    current: {
+        index: 7,
+        length: 2,
+        multiple: 0.000001,
+        type: 'numLE',
+    },
+    triggered: {
+        index: 4,
+        type: 'bool01000000',
+    },
+    triggered_count: {
+        index: 7,
+        length: 2,
+        type: 'unsignedNumLE',
     },
     count: {
         index: 7,

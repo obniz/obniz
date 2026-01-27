@@ -5,7 +5,6 @@
 import { rejects } from 'assert';
 import EventEmitter from 'eventemitter3';
 import semver from 'semver';
-import { Result } from 'typedoc/dist/lib/utils';
 import {
   ObnizBleInvalidParameterError,
   ObnizBleScanStartError,

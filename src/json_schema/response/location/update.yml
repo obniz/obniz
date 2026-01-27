@@ -1,0 +1,27 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/location/update"
+
+type: object
+properties:
+  latitude:
+    type: number
+    example: 37.77
+    description: "latitude in degrees"
+  longitude:
+    type: number
+    example: -122.41
+    description: "longitude in degrees"
+  altitude:
+    type: number
+    example: 10.0
+    description: "altitude in degrees"
+  accuracy:
+    type: number
+    example: 5.0
+    description: "accuracy in degrees"
+  speed:
+    type: number
+    example: 0.0
+    description: "speed in degrees"

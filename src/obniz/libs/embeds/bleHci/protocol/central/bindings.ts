@@ -48,7 +48,7 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
   private _handles: any;
   private _gatts: { [handle: string]: GattCentral };
   private _aclStreams: { [key: string]: AclStream };
-  private _signalings: any;
+  public _signalings: Record<string, Signaling>;
   private _hci: Hci;
   private _gap: Gap;
   private _scanServiceUuids: UUID[] | null = null;
@@ -109,7 +109,7 @@ export class NobleBindings extends EventEmitter<NobleBindingsEventType> {
     addressType: BleDeviceAddressType
   ) {
     if (!this._addresses[uuid]) {
-      const address: any = BleHelper.addColon(uuid);
+      const address: any = BleHelper.addColon(uuid as any);
       this._addresses[uuid] = address;
       this._addresseTypes[uuid] = addressType;
       this._connectable[uuid] = true;

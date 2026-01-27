@@ -1,4 +1,5 @@
 import { MESHJsBlockVersionError, MESHJsOutOfRangeError } from '../util/Error';
+import { UUID128 } from '../../../../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export class Base {
   /**
@@ -12,12 +13,12 @@ export class Base {
 
   // Constant Values
   public readonly UUIDS = {
-    SERVICE_ID: '72c90001-57a9-4d40-b746-534e22ec9f9e' as const,
+    SERVICE_ID: '72c90001-57a9-4d40-b746-534e22ec9f9e' as UUID128,
     CHARACTERISTICS: {
-      INDICATE: '72c90005-57a9-4d40-b746-534e22ec9f9e' as const,
-      NOTIFY: '72c90003-57a9-4d40-b746-534e22ec9f9e' as const,
-      WRITE: '72c90004-57a9-4d40-b746-534e22ec9f9e' as const,
-      WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e' as const,
+      INDICATE: '72c90005-57a9-4d40-b746-534e22ec9f9e' as UUID128,
+      NOTIFY: '72c90003-57a9-4d40-b746-534e22ec9f9e' as UUID128,
+      WRITE: '72c90004-57a9-4d40-b746-534e22ec9f9e' as UUID128,
+      WRITE_WO_RESPONSE: '72c90002-57a9-4d40-b746-534e22ec9f9e' as UUID128,
     } as const,
   } as const;
   protected readonly MESSAGE_TYPE_ID_INDEX = 0 as const;

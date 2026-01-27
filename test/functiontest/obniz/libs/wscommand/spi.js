@@ -16,7 +16,9 @@ describe('spi.log', function () {
     const requestJson = [
       { spi0: { mode: 'master', clock: 1000000, clk: 0, mosi: 1, miso: 2 } },
     ];
-    const expecteBinaryStrings = ['05 00 0b 00 00 00 01 02 ff ff 00 0f 42 40'];
+    const expecteBinaryStrings = [
+      '05 00 0c 00 00 00 01 02 ff ff 00 0f 42 40 ff',
+    ];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -83,7 +85,9 @@ describe('spi.log', function () {
     const requestJson = [
       { spi0: { mode: 'master', clock: 1000000, clk: 0, miso: 2 } },
     ];
-    const expecteBinaryStrings = ['05 00 0b 00 00 00 ff 02 ff ff 00 0f 42 40'];
+    const expecteBinaryStrings = [
+      '05 00 0c 00 00 00 ff 02 ff ff 00 0f 42 40 ff',
+    ];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -108,7 +112,9 @@ describe('spi.log', function () {
     const requestJson = [
       { spi0: { mode: 'master', clock: 1000000, clk: 0, mosi: 1 } },
     ];
-    const expecteBinaryStrings = ['05 00 0b 00 00 00 01 ff ff ff 00 0f 42 40'];
+    const expecteBinaryStrings = [
+      '05 00 0c 00 00 00 01 ff ff ff 00 0f 42 40 ff',
+    ];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -131,7 +137,9 @@ describe('spi.log', function () {
 
   it('request test no.5', function () {
     const requestJson = [{ spi0: { mode: 'master', clock: 1000000, mosi: 1 } }];
-    const expecteBinaryStrings = ['05 00 0b 00 00 ff 01 ff ff ff 00 0f 42 40'];
+    const expecteBinaryStrings = [
+      '05 00 0c 00 00 ff 01 ff ff ff 00 0f 42 40 ff',
+    ];
 
     expect(requestJson.length).to.be.equal(1);
 
@@ -156,7 +164,9 @@ describe('spi.log', function () {
     const requestJson = [
       { spi0: { mode: 'master', clock: 1000000, clk: 0, mosi: 1, miso: 2 } },
     ];
-    const expecteBinaryStrings = ['05 00 0b 00 00 00 01 02 ff ff 00 0f 42 40'];
+    const expecteBinaryStrings = [
+      '05 00 0c 00 00 00 01 02 ff ff 00 0f 42 40 ff',
+    ];
 
     expect(requestJson.length).to.be.equal(1);
 

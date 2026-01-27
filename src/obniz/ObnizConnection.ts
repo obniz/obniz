@@ -35,6 +35,14 @@ interface ConnectedNetworkWiFiMESH {
   rssi: number;
 }
 
+interface ConnectedNetworkCellular {
+  imsi: string;
+  imei: string;
+  iccid: string;
+  cnum: string;
+  rssi: number;
+}
+
 export interface ConnectedNetwork {
   /**
    * Epoch Unix Timestamp (seconds) at device become online on the cloud
@@ -65,6 +73,11 @@ export interface ConnectedNetwork {
    * Wi-Fi MESH information when net is wifimesh
    */
   wifimesh?: ConnectedNetworkWiFiMESH;
+
+  /**
+   * Cellular information when net is cellular
+   */
+  cellular?: ConnectedNetworkCellular;
 }
 
 /**
@@ -115,6 +128,12 @@ export abstract class ObnizConnection extends EventEmitter<
   public debugprint: boolean;
 
   /**
+   * This variable sets interval time to check connection state to obniz Device.
+   *
+   */
+  public connectionCheckLoopInterval: null | number = null;
+
+  /**
    * @ignore
    */
   public debugprintBinary: boolean;
@@ -142,6 +161,30 @@ export abstract class ObnizConnection extends EventEmitter<
    * ```
    */
   public firmware_ver?: string;
+
+  /**
+   * This variable indicate installed plugin_name of target device
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *   console.log(obniz.plugin_name) // ex. "my_plugin"
+   * }
+   * ```
+   */
+  public plugin_name?: string;
+
+  /**
+   * This variable indicate installed boot reason of target device
+   *
+   * ```javascript
+   * var obniz = new Obniz('1234-5678');
+   * obniz.onconnect = async function() {
+   *   console.log(obniz.boot_reason) // ex. "DEEPSLEEP_RESET"
+   * }
+   * ```
+   */
+  public boot_reason?: string;
 
   /**
    * Device metadata set on obniz cloud.
@@ -281,7 +324,7 @@ export abstract class ObnizConnection extends EventEmitter<
   protected socket_local: wsClient | null = null;
   protected bufferdAmoundWarnBytes: number;
   protected options: Required<ObnizOptions>;
-  protected wsCommandManager: WSCommandManager = WSCommandManagerInstance;
+  protected wsCommandManager: typeof WSCommandManagerInstance = WSCommandManagerInstance;
   protected _sendQueueTimer: ReturnType<typeof setTimeout> | null = null;
   protected _sendQueue: Uint8Array[] | null = null;
   protected _waitForLocalConnectReadyTimer: ReturnType<
@@ -331,7 +374,6 @@ export abstract class ObnizConnection extends EventEmitter<
         options.reset_obniz_on_ws_disconnection === false ? false : true,
       obnizid_dialog: options.obnizid_dialog === false ? false : true,
     };
-    this.wsCommandManager.createCommandInstances();
     if (this.autoConnect) {
       this._startAutoConnectLoopInBackground();
     }
@@ -561,20 +603,22 @@ export abstract class ObnizConnection extends EventEmitter<
         return;
       }
 
-      let sendData = JSON.stringify([obj]);
+      let sendData: string | Uint8Array = JSON.stringify([obj]);
       if (this.debugprint) {
         this._print_debug('send: ' + sendData);
       }
 
       /* compress */
       if (this.options.binary && options.local_connect) {
-        let compressed: any;
+        let compressed: Uint8Array | null;
         try {
           compressed = this.wsCommandManager.compress(JSON.parse(sendData)[0]);
           if (compressed) {
             sendData = compressed;
             if (this.debugprintBinary) {
-              this.log('binalized: ' + new Uint8Array(compressed).toString());
+              this.log(
+                'binalized(send): ' + new Uint8Array(compressed).toString()
+              );
             }
           }
         } catch (e) {
@@ -584,7 +628,7 @@ export abstract class ObnizConnection extends EventEmitter<
           });
           this.error({
             alert: 'error',
-            message: sendData,
+            message: sendData as string,
           });
           throw e;
         }
@@ -911,6 +955,8 @@ export abstract class ObnizConnection extends EventEmitter<
 
   protected _connectLocalWait() {
     const host = this._localConnectIp;
+
+    this.connectionCheckLoopInterval = null; // local connectしないのであれば OSとの通信確認は不要
     if (!host || !this.options.binary || !this.options.local_connect) {
       return;
       // cannot local connect
@@ -952,8 +998,11 @@ export abstract class ObnizConnection extends EventEmitter<
 
     this.socket_local = ws;
 
-    return new Promise((resolve, reject) => {
-      this.once('_localConnectReady', resolve);
+    return new Promise<void>((resolve, reject) => {
+      this.once('_localConnectReady', () => {
+        this.connectionCheckLoopInterval = 60 * 1000; // local connectするのであればOSとの通信確認は必要
+        resolve();
+      });
       this.once('_localConnectClose', () => {
         reject(
           new Error(
@@ -1140,6 +1189,8 @@ export abstract class ObnizConnection extends EventEmitter<
     if (wsObj.ready) {
       const wsObniz = wsObj.obniz;
       this.firmware_ver = wsObniz.firmware;
+      this.plugin_name = wsObniz.plugin_name;
+      this.boot_reason = wsObniz.boot_reason;
       this.hw = wsObniz.hw;
       if (!this.hw) {
         this.hw = 'obnizb1';
@@ -1274,48 +1325,55 @@ export abstract class ObnizConnection extends EventEmitter<
       clearTimeout(this._nextPingTimeout);
     }
     this._nextPingTimeout = setTimeout(async () => {
-      const loopInterval = 60 * 1000; // 60 sec
-      const loopTimeout = 30 * 1000; // 30 sec
       if (this._nextPingTimeout) {
         clearTimeout(this._nextPingTimeout);
       }
       this._nextPingTimeout = null;
-      if (this.connectionState === 'connected') {
-        const currentTime = new Date().getTime();
 
-        // after 15 sec from last data received
-        if (this._lastDataReceivedAt + loopTimeout < currentTime) {
-          const time = this._lastDataReceivedAt;
-          try {
-            const p = this.pingWait();
-            const wait = new Promise((resolve, reject) => {
-              setTimeout(reject, loopTimeout);
-            });
-            await Promise.race([p, wait]);
-            // this.log("ping/pong success");
-          } catch (e) {
-            if (this.connectionState !== 'connected') {
-              // already closed
-            } else if (time !== this._lastDataReceivedAt) {
-              // this will be disconnect -> reconnect while pingWait
-            } else {
-              // ping error or timeout
-              // this.error("ping/pong response timeout error");
-              this.wsOnClose('ping/pong response timeout error');
-              return;
-            }
+      const enablePingPong = this.connectionCheckLoopInterval !== null;
+      const loopInterval = this.connectionCheckLoopInterval ?? 60 * 1000;
+      const loopTimeout = 30 * 1000; // 30 sec
+
+      if (!enablePingPong) {
+        return;
+      }
+      if (this.connectionState !== 'connected') {
+        return;
+      }
+      const currentTime = new Date().getTime();
+
+      // after 15 sec from last data received
+      if (this._lastDataReceivedAt + loopTimeout < currentTime) {
+        const time = this._lastDataReceivedAt;
+        try {
+          const p = this.pingWait();
+          const wait = new Promise((resolve, reject) => {
+            setTimeout(reject, loopTimeout);
+          });
+          await Promise.race([p, wait]);
+          // this.log("ping/pong success");
+        } catch (e) {
+          if (this.connectionState !== 'connected') {
+            // already closed
+          } else if (time !== this._lastDataReceivedAt) {
+            // this will be disconnect -> reconnect while pingWait
+          } else {
+            // ping error or timeout
+            // this.error("ping/pong response timeout error");
+            this.wsOnClose('ping/pong response timeout error');
+            return;
           }
-        } else {
-          // this.log("ping/pong not need");
         }
+      } else {
+        // this.log("ping/pong not need");
+      }
 
-        if (this.connectionState === 'connected') {
-          if (!this._nextPingTimeout) {
-            this._nextPingTimeout = setTimeout(
-              this._startPingLoopInBackground.bind(this),
-              loopInterval
-            );
-          }
+      if (this.connectionState === 'connected') {
+        if (!this._nextPingTimeout) {
+          this._nextPingTimeout = setTimeout(
+            this._startPingLoopInBackground.bind(this),
+            loopInterval
+          );
         }
       }
     }, 0);

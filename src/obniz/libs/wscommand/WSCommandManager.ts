@@ -7,7 +7,7 @@ import WSSchema from './WSSchema';
 import { HW, WSCommandAbstract } from './WSCommandAbstract';
 import { StrictEventEmitter } from 'strict-event-emitter';
 
-type WSCommandConstructor = new () => WSCommandAbstract;
+export type WSCommandConstructor = new () => WSCommandAbstract;
 
 interface Payload {
   /**
@@ -46,32 +46,43 @@ interface WSCommandManagerEventsMap {
   ) => void;
 }
 
-export class WSCommandManager {
+export class WSCommandManager<C extends Record<string, WSCommandAbstract>> {
   private moduleNo2Name: Record<number, string> = {};
-  private commandClasses: { [key: string]: WSCommandConstructor } = {};
-  private commands: { [key: string]: WSCommandAbstract } = {};
+  private commandClasses: { [K in keyof C]: new () => C[K] };
+  private commands!: { [K in keyof C]: C[K] };
   public events = new StrictEventEmitter<WSCommandManagerEventsMap>();
 
   static get schema(): any {
     return WSSchema;
   }
 
-  public addCommandClass(name: string, classObj: WSCommandConstructor): void {
-    this.commandClasses[name] = classObj;
+  constructor(commandClasses: { [K in keyof C]: new () => C[K] }) {
+    this.commandClasses = commandClasses;
+    this.commands = {} as { [K in keyof C]: C[K] };
+    this.createCommandInstances();
   }
 
-  public createCommandInstances() {
-    for (const [name, classObj] of Object.entries(this.commandClasses)) {
-      this.commands[name] = new classObj();
-      this.moduleNo2Name[this.commands[name].module] = name;
-      this.commands[name].parsed = (module, func, payload) => {
+  private createCommandInstances() {
+    for (const name in this.commandClasses) {
+      if (!Object.prototype.hasOwnProperty.call(this.commandClasses, name)) {
+        continue;
+      }
+      const key = name as keyof C;
+      const classObj = this.commandClasses[key];
+      const instance = new classObj();
+      this.commands[key] = instance;
+      this.moduleNo2Name[instance.module] = name;
+      instance.parsed = (module, func, payload) => {
         this.events.emit('binaryGenerated', module, func, payload);
       };
     }
   }
 
+  public getCommandInstance<Name extends Extract<keyof C, string>>(
+    name: Name
+  ): C[Name];
   public getCommandInstance(name: string) {
-    return this.commands[name];
+    return this.commands[name as keyof C];
   }
 
   public getCommandInstanceByModule(module: number) {

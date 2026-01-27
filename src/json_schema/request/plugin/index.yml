@@ -7,3 +7,5 @@ description: "plugin command"
 
 "anyOf":
   - {$ref: "/request/plugin/send"}
+  - {$ref: "/request/plugin/exec_lua"}
+  - {$ref: "/request/plugin/reload_lua"}

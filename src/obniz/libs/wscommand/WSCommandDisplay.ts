@@ -18,7 +18,7 @@ export class WSCommandDisplay extends WSCommandAbstract {
 
   // Commands
 
-  public clear(params: any) {
+  public clear() {
     this.sendCommand(this._CommandClear, null);
   }
 
@@ -32,11 +32,11 @@ export class WSCommandDisplay extends WSCommandAbstract {
     this.print(result);
   }
 
-  public text(params: any) {
+  public text(params: { text: string }) {
     this.printText(params.text);
   }
 
-  public raw(params: any) {
+  public raw(params: { color_depth?: number; raw: number[] }) {
     if (typeof params.color_depth === 'number' && params.color_depth > 1) {
       this.drawRawColors(params.raw, params.color_depth);
     } else {
@@ -44,7 +44,9 @@ export class WSCommandDisplay extends WSCommandAbstract {
     }
   }
 
-  public qr(params: any) {
+  public qr(params: {
+    qr: { text: string; correction?: 'L' | 'M' | 'Q' | 'H' };
+  }) {
     const text = params.qr.text;
     const correctionLevel = params.qr.correction || 'M';
 
@@ -86,7 +88,9 @@ export class WSCommandDisplay extends WSCommandAbstract {
     }
   }
 
-  public pinName(params: any) {
+  public pinName(params: {
+    pin_assign: { module_name: string; pin_name: string }[];
+  }) {
     for (let i = 0; i < 40; i++) {
       if (typeof params.pin_assign[i] === 'object') {
         this.setPinName(

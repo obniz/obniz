@@ -1,485 +1,333 @@
-<!doctype html>
-<html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ObnizPartsInterface | obniz</title>
-	<meta name="description" content="">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="../assets/css/main.css">
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="../index.html" class="title">obniz</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="../index.html">Globals</a>
-				</li>
-				<li>
-					<a href="../modules/obnizcore.html">ObnizCore</a>
-				</li>
-				<li>
-					<a href="obnizcore.obnizpartsinterface.html">ObnizPartsInterface</a>
-				</li>
-			</ul>
-			<h1>Class ObnizPartsInterface</h1>
-		</div>
-	</div>
-</header>
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ObnizPartsInterface | obniz</title><meta name="description" content="Documentation for obniz"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base="..">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">obniz</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
 <div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">ObnizPartsInterface</span>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implemented by</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="parts.adt7310.adt7310.html" class="tsd-signature-type">ADT7310</a></li>
-					<li><a href="parts.adt7410.adt7410.html" class="tsd-signature-type">ADT7410</a></li>
-					<li><a href="parts.ak09916.ak09916.html" class="tsd-signature-type">AK09916</a></li>
-					<li><a href="parts.ak09916.ak09916.html" class="tsd-signature-type">AK09916</a></li>
-					<li><a href="parts.ak8963.ak8963.html" class="tsd-signature-type">AK8963</a></li>
-					<li><a href="parts.am2320.am2320.html" class="tsd-signature-type">AM2320</a></li>
-					<li><a href="parts.amg8833.amg8833.html" class="tsd-signature-type">AMG8833</a></li>
-					<li><a href="parts.axp192.axp192.html" class="tsd-signature-type">AXP192</a></li>
-					<li><a href="parts.analogtemperaturesensor.analogtemperaturesensor.html" class="tsd-signature-type">AnalogTemperatureSensor</a></li>
-					<li><a href="parts.arducammini.arducammini.html" class="tsd-signature-type">ArduCAMMini</a></li>
-					<li><a href="parts.bme280.bme280.html" class="tsd-signature-type">BME280</a></li>
-					<li><a href="parts.bmp280.bmp280.html" class="tsd-signature-type">BMP280</a></li>
-					<li><a href="parts.button.button.html" class="tsd-signature-type">Button</a></li>
-					<li><a href="parts.ccs811.ccs811.html" class="tsd-signature-type">CCS811</a></li>
-					<li><a href="parts.ccs811.ccs811.html" class="tsd-signature-type">CCS811</a></li>
-					<li><a href="parts.ct10.ct10.html" class="tsd-signature-type">CT10</a></li>
-					<li><a href="parts.d6t44l.d6t44l.html" class="tsd-signature-type">D6T44L</a></li>
-					<li><a href="parts.dcmotor.dcmotor.html" class="tsd-signature-type">DCMotor</a></li>
-					<li><a href="parts.dht12.dht12.html" class="tsd-signature-type">DHT12</a></li>
-					<li><a href="parts.dht12.dht12.html" class="tsd-signature-type">DHT12</a></li>
-					<li><a href="parts.dps310.dps310.html" class="tsd-signature-type">DPS310</a></li>
-					<li><a href="parts.enc03r_module.enc03r_module.html" class="tsd-signature-type">ENC03R_Module</a></li>
-					<li><a href="parts.fsr40x.fsr40x.html" class="tsd-signature-type">FSR40X</a></li>
-					<li><a href="parts.flickhat.flickhat.html" class="tsd-signature-type">FlickHat</a></li>
-					<li><a href="parts.fullcolorled.fullcolorled.html" class="tsd-signature-type">FullColorLED</a></li>
-					<li><a href="parts.gp2y0a21yk0f.gp2y0a21yk0f.html" class="tsd-signature-type">GP2Y0A21YK0F</a></li>
-					<li><a href="parts.gysfdmaxb.gysfdmaxb.html" class="tsd-signature-type">GYSFDMAXB</a></li>
-					<li><a href="parts.grove_3axisaccelerometer.grove_3axisaccelerometer.html" class="tsd-signature-type">Grove_3AxisAccelerometer</a></li>
-					<li><a href="parts.grove_button.grove_button.html" class="tsd-signature-type">Grove_Button</a></li>
-					<li><a href="parts.grove_buzzer.grove_buzzer.html" class="tsd-signature-type">Grove_Buzzer</a></li>
-					<li><a href="parts.reflection-27192.grove_distancesensor.grove_distancesensor.html" class="tsd-signature-type">Grove_DistanceSensor</a></li>
-					<li><a href="parts.grove_earthoptionsa.grove_earth.html" class="tsd-signature-type">Grove_EARTH</a></li>
-					<li><a href="parts.grove_earheartrate.grove_earheartrate.html" class="tsd-signature-type">Grove_EarHeartRate</a></li>
-					<li><a href="parts.grove_gps.grove_gps.html" class="tsd-signature-type">Grove_GPS</a></li>
-					<li><a href="parts.grove_gesturesensor.grove_gesturesensor.html" class="tsd-signature-type">Grove_GestureSensor</a></li>
-					<li><a href="parts.grove_joystick.grove_joystick.html" class="tsd-signature-type">Grove_JoyStick</a></li>
-					<li><a href="parts.grove_lightsensor.grove_lightsensor.html" class="tsd-signature-type">Grove_LightSensor</a></li>
-					<li><a href="parts.grove_mp3.grove_mp3.html" class="tsd-signature-type">Grove_MP3</a></li>
-					<li><a href="parts.grove_microswitch.grove_microswitch.html" class="tsd-signature-type">Grove_MicroSwitch</a></li>
-					<li><a href="parts.grove_pressuresensor.grove_pressuresensor.html" class="tsd-signature-type">Grove_PressureSensor</a></li>
-					<li><a href="parts.grove_relay.grove_relay.html" class="tsd-signature-type">Grove_Relay</a></li>
-					<li><a href="parts.grove_rotaryanglesensoroptionsa.grove_rotaryanglesensor.html" class="tsd-signature-type">Grove_RotaryAngleSensor</a></li>
-					<li><a href="parts.grove_sht35sensor.grove_sht35sensor.html" class="tsd-signature-type">Grove_SHT35Sensor</a></li>
-					<li><a href="parts.grove_soilmoisturesensor.grove_soilmoisturesensor.html" class="tsd-signature-type">Grove_SoilMoistureSensor</a></li>
-					<li><a href="parts.grove_speaker.grove_speaker.html" class="tsd-signature-type">Grove_Speaker</a></li>
-					<li><a href="parts.grove_waterlevelsensor.grove_waterlevelsensor.html" class="tsd-signature-type">Grove_WaterLevelSensor</a></li>
-					<li><a href="parts.hc_sr04.hcsr04.html" class="tsd-signature-type">HCSR04</a></li>
-					<li><a href="parts.hc_sr505.hcsr505.html" class="tsd-signature-type">HCSR505</a></li>
-					<li><a href="parts.hmc5883l.hmc5883l.html" class="tsd-signature-type">HMC5883L</a></li>
-					<li><a href="parts.hx711.hx711.html" class="tsd-signature-type">Hx711</a></li>
-					<li><a href="parts.i2ccompassabstract.html" class="tsd-signature-type">I2cCompassAbstract</a></li>
-					<li><a href="parts.i2cimu6abstract.html" class="tsd-signature-type">I2cImu6Abstract</a></li>
-					<li><a href="parts.i2cpartsabstract.html" class="tsd-signature-type">I2cPartsAbstract</a></li>
-					<li><a href="parts.icm20948.icm20948.html" class="tsd-signature-type">ICM20948</a></li>
-					<li><a href="parts.icm20948.icm20948.html" class="tsd-signature-type">ICM20948</a></li>
-					<li><a href="parts.ipm_165.ipm_165.html" class="tsd-signature-type">IPM_165</a></li>
-					<li><a href="parts.irmodule.irmodule.html" class="tsd-signature-type">IRModule</a></li>
-					<li><a href="parts.irsensor.irsensor.html" class="tsd-signature-type">IRSensor</a></li>
-					<li><a href="parts.infraredled.infraredled.html" class="tsd-signature-type">InfraredLED</a></li>
-					<li><a href="parts.joystick.joystick.html" class="tsd-signature-type">JoyStick</a></li>
-					<li><a href="parts.jpegserialcam.jpegserialcam.html" class="tsd-signature-type">JpegSerialCam</a></li>
-					<li><a href="parts.kxr94_2050.kxr94_2050.html" class="tsd-signature-type">KXR94_2050</a></li>
-					<li><a href="parts.kxsc7_2050.kxsc7_2050.html" class="tsd-signature-type">KXSC7_2050</a></li>
-					<li><a href="parts.keyestudio_button.keyestudio_button.html" class="tsd-signature-type">Keyestudio_Button</a></li>
-					<li><a href="parts.keyestudio_buzzer.keyestudio_buzzer.html" class="tsd-signature-type">Keyestudio_Buzzer</a></li>
-					<li><a href="parts.keyestudio_ht16k33.keyestudio_ht16k33.html" class="tsd-signature-type">Keyestudio_HT16K33</a></li>
-					<li><a href="parts.keyestudio_moisturesensor.keyestudio_moisturesensor.html" class="tsd-signature-type">Keyestudio_MoistureSensor</a></li>
-					<li><a href="parts.keyestudio_pir.keyestudio_pir.html" class="tsd-signature-type">Keyestudio_PIR</a></li>
-					<li><a href="parts.keyestudio_temperaturesensor.keyestudio_temperaturesensor.html" class="tsd-signature-type">Keyestudio_TemperatureSensor</a></li>
-					<li><a href="parts.keyestudio_trafficlight.keyestudio_trafficlight.html" class="tsd-signature-type">Keyestudio_TrafficLight</a></li>
-					<li><a href="parts.led.led.html" class="tsd-signature-type">LED</a></li>
-					<li><a href="parts.lm35dz.lm35dz.html" class="tsd-signature-type">LM35DZ</a></li>
-					<li><a href="parts.lm35dz.lm35dz.html" class="tsd-signature-type">LM35DZ</a></li>
-					<li><a href="parts.lm60.lm60.html" class="tsd-signature-type">LM60</a></li>
-					<li><a href="parts.lm60.lm60.html" class="tsd-signature-type">LM60</a></li>
-					<li><a href="parts.lm61.lm61.html" class="tsd-signature-type">LM61</a></li>
-					<li><a href="parts.lm61.lm61.html" class="tsd-signature-type">LM61</a></li>
-					<li><a href="parts.lmt87.lmt87.html" class="tsd-signature-type">LMT87</a></li>
-					<li><a href="parts.lmt87.lmt87.html" class="tsd-signature-type">LMT87</a></li>
-					<li><a href="parts.m5stickc_adc.m5stickc_adc.html" class="tsd-signature-type">M5StickC_ADC</a></li>
-					<li><a href="parts.m5stickc_dac.m5stickc_dac.html" class="tsd-signature-type">M5StickC_DAC</a></li>
-					<li><a href="parts.m5stickc_finger.m5stickc_finger.html" class="tsd-signature-type">M5StickC_FINGER</a></li>
-					<li><a href="parts.m5stickc_joystick.m5stickc_joystick.html" class="tsd-signature-type">M5StickC_JoyStick</a></li>
-					<li><a href="parts.m5stackc_rs485.m5stickc_rs485.html" class="tsd-signature-type">M5StickC_RS485</a></li>
-					<li><a href="parts.m5stickc_tof.m5stickc_tof.html" class="tsd-signature-type">M5StickC_ToF</a></li>
-					<li><a href="parts.m5stickc_yun.m5stickc_yun.html" class="tsd-signature-type">M5StickC_Yun</a></li>
-					<li><a href="parts.mcp23s08.mcp23s08.html" class="tsd-signature-type">MCP23S08</a></li>
-					<li><a href="parts.mcp4725.mcp4725.html" class="tsd-signature-type">MCP4725</a></li>
-					<li><a href="parts.mcp9700.mcp9700.html" class="tsd-signature-type">MCP9700</a></li>
-					<li><a href="parts.mcp9700.mcp9700.html" class="tsd-signature-type">MCP9700</a></li>
-					<li><a href="parts.mcp9701.mcp9701.html" class="tsd-signature-type">MCP9701</a></li>
-					<li><a href="parts.mcp9701.mcp9701.html" class="tsd-signature-type">MCP9701</a></li>
-					<li><a href="parts.mfrc522.mfrc522.html" class="tsd-signature-type">MFRC522</a></li>
-					<li><a href="parts.mh_z19b.mh_z19b.html" class="tsd-signature-type">MH_Z19B</a></li>
-					<li><a href="parts.mpu6050.mpu6050.html" class="tsd-signature-type">MPU6050</a></li>
-					<li><a href="parts.mpu6500.mpu6500.html" class="tsd-signature-type">MPU6500</a></li>
-					<li><a href="parts.mpu6886.mpu6886.html" class="tsd-signature-type">MPU6886</a></li>
-					<li><a href="parts.mpu9250.mpu9250.html" class="tsd-signature-type">MPU9250</a></li>
-					<li><a href="parts.mq135.mq135.html" class="tsd-signature-type">MQ135</a></li>
-					<li><a href="parts.mq2.mq2.html" class="tsd-signature-type">MQ2</a></li>
-					<li><a href="parts.mq3.mq3.html" class="tsd-signature-type">MQ3</a></li>
-					<li><a href="parts.mq4.mq4.html" class="tsd-signature-type">MQ4</a></li>
-					<li><a href="parts.mq5.mq5.html" class="tsd-signature-type">MQ5</a></li>
-					<li><a href="parts.mq6.mq6.html" class="tsd-signature-type">MQ6</a></li>
-					<li><a href="parts.mq7.mq7.html" class="tsd-signature-type">MQ7</a></li>
-					<li><a href="parts.mq8.mq8.html" class="tsd-signature-type">MQ8</a></li>
-					<li><a href="parts.mq9.mq9.html" class="tsd-signature-type">MQ9</a></li>
-					<li><a href="parts.mqgas.mqgassensor.html" class="tsd-signature-type">MQGasSensor</a></li>
-					<li><a href="parts.mt_500bt.mt_500bt.html" class="tsd-signature-type">MT_500BT</a></li>
-					<li><a href="parts.matrixled_ht16k33.matrixled_ht16k33.html" class="tsd-signature-type">MatrixLED_HT16K33</a></li>
-					<li><a href="parts.matrixled_max7219.matrixled_max7219.html" class="tsd-signature-type">MatrixLED_MAX7219</a></li>
-					<li><a href="parts.pca9685.pca9685.html" class="tsd-signature-type">PCA9685</a></li>
-					<li><a href="parts.pls_01bt.pls_01bt.html" class="tsd-signature-type">PLS_01BT</a></li>
-					<li><a href="parts.pt550.pt550.html" class="tsd-signature-type">PT550</a></li>
-					<li><a href="parts.papirsvz.papirsvz.html" class="tsd-signature-type">PaPIRsVZ</a></li>
-					<li><a href="parts.potentiometer.potentiometer.html" class="tsd-signature-type">Potentiometer</a></li>
-					<li><a href="parts.puls08m5stickcs.puls08m5stickcs.html" class="tsd-signature-type">Puls08M5stickcS</a></li>
-					<li><a href="parts.rex_btpm25v.rex_btpm25v.html" class="tsd-signature-type">REX_BTPM25V</a></li>
-					<li><a href="parts.rn42.rn42.html" class="tsd-signature-type">RN42</a></li>
-					<li><a href="parts.rs_btirex2.rs_btirex2.html" class="tsd-signature-type">RS_BTIREX2</a></li>
-					<li><a href="parts.rs_btwattch2.rs_btwattch2.html" class="tsd-signature-type">RS_BTWATTCH2</a></li>
-					<li><a href="parts.s11059.s11059.html" class="tsd-signature-type">S11059</a></li>
-					<li><a href="parts.s5851a.s5851a.html" class="tsd-signature-type">S5851A</a></li>
-					<li><a href="parts.s8100b.s8100b.html" class="tsd-signature-type">S8100B</a></li>
-					<li><a href="parts.s8100b.s8100b.html" class="tsd-signature-type">S8100B</a></li>
-					<li><a href="parts.s8120c.s8120c.html" class="tsd-signature-type">S8120C</a></li>
-					<li><a href="parts.s8120c.s8120c.html" class="tsd-signature-type">S8120C</a></li>
-					<li><a href="parts.sen0114.sen0114.html" class="tsd-signature-type">SEN0114</a></li>
-					<li><a href="parts.sh200q.sh200q.html" class="tsd-signature-type">SH200Q</a></li>
-					<li><a href="parts.sht20.sht20.html" class="tsd-signature-type">SHT20</a></li>
-					<li><a href="parts.sht31.sht31.html" class="tsd-signature-type">SHT31</a></li>
-					<li><a href="parts.snx4hc595.snx4hc595.html" class="tsd-signature-type">SNx4HC595</a></li>
-					<li><a href="parts.st7735s.st7735s.html" class="tsd-signature-type">ST7735S</a></li>
-					<li><a href="parts.sainsmarttft18lcd.sainsmarttft18lcd.html" class="tsd-signature-type">SainSmartTFT18LCD</a></li>
-					<li><a href="parts.servomotor.servomotor.html" class="tsd-signature-type">ServoMotor</a></li>
-					<li><a href="parts.sharpmemorytft.sharpmemorytft.html" class="tsd-signature-type">SharpMemoryTFT</a></li>
-					<li><a href="parts.solenoid.solenoid.html" class="tsd-signature-type">Solenoid</a></li>
-					<li><a href="parts.speaker.speaker.html" class="tsd-signature-type">Speaker</a></li>
-					<li><a href="parts.steppermotor.steppermotor.html" class="tsd-signature-type">StepperMotor</a></li>
-					<li><a href="parts.toio_corecube.toio_corecube.html" class="tsd-signature-type">Toio_CoreCube</a></li>
-					<li><a href="parts.usb.usb.html" class="tsd-signature-type">USB</a></li>
-					<li><a href="parts.vl53l0x.vl53l0x.html" class="tsd-signature-type">VL53L0X</a></li>
-					<li><a href="parts.w5500.w5500.html" class="tsd-signature-type">W5500</a></li>
-					<li><a href="parts.ws2811.ws2811.html" class="tsd-signature-type">WS2811</a></li>
-					<li><a href="parts.ws2812.ws2812.html" class="tsd-signature-type">WS2812</a></li>
-					<li><a href="parts.ws2812b.ws2812b.html" class="tsd-signature-type">WS2812B</a></li>
-					<li><a href="parts.xbee.xbee.html" class="tsd-signature-type">XBee</a></li>
-					<li><a href="parts.yg1006.yg1006.html" class="tsd-signature-type">YG1006</a></li>
-					<li><a href="parts.24lc256._24lc256.html" class="tsd-signature-type">_24LC256</a></li>
-					<li><a href="parts.7segmentled._7segmentled.html" class="tsd-signature-type">_7SegmentLED</a></li>
-					<li><a href="parts.7segmentledarray._7segmentledarray.html" class="tsd-signature-type">_7SegmentLEDArray</a></li>
-					<li><a href="parts.7segmentled_max7219._7segmentled_max7219.html" class="tsd-signature-type">_7SegmentLED_MAX7219</a></li>
-				</ul>
-			</section>
-			<section class="tsd-panel-group tsd-index-group">
-				<h2>Index</h2>
-				<section class="tsd-panel tsd-index-panel">
-					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizpartsinterface.html#iokeys" class="tsd-kind-icon">io<wbr>Keys</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizpartsinterface.html#keys" class="tsd-kind-icon">keys</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizpartsinterface.html#params" class="tsd-kind-icon">params</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="obnizcore.obnizpartsinterface.html#requiredkeys" class="tsd-kind-icon">required<wbr>Keys</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="obnizcore.obnizpartsinterface.html#info" class="tsd-kind-icon">info</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Methods</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="obnizcore.obnizpartsinterface.html#wired" class="tsd-kind-icon">wired</a></li>
-							</ul>
-						</section>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="iokeys" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagAbstract">Abstract</span> io<wbr>Keys</h3>
-					<div class="tsd-signature tsd-kind-icon">io<wbr>Keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizPartsInterface.ts:24</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="keys" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> keys</h3>
-					<div class="tsd-signature tsd-kind-icon">keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizPartsInterface.ts:22</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="params" class="tsd-anchor"></a>
-					<h3>params</h3>
-					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizPartsInterface.ts:25</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="requiredkeys" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> required<wbr>Keys</h3>
-					<div class="tsd-signature tsd-kind-icon">required<wbr>Keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizPartsInterface.ts:23</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
-					<a name="info" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> info</h3>
-					<div class="tsd-signature tsd-kind-icon">info<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in src/obniz/ObnizPartsInterface.ts:20</li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-siganture">
-								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></li>
-								</ul>
-								<ul class="tsd-descriptions">
-									<li class="tsd-description">
-										<h4 class="tsd-returns-title">Returns <a href="../interfaces/obnizcore.obnizpartsinfo.html" class="tsd-signature-type">ObnizPartsInfo</a></h4>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="wired" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> wired</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">wired<span class="tsd-signature-symbol">(</span>obniz<span class="tsd-signature-symbol">: </span><a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in src/obniz/ObnizPartsInterface.ts:27</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>obniz: <a href="obnizcore.obniz.html" class="tsd-signature-type">Obniz</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class="globals  ">
-						<a href="../index.html"><em>Globals</em></a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/obnizapp.html">Obniz<wbr>App</a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/obnizcore.html">Obniz<wbr>Core</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-not-exported">
-						<a href="../modules/parts.html">Parts</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/parts_ble_utils_abstracts.html">parts/<wbr>Ble/utils/abstracts</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/parts_ble_utils_abstracts_meshjs_block.html">parts/<wbr>Ble/utils/abstracts/MESHjs/block</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/parts_ble_utils_abstracts_meshjs_util.html">parts/<wbr>Ble/utils/abstracts/MESHjs/util</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/parts_ethernet_w5500.html">parts/<wbr>Ethernet/<wbr>W5500</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="obnizcore.obnizpartsinterface.html" class="tsd-kind-icon">Obniz<wbr>Parts<wbr>Interface</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.obnizpartsinterface.html#iokeys" class="tsd-kind-icon">io<wbr>Keys</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.obnizpartsinterface.html#keys" class="tsd-kind-icon">keys</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.obnizpartsinterface.html#params" class="tsd-kind-icon">params</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="obnizcore.obnizpartsinterface.html#requiredkeys" class="tsd-kind-icon">required<wbr>Keys</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
-								<a href="obnizcore.obnizpartsinterface.html#info" class="tsd-kind-icon">info</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="obnizcore.obnizpartsinterface.html#wired" class="tsd-kind-icon">wired</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
-<div class="overlay"></div>
-<script src="../assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
-</body>
-</html>
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb">
+<li><a href="../index.html">obniz</a></li>
+<li><a href="../modules/ObnizCore.html">ObnizCore</a></li>
+<li><a href="ObnizCore.ObnizPartsInterface.html">ObnizPartsInterface</a></li></ul>
+<h1>Class ObnizPartsInterface<code class="tsd-tag ts-flagAbstract">Abstract</code> </h1></div>
+<section class="tsd-panel tsd-hierarchy">
+<h4>Hierarchy</h4>
+<ul class="tsd-hierarchy">
+<li><span class="target">ObnizPartsInterface</span></li></ul></section>
+<section class="tsd-panel">
+<h4>Implemented by</h4>
+<ul class="tsd-hierarchy">
+<li><a href="Parts.W5500.W5500.html" class="tsd-signature-type tsd-kind-class">W5500</a></li>
+<li><a href="Parts.hx711.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.USB.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Puls08M5stickcS.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MT_500BT.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.PLS_01BT.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.REX_BTPM25V.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.RS_BTIREX2.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.RS_BTWATTCH2.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Toio_CoreCube.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.ArduCAMMini.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.JpegSerialCam.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.PT550.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.S11059.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MCP4725.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.7SegmentLED.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.7SegmentLEDArray.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.7SegmentLED_MAX7219.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MatrixLED_HT16K33.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MatrixLED_MAX7219.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.ST7735S.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.SainSmartTFT18LCD.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.SharpMemoryTFT.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.GP2Y0A21YK0F.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.HC_SR04.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.VL53L0X.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.GYSFDMAXB.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.CCS811.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MH_Z19B.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MQGas.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_3AxisAccelerometer.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_Button.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_Buzzer.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_EARTHOptionsA.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_EarHeartRate.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_GPS.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_GestureSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_JoyStick.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_LightSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_MP3.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_MicroSwitch.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_PressureSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_Relay.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_RotaryAngleSensorOptionsA.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_SHT35Sensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_SoilMoistureSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_Speaker.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Grove_WaterLevelSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.ENC03R_Module.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.IRModule.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.IRSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.InfraredLED.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.YG1006.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Keyestudio_Button.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Keyestudio_Buzzer.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Keyestudio_MoistureSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Keyestudio_PIR.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Keyestudio_TemperatureSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Keyestudio_TrafficLight.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.FullColorLED.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.LED.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.WS2811.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.WS2812.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.WS2812B.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MCP23S08.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.SNx4HC595.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.M5StickC_ADC.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.M5StickC_FINGER.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.M5StickC_JoyStick.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.M5StackC_RS485.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.M5StickC_Yun.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.CT10.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.24LC256.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.AK09916.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Button.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.FlickHat.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.HC_SR505.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.ICM20948.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.IPM_165.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.JoyStick.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.KXR94_2050.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.KXSC7_2050.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.PaPIRsVZ.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Potentiometer.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.DCMotor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.PCA9685.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.ServoMotor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Solenoid.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.StepperMotor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.AXP192.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.BMP280.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.DPS310.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.FSR40X.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.SEN0114.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.Speaker.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.AnalogTemperatureSensor.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.LM35DZ.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.LM60.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.LM61.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.LMT87.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MCP9700.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MCP9701.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.S8100B.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.S8120C.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.ADT7410.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.AM2320.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.AMG8833.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.BME280.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.D6T44L.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.DHT12.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.DHT20.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.S5851A.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.SHT20.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.SHT31.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.ADT7310.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.MFRC522.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.RN42.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.XBee.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
+<li><a href="Parts.default-2.html" class="tsd-signature-type tsd-kind-class">default</a></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/obniz/obniz/blob/f23012034/src/obniz/ObnizPartsInterface.ts#L19">src/obniz/ObnizPartsInterface.ts:19</a></li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
+<h5 class="tsd-index-heading uppercase" role="button" aria-expanded="false" tabIndex=0><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 5.50969L8 11.6609L14.5 5.50969L12.5466 3.66086L8 7.96494L3.45341 3.66086L1.5 5.50969Z" fill="var(--color-text)"></path></svg> Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Constructors</h3>
+<div class="tsd-index-list"><a href="ObnizCore.ObnizPartsInterface.html#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-512"><rect fill="var(--color-icon-background)" stroke="#4D7FFF" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Properties</h3>
+<div class="tsd-index-list"><a href="ObnizCore.ObnizPartsInterface.html#ioKeys" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>io<wbr/>Keys?</span></a>
+<a href="ObnizCore.ObnizPartsInterface.html#keys" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>keys</span></a>
+<a href="ObnizCore.ObnizPartsInterface.html#params" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>params</span></a>
+<a href="ObnizCore.ObnizPartsInterface.html#requiredKeys" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>required<wbr/>Keys</span></a>
+<a href="ObnizCore.ObnizPartsInterface.html#info" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>info</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Methods</h3>
+<div class="tsd-index-list"><a href="ObnizCore.ObnizPartsInterface.html#wired" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>wired</span></a>
+</div></section></div></details></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Constructors</h2>
+<section class="tsd-panel tsd-member"><a id="constructor" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_ObnizPartsInterface"><span class="tsd-kind-constructor-signature">new <wbr/>Obniz<wbr/>Parts<wbr/>Interface</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ObnizCore.ObnizPartsInterface.html" class="tsd-signature-type tsd-kind-class">ObnizPartsInterface</a><a href="#constructor.new_ObnizPartsInterface" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="ObnizCore.ObnizPartsInterface.html" class="tsd-signature-type tsd-kind-class">ObnizPartsInterface</a></h4></li></ul></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Properties</h2>
+<section class="tsd-panel tsd-member"><a id="ioKeys" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <code class="tsd-tag ts-flagAbstract">Abstract</code> <span>io<wbr/>Keys</span><a href="#ioKeys" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">io<wbr/>Keys</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/obniz/obniz/blob/f23012034/src/obniz/ObnizPartsInterface.ts#L24">src/obniz/ObnizPartsInterface.ts:24</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="keys" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>keys</span><a href="#keys" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">keys</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/obniz/obniz/blob/f23012034/src/obniz/ObnizPartsInterface.ts#L22">src/obniz/ObnizPartsInterface.ts:22</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="params" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>params</span><a href="#params" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">params</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/obniz/obniz/blob/f23012034/src/obniz/ObnizPartsInterface.ts#L25">src/obniz/ObnizPartsInterface.ts:25</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="requiredKeys" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>required<wbr/>Keys</span><a href="#requiredKeys" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">required<wbr/>Keys</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/obniz/obniz/blob/f23012034/src/obniz/ObnizPartsInterface.ts#L23">src/obniz/ObnizPartsInterface.ts:23</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="info" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>info</span><a href="#info" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">info</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="../interfaces/ObnizCore.ObnizPartsInfo.html" class="tsd-signature-type tsd-kind-interface">ObnizPartsInfo</a><span class="tsd-signature-symbol">)</span></div>
+<div class="tsd-type-declaration">
+<h4>Type declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter-signature">
+<ul class="tsd-signatures">
+<li class="tsd-signature" id="info.__type.__type-1"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/ObnizCore.ObnizPartsInfo.html" class="tsd-signature-type tsd-kind-interface">ObnizPartsInfo</a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/ObnizCore.ObnizPartsInfo.html" class="tsd-signature-type tsd-kind-interface">ObnizPartsInfo</a></h4></li></ul></li></ul></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/obniz/obniz/blob/f23012034/src/obniz/ObnizPartsInterface.ts#L20">src/obniz/ObnizPartsInterface.ts:20</a></li></ul></aside></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Methods</h2>
+<section class="tsd-panel tsd-member"><a id="wired" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>wired</span><a href="#wired" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="wired.wired-1"><span class="tsd-kind-call-signature">wired</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">obniz</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#wired.wired-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">obniz</span>: <a href="ObnizCore.Obniz.html" class="tsd-signature-type tsd-kind-class">Obniz</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/obniz/obniz/blob/f23012034/src/obniz/ObnizPartsInterface.ts#L27">src/obniz/ObnizPartsInterface.ts:27</a></li></ul></aside></li></ul></section></section></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)" id="icon-chevronDown"></path></svg>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
+<li><a href="#ioKeys" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>io<wbr/>Keys</span></a></li>
+<li><a href="#keys" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>keys</span></a></li>
+<li><a href="#params" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>params</span></a></li>
+<li><a href="#requiredKeys" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>required<wbr/>Keys</span></a></li>
+<li><a href="#info" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>info</span></a></li>
+<li><a href="#wired" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>wired</span></a></li></ul></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>obniz</span></a>
+<ul class="tsd-small-nested-navigation">
+<li><a href="../modules/ObnizApp.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>Obniz<wbr/>App</span></a></li>
+<li>
+<details class="tsd-index-accordion" open data-key="ObnizCore"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg><a href="../modules/ObnizCore.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>Obniz<wbr/>Core</span></a></summary>
+<div class="tsd-accordion-details">
+<ul class="tsd-nested-navigation">
+<li><a href="../modules/ObnizCore.Components.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>Components</span></a></li>
+<li><a href="../modules/ObnizCore.Errors.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>Errors</span></a></li>
+<li><a href="../modules/ObnizCore.Hardware.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>Hardware</span></a></li>
+<li><a href="ObnizCore.Obniz.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>Obniz</span></a></li>
+<li><a href="ObnizCore.ObnizApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Api</span></a></li>
+<li><a href="ObnizCore.ObnizComponents.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Components</span></a></li>
+<li><a href="ObnizCore.ObnizConnection.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Connection</span></a></li>
+<li><a href="ObnizCore.ObnizDevice.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Device</span></a></li>
+<li><a href="ObnizCore.ObnizParts.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Parts</span></a></li>
+<li><a href="ObnizCore.ObnizPartsBle.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble</span></a></li>
+<li><a href="ObnizCore.ObnizPartsBleConnectable.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Connectable</span></a></li>
+<li><a href="ObnizCore.ObnizPartsBleInterface.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Interface</span></a></li>
+<li><a href="ObnizCore.ObnizPartsBlePairable.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Pairable</span></a></li>
+<li><a href="ObnizCore.ObnizPartsInterface.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Parts<wbr/>Interface</span></a></li>
+<li><a href="ObnizCore.ObnizSystemMethods.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>System<wbr/>Methods</span></a></li>
+<li><a href="ObnizCore.ObnizUIs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>ObnizUIs</span></a></li>
+<li><a href="ObnizCore.ObnizUtil.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obniz<wbr/>Util</span></a></li>
+<li><a href="../interfaces/ObnizCore.ConnectedNetwork.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-256"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)"></path></g></svg><span>Connected<wbr/>Network</span></a></li>
+<li><a href="../interfaces/ObnizCore.ObnizErrorMessage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Obniz<wbr/>Error<wbr/>Message</span></a></li>
+<li><a href="../interfaces/ObnizCore.ObnizOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Obniz<wbr/>Options</span></a></li>
+<li><a href="../interfaces/ObnizCore.ObnizPartsBleInfo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Info</span></a></li>
+<li><a href="../interfaces/ObnizCore.ObnizPartsBleProps.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Props</span></a></li>
+<li><a href="../interfaces/ObnizCore.ObnizPartsInfo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Obniz<wbr/>Parts<wbr/>Info</span></a></li>
+<li><a href="../interfaces/ObnizCore.ObnizPartsProps.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Obniz<wbr/>Parts<wbr/>Props</span></a></li>
+<li><a href="../interfaces/ObnizCore.PartsList.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Parts<wbr/>List</span></a></li>
+<li><a href="../interfaces/ObnizCore.Triaxial.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Triaxial</span></a></li>
+<li><a href="../types/ObnizCore.NormalValueType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4194304"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-type-alias)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)"></path></g></svg><span>Normal<wbr/>Value<wbr/>Type</span></a></li>
+<li><a href="../types/ObnizCore.ObnizBleBeaconStruct.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Obniz<wbr/>Ble<wbr/>Beacon<wbr/>Struct</span></a></li>
+<li><a href="../types/ObnizCore.ObnizBleBeaconStructCheck.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Obniz<wbr/>Ble<wbr/>Beacon<wbr/>Struct<wbr/>Check</span></a></li>
+<li><a href="../types/ObnizCore.ObnizBleBeaconStructNormal.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Obniz<wbr/>Ble<wbr/>Beacon<wbr/>Struct<wbr/>Normal</span></a></li>
+<li><a href="../types/ObnizCore.ObnizConnectionEventNames.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Obniz<wbr/>Connection<wbr/>Event<wbr/>Names</span></a></li>
+<li><a href="../types/ObnizCore.ObnizPartsBleCompare.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Compare</span></a></li>
+<li><a href="../types/ObnizCore.ObnizPartsBleCompareWithNonNull.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Compare<wbr/>With<wbr/>Non<wbr/>Null</span></a></li>
+<li><a href="../types/ObnizCore.ObnizPartsBleMode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Mode</span></a></li>
+<li><a href="../types/ObnizCore.PartsType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Parts<wbr/>Type</span></a></li>
+<li><a href="../types/ObnizCore.PeripheralName.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Peripheral<wbr/>Name</span></a></li>
+<li><a href="../variables/ObnizCore.iBeaconCompanyID.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-32"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-variable)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.106 16L8.85 7.24H9.966L11.454 13.192C11.558 13.608 11.646 13.996 11.718 14.356C11.79 14.708 11.842 14.976 11.874 15.16C11.906 14.976 11.954 14.708 12.018 14.356C12.09 13.996 12.178 13.608 12.282 13.192L13.758 7.24H14.85L12.582 16H11.106Z" fill="var(--color-text)"></path></g></svg><span>i<wbr/>Beacon<wbr/>CompanyID</span></a></li>
+<li><a href="../variables/ObnizCore.iBeaconData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-32"></use></svg><span>i<wbr/>Beacon<wbr/>Data</span></a></li>
+<li><a href="../variables/ObnizCore.iBeaconDataWithStrict.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-32"></use></svg><span>i<wbr/>Beacon<wbr/>Data<wbr/>With<wbr/>Strict</span></a></li>
+<li><a href="../variables/ObnizCore.notMatchDeviceError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-32"></use></svg><span>not<wbr/>Match<wbr/>Device<wbr/>Error</span></a></li>
+<li><a href="../functions/ObnizCore.checkEquals.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-64"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)"></path></g></svg><span>check<wbr/>Equals</span></a></li>
+<li><a href="../functions/ObnizCore.fixByRange.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>fix<wbr/>By<wbr/>Range</span></a></li>
+<li><a href="../functions/ObnizCore.fixedPoint.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>fixed<wbr/>Point</span></a></li>
+<li><a href="../functions/ObnizCore.int.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>int</span></a></li>
+<li><a href="../functions/ObnizCore.intBE.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>intBE</span></a></li>
+<li><a href="../functions/ObnizCore.uint.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>uint</span></a></li>
+<li><a href="../functions/ObnizCore.uintBE.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>uintBE</span></a></li>
+<li><a href="../functions/ObnizCore.uintToArray.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>uint<wbr/>To<wbr/>Array</span></a></li>
+<li><a href="../functions/ObnizCore.uintToArrayWithBE.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>uint<wbr/>To<wbr/>Array<wbr/>WithBE</span></a></li></ul></div></details></li>
+<li><a href="../modules/Parts.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>Parts</span></a></li>
+<li><a href="../modules/obniz_ObnizPartsBleUuids.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/<wbr/>Obniz<wbr/>Parts<wbr/>Ble<wbr/>Uuids</span></a></li>
+<li><a href="../modules/obniz_ObnizTypes.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/<wbr/>Obniz<wbr/>Types</span></a></li>
+<li><a href="../modules/obniz_libs_embeds_bleHci_bleTypesUuid.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/libs/embeds/ble<wbr/>Hci/ble<wbr/>Types<wbr/>Uuid</span></a></li>
+<li><a href="../modules/obniz_libs_embeds_mcp23s08.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/libs/embeds/mcp23s08</span></a></li>
+<li><a href="../modules/obniz_libs_embeds_mcp23s08_io.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/libs/embeds/mcp23s08_<wbr/>io</span></a></li>
+<li><a href="../modules/obniz_libs_embeds_storage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/libs/embeds/storage</span></a></li>
+<li><a href="../modules/obniz_libs_utils_binaryAnalyzer_binaryAnalyzer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/libs/utils/binary<wbr/>Analyzer/binary<wbr/>Analyzer</span></a></li>
+<li><a href="../modules/obniz_libs_utils_brand.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/libs/utils/brand</span></a></li>
+<li><a href="../modules/obniz_libs_utils_retry.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/libs/utils/retry</span></a></li>
+<li><a href="../modules/obniz_libs_wscommand_WSCommandStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>obniz/libs/wscommand/WSCommand<wbr/>Storage</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESH.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESH</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_block_Base.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/block/<wbr/>Base</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_block_Brightness.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/block/<wbr/>Brightness</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_block_Button.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/block/<wbr/>Button</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_block_GPIO.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/block/GPIO</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_block_LED.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/block/LED</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_block_Motion.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/block/<wbr/>Motion</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_block_Move.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/block/<wbr/>Move</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_block_TempHumid.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/block/<wbr/>Temp<wbr/>Humid</span></a></li>
+<li><a href="../modules/parts_Ble_utils_abstracts_MESHjs_util_Error.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>parts/<wbr/>Ble/utils/abstracts/MESHjs/util/<wbr/>Error</span></a></li>
+<li><a href="../modules/Obniz.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>Obniz</span></a></li>
+<li><a href="../modules/W5500Parts.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>W5500<wbr/>Parts</span></a></li>
+<li><a href="../modules/W5500SocketParts.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>W5500<wbr/>Socket<wbr/>Parts</span></a></li></ul></nav></div></div></div>
+<div class="tsd-generator">
+<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<div class="overlay"></div></body></html>

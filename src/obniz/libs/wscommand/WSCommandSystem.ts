@@ -19,32 +19,37 @@ export class WSCommandSystem extends WSCommandAbstract {
   _CommandSleepSeconds = 10;
   _CommandSleepMinute = 11;
   _CommandSleepIoTrigger = 12;
+  _CommandUpdatePingCheckInterval = 18;
+
+  _CommandNotifyTimeStamp = 20;
+  _CommandSetQueueMode = 21;
+  _CommandSetClock = 22;
 
   // Commands
 
-  public reboot(params: any) {
+  public reboot() {
     this.sendCommand(this._CommandReboot, null);
   }
 
-  public reset(params: any) {
+  public reset() {
     this.sendCommand(this._CommandReset, null);
   }
 
-  public selfCheck(params: any) {
+  public selfCheck() {
     this.sendCommand(this._CommandSelfCheck, null);
   }
 
-  public wait(params: any) {
+  public wait(params: { wait: number }) {
     const msec = params.wait;
     const buf = new Uint8Array([msec >> 8, msec]);
     this.sendCommand(this._CommandWait, buf);
   }
 
-  public keepWorkingAtOffline(params: any) {
+  public keepWorkingAtOffline(params: { keep_working_at_offline: boolean }) {
     this.resetOnDisconnect(!params.keep_working_at_offline);
   }
 
-  public ping(params: any) {
+  public ping(params: { ping: { key: number[] } }) {
     const unixtime = new Date().getTime();
     const buf = new Uint8Array(params.ping.key.length + 8);
     const upper = Math.floor(unixtime / Math.pow(2, 32));
@@ -64,9 +69,23 @@ export class WSCommandSystem extends WSCommandAbstract {
     this.sendCommand(this._CommandPingPong, buf);
   }
 
-  public resetOnDisconnect(mustReset: any) {
+  public resetOnDisconnect(mustReset: boolean) {
     const buf = new Uint8Array([mustReset ? 1 : 0]);
     this.sendCommand(this._CommandResetOnDisconnect, buf);
+  }
+
+  /**
+   * デバイスのpingの間隔を更新します。これはクラウドから一度切り離されると再度もとに戻ります。
+   *
+   * @param {number} intervalMilliSec
+   */
+  updatePingCheckInterval(intervalMilliSec: number) {
+    const buf = new Uint8Array(4);
+    buf[0] = intervalMilliSec >> (8 * 3);
+    buf[1] = intervalMilliSec >> (8 * 2);
+    buf[2] = intervalMilliSec >> (8 * 1);
+    buf[3] = intervalMilliSec >> (8 * 0);
+    this.sendCommand(this._CommandUpdatePingCheckInterval, buf);
   }
 
   public parseFromJson(json: any) {
@@ -88,7 +107,11 @@ export class WSCommandSystem extends WSCommandAbstract {
       { uri: '/request/system/sleepSeconds', onValid: this.sleepSeconds },
       { uri: '/request/system/sleepMinute', onValid: this.sleepMinute },
       { uri: '/request/system/sleepIoTrigger', onValid: this.sleepIoTrigger },
+
+      { uri: '/request/system/queue_mode', onValid: this.setQueueMode },
+      { uri: '/request/system/set_clock', onValid: this.setClock },
     ];
+
     const res = this.validateCommandSchema(schemaData, module, 'system');
 
     if (res.valid === 0) {
@@ -100,19 +123,19 @@ export class WSCommandSystem extends WSCommandAbstract {
     }
   }
 
-  public pong(objToSend: any, payload: any) {
+  public pong(objToSend: any, payload: Uint8Array) {
     objToSend.system = objToSend.system || {};
     const pongServerTime = new Date().getTime();
 
     if (payload.length >= 16) {
-      payload = Buffer.from(payload);
+      const buf = Buffer.from(payload);
       const obnizTime =
-        payload.readUIntBE(0, 4) * Math.pow(2, 32) + payload.readUIntBE(4, 4);
+        buf.readUIntBE(0, 4) * Math.pow(2, 32) + buf.readUIntBE(4, 4);
       const pingServerTime =
-        payload.readUIntBE(8, 4) * Math.pow(2, 32) + payload.readUIntBE(12, 4);
+        buf.readUIntBE(8, 4) * Math.pow(2, 32) + buf.readUIntBE(12, 4);
       const key = [];
-      for (let i = 16; i < payload.length; i++) {
-        key.push(payload[i]);
+      for (let i = 16; i < buf.length; i++) {
+        key.push(buf.readUInt8(i));
       }
       objToSend.system.pong = {
         key,
@@ -124,6 +147,21 @@ export class WSCommandSystem extends WSCommandAbstract {
       objToSend.system.pong = {
         pongServerTime,
       };
+    }
+  }
+
+  public timestamp(objToSend: any, payload: Uint8Array) {
+    objToSend.system = objToSend.system || {};
+
+    if (payload.length === 4) {
+      const buf = Buffer.from(payload);
+      const unixSeconds = buf.readUIntBE(0, 4);
+      objToSend.system.timestamp = unixSeconds * 1000;
+    } else if (payload.length === 8) {
+      const buf = Buffer.from(payload);
+      const milliseconds =
+        buf.readUIntBE(0, 4) * Math.pow(2, 32) + buf.readUIntBE(4, 4);
+      objToSend.system.timestamp = milliseconds;
     }
   }
 
@@ -143,6 +181,9 @@ export class WSCommandSystem extends WSCommandAbstract {
         this.pong(objToSend, payload);
 
         break;
+      case this._CommandNotifyTimeStamp:
+        this.timestamp(objToSend, payload);
+        break;
 
       default:
         super.notifyFromBinary(objToSend, func, payload);
@@ -150,26 +191,63 @@ export class WSCommandSystem extends WSCommandAbstract {
     }
   }
 
-  public sleepSeconds(params: any) {
+  public sleepSeconds(params: { sleep_seconds: number }) {
     const sec = params.sleep_seconds;
     const buf = new Uint8Array([sec >> 8, sec]);
     this.sendCommand(this._CommandSleepSeconds, buf);
   }
 
-  public sleepMinute(params: any) {
+  public sleepMinute(params: { sleep_minute: number }) {
     const minute = params.sleep_minute;
     const buf = new Uint8Array([minute >> 8, minute]);
     this.sendCommand(this._CommandSleepMinute, buf);
   }
 
-  public sleepIoTrigger(params: any) {
-    let trigger = params.sleep_io_trigger;
-    if (trigger === true) {
-      trigger = 1;
-    } else {
-      trigger = 0;
-    }
-    const buf = new Uint8Array([trigger]);
+  public sleepIoTrigger(params: { sleep_io_trigger: boolean }) {
+    const trigger = params.sleep_io_trigger;
+    const triggerNum = trigger === true ? 1 : 0;
+    const buf = new Uint8Array([triggerNum]);
     this.sendCommand(this._CommandSleepIoTrigger, buf);
+  }
+
+  public setQueueMode(params: {
+    queue_mode: { interval: number; timestamp: string };
+  }) {
+    const interval = params.queue_mode.interval;
+    const timestamp = params.queue_mode.timestamp;
+    const buf = new Uint8Array(9);
+
+    buf[0] = 0;
+    if (timestamp === 'none') {
+      buf[0] = 0;
+    } else if (timestamp === 'unix_seconds') {
+      buf[0] = 1;
+    } else if (timestamp === 'unix_milliseconds') {
+      buf[0] = 2;
+    }
+    // interval
+    buf[1] = interval >> (8 * 3);
+    buf[2] = interval >> (8 * 2);
+    buf[3] = interval >> (8 * 1);
+    buf[4] = interval >> (8 * 0);
+
+    this.sendCommand(this._CommandSetQueueMode, buf);
+  }
+
+  public setClock(params: { clock: number }) {
+    const unixtime = params.clock;
+    const buf = new Uint8Array(8);
+    const upper = Math.floor(unixtime / Math.pow(2, 32));
+    const lower = unixtime - upper * Math.pow(2, 32);
+    buf[0] = upper >> (8 * 3);
+    buf[1] = upper >> (8 * 2);
+    buf[2] = upper >> (8 * 1);
+    buf[3] = upper >> (8 * 0);
+    buf[4] = lower >> (8 * 3);
+    buf[5] = lower >> (8 * 2);
+    buf[6] = lower >> (8 * 1);
+    buf[7] = lower >> (8 * 0);
+
+    this.sendCommand(this._CommandSetClock, buf);
   }
 }

@@ -12,6 +12,7 @@ import {
 } from '../../../../obniz/ObnizPartsBleAbstract';
 import { BleBatteryService } from '../services/batteryService';
 import { BleGenericAccess } from '../services/genericAccess';
+import { UUID16 } from '../../../../obniz/libs/embeds/bleHci/bleTypes';
 
 type PinCodeType = 'Authentication' | 'Rewrite';
 
@@ -34,14 +35,12 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
     Beacon: /null/,
   };
 
-  public static readonly BeaconDataLength: ObnizPartsBleCompare<
-    number | null
-  > = {
+  public static readonly BeaconDataLength: ObnizPartsBleCompare<number> = {
     Connectable: null,
     Beacon: 0x1b,
   };
 
-  public static readonly CompanyID: ObnizPartsBleCompare<number[] | null> = {
+  public static readonly CompanyID: ObnizPartsBleCompare<number[]> = {
     Connectable: null,
     Beacon: [0x10, 0x05],
   };
@@ -69,11 +68,11 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<
     ])[0];
     await super.connectWait(keys);
 
-    const service1800 = this.peripheral.getService('1800');
+    const service1800 = this.peripheral.getService('1800' as UUID16);
     if (service1800) {
       this.genericAccess = new BleGenericAccess(service1800);
     }
-    const service180F = this.peripheral.getService('180F');
+    const service180F = this.peripheral.getService('180F' as UUID16);
     if (service180F) {
       this.batteryService = new BleBatteryService(service180F);
     }

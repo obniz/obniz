@@ -216,9 +216,6 @@ export class PeripheralI2C extends ComponentAbstract {
     if (this.state.pull) {
       this.Obniz.getIO(this.state.sda).pull(this.state.pull);
       this.Obniz.getIO(this.state.scl).pull(this.state.pull);
-    } else {
-      this.Obniz.getIO(this.state.sda).pull(null);
-      this.Obniz.getIO(this.state.scl).pull(null);
     }
 
     if (this.state.gnd !== undefined) {

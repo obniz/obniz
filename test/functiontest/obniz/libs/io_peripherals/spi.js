@@ -20,12 +20,6 @@ describe('obniz.libs.spi', function () {
       mosi: 1,
     });
 
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master', mosi: 1 } },
     ]);
@@ -42,12 +36,6 @@ describe('obniz.libs.spi', function () {
       gnd: 7,
     });
 
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([{ io7: false }]);
     expect(this.obniz).send([
       {
@@ -74,10 +62,6 @@ describe('obniz.libs.spi', function () {
       miso: 2,
       mode: 'master',
     });
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master' } },
     ]);
@@ -108,10 +92,6 @@ describe('obniz.libs.spi', function () {
       miso: 2,
       mode: 'master',
     });
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master' } },
     ]);
@@ -141,10 +121,6 @@ describe('obniz.libs.spi', function () {
       miso: 2,
       mode: 'master',
     });
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master' } },
     ]);
@@ -180,12 +156,6 @@ describe('obniz.libs.spi', function () {
       mode: 'master',
       mosi: 1,
     });
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master', mosi: 1 } },
     ]);
@@ -218,12 +188,6 @@ describe('obniz.libs.spi', function () {
       mosi: 1,
     });
 
-    expect(this.obniz).send([{ io0: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io1: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io2: { output_type: 'push-pull5v' } }]);
-    expect(this.obniz).send([{ io0: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io1: { pull_type: 'float' } }]);
-    expect(this.obniz).send([{ io2: { pull_type: 'float' } }]);
     expect(this.obniz).send([
       { spi0: { clk: 0, clock: 1000000, miso: 2, mode: 'master', mosi: 1 } },
     ]);

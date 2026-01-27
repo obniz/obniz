@@ -9,6 +9,7 @@ import {
   ObnizPartsBleInterface,
   ObnizPartsBleInfo,
 } from '../../../obniz/ObnizPartsBleInterface';
+import { UUID128, UUID16 } from '../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export interface uPRISMOptions {}
 
@@ -139,9 +140,9 @@ export default class uPRISM implements ObnizPartsBleInterface {
   private accelRange = 1024;
 
   private _uuids = {
-    service: 'a587905b-ac98-4cb1-8b1d-5e22ae747d17',
-    settingEnableChar: '51bc99bd-b22e-4ff5-807e-b641d21af060',
-    notifyChar: '0d6fcf18-d935-49d1-836d-384c7b857b83',
+    service: 'a587905b-ac98-4cb1-8b1d-5e22ae747d17' as UUID128,
+    settingEnableChar: '51bc99bd-b22e-4ff5-807e-b641d21af060' as UUID128,
+    notifyChar: '0d6fcf18-d935-49d1-836d-384c7b857b83' as UUID128,
   };
 
   constructor(peripheral: BleRemotePeripheral | null) {

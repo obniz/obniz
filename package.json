@@ -1,6 +1,6 @@
 {
   "name": "obniz",
-  "version": "3.30.1",
+  "version": "3.32.0-beta.1",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -24,9 +24,9 @@
     "local": "gulp --gulpfile devtools/_tools/server.js --cwd .",
     "watch": "tsc -w & webpack --watch --config ./devtools/webpack.config.js  ",
     "watch:debug": "tsc -w -p tsconfig.debug.json & webpack --watch --config ./devtools/webpack.config.js  ",
-    "build": "npm run clean && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
-    "doc": "typedoc --includes ./src/ --exclude '**/*.json' --theme ./devtools/typedocTheme --stripInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected  --media ./docs/images",
-    "build-ts": "npm run clean && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
+    "build": "npm run clean && npm run generate:ble-uuid && npm run lint && gulp --gulpfile devtools/_tools/server.js --cwd . build ",
+    "doc": "typedoc --plugin ./devtools/typedoc-plugins/external-module-name.js --tsconfig ./tsconfig.json --entryPointStrategy expand --entryPoints ./src --includes ./src/ --exclude '**/*.json' --theme default --excludeInternal --readme none --out docs/obnizjs --excludePrivate --excludeProtected --media ./docs/images",
+    "build-ts": "npm run clean && npm run generate:ble-uuid && npm run lint-ts && gulp --gulpfile devtools/_tools/server.js --cwd . build",
     "version": "npm run build && npm run doc && git add docs && git add obniz.js",
     "lint": "eslint --fix . --rulesdir devtools/eslint/rule --quiet",
     "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule --quiet",
@@ -36,7 +36,8 @@
     "prepublishOnly": "npm run build",
     "code-quality": "docker run --rm -it -v $PWD:/data/project/ -p 8080:8080 jetbrains/qodana-js:2022.2-eap --show-report",
     "clean": "rimraf ./dist ./obniz.js ./obniz.d.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "generate:ble-uuid": "node devtools/_tools/generateBleUuids.js"
   },
   "lint-staged": {
     "src/**/*.ts": [
@@ -123,9 +124,7 @@
     "sinon": "^7.5.0",
     "text-encoding": "^0.7.0",
     "through2": "^2.0.3",
-    "typedoc": "^0.16.9",
-    "typedoc-plugin-external-module-name": "^4.0.6",
-    "typedoc-plugin-internal-external": "^2.1.1",
+    "typedoc": "0.24.8",
     "typescript": "^4.7.4",
     "vinyl": "^2.2.0",
     "webpack": "^4.34.0",
@@ -160,5 +159,8 @@
     "canvas": "./dist/src/obniz/libs/webpackReplace/canvas",
     "./dist/src/obniz/libs/webpackReplace/require-context": "./dist/src/obniz/libs/webpackReplace/require-context-browser",
     "./dist/src/obniz/libs/webpackReplace/dialogPollyfill": "./dist/src/obniz/libs/webpackReplace/dialogPollyfill-browser"
+  },
+  "volta": {
+    "node": "16.15.0"
   }
 }

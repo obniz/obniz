@@ -1,0 +1,11 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/canbus"
+basePath: "canbus0"
+description: "available canbus0"
+
+"anyOf":
+  - {$ref: "/request/canbus/init"}
+  - {$ref: "/request/canbus/deinit"}
+  - {$ref: "/request/canbus/send"}

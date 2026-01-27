@@ -17,13 +17,13 @@ export class WSCommandDirective extends WSCommandAbstract {
   _CommandPause = 1;
   _CommandResume = 2;
   _CommandNotify = 3;
-  subCommandManager = new WSCommandManager();
+  subCommandManager = new WSCommandManager({
+    WSCommandIO,
+    WSCommandPWM,
+  });
 
   constructor() {
     super();
-    this.subCommandManager.addCommandClass('WSCommandIO', WSCommandIO);
-    this.subCommandManager.addCommandClass('WSCommandPWM', WSCommandPWM);
-    this.subCommandManager.createCommandInstances();
   }
 
   // Commands

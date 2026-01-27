@@ -36,11 +36,11 @@ export class WSCommandSPI extends WSCommandAbstract {
     if (miso === null) {
       miso = this.ioNotUsed;
     }
-    if (cs === null) {
+    if (typeof cs !== 'number') {
       cs = this.ioNotUsed;
     }
 
-    const buf = new Uint8Array(11);
+    const buf = new Uint8Array(12);
     buf[0] = module;
     buf[1] = mode;
     buf[2] = clk;

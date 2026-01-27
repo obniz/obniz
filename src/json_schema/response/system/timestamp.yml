@@ -1,0 +1,13 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/system/timestamp"
+desccription: "timestamp of the device."
+
+type: object
+required: [timestamp]
+properties:
+  timestamp:
+    type: number
+    description: "The timestamp in milliseconds since epoch (1970-01-01T00:00:00Z)."
+    example: 1592171234567

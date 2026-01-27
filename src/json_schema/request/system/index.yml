@@ -14,3 +14,5 @@ basePath: "system"
   - {$ref: "/request/system/sleepSeconds"}
   - {$ref: "/request/system/sleepMinute"}
   - {$ref: "/request/system/sleepIoTrigger"}
+  - {$ref: "/request/system/set_clock"}
+  - {$ref: "/request/system/queue_mode"}

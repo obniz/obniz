@@ -28,6 +28,8 @@ export interface RS_BTEVS1_Data {
   pm2_5: number;
   /** PM4.0 [ug/m3] */
   pm4_0: number;
+  /** @deprecated for compatibility */
+  pm5_0: number;
   /** PM10.0 [ug/m3] */
   pm10_0: number;
   /** temperature 温度 [℃] */
@@ -126,6 +128,8 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   RS_BTEVS1_Data,
   RS_BTEVS1_Data
 > {
+  protected readonly staticClass = RS_BTEVS1;
+
   public static readonly AvailableBleMode:
     | ObnizPartsBleMode
     | ObnizPartsBleMode[] = ['Connectable', 'Beacon'];
@@ -143,12 +147,12 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
   //   number | null
   // > = 0x0c;
 
-  public static readonly CompanyID: ObnizPartsBleCompare<number[] | null> = [
+  public static readonly CompanyID: ObnizPartsBleCompare<number[]> = [
     0x00,
     0xff,
   ];
 
-  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<RS_BTEVS1_Data> | null> = {
+  public static readonly BeaconDataStruct: ObnizBleBeaconStruct<RS_BTEVS1_Data> = {
     co2: {
       index: 0,
       length: 2,
@@ -179,8 +183,8 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
       index: 6,
       length: 2,
       type: 'custom', // 'numLE',
-      multiple: 0.1,
-      round: 1,
+      // multiple: 0.1,
+      // round: 1,
       func: (data, p) =>
         (p.manufacturerSpecificData?.length ?? 0) + 1 === 0x0b &&
         (p.localName ?? '').startsWith('BT')
@@ -199,7 +203,6 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
     },
   };
 
-  protected staticClass = RS_BTEVS1;
   /** Event handler for button ボタンのイベントハンドラー */
   public onButtonPressed: ((pressed: boolean) => void) | null = null;
   /** Event handler for temperature sensor 温度センサーのイベントハンドラー */
@@ -270,6 +273,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
         pm1_0: Buffer.from(measureData).readUInt8(2),
         pm2_5: Buffer.from(measureData).readUInt8(3),
         pm4_0: Buffer.from(measureData).readUInt8(4),
+        pm5_0: Buffer.from(measureData).readUInt8(4),
         pm10_0: Buffer.from(measureData).readUInt8(5),
         temp: Buffer.from(measureData).readUInt8(6),
         humid: Buffer.from(measureData).readUInt8(7),
@@ -281,6 +285,7 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<
       pm1_0: Buffer.from(measureData).readUInt8(2),
       pm2_5: Buffer.from(measureData).readUInt8(3),
       pm4_0: Buffer.from(measureData).readUInt8(4),
+      pm5_0: Buffer.from(measureData).readUInt8(4),
       pm10_0: Buffer.from(measureData).readUInt8(5),
       temp: Buffer.from(measureData).readInt16LE(6) / 10,
       humid: Buffer.from(measureData).readUInt8(8),

@@ -27,6 +27,52 @@ plugin command
 ```
 
 
+##  request: <a name="-request-plugin-exec_lua">exec_lua</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `plugin.exec_lua` |  string  | <ul><li>required</li></ul> | Lua script to be run on target device&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "plugin": {
+            "exec_lua": "duration = 3"
+        }
+    }
+]
+```
+
+
+##  request: <a name="-request-plugin-reload_lua">reload_lua</a>
+
+
+
+
+| path | type | conditions  | description |
+|:---- |:---- |:---- |:---- |
+| `plugin.reload` |  boolean  | <ul><li>required</li></ul> | Indicate load Lua from storage. This is reloading. It will lose state.&nbsp; |
+
+
+
+```
+// Json Example
+[
+    {
+        "plugin": {
+            "reload": true
+        }
+    }
+]
+```
+
+
 
 
 

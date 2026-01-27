@@ -9,6 +9,7 @@ module.exports = {
     path: path.join(__dirname, '../'),
     pathinfo: false,
     library: 'Obniz',
+    hashFunction: 'sha256',
   },
   devtool: 'none',
   module: {

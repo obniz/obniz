@@ -1,0 +1,29 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/canbus/send"
+related: "/response/canbus/read"
+
+type: object
+required: [id, data]
+properties:
+  id:
+    type: integer
+    desription: "message identifier"
+  data: {$ref: "/dataArray1024"}
+  extended:
+    type: boolean
+    default: false
+    desription: "indicate extended format or not"
+  rtr:
+    type: boolean
+    default: false
+    desription: "message is remote frame"
+  single_shot:
+    type: boolean
+    default: false
+    desription: "message is single shot"
+  self_reception:
+    type: boolean
+    default: false
+    desription: "message is self reception request"

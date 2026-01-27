@@ -41,7 +41,7 @@ export default abstract class MINEW<
     macAddressIndex: number,
     versionNumber: number,
     additonalData: ObnizBleBeaconStruct<Omit<T, keyof MINEW_Base_Data>>
-  ): ObnizPartsBleCompare<ObnizBleBeaconStruct<T>> => ({
+  ): ObnizBleBeaconStruct<T> => ({
     // TODO: delete underscore
     frameType_: {
       index: 0,

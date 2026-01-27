@@ -8,6 +8,7 @@ import {
 import { BleRemoteCharacteristic } from '../../../../obniz';
 import { BleRemotePeripheral } from '../../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
 import { Base } from './MESHjs/block/Base';
+import { UUID } from '../../../../obniz/libs/embeds/bleHci/bleTypes';
 
 export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
   // Event Handler
@@ -154,7 +155,7 @@ export abstract class MESH<S> extends ObnizPartsBleConnectable<null, S> {
     this.writeWOResponseCharacteristic_.writeWait(data, true);
   }
 
-  private getCharacteristic_(uuid: string) {
+  private getCharacteristic_(uuid: UUID) {
     return this.peripheral
       .getService(this.meshBlock.UUIDS.SERVICE_ID)!
       .getCharacteristic(uuid);

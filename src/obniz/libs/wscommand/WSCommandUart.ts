@@ -11,6 +11,7 @@ export class WSCommandUart extends WSCommandAbstract {
   _CommandDeinit = 1;
   _CommandSend = 2;
   _CommandRecv = 3;
+  _CommandSetDE = 4;
   // Commands
 
   public init(params: any, module: any) {
@@ -75,6 +76,13 @@ export class WSCommandUart extends WSCommandAbstract {
     this.sendCommand(this._CommandSend, buf);
   }
 
+  public de(params: any, module: any) {
+    const buf = new Uint8Array(2);
+    buf[0] = module;
+    buf[1] = params.de;
+    this.sendCommand(this._CommandSetDE, buf);
+  }
+
   public parseFromJson(json: any) {
     // 0~2
     for (let i = 0; i < 3; i++) {
@@ -86,6 +94,7 @@ export class WSCommandUart extends WSCommandAbstract {
         { uri: '/request/uart/init', onValid: this.init },
         { uri: '/request/uart/send', onValid: this.send },
         { uri: '/request/uart/deinit', onValid: this.deinit },
+        { uri: '/request/uart/de', onValid: this.de },
       ];
       const res = this.validateCommandSchema(schemaData, module, 'uart' + i, i);
 

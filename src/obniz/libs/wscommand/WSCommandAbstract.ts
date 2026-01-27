@@ -57,13 +57,14 @@ export abstract class WSCommandAbstract {
     this._hw = obj;
   }
 
+  // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
   public sendCommand(func: number, payload: Uint8Array | null): void {
     if (this.parsed) {
       this.parsed(this.module, func, payload);
     }
   }
 
-  public parseFromJson(json: any) {
+  public parseFromJson(json: { [k: string]: unknown }) {
     // abstract
   }
 

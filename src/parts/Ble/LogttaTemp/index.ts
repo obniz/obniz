@@ -71,6 +71,8 @@ export default class Logtta_TH extends Logtta<
   Logtta_TH_Data,
   Logtta_TH_Connected_Data
 > {
+  protected readonly staticClass = Logtta_TH;
+
   public static readonly PartsName = 'Logtta_TH';
 
   public static readonly AvailableBleMode: ObnizPartsBleMode[] = [
@@ -88,7 +90,9 @@ export default class Logtta_TH extends Logtta<
     Beacon: null,
   };
 
-  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_TH_Data> | null> = {
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<Logtta_TH_Data>
+  > = {
     Connectable: null,
     Beacon: {
       appearance: {
@@ -176,8 +180,6 @@ export default class Logtta_TH extends Logtta<
   public static isAdvDevice(peripheral: BleRemotePeripheral): boolean {
     return this.getDeviceMode(peripheral) === 'Beacon';
   }
-
-  protected readonly staticClass = Logtta_TH;
 
   /**
    * @deprecated

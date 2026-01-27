@@ -198,6 +198,8 @@ export type Logtta_Accel_Axis = (keyof Triaxial)[];
  * ビーコンモードのときのみ動作します
  */
 export default class Logtta_Accel extends Logtta<Logtta_Accel_Data, unknown> {
+  protected readonly staticClass = Logtta_Accel;
+
   public static readonly PartsName = 'Logtta_Accel';
 
   public static readonly AvailableBleMode = 'Beacon';
@@ -227,7 +229,9 @@ export default class Logtta_Accel extends Logtta<Logtta_Accel_Data, unknown> {
     Beacon: [0x10, 0x05],
   };
 
-  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_Accel_Data> | null> = {
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<Logtta_Accel_Data>
+  > = {
     Connectable: null,
     Beacon: {
       appearance: {
@@ -360,8 +364,6 @@ export default class Logtta_Accel extends Logtta<Logtta_Accel_Data, unknown> {
       (key, i) => (data & (2 ** i)) > 0
     ) as Logtta_Accel_Axis;
   }
-
-  protected readonly staticClass = Logtta_Accel;
 
   protected parseData(data: number[]): unknown {
     return data;

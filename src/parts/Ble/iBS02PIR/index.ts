@@ -31,8 +31,8 @@ export default class iBS02PIR extends BaseiBS<iBS02PIR_Data> {
 
   public static readonly BeaconDataStruct: ObnizBleBeaconStruct<iBS02PIR_Data> = {
     battery: BaseiBS.Config.battery,
-    event: BaseiBS.Config.event,
-    ...BaseiBS.getUniqueData(2, 0x01),
+    event: BaseiBS.Config.pir,
+    ...BaseiBS.getUniqueData(3, 0x01),
   };
 
   protected readonly staticClass = iBS02PIR;

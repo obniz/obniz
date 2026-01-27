@@ -35,13 +35,13 @@ export class Plugin {
    *
    * ```javascript
    * // Javascript Example
-   * obniz.plugin.onFrameStart = length => {
+   * obniz.plugin.onFrameStart = (frame_id, length) => {
    *   console.log(`${length} bytes will be start`);
    * };
    * ```
    *
    */
-  public onFrameStart?: (length: number) => void;
+  public onFrameStart?: (frame_id: number, length: number) => void;
 
   /**
    * Callback function is called when Frame Information Received
@@ -95,6 +95,46 @@ export class Plugin {
     }
 
     this.Obniz.send({ plugin: { send: send_data } });
+  }
+
+  /**
+   * Executing Lua on target device instantly.
+   * Lua script never be saved on a device.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.plugin.execLua("duration = 60")
+   * ```
+   *
+   */
+  public execLua(lua_script: string) {
+    if (semver.major(this.Obniz.firmware_ver!) < 7) {
+      throw new Error(`Please update obniz firmware >= 7.0.0`);
+    }
+
+    if (typeof lua_script !== 'string') {
+      throw new Error(`Lua Script must be a string`);
+    }
+
+    this.Obniz.send({ plugin: { exec_lua: lua_script } });
+  }
+
+  /**
+   * Executing Lua on target device and save to it's flash memory.
+   *
+   * ```javascript
+   * // Javascript Example
+   * obniz.storage.savePluginLua(`os.log("Hello World")`);
+   * obniz.plugin.reloadLua();
+   * ```
+   *
+   */
+  public reloadLua() {
+    if (semver.major(this.Obniz.firmware_ver!) < 7) {
+      throw new Error(`Please update obniz firmware >= 7.0.0`);
+    }
+
+    this.Obniz.send({ plugin: { reload: true } });
   }
 
   /**

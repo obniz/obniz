@@ -14,6 +14,7 @@ properties:
   clk:  {$ref: "/pinSetting"}
   mosi:  {$ref: "/pinSetting"}
   miso:  {$ref: "/pinSetting"}
+  cs:  {$ref: "/pinSetting"}
   clock:
     type: integer
     default: 115200

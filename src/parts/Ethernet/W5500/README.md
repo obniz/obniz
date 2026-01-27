@@ -53,6 +53,13 @@ The socket calls the handler when the connection is successful or when something
 
 The first argument is an instance of the socket. Only some have a second argument. **Handler registration functions only, not async functions.**
 
+
+About Data
+- TCP: payload
+- UDP: Destination 8byte + Payload
+
+[https://docs.wiznet.io/Product/iEthernet/W5500/Application/udp#receiving-process](https://docs.wiznet.io/Product/iEthernet/W5500/Application/udp#receiving-process)
+
 ```javascript
 socket.setInterruptHandler('ReceiveData', async (socket, data) => {
   console.log(`Socket${socket.id}[Receive]`, data);
@@ -178,6 +185,7 @@ await socket.initWait({
 
 socket.setInterruptHandler('ReceiveData', async (socket, data) => {
   console.log(`Socket${socket.id}[Receive]`, data);
+  // data includes header 8bytes
   await ethernet.finalizeWait();
   console.log('End');
 });

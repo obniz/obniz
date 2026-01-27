@@ -64,6 +64,8 @@ export default class Logtta_AD extends Logtta<
   Logtta_AD_Data,
   Logtta_AD_Connected_Data
 > {
+  protected readonly staticClass = Logtta_AD;
+
   public static readonly PartsName = 'Logtta_AD';
 
   public static readonly ServiceUuids = {
@@ -71,7 +73,9 @@ export default class Logtta_AD extends Logtta<
     Beacon: null,
   };
 
-  public static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_AD_Data> | null> = {
+  public static readonly BeaconDataStruct: ObnizPartsBleCompare<
+    ObnizBleBeaconStruct<Logtta_AD_Data>
+  > = {
     Connectable: null,
     Beacon: {
       appearance: {
@@ -141,8 +145,6 @@ export default class Logtta_AD extends Logtta<
   protected static parseVoltData(data: number[], func = uint): number {
     return (4 / 916) * func(data);
   }
-
-  protected readonly staticClass = Logtta_AD;
 
   /**
    * Get the current value from the Logtta_AD

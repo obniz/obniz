@@ -78,7 +78,8 @@
     "motion": {
     },
     "location": {
-    }
+    },
+    "storage": {}
   },
   "protocol": {
     "tcp": {
