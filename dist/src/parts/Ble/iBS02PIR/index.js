@@ -15,4 +15,4 @@ class iBS02PIR extends iBS_1.BaseiBS {
 }
 exports.default = iBS02PIR;
 iBS02PIR.PartsName = 'iBS02PIR';
-iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.event }, iBS_1.BaseiBS.getUniqueData(2, 0x01));
+iBS02PIR.BeaconDataStruct = Object.assign({ battery: iBS_1.BaseiBS.Config.battery, event: iBS_1.BaseiBS.Config.pir }, iBS_1.BaseiBS.getUniqueData(3, 0x01));

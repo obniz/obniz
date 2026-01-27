@@ -93,6 +93,31 @@ BaseiBS.Config = {
         length: 2,
         type: 'numLE',
     },
+    flood: {
+        index: 4,
+        type: 'bool01000000',
+    },
+    voltage: {
+        index: 7,
+        length: 2,
+        multiple: 0.001,
+        type: 'numLE',
+    },
+    current: {
+        index: 7,
+        length: 2,
+        multiple: 0.000001,
+        type: 'numLE',
+    },
+    triggered: {
+        index: 4,
+        type: 'bool01000000',
+    },
+    triggered_count: {
+        index: 7,
+        length: 2,
+        type: 'unsignedNumLE',
+    },
     count: {
         index: 7,
         length: 2,

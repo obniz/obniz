@@ -15,17 +15,51 @@ export declare class WSCommandSystem extends WSCommandAbstract {
     _CommandSleepSeconds: number;
     _CommandSleepMinute: number;
     _CommandSleepIoTrigger: number;
-    reboot(params: any): void;
-    reset(params: any): void;
-    selfCheck(params: any): void;
-    wait(params: any): void;
-    keepWorkingAtOffline(params: any): void;
-    ping(params: any): void;
-    resetOnDisconnect(mustReset: any): void;
+    _CommandUpdatePingCheckInterval: number;
+    _CommandNotifyTimeStamp: number;
+    _CommandSetQueueMode: number;
+    _CommandSetClock: number;
+    reboot(): void;
+    reset(): void;
+    selfCheck(): void;
+    wait(params: {
+        wait: number;
+    }): void;
+    keepWorkingAtOffline(params: {
+        keep_working_at_offline: boolean;
+    }): void;
+    ping(params: {
+        ping: {
+            key: number[];
+        };
+    }): void;
+    resetOnDisconnect(mustReset: boolean): void;
+    /**
+     * デバイスのpingの間隔を更新します。これはクラウドから一度切り離されると再度もとに戻ります。
+     *
+     * @param {number} intervalMilliSec
+     */
+    updatePingCheckInterval(intervalMilliSec: number): void;
     parseFromJson(json: any): void;
-    pong(objToSend: any, payload: any): void;
+    pong(objToSend: any, payload: Uint8Array): void;
+    timestamp(objToSend: any, payload: Uint8Array): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
-    sleepSeconds(params: any): void;
-    sleepMinute(params: any): void;
-    sleepIoTrigger(params: any): void;
+    sleepSeconds(params: {
+        sleep_seconds: number;
+    }): void;
+    sleepMinute(params: {
+        sleep_minute: number;
+    }): void;
+    sleepIoTrigger(params: {
+        sleep_io_trigger: boolean;
+    }): void;
+    setQueueMode(params: {
+        queue_mode: {
+            interval: number;
+            timestamp: string;
+        };
+    }): void;
+    setClock(params: {
+        clock: number;
+    }): void;
 }

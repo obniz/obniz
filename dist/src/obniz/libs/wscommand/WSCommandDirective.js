@@ -19,10 +19,10 @@ class WSCommandDirective extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandPause = 1;
         this._CommandResume = 2;
         this._CommandNotify = 3;
-        this.subCommandManager = new WSCommandManager_1.WSCommandManager();
-        this.subCommandManager.addCommandClass('WSCommandIO', WSCommandIO_1.WSCommandIO);
-        this.subCommandManager.addCommandClass('WSCommandPWM', WSCommandPWM_1.WSCommandPWM);
-        this.subCommandManager.createCommandInstances();
+        this.subCommandManager = new WSCommandManager_1.WSCommandManager({
+            WSCommandIO: WSCommandIO_1.WSCommandIO,
+            WSCommandPWM: WSCommandPWM_1.WSCommandPWM,
+        });
     }
     // Commands
     init(params, originalParams) {

@@ -104,6 +104,12 @@ export declare class PeripheralUART extends ComponentAbstract {
      */
     start(params: PeripheralUARTOptions): void;
     /**
+     * Setting DE IO. IF DE is set, then OS will automatically HIGH when start transmitting and LOW on end of transmitting.
+     *
+     * @param io_de IO of DE(TX Enable)
+     */
+    setDE(io_de: number): void;
+    /**
      * This sends data.
      *
      * Available formats are

@@ -36,8 +36,8 @@ class HEM_9200T {
      */
     static isDevice(peripheral) {
         if (peripheral.localName &&
-            (peripheral.localName.startsWith('BLESmart_') ||
-                peripheral.localName.startsWith('BLEsmart_'))) {
+            (peripheral.localName.startsWith('BLESmart_00000116') ||
+                peripheral.localName.startsWith('BLEsmart_00000116'))) {
             return true;
         }
         return false;

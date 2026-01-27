@@ -9,9 +9,11 @@ export declare class WSCommandUart extends WSCommandAbstract {
     _CommandDeinit: number;
     _CommandSend: number;
     _CommandRecv: number;
+    _CommandSetDE: number;
     init(params: any, module: any): void;
     deinit(params: any, module: any): void;
     send(params: any, module: any): void;
+    de(params: any, module: any): void;
     parseFromJson(json: any): void;
     notifyFromBinary(objToSend: any, func: number, payload: Uint8Array): void;
 }

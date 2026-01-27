@@ -16,6 +16,8 @@ export interface RS_BTEVS1_Data {
     pm2_5: number;
     /** PM4.0 [ug/m3] */
     pm4_0: number;
+    /** @deprecated for compatibility */
+    pm5_0: number;
     /** PM10.0 [ug/m3] */
     pm10_0: number;
     /** temperature 温度 [℃] */
@@ -106,6 +108,7 @@ export interface RS_BTEVS1_Pm2_5 {
 }
 /** RS_BTEVS1 management class RS_BTEVS1を管理するクラス */
 export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, RS_BTEVS1_Data> {
+    protected readonly staticClass: typeof RS_BTEVS1;
     static readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
     static readonly PartsName = "RS_BTEVS1";
     /**
@@ -114,9 +117,8 @@ export default class RS_BTEVS1 extends ObnizPartsBleConnectable<RS_BTEVS1_Data, 
      * EVS_1234 1.2~
      */
     static readonly LocalName: RegExp;
-    static readonly CompanyID: ObnizPartsBleCompare<number[] | null>;
-    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<RS_BTEVS1_Data> | null>;
-    protected staticClass: typeof RS_BTEVS1;
+    static readonly CompanyID: ObnizPartsBleCompare<number[]>;
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<RS_BTEVS1_Data>;
     /** Event handler for button ボタンのイベントハンドラー */
     onButtonPressed: ((pressed: boolean) => void) | null;
     /** Event handler for temperature sensor 温度センサーのイベントハンドラー */

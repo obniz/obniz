@@ -2,10 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Obniz = void 0;
 const m5stack_basic_1 = require("./libs/hw/m5stack_basic");
+const iekilo1_components_1 = require("./libs/hw/iekilo1_components");
 const m5stickc_1 = require("./libs/hw/m5stickc");
 const ObnizApi_1 = require("./ObnizApi");
 const ObnizApp_1 = require("./ObnizApp");
 const ObnizDevice_1 = require("./ObnizDevice");
+const wscommand_1 = require("./libs/wscommand");
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
  *
@@ -46,6 +48,9 @@ class Obniz extends ObnizDevice_1.ObnizDevice {
     static get App() {
         return ObnizApp_1.ObnizApp;
     }
+    static getWsCommandModule() {
+        return (0, wscommand_1.createCommandManager)();
+    }
 }
 exports.Obniz = Obniz;
 /**
@@ -53,3 +58,12 @@ exports.Obniz = Obniz;
  */
 Obniz.M5StickC = m5stickc_1.M5StickC;
 Obniz.M5StackBasic = m5stack_basic_1.M5StackBasic;
+/**
+ * types
+ */
+// eslint-disable-next-line no-redeclare
+// eslint-disable-next-line @typescript-eslint/no-namespace
+(function (Obniz) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Obniz.KiloInterface = iekilo1_components_1.KiloInterface;
+})(Obniz = exports.Obniz || (exports.Obniz = {}));

@@ -14,8 +14,8 @@ export default abstract class Logtta<S, T> extends ObnizPartsBleConnectable<S, T
         Connectable: undefined;
         Beacon: RegExp;
     };
-    static readonly BeaconDataLength: ObnizPartsBleCompare<number | null>;
-    static readonly CompanyID: ObnizPartsBleCompare<number[] | null>;
+    static readonly BeaconDataLength: ObnizPartsBleCompare<number>;
+    static readonly CompanyID: ObnizPartsBleCompare<number[]>;
     protected serviceUuid: string;
     protected authenticated: boolean;
     onNotify?: (data: T) => void;

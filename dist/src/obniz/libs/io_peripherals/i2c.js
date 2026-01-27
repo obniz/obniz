@@ -141,10 +141,6 @@ class PeripheralI2C extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.getIO(this.state.sda).pull(this.state.pull);
             this.Obniz.getIO(this.state.scl).pull(this.state.pull);
         }
-        else {
-            this.Obniz.getIO(this.state.sda).pull(null);
-            this.Obniz.getIO(this.state.scl).pull(null);
-        }
         if (this.state.gnd !== undefined) {
             this.Obniz.getIO(this.state.gnd).output(false);
             const ioNames = {};

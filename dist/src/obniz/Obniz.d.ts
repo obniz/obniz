@@ -39,8 +39,11 @@ import { Handle as _Handle } from './libs/embeds/bleHci/bleTypes';
 import { UUID as _UUID } from './libs/embeds/bleHci/bleTypes';
 import { ObnizBLEHci as _ObnizBLEHci } from './libs/embeds/bleHci/hci';
 import { Display as _Display } from './libs/embeds/display';
+import { Storage as _Storage } from './libs/embeds/storage';
 import { ObnizSwitch as _ObnizSwitch } from './libs/embeds/switch';
 import { M5StackBasic as _M5StackBasic } from './libs/hw/m5stack_basic';
+import { IntelligentEdgeKiloComponent as _IntelligentEdgeKiloComponent } from './libs/hw/iekilo1_components';
+import { KiloInterface as _KiloInterface } from './libs/hw/iekilo1_components';
 import { M5StickC as _M5StickC } from './libs/hw/m5stickc';
 import { ObnizBoard as _ObnizBoard } from './libs/hw/obnizBoard';
 import { PeripheralAD as _PeripheralAD } from './libs/io_peripherals/ad';
@@ -99,6 +102,8 @@ import { ObnizTimeoutError as _ObnizTimeoutError } from './ObnizError';
 import { ObnizPartsInterface as _ObnizPartsInterface } from './ObnizPartsInterface';
 import { ObnizPartsInfo as _ObnizPartsInfo } from './ObnizPartsInterface';
 import { PartsList } from './ObnizPartsList';
+import { WsCommandModules } from './libs/wscommand';
+import { WSCommandManager } from './libs/wscommand/WSCommandManager';
 /**
  * obniz class is the abstract version of obniz Board hardware within JavaScript.
  *
@@ -140,6 +145,7 @@ export declare class Obniz extends ObnizDevice {
      * @returns {ObnizApp}
      */
     static get App(): typeof _ObnizApp;
+    static getWsCommandModule(): WSCommandManager<WsCommandModules>;
 }
 /**
  * types
@@ -174,11 +180,14 @@ export declare namespace Obniz {
     type Directive = _Directive;
     type DirectiveAnimationFrame = _DirectiveAnimationFrame;
     type Display = _Display;
+    type Storage = _Storage;
     type IBeacon = _IBeacon;
     type LogicAnalyzer = _LogicAnalyzer;
     type LogicAnalyzerOptions = _LogicAnalyzerOptions;
     type LogicAnalyzerOptionsExt = _LogicAnalyzerOptionsExt;
     type M5StackBasic = _M5StackBasic;
+    type IntelligentEdgeKiloComponent = _IntelligentEdgeKiloComponent;
+    export import KiloInterface = _KiloInterface;
     type M5StickC = _M5StickC;
     type ObnizBLE = _ObnizBLE;
     type ObnizBleAttError = _ObnizBleAttError;

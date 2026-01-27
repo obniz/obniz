@@ -1,0 +1,69 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/motion/init"
+description: "starting motion service"
+
+type: object
+required: []  #
+uniqueKeys: []
+properties:
+  temperature:
+    type: object
+    required: [mode]
+    additionalProperties: true
+    properties:
+      mode:
+        type: string
+        description: "mode for sensing"
+        example: "oneshot"
+        enum:
+          - oneshot
+          - sensitive
+
+      sensitivity:
+        type: number
+        description: "sensitivity percentage for changes for sensitive mode."
+        example: "0.95"
+        minimum: 0
+        maximum: 1
+
+  acceleration:
+    type: object
+    required: [mode]
+    additionalProperties: true
+    properties:
+      mode:
+        type: string
+        description: "mode for sensing"
+        example: "oneshot"
+        enum:
+          - oneshot
+          - sensitive
+
+      sensitivity:
+        type: number
+        description: "sensitivity percentage for changes for sensitive mode."
+        example: "0.95"
+        minimum: 0
+        maximum: 1
+
+  recognition:
+    type: object
+    required: [mode]
+    additionalProperties: true
+    properties:
+      mode:
+        type: string
+        description: "mode for sensing"
+        example: "oneshot"
+        enum:
+          - oneshot
+          - sensitive
+
+      sensitivity:
+        type: number
+        description: "sensitivity percentage for changes for sensitive mode."
+        example: "0.95"
+        minimum: 0
+        maximum: 1

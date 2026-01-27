@@ -67,18 +67,10 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
             this.Obniz.getIO(this.params.rx).drive(this.params.drive);
             this.Obniz.getIO(this.params.tx).drive(this.params.drive);
         }
-        else {
-            this.Obniz.getIO(this.params.rx).drive('5v');
-            this.Obniz.getIO(this.params.tx).drive('5v');
-        }
         // eslint-disable-next-line no-prototype-builtins
         if (this.params.hasOwnProperty('pull')) {
             this.Obniz.getIO(this.params.rx).pull(this.params.pull);
             this.Obniz.getIO(this.params.tx).pull(this.params.pull);
-        }
-        else {
-            this.Obniz.getIO(this.params.rx).pull(null);
-            this.Obniz.getIO(this.params.tx).pull(null);
         }
         // eslint-disable-next-line no-prototype-builtins
         if (this.params.hasOwnProperty('gnd')) {
@@ -105,6 +97,21 @@ class PeripheralUART extends ComponentAbstact_1.ComponentAbstract {
         this.Obniz.send(obj);
         this.received = [];
         this.used = true;
+    }
+    /**
+     * Setting DE IO. IF DE is set, then OS will automatically HIGH when start transmitting and LOW on end of transmitting.
+     *
+     * @param io_de IO of DE(TX Enable)
+     */
+    setDE(io_de) {
+        if (!this.used) {
+            throw new Error(`uart${this.id} is not started`);
+        }
+        const obj = {};
+        obj['uart' + this.id] = {
+            de: io_de,
+        };
+        this.Obniz.send(obj);
     }
     /**
      * This sends data.

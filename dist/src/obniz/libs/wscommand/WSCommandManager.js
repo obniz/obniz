@@ -11,23 +11,27 @@ exports.WSCommandManager = void 0;
 const WSSchema_1 = __importDefault(require("./WSSchema"));
 const strict_event_emitter_1 = require("strict-event-emitter");
 class WSCommandManager {
-    constructor() {
+    constructor(commandClasses) {
         this.moduleNo2Name = {};
-        this.commandClasses = {};
-        this.commands = {};
         this.events = new strict_event_emitter_1.StrictEventEmitter();
+        this.commandClasses = commandClasses;
+        this.commands = {};
+        this.createCommandInstances();
     }
     static get schema() {
         return WSSchema_1.default;
     }
-    addCommandClass(name, classObj) {
-        this.commandClasses[name] = classObj;
-    }
     createCommandInstances() {
-        for (const [name, classObj] of Object.entries(this.commandClasses)) {
-            this.commands[name] = new classObj();
-            this.moduleNo2Name[this.commands[name].module] = name;
-            this.commands[name].parsed = (module, func, payload) => {
+        for (const name in this.commandClasses) {
+            if (!Object.prototype.hasOwnProperty.call(this.commandClasses, name)) {
+                continue;
+            }
+            const key = name;
+            const classObj = this.commandClasses[key];
+            const instance = new classObj();
+            this.commands[key] = instance;
+            this.moduleNo2Name[instance.module] = name;
+            instance.parsed = (module, func, payload) => {
                 this.events.emit('binaryGenerated', module, func, payload);
             };
         }

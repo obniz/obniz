@@ -185,6 +185,7 @@ export declare type Logtta_Accel_Axis = (keyof Triaxial)[];
  * ビーコンモードのときのみ動作します
  */
 export default class Logtta_Accel extends Logtta<Logtta_Accel_Data, unknown> {
+    protected readonly staticClass: typeof Logtta_Accel;
     static readonly PartsName = "Logtta_Accel";
     static readonly AvailableBleMode = "Beacon";
     static readonly ServiceUuids: {
@@ -207,11 +208,10 @@ export default class Logtta_Accel extends Logtta<Logtta_Accel_Data, unknown> {
         Connectable: undefined;
         Beacon: number[];
     };
-    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_Accel_Data> | null>;
+    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_Accel_Data>>;
     protected static parseAccelSamplingData(data: number): number;
     protected static parseAccelRangeData(data: number): number;
     protected static parseAccelAxis(data: number): Logtta_Accel_Axis;
-    protected readonly staticClass: typeof Logtta_Accel;
     protected parseData(data: number[]): unknown;
     /**
      * @deprecated

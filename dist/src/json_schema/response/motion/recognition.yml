@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/motion/recognition"
+
+type: object
+required: [recognition]
+properties:
+  recognition:
+    type: object
+    required: [motion,possibility]
+    additionalProperties: true
+    properties:
+      motion:
+        type: string
+        description: "recognized motion"
+        example: "moving"
+        enum:
+          - none
+          - moving
+
+      possibility:
+        type: number
+        description: "possibility of recognition"
+        example: 0.99

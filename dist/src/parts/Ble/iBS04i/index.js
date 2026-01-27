@@ -20,4 +20,4 @@ iBS04i.CompanyID = ObnizPartsBleAbstract_1.iBeaconCompanyID;
 iBS04i.CompanyID_ScanResponse = iBS_1.BaseiBS.CompanyID;
 iBS04i.BeaconDataLength = 0x1a;
 iBS04i.BeaconDataLength_ScanResponse = iBS_1.BaseiBS.BeaconDataLength;
-iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconData);
+iBS04i.BeaconDataStruct = Object.assign(Object.assign({ battery: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.battery), { scanResponse: true }), button: Object.assign(Object.assign({}, iBS_1.BaseiBS.Config.button), { scanResponse: true }) }, iBS_1.BaseiBS.getUniqueData(4, 0x18, 0, true)), ObnizPartsBleAbstract_1.iBeaconDataWithStrict);

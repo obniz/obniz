@@ -8,8 +8,15 @@ import { Brand } from '../../utils/brand';
 /**
  * BLE UUID. Case is ignored. So aa00 and AA00 are the same.
  */
-export declare type UUID = string;
+declare type HexDecimal1 = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+declare type HexDecimal4 = `${HexDecimal1}${HexDecimal1}${HexDecimal1}${HexDecimal1}`;
+export declare type UUID16 = `${HexDecimal4}`;
+export declare type UUID32 = Brand<string, 'UUID32'>;
+export declare type UUID128 = string;
+export declare type UUID = UUID16 | UUID32 | UUID128;
 export declare type BleDeviceAddress = Brand<string, 'BleDeviceAddress'>;
+export declare type BleDeviceAddressReversed = Brand<string, 'BleDeviceAddressReversed'>;
+export declare type BleDeviceColonSeparatedAddress = Brand<`${string}:${string}:${string}:${string}:${string}:${string}`, 'BleDeviceColonSeparatedAddress'>;
 export declare type Handle = Brand<number, 'BleHandle'>;
 export declare type BleDeviceType = 'ble' | 'dumo' | 'breder';
 export declare type BleDeviceAddressType = 'public' | 'random' | 'rpa_public' | 'rpa_random';
@@ -106,3 +113,4 @@ export interface BleSupportType {
      */
     extended?: boolean;
 }
+export {};

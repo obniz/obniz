@@ -52,6 +52,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
             'clk',
             'mosi',
             'miso',
+            'cs',
             'frequency',
             'drive',
             'pull',
@@ -63,6 +64,7 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
             'mosi',
             'miso',
             'gnd',
+            'cs',
         ];
         for (const key of ioKeys) {
             if (this.params[key] && !this.Obniz.isValidIO(this.params[key])) {
@@ -82,6 +84,9 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
         if (this.params.miso !== undefined) {
             obj['spi' + this.id].miso = this.params.miso;
         }
+        if (this.params.cs !== undefined) {
+            obj['spi' + this.id].cs = this.params.cs;
+        }
         if (this.params.drive) {
             if (this.params.clk !== undefined) {
                 this.Obniz.getIO(this.params.clk).drive(this.params.drive);
@@ -92,16 +97,8 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
             if (this.params.miso !== undefined) {
                 this.Obniz.getIO(this.params.miso).drive(this.params.drive);
             }
-        }
-        else {
-            if (this.params.clk !== undefined) {
-                this.Obniz.getIO(this.params.clk).drive('5v');
-            }
-            if (this.params.mosi !== undefined) {
-                this.Obniz.getIO(this.params.mosi).drive('5v');
-            }
-            if (this.params.miso !== undefined) {
-                this.Obniz.getIO(this.params.miso).drive('5v');
+            if (this.params.cs !== undefined) {
+                this.Obniz.getIO(this.params.cs).drive(this.params.drive);
             }
         }
         if (this.params.pull) {
@@ -114,16 +111,8 @@ class PeripheralSPI extends ComponentAbstact_1.ComponentAbstract {
             if (this.params.miso !== undefined) {
                 this.Obniz.getIO(this.params.miso).pull(this.params.pull);
             }
-        }
-        else {
-            if (this.params.clk !== undefined) {
-                this.Obniz.getIO(this.params.clk).pull(null);
-            }
-            if (this.params.mosi !== undefined) {
-                this.Obniz.getIO(this.params.mosi).pull(null);
-            }
-            if (this.params.miso !== undefined) {
-                this.Obniz.getIO(this.params.miso).pull(null);
+            if (this.params.cs !== undefined) {
+                this.Obniz.getIO(this.params.cs).pull(this.params.pull);
             }
         }
         if (this.params.gnd !== undefined) {

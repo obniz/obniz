@@ -1,0 +1,14 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/plugin/reload_lua"
+desccription: "Load from storage and run Lua."
+
+type: object
+required: [reload]
+properties:
+  reload:
+    type: boolean
+    description: "Indicate load Lua from storage. This is reloading. It will lose state."
+    example: true
+

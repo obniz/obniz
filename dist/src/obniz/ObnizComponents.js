@@ -15,6 +15,7 @@ const io_1 = require("./libs/io_peripherals/io");
 const pwm_1 = require("./libs/io_peripherals/pwm");
 const spi_1 = require("./libs/io_peripherals/spi");
 const uart_1 = require("./libs/io_peripherals/uart");
+const canbus_1 = require("./libs/io_peripherals/canbus");
 const logicanalyzer_1 = require("./libs/measurements/logicanalyzer");
 const measure_1 = require("./libs/measurements/measure");
 const wifi_1 = require("./libs/network/wifi");
@@ -24,10 +25,13 @@ const ObnizParts_1 = require("./ObnizParts");
 const ComponentAbstact_1 = require("./libs/ComponentAbstact");
 const hw_1 = require("./libs/hw");
 const grove_1 = require("./libs/io_peripherals/grove");
+const storage_1 = require("./libs/embeds/storage");
+const motion_1 = require("./libs/embeds/motion");
+const location_1 = require("./libs/embeds/location");
+const iekilo1_components_1 = require("./libs/hw/iekilo1_components");
 class ObnizComponents extends ObnizParts_1.ObnizParts {
     constructor(id, options) {
         super(id, options);
-        this.pongObservers = [];
         this._allComponentKeys = [];
     }
     /**
@@ -184,12 +188,16 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
             i2c: i2c_1.PeripheralI2C,
             pwm: pwm_1.PeripheralPWM,
             grove: grove_1.PeripheralGrove,
+            canbus: canbus_1.PeripheralCANBus,
         };
         const ble = ble_1.ObnizBLE;
         const embeds_map = {
             display: display_1.Display,
             switch: switch_1.ObnizSwitch,
             ble,
+            storage: storage_1.Storage,
+            motion: motion_1.Motion,
+            location: location_1.Location,
         };
         const protocol_map = {
             tcp: tcp_1.Tcp,
@@ -219,6 +227,7 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
             for (const key in embeds_map) {
                 if (hw_embeds[key]) {
                     const Class = embeds_map[key];
+                    // 'this' must be an instance of Obniz class since it's the only class that gets instantiated by user.
                     this[key] = new Class(this, hw_embeds[key]);
                     this._allComponentKeys.push(key);
                     if (typeof this[key].debugHandler === 'function') {
@@ -250,6 +259,13 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
                     this._allComponentKeys.push(key);
                 }
             }
+        }
+        // hw specific components
+        if (this.hw === 'iekilo1') {
+            this.components = new iekilo1_components_1.IntelligentEdgeKiloComponent(this);
+        }
+        else {
+            delete this.components;
         }
     }
     _resetComponents() {
@@ -283,26 +299,6 @@ class ObnizComponents extends ObnizParts_1.ObnizParts {
                     targetComponent.notified(obj[key]);
                 }
             }
-        }
-    }
-    _handleSystemCommand(wsObj) {
-        super._handleSystemCommand(wsObj);
-        // ping pong
-        if (wsObj.pong) {
-            for (const callback of this.pongObservers) {
-                callback(wsObj);
-            }
-        }
-    }
-    addPongObserver(callback) {
-        if (callback) {
-            this.pongObservers.push(callback);
-        }
-    }
-    removePongObserver(callback) {
-        if (this.pongObservers.includes(callback)) {
-            const index = this.pongObservers.indexOf(callback);
-            this.pongObservers.splice(index, 1);
         }
     }
     _getFreePeripheralUnit(peripheral) {

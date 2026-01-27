@@ -51,12 +51,13 @@ export interface Logtta_AD_Connected_Data {
 }
 /** Logtta_AD management class Logtta_ADを管理するクラス */
 export default class Logtta_AD extends Logtta<Logtta_AD_Data, Logtta_AD_Connected_Data> {
+    protected readonly staticClass: typeof Logtta_AD;
     static readonly PartsName = "Logtta_AD";
     static readonly ServiceUuids: {
         Connectable: string;
         Beacon: null;
     };
-    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_AD_Data> | null>;
+    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_AD_Data>>;
     /**
      * @deprecated
      *
@@ -71,9 +72,8 @@ export default class Logtta_AD extends Logtta<Logtta_AD_Data, Logtta_AD_Connecte
      * Logtta_ADかどうか
      */
     static isDevice(peripheral: BleRemotePeripheral): boolean;
-    protected static parseAmpereData(data: number[], func?: (value: number[]) => number): number;
-    protected static parseVoltData(data: number[], func?: (value: number[]) => number): number;
-    protected readonly staticClass: typeof Logtta_AD;
+    protected static parseAmpereData(data: number[], func?: (value: number[] | Uint8Array) => number): number;
+    protected static parseVoltData(data: number[], func?: (value: number[] | Uint8Array) => number): number;
     /**
      * Get the current value from the Logtta_AD
      *

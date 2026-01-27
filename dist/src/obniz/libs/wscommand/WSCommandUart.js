@@ -14,6 +14,7 @@ class WSCommandUart extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandDeinit = 1;
         this._CommandSend = 2;
         this._CommandRecv = 3;
+        this._CommandSetDE = 4;
     }
     // Commands
     init(params, module) {
@@ -75,6 +76,12 @@ class WSCommandUart extends WSCommandAbstract_1.WSCommandAbstract {
         buf.set(params.data, 1);
         this.sendCommand(this._CommandSend, buf);
     }
+    de(params, module) {
+        const buf = new Uint8Array(2);
+        buf[0] = module;
+        buf[1] = params.de;
+        this.sendCommand(this._CommandSetDE, buf);
+    }
     parseFromJson(json) {
         // 0~2
         for (let i = 0; i < 3; i++) {
@@ -86,6 +93,7 @@ class WSCommandUart extends WSCommandAbstract_1.WSCommandAbstract {
                 { uri: '/request/uart/init', onValid: this.init },
                 { uri: '/request/uart/send', onValid: this.send },
                 { uri: '/request/uart/deinit', onValid: this.deinit },
+                { uri: '/request/uart/de', onValid: this.de },
             ];
             const res = this.validateCommandSchema(schemaData, module, 'uart' + i, i);
             if (res.valid === 0) {

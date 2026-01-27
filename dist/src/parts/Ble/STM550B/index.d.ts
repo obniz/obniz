@@ -2,8 +2,7 @@
  * @packageDocumentation
  * @module Parts.STM550B
  */
-import { BleRemotePeripheral } from '../../../obniz/libs/embeds/bleHci/bleRemotePeripheral';
-import { ObnizBleBeaconStruct, ObnizPartsBle, ObnizPartsBleMode } from '../../../obniz/ObnizPartsBleAbstract';
+import { ObnizBleBeaconStruct, ObnizPartsBle } from '../../../obniz/ObnizPartsBleAbstract';
 export interface STM550B_Options {
 }
 /**
@@ -40,12 +39,9 @@ export interface STM550B_Data {
     magnet_contact?: boolean;
 }
 export default class STM550B extends ObnizPartsBle<STM550B_Data> {
-    static readonly PartsName = "STM550B";
-    static AvailableBleMode: "Beacon";
-    static readonly BeaconDataStruct: ObnizBleBeaconStruct<STM550B_Data>;
-    static readonly CompanyID: {
-        Beacon: number[];
-    };
     protected readonly staticClass: typeof STM550B;
-    constructor(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode);
+    static readonly PartsName = "STM550B";
+    static readonly AvailableBleMode = "Beacon";
+    static readonly CompanyID: number[];
+    static readonly BeaconDataStruct: ObnizBleBeaconStruct<STM550B_Data>;
 }

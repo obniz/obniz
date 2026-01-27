@@ -51,7 +51,8 @@
     "embeds": {
       "ble": {
         "extended": true
-      }
+      },
+      "storage": {}
     },
     "protocol": {
       "tcp": {

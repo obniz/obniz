@@ -1,0 +1,25 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/motion/acceleration"
+
+type: object
+required: [acceleration]
+properties:
+  acceleration:
+    type: object
+    required: [r, t, p]
+    additionalProperties: true
+    properties:
+      r:
+        type: number
+        example: 1.01
+        description: "acceleration R"
+      t:
+        type: number
+        example: 0.04
+        description: "acceleration Theta in degrees"
+      p:
+        type: number
+        example: 90.3
+        description: "acceleration Phi in degrees"

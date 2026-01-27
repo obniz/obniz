@@ -28,13 +28,13 @@ export declare class Plugin {
      *
      * ```javascript
      * // Javascript Example
-     * obniz.plugin.onFrameStart = length => {
+     * obniz.plugin.onFrameStart = (frame_id, length) => {
      *   console.log(`${length} bytes will be start`);
      * };
      * ```
      *
      */
-    onFrameStart?: (length: number) => void;
+    onFrameStart?: (frame_id: number, length: number) => void;
     /**
      * Callback function is called when Frame Information Received
      *
@@ -61,6 +61,28 @@ export declare class Plugin {
      *
      */
     send(data: string | number | number[] | Buffer): void;
+    /**
+     * Executing Lua on target device instantly.
+     * Lua script never be saved on a device.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.plugin.execLua("duration = 60")
+     * ```
+     *
+     */
+    execLua(lua_script: string): void;
+    /**
+     * Executing Lua on target device and save to it's flash memory.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.storage.savePluginLua(`os.log("Hello World")`);
+     * obniz.plugin.reloadLua();
+     * ```
+     *
+     */
+    reloadLua(): void;
     /**
      * @ignore
      * @private

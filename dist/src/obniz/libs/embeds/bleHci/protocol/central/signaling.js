@@ -32,6 +32,7 @@ const SIGNALING_CID = 0x0005;
 class Signaling extends eventemitter3_1.default {
     constructor(handle, aclStream) {
         super();
+        this.connectionParameterUpdateAccept = true;
         this._handle = handle;
         this._aclStream = aclStream;
         this.onAclStreamDataBinded = this.onAclStreamData.bind(this);
@@ -72,9 +73,16 @@ class Signaling extends eventemitter3_1.default {
         response.writeUInt8(CONNECTION_PARAMETER_UPDATE_RESPONSE, 0); // code
         response.writeUInt8(identifier, 1); // identifier
         response.writeUInt16LE(2, 2); // length
-        response.writeUInt16LE(0, 4);
+        if (this.connectionParameterUpdateAccept) {
+            response.writeUInt16LE(0, 4); // accept
+        }
+        else {
+            response.writeUInt16LE(1, 4); // reject
+        }
         this._aclStream.write(SIGNALING_CID, response);
-        this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
+        if (this.connectionParameterUpdateAccept) {
+            this.emit('connectionParameterUpdateRequest', this._handle, minInterval, maxInterval, latency, supervisionTimeout);
+        }
     }
 }
 exports.Signaling = Signaling;

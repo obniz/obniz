@@ -1,0 +1,10 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/motion"
+basePath: "motion"
+
+"anyOf":
+  - {$ref: "/response/motion/temperature"}
+  - {$ref: "/response/motion/acceleration"}
+  - {$ref: "/response/motion/recognition"}

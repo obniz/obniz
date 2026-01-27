@@ -107,14 +107,15 @@ const t = {
     func: findType('temperature', 0.01),
 };
 class STM550B extends ObnizPartsBleAbstract_1.ObnizPartsBle {
-    constructor(peripheral, mode) {
-        super(peripheral, mode);
+    constructor() {
+        super(...arguments);
         this.staticClass = STM550B;
     }
 }
 exports.default = STM550B;
 STM550B.PartsName = 'STM550B';
 STM550B.AvailableBleMode = 'Beacon';
+STM550B.CompanyID = [0xda, 0x03];
 STM550B.BeaconDataStruct = {
     temperature: {
         index: 4,
@@ -164,7 +165,4 @@ STM550B.BeaconDataStruct = {
         type: 'custom',
         func: findType('acceleration_vector'),
     },
-};
-STM550B.CompanyID = {
-    Beacon: [0xda, 0x03],
 };

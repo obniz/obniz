@@ -1,0 +1,12 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/set_clock"
+
+type: object
+required: [clock]
+properties:
+  clock:
+    type: integer
+    description: "Set the clock (Unix timestamp in milliseconds). This will be set to device immediately and used as device timestamp"
+    example: 1592171234567

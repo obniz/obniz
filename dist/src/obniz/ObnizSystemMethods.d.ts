@@ -5,6 +5,8 @@
 import { ObnizComponents } from './ObnizComponents';
 import { ObnizOptions } from './ObnizOptions';
 export declare class ObnizSystemMethods extends ObnizComponents {
+    protected pongObservers: any;
+    deviceTimestamp: number | null;
     constructor(id: string, options?: ObnizOptions);
     /**
      * This pauses obniz Board for a period given in terms of ms (millisecond).
@@ -143,6 +145,22 @@ export declare class ObnizSystemMethods extends ObnizComponents {
      */
     sleep(date: Date): void;
     /**
+     * Set the internal clock of the obniz device.
+     * This will be set to device immediately and used as device timestamp.
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.setClock();
+     * ```
+     *
+     * @param unix_milliseconds number of milliseconds since January 1, 1970 00:00:00 UTC. If not specified, the current time will be used.
+     */
+    setClock(unix_milliseconds?: number): void;
+    setQueueMode(params: {
+        timestamp: 'none' | 'unix_seconds' | 'unix_milliseconds';
+        interval: number;
+    }): void;
+    /**
      * Action only with obniz Board 1Y.
      *
      * It returns from sleep depending on the pin state of IO0.
@@ -173,4 +191,7 @@ export declare class ObnizSystemMethods extends ObnizComponents {
      * @param forceGlobalNetwork
      */
     pingWait(unixtime?: number, rand?: number, forceGlobalNetwork?: boolean): Promise<void>;
+    private addPongObserver;
+    private removePongObserver;
+    protected _handleSystemCommand(wsObj: any): void;
 }

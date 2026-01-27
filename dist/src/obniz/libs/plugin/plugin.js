@@ -49,6 +49,41 @@ class Plugin {
         this.Obniz.send({ plugin: { send: send_data } });
     }
     /**
+     * Executing Lua on target device instantly.
+     * Lua script never be saved on a device.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.plugin.execLua("duration = 60")
+     * ```
+     *
+     */
+    execLua(lua_script) {
+        if (semver_1.default.major(this.Obniz.firmware_ver) < 7) {
+            throw new Error(`Please update obniz firmware >= 7.0.0`);
+        }
+        if (typeof lua_script !== 'string') {
+            throw new Error(`Lua Script must be a string`);
+        }
+        this.Obniz.send({ plugin: { exec_lua: lua_script } });
+    }
+    /**
+     * Executing Lua on target device and save to it's flash memory.
+     *
+     * ```javascript
+     * // Javascript Example
+     * obniz.storage.savePluginLua(`os.log("Hello World")`);
+     * obniz.plugin.reloadLua();
+     * ```
+     *
+     */
+    reloadLua() {
+        if (semver_1.default.major(this.Obniz.firmware_ver) < 7) {
+            throw new Error(`Please update obniz firmware >= 7.0.0`);
+        }
+        this.Obniz.send({ plugin: { reload: true } });
+    }
+    /**
      * @ignore
      * @private
      */

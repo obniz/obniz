@@ -16,6 +16,7 @@ items:
     "^spi[0-1]$": {$ref: "/response/spi"}
     "^i2c[0-1]$": {$ref: "/response/i2c"}
     "^tcp[0-7]$": {$ref: "/response/tcp" }
+    "^canbus[0-1]$": {$ref: "/response/canbus" }
 
   properties:
     io: {$ref: "/response/ioAnimation" }
@@ -29,3 +30,6 @@ items:
     ws: {$ref: "/response/ws"}
     wifi: {$ref: "/response/wifi"}
     plugin: {$ref: "/response/plugin"}
+    storage: {$ref: "/response/storage"}
+    motion: {$ref: "/response/motion"}
+    location: {$ref: "/response/location"}

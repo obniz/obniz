@@ -6,8 +6,8 @@
 /// <reference types="node" />
 import EventEmitter from 'eventemitter3';
 import wsClient from 'ws';
+import { WSCommandManagerInstance } from './libs/wscommand';
 import { ObnizOptions } from './ObnizOptions';
-import { WSCommandManager } from './libs/wscommand/WSCommandManager';
 export declare type ObnizConnectionEventNames = 'connect' | 'close';
 export interface ObnizErrorMessage {
     alert: 'warn' | 'error';
@@ -23,6 +23,13 @@ interface ConnectedNetworkWiFiMESH {
     parent_obniz_id?: string;
     root_obniz_id: string;
     layer: number;
+    rssi: number;
+}
+interface ConnectedNetworkCellular {
+    imsi: string;
+    imei: string;
+    iccid: string;
+    cnum: string;
     rssi: number;
 }
 export interface ConnectedNetwork {
@@ -50,6 +57,10 @@ export interface ConnectedNetwork {
      * Wi-Fi MESH information when net is wifimesh
      */
     wifimesh?: ConnectedNetworkWiFiMESH;
+    /**
+     * Cellular information when net is cellular
+     */
+    cellular?: ConnectedNetworkCellular;
 }
 /**
  * @ignore
@@ -74,6 +85,11 @@ export declare abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * ```
      */
     debugprint: boolean;
+    /**
+     * This variable sets interval time to check connection state to obniz Device.
+     *
+     */
+    connectionCheckLoopInterval: null | number;
     /**
      * @ignore
      */
@@ -100,6 +116,28 @@ export declare abstract class ObnizConnection extends EventEmitter<ObnizConnecti
      * ```
      */
     firmware_ver?: string;
+    /**
+     * This variable indicate installed plugin_name of target device
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     * obniz.onconnect = async function() {
+     *   console.log(obniz.plugin_name) // ex. "my_plugin"
+     * }
+     * ```
+     */
+    plugin_name?: string;
+    /**
+     * This variable indicate installed boot reason of target device
+     *
+     * ```javascript
+     * var obniz = new Obniz('1234-5678');
+     * obniz.onconnect = async function() {
+     *   console.log(obniz.boot_reason) // ex. "DEEPSLEEP_RESET"
+     * }
+     * ```
+     */
+    boot_reason?: string;
     /**
      * Device metadata set on obniz cloud.
      *
@@ -231,7 +269,7 @@ export declare abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected socket_local: wsClient | null;
     protected bufferdAmoundWarnBytes: number;
     protected options: Required<ObnizOptions>;
-    protected wsCommandManager: WSCommandManager;
+    protected wsCommandManager: typeof WSCommandManagerInstance;
     protected _sendQueueTimer: ReturnType<typeof setTimeout> | null;
     protected _sendQueue: Uint8Array[] | null;
     protected _waitForLocalConnectReadyTimer: ReturnType<typeof setTimeout> | null;
@@ -406,7 +444,7 @@ export declare abstract class ObnizConnection extends EventEmitter<ObnizConnecti
     protected tryWsConnectOnceWait(desired_server?: string): Promise<void>;
     protected _connectCloudWait(desired_server?: string): Promise<void>;
     protected _createCloudSocket(url: string): wsClient;
-    protected _connectLocalWait(): Promise<unknown> | undefined;
+    protected _connectLocalWait(): Promise<void> | undefined;
     protected _disconnectLocal(): void;
     protected _disconnectCloudRequest(): void;
     protected _disconnectCloud(notify?: boolean): void;

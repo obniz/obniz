@@ -9,6 +9,8 @@ const ObnizComponents_1 = require("./ObnizComponents");
 class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
     constructor(id, options) {
         super(id, options);
+        this.deviceTimestamp = null;
+        this.pongObservers = [];
     }
     /**
      * This pauses obniz Board for a period given in terms of ms (millisecond).
@@ -208,6 +210,42 @@ class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
         }
     }
     /**
+     * Set the internal clock of the obniz device.
+     * This will be set to device immediately and used as device timestamp.
+     *
+     * ```javascript
+     * // JavaScript example
+     * obniz.setClock();
+     * ```
+     *
+     * @param unix_milliseconds number of milliseconds since January 1, 1970 00:00:00 UTC. If not specified, the current time will be used.
+     */
+    setClock(unix_milliseconds) {
+        let clock = unix_milliseconds;
+        if (typeof clock !== 'number') {
+            clock = new Date().getTime();
+        }
+        this.send({ system: { clock } });
+    }
+    setQueueMode(params) {
+        if (params.timestamp !== 'none' &&
+            params.timestamp !== 'unix_seconds' &&
+            params.timestamp !== 'unix_milliseconds') {
+            throw new Error(`mode must be 'none' | 'unix_seconds' | 'unix_milliseconds'`);
+        }
+        if (typeof params.interval !== 'number' || params.interval < 0) {
+            throw new Error('interval must be a positive number');
+        }
+        if (params.interval > 60 * 60 * 1000) {
+            throw new Error('interval max value is 3600000');
+        }
+        this.send({
+            system: {
+                queue_mode: { timestamp: params.timestamp, interval: params.interval },
+            },
+        });
+    }
+    /**
      * Action only with obniz Board 1Y.
      *
      * It returns from sleep depending on the pin state of IO0.
@@ -297,6 +335,29 @@ class ObnizSystemMethods extends ObnizComponents_1.ObnizComponents {
             };
             this.addPongObserver(callback);
         });
+    }
+    addPongObserver(callback) {
+        if (callback) {
+            this.pongObservers.push(callback);
+        }
+    }
+    removePongObserver(callback) {
+        if (this.pongObservers.includes(callback)) {
+            const index = this.pongObservers.indexOf(callback);
+            this.pongObservers.splice(index, 1);
+        }
+    }
+    _handleSystemCommand(wsObj) {
+        super._handleSystemCommand(wsObj);
+        // ping pong
+        if (wsObj.pong) {
+            for (const callback of this.pongObservers) {
+                callback(wsObj);
+            }
+        }
+        else if (wsObj.timestamp) {
+            this.deviceTimestamp = wsObj.timestamp;
+        }
     }
 }
 exports.ObnizSystemMethods = ObnizSystemMethods;

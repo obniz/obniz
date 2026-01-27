@@ -1,0 +1,30 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/canbus/init"
+description: "tx, rx are required for io"
+
+type: object
+required: [tx, rx, kbps, mode, filter_code, filter_mask]  #
+uniqueKeys: [tx, rx]
+properties:
+  mode:
+    type: string
+    enum: [normal, noack, listen]
+  tx:  {$ref: "/pinSetting"}
+  rx:  {$ref: "/pinSetting"}
+  kbps:
+    type: integer
+    minimum: 1
+    maximum: 1000  # 1MHz
+    desription: "bus speed. options are different in MCUs"
+  filter_code:
+    type: integer
+    minimum: 0
+    maximum: 0xFFFFFFFF
+    desription: "Accept Data Fields"
+  filter_mask:
+    type: integer
+    minimum: 0
+    maximum: 0xFFFFFFFF
+    desription: "Accept Filter Mask. 0 means accept all."

@@ -23,7 +23,7 @@ class WSCommandDisplay extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandDrawCampusRawColors = 6;
     }
     // Commands
-    clear(params) {
+    clear() {
         this.sendCommand(this._CommandClear, null);
     }
     print(buf) {

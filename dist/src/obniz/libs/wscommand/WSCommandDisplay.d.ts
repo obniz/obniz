@@ -8,13 +8,28 @@ export declare class WSCommandDisplay extends WSCommandAbstract {
     _CommandDrawIOState: number;
     _CommandSetPinName: number;
     _CommandDrawCampusRawColors: number;
-    clear(params: any): void;
+    clear(): void;
     print(buf: Uint8Array): void;
     printText(text: string): void;
-    text(params: any): void;
-    raw(params: any): void;
-    qr(params: any): void;
-    pinName(params: any): void;
+    text(params: {
+        text: string;
+    }): void;
+    raw(params: {
+        color_depth?: number;
+        raw: number[];
+    }): void;
+    qr(params: {
+        qr: {
+            text: string;
+            correction?: 'L' | 'M' | 'Q' | 'H';
+        };
+    }): void;
+    pinName(params: {
+        pin_assign: {
+            module_name: string;
+            pin_name: string;
+        }[];
+    }): void;
     drawVertically(buf: Uint8Array): void;
     drawHorizonally(buf: Uint8Array): void;
     drawIOState(val: boolean): void;

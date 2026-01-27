@@ -13,12 +13,17 @@ import { PeripheralIO } from './libs/io_peripherals/io';
 import { PeripheralPWM } from './libs/io_peripherals/pwm';
 import { PeripheralSPI } from './libs/io_peripherals/spi';
 import { PeripheralUART } from './libs/io_peripherals/uart';
+import { PeripheralCANBus } from './libs/io_peripherals/canbus';
 import { LogicAnalyzer } from './libs/measurements/logicanalyzer';
 import { ObnizMeasure } from './libs/measurements/measure';
 import { WiFi } from './libs/network/wifi';
 import { Plugin } from './libs/plugin/plugin';
 import { ObnizParts } from './ObnizParts';
 import { ObnizOptions } from './ObnizOptions';
+import { Storage } from './libs/embeds/storage';
+import { Motion } from './libs/embeds/motion';
+import { Location } from './libs/embeds/location';
+import { IntelligentEdgeKiloComponent } from './libs/hw/iekilo1_components';
 export declare type PeripheralName = 'pwm' | 'uart' | 'spi' | 'i2c' | 'tcp';
 export declare abstract class ObnizComponents extends ObnizParts {
     /**
@@ -182,6 +187,22 @@ export declare abstract class ObnizComponents extends ObnizParts {
      */
     switch?: ObnizSwitch;
     /**
+     * @category Embeds
+     */
+    storage?: Storage;
+    /**
+     * @category Embeds
+     */
+    motion?: Motion;
+    /**
+     * @category Embeds
+     */
+    location?: Location;
+    /**
+     * @category Peripherals
+     */
+    canbus0?: PeripheralCANBus;
+    /**
      * If obnizOS ver >= 3.0.0, automatically load [[ObnizCore.Components.Ble.Hci.ObnizBLE|ObnizHciBLE]],
      * and obnizOS ver < 3.0.0 throw unsupported Error,
      *
@@ -196,8 +217,11 @@ export declare abstract class ObnizComponents extends ObnizParts {
      * @category plugin
      */
     plugin?: Plugin;
+    /**
+     * @category hardware specific components
+     */
+    components?: IntelligentEdgeKiloComponent;
     protected _hwDefinition: any;
-    protected pongObservers: any;
     protected _allComponentKeys: any;
     protected _hw_peripherals: any;
     constructor(id: string, options?: ObnizOptions);
@@ -260,8 +284,5 @@ export declare abstract class ObnizComponents extends ObnizParts {
     protected _prepareComponents(): void;
     protected _resetComponents(): void;
     protected _notifyToModule(obj: any): void;
-    protected _handleSystemCommand(wsObj: any): void;
-    protected addPongObserver(callback: any): void;
-    protected removePongObserver(callback: any): void;
     protected _getFreePeripheralUnit(peripheral: PeripheralName): any;
 }

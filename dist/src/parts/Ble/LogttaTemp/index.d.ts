@@ -55,6 +55,7 @@ export interface Logtta_TH_Connected_Data {
  * Logtta_TH(Logtta_Temp)を管理するクラス
  */
 export default class Logtta_TH extends Logtta<Logtta_TH_Data, Logtta_TH_Connected_Data> {
+    protected readonly staticClass: typeof Logtta_TH;
     static readonly PartsName = "Logtta_TH";
     static readonly AvailableBleMode: ObnizPartsBleMode[];
     static readonly LocalName: {
@@ -65,9 +66,9 @@ export default class Logtta_TH extends Logtta<Logtta_TH_Data, Logtta_TH_Connecte
         Connectable: string;
         Beacon: null;
     };
-    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_TH_Data> | null>;
-    protected static parseTemperatureData(data: number[], func?: (value: number[]) => number): number;
-    protected static parseHumidityData(data: number[], func?: (value: number[]) => number): number;
+    static readonly BeaconDataStruct: ObnizPartsBleCompare<ObnizBleBeaconStruct<Logtta_TH_Data>>;
+    protected static parseTemperatureData(data: number[], func?: (value: number[] | Uint8Array) => number): number;
+    protected static parseHumidityData(data: number[], func?: (value: number[] | Uint8Array) => number): number;
     /**
      * @deprecated
      *
@@ -96,7 +97,6 @@ export default class Logtta_TH extends Logtta<Logtta_TH_Data, Logtta_TH_Connecte
      * Logtta_TH(Logtta_Temp)かどうか
      */
     static isAdvDevice(peripheral: BleRemotePeripheral): boolean;
-    protected readonly staticClass: typeof Logtta_TH;
     /**
      * @deprecated
      *

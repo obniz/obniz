@@ -24,7 +24,9 @@ export declare abstract class WSCommandAbstract {
     constructor();
     setHw(obj: HW): void;
     sendCommand(func: number, payload: Uint8Array | null): void;
-    parseFromJson(json: any): void;
+    parseFromJson(json: {
+        [k: string]: unknown;
+    }): void;
     notifyFromBinary(objToSend: {
         [key: string]: any;
     }, func: number, payload: Uint8Array): void;

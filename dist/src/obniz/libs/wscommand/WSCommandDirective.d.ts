@@ -1,4 +1,6 @@
 import { WSCommandAbstract } from './WSCommandAbstract';
+import { WSCommandIO } from './WSCommandIO';
+import { WSCommandPWM } from './WSCommandPWM';
 import { WSCommandManager } from './WSCommandManager';
 export declare class WSCommandDirective extends WSCommandAbstract {
     module: number;
@@ -6,7 +8,10 @@ export declare class WSCommandDirective extends WSCommandAbstract {
     _CommandPause: number;
     _CommandResume: number;
     _CommandNotify: number;
-    subCommandManager: WSCommandManager;
+    subCommandManager: WSCommandManager<{
+        WSCommandIO: WSCommandIO;
+        WSCommandPWM: WSCommandPWM;
+    }>;
     constructor();
     init(params: any, originalParams: any): void;
     changeState(params: any): void;

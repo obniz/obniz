@@ -1,0 +1,21 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/system/queue_mode"
+
+type: object
+required: [queue_mode]
+properties:
+  queue_mode:
+    type: object
+    description: "Set timestamp and queue interval and other extra features of device queue mode"
+    properties:
+      interval:
+        type: integer
+        description: "Set interval of transmission queue of device. Unit is milliseconds. Default is 0ms"
+        example: 1000
+      timestamp:
+        type: string
+        enum: ["none", "unix_seconds", "unix_milliseconds"]
+        description: "Set timestamp mode. In timestamp mode, device add timestamp to every commands. Default is none. sec use 4 bytes and millisec use 8 bytes"
+        example: "none"

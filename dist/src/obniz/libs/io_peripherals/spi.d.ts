@@ -25,6 +25,10 @@ interface PeripheralSPIOptions {
      */
     miso?: number;
     /**
+     * CS pin no
+     */
+    cs?: number;
+    /**
      * frequency (Hz)
      */
     frequency: number;

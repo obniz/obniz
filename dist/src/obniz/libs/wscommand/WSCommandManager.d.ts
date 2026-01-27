@@ -4,7 +4,7 @@
  */
 import { HW, WSCommandAbstract } from './WSCommandAbstract';
 import { StrictEventEmitter } from 'strict-event-emitter';
-declare type WSCommandConstructor = new () => WSCommandAbstract;
+export declare type WSCommandConstructor = new () => WSCommandAbstract;
 interface Payload {
     /**
      * module number
@@ -32,16 +32,18 @@ interface PayloadChunk extends Payload {
 interface WSCommandManagerEventsMap {
     binaryGenerated: (module: number, func: number, binary: Uint8Array | null) => void;
 }
-export declare class WSCommandManager {
+export declare class WSCommandManager<C extends Record<string, WSCommandAbstract>> {
     private moduleNo2Name;
     private commandClasses;
     private commands;
     events: StrictEventEmitter<WSCommandManagerEventsMap>;
     static get schema(): any;
-    addCommandClass(name: string, classObj: WSCommandConstructor): void;
-    createCommandInstances(): void;
-    getCommandInstance(name: string): WSCommandAbstract;
-    getCommandInstanceByModule(module: number): WSCommandAbstract;
+    constructor(commandClasses: {
+        [K in keyof C]: new () => C[K];
+    });
+    private createCommandInstances;
+    getCommandInstance<Name extends Extract<keyof C, string>>(name: Name): C[Name];
+    getCommandInstanceByModule(module: number): C[string];
     framed(module: number, func: number, payload: Uint8Array | null): Uint8Array;
     /**
      * Dequeue a next wscommands from binary array.

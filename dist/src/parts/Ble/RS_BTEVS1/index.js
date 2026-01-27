@@ -61,6 +61,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
                 pm1_0: Buffer.from(measureData).readUInt8(2),
                 pm2_5: Buffer.from(measureData).readUInt8(3),
                 pm4_0: Buffer.from(measureData).readUInt8(4),
+                pm5_0: Buffer.from(measureData).readUInt8(4),
                 pm10_0: Buffer.from(measureData).readUInt8(5),
                 temp: Buffer.from(measureData).readUInt8(6),
                 humid: Buffer.from(measureData).readUInt8(7),
@@ -71,6 +72,7 @@ class RS_BTEVS1 extends ObnizPartsBleAbstract_1.ObnizPartsBleConnectable {
             pm1_0: Buffer.from(measureData).readUInt8(2),
             pm2_5: Buffer.from(measureData).readUInt8(3),
             pm4_0: Buffer.from(measureData).readUInt8(4),
+            pm5_0: Buffer.from(measureData).readUInt8(4),
             pm10_0: Buffer.from(measureData).readUInt8(5),
             temp: Buffer.from(measureData).readInt16LE(6) / 10,
             humid: Buffer.from(measureData).readUInt8(8),
@@ -324,8 +326,8 @@ RS_BTEVS1.BeaconDataStruct = {
         index: 6,
         length: 2,
         type: 'custom',
-        multiple: 0.1,
-        round: 1,
+        // multiple: 0.1,
+        // round: 1,
         func: (data, p) => {
             var _a, _b, _c;
             return ((_b = (_a = p.manufacturerSpecificData) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + 1 === 0x0b &&

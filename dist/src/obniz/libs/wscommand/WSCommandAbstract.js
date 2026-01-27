@@ -25,6 +25,7 @@ class WSCommandAbstract {
     setHw(obj) {
         this._hw = obj;
     }
+    // This function does NOT send command to websocket. Just doing creating frame and append it to some variable.
     sendCommand(func, payload) {
         if (this.parsed) {
             this.parsed(this.module, func, payload);

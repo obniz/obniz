@@ -3,26 +3,29 @@
  * @module ObnizCore
  */
 import { BleRemoteCharacteristic } from './libs/embeds/bleHci/bleRemoteCharacteristic';
-import { BleRemotePeripheral, IBeacon } from './libs/embeds/bleHci/bleRemotePeripheral';
+import { BleConnectSetting, BleRemotePeripheral, IBeacon } from './libs/embeds/bleHci/bleRemotePeripheral';
 import { ObnizPartsInfo, ObnizPartsProps } from './ObnizPartsInterface';
 import { PartsType } from './ObnizPartsList';
 declare const ObnizPartsBleModeList: readonly ["Beacon", "Connectable", "Pairing"];
 export declare type ObnizPartsBleMode = typeof ObnizPartsBleModeList[number];
-export declare type ObnizPartsBleCompare<S> = ObnizPartsBleCompareWithMode<S> | S;
-export declare type ObnizPartsBleCompareWithMode<S> = {
+declare type ObnizPartsBleCompareByMode<S> = {
     [key in ObnizPartsBleMode]?: S;
 };
+export declare type ObnizPartsBleCompareWithNonNull<S> = ObnizPartsBleCompareByMode<S> | S;
+export declare type ObnizPartsBleCompare<S> = ObnizPartsBleCompareByMode<S | null> | S;
 declare type NumberType = 'numLE' | 'numBE' | 'unsignedNumLE' | 'unsignedNumBE';
 declare type BoolType = 'bool0001' | 'bool0010' | 'bool0100' | 'bool1000' | 'bool00010000' | 'bool00100000' | 'bool01000000' | 'bool10000000';
 declare type OtherType = 'string' | 'xyz';
 declare type CustomType = 'custom';
 declare type CheckType = 'check';
-export declare type NormalValueType = NumberType | BoolType | OtherType | CustomType;
-export declare type ValueType = NormalValueType | CheckType;
+export declare type NormalValueType = NumberType | BoolType | OtherType;
 export declare type ObnizBleBeaconStruct<S> = {
     [key in keyof S]: ObnizBleBeaconStructNormal<S, key>;
-} & {
-    [key in string]: ObnizBleBeaconStructCheck;
+} | {
+    [key in Exclude<string, keyof S>]: ObnizBleBeaconStructCheck;
+};
+declare type ObnizBleBeaconStructStrict<S, T extends string> = {
+    [key in keyof S | T]: key extends keyof S ? ObnizBleBeaconStructNormal<S, key> : ObnizBleBeaconStructCheck;
 };
 interface ObnizBleBeaconStructStandard<S> {
     /** Value type */
@@ -34,42 +37,52 @@ interface ObnizBleBeaconStructStandard<S> {
     /** Be sure to use scan response data */
     scanResponse?: boolean;
 }
-export declare type ObnizBleBeaconStructNormal<S, key extends keyof S> = ObnizBleBeaconStructStandard<NormalValueType> & {
-    /** Default: 1 (ex: parseInt() * multiple) */
+export declare type ObnizBleBeaconStructNormal<S, key extends keyof S> = (ObnizBleBeaconStructStandard<NormalValueType> & {
+    /** Default: 0 (def: base + parseInt() * multiple) */
+    base?: number;
+    /** Default: 1 (def: base + parseInt() * multiple) */
     multiple?: number;
+    /** Default: none (ex: 0.1234 --(round: 2)-> 0.12) */
+    round?: number;
     /** Number of bytes in the integer part with fixed point */
     fixedIntegerBytes?: number;
-    /** round precision */
-    round?: number;
-    /** Required in array type, Only in xyz */
+}) | (ObnizBleBeaconStructStandard<CustomType> & {
     /** Used only 'custom' */
-    func?: (data: number[], peripheral: BleRemotePeripheral) => S[key];
-};
-export declare type ObnizBleBeaconStructCheck = ObnizBleBeaconStructStandard<ValueType> & {
+    func: (data: number[], peripheral: BleRemotePeripheral) => S[key];
+});
+export declare type ObnizBleBeaconStructCheck = ObnizBleBeaconStructCheckWithData | ObnizBleBeaconStructCheckWithFunc;
+declare type ObnizBleBeaconStructCheckWithData = ObnizBleBeaconStructStandard<CheckType> & {
     /** Compare data value, Used only 'check' */
-    data?: number | number[];
+    data: number | number[];
+};
+declare type ObnizBleBeaconStructCheckWithFunc = ObnizBleBeaconStructStandard<CheckType> & {
+    /** Compare function with data value, Used only 'check' */
+    func: (data: Uint8Array) => boolean;
 };
 export declare const notMatchDeviceError: Error;
-export declare const fixedPoint: (value: number[], integerBytes: number) => number;
-export declare const uint: (value: number[]) => number;
-export declare const int: (value: number[]) => number;
-export declare const uintBE: (value: number[]) => number;
-export declare const intBE: (value: number[]) => number;
-export declare const uintToArray: (value: number, length?: number) => number[];
+export declare const fixedPoint: (value: number[] | Uint8Array, integerBytes: number) => number;
+export declare const uint: (value: number[] | Uint8Array) => number;
+export declare const int: (value: number[] | Uint8Array) => number;
+export declare const uintBE: (value: number[] | Uint8Array) => number;
+export declare const intBE: (value: number[] | Uint8Array) => number;
+export declare const uintToArray: (value: number, length?: number) => Uint8Array;
+export declare const uintToArrayWithBE: (value: number, length?: number) => Uint8Array;
+export declare const fixByRange: (name: string, value: number, min: number, max: number) => number;
+export declare const checkEquals: (base: number[] | Uint8Array, target: number[] | Uint8Array) => boolean;
 export interface ObnizPartsBleProps extends ObnizPartsProps {
     readonly PartsName: PartsType;
     readonly AvailableBleMode: ObnizPartsBleMode | ObnizPartsBleMode[];
-    readonly Address?: ObnizPartsBleCompare<RegExp>;
-    readonly LocalName?: ObnizPartsBleCompare<RegExp>;
-    readonly ServiceUuids?: ObnizPartsBleCompare<string | string[] | null>;
-    readonly BeaconDataLength?: ObnizPartsBleCompare<number | null>;
-    readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number | null>;
-    readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
-    readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[] | null>;
-    readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
-    readonly ServiceDataLength?: ObnizPartsBleCompare<number | null>;
-    readonly ServiceUUID?: ObnizPartsBleCompare<number[] | null>;
-    readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+    readonly Address?: ObnizPartsBleCompareWithNonNull<RegExp>;
+    readonly LocalName?: ObnizPartsBleCompareWithNonNull<RegExp>;
+    readonly ServiceUuids?: ObnizPartsBleCompare<string | string[]>;
+    readonly BeaconDataLength?: ObnizPartsBleCompare<number>;
+    readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number>;
+    readonly CompanyID?: ObnizPartsBleCompare<number[]>;
+    readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[]>;
+    readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown>>;
+    readonly ServiceDataLength?: ObnizPartsBleCompare<number>;
+    readonly ServiceUUID?: ObnizPartsBleCompare<number[]>;
+    readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown>>;
     getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
     getDeviceMode(peripheral: BleRemotePeripheral): ObnizPartsBleMode | null;
     new (peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode): ObnizPartsBle<unknown>;
@@ -91,44 +104,46 @@ export declare abstract class ObnizPartsBle<S> {
      *
      * 標準でisDevice()の条件として使用
      */
-    static readonly Address?: ObnizPartsBleCompare<RegExp>;
+    static readonly Address?: ObnizPartsBleCompareWithNonNull<RegExp>;
     /**
      * Used as a condition of isDevice() by default.
      *
      * 標準でisDevice()の条件として使用
      */
-    static readonly LocalName?: ObnizPartsBleCompare<RegExp>;
+    static readonly LocalName?: ObnizPartsBleCompareWithNonNull<RegExp>;
     /**
      * Used as a condition of isDevice() by default.
      *
      * 標準でisDevice()の条件として使用
      */
-    static readonly ServiceUuids?: ObnizPartsBleCompare<string | string[] | null>;
+    static readonly ServiceUuids?: ObnizPartsBleCompare<string | string[]>;
     static getServiceUuids(mode: ObnizPartsBleMode): string[] | null | undefined;
     /**
      * Used as a condition of isDevice() by default.
      *
      * 標準でisDevice()の条件として使用
      */
-    static readonly BeaconDataLength?: ObnizPartsBleCompare<number | null>;
+    static readonly BeaconDataLength?: ObnizPartsBleCompare<number>;
+    /**
+     * Overall length of manufacturer-specific data.
+     * Used as a condition of isDevice() by default.
+     *
+     * 製造者固有データ全体の長さ
+     * 標準でisDevice()の条件として使用
+     */
+    static readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number>;
     /**
      * Used as a condition of isDevice() by default.
      *
      * 標準でisDevice()の条件として使用
      */
-    static readonly BeaconDataLength_ScanResponse?: ObnizPartsBleCompare<number | null>;
+    static readonly CompanyID?: ObnizPartsBleCompare<number[]>;
     /**
      * Used as a condition of isDevice() by default.
      *
      * 標準でisDevice()の条件として使用
      */
-    static readonly CompanyID?: ObnizPartsBleCompare<number[] | null>;
-    /**
-     * Used as a condition of isDevice() by default.
-     *
-     * 標準でisDevice()の条件として使用
-     */
-    static readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[] | null>;
+    static readonly CompanyID_ScanResponse?: ObnizPartsBleCompare<number[]>;
     /**
      * Used as a condition of isDevice() by default.
      * Compare with data after Company ID.
@@ -136,19 +151,19 @@ export declare abstract class ObnizPartsBle<S> {
      * 標準でisDevice()の条件として使用
      * CompanyID以降のデータと比較
      */
-    static readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+    static readonly BeaconDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown>>;
     /**
      * Used as a condition of isDevice() by default.
      *
      * 標準でisDevice()の条件として使用
      */
-    static readonly ServiceDataLength?: ObnizPartsBleCompare<number | null>;
+    static readonly ServiceDataLength?: ObnizPartsBleCompare<number>;
     /**
      * Used as a condition of isDevice() by default.
      *
      * 標準でisDevice()の条件として使用
      */
-    static readonly ServiceDataUUID?: ObnizPartsBleCompare<number[] | null>;
+    static readonly ServiceDataUUID?: ObnizPartsBleCompare<number[]>;
     /**
      * Used as a condition of isDevice() by default.
      * Compare with data after Service UUID.
@@ -156,7 +171,7 @@ export declare abstract class ObnizPartsBle<S> {
      * 標準でisDevice()の条件として使用
      * ServiceUUID以降のデータと比較
      */
-    static readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown> | null>;
+    static readonly ServiceDataStruct?: ObnizPartsBleCompare<ObnizBleBeaconStruct<unknown>>;
     /**
      * @deprecated
      */
@@ -204,8 +219,11 @@ export declare abstract class ObnizPartsBle<S> {
     checkMode(force?: boolean): ObnizPartsBleMode;
     /**
      * アドバタイジングデータを連想配列に成形
+     *
      * 利用可能なモード: Beacon, Connectable(一部のみ)
+     *
      * Form advertising data into an associative array
+     *
      * Available modes: Beacon, Connectable(only part)
      */
     getData(): S;
@@ -213,14 +231,28 @@ export declare abstract class ObnizPartsBle<S> {
 }
 export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsBle<S> {
     constructor(peripheral: BleRemotePeripheral, mode: ObnizPartsBleMode);
+    protected readonly disconnectedListeners: ((reason: unknown) => void | Promise<void>)[];
+    /**
+     * Register functions to be called on disconnection.
+     *
+     * Note: Registration is reset upon connection, so please register after connection.
+     *
+     * 切断時に呼ばれる関数を登録
+     *
+     * 注意: 接続時に登録がリセットされるため、接続後に登録してください
+     *
+     * @param func Function to be registered 登録したい関数
+     */
+    protected registerDisconnected(func: () => void): void;
     /**
      * Connect to peripherals with validation.
      *
      * バリデーションのあるペリフェラルへの接続
      *
      * @param keys: Key acquired when pairing previously 以前にペアリングしたときに取得されたキー
+     * @param setting: Additional settings when connecting 接続時の追加設定
      */
-    connectWait(keys?: string): Promise<void>;
+    connectWait(keys?: string, setting?: BleConnectSetting): Promise<void>;
     /**
      * Disconnect from peripheral.
      *
@@ -241,14 +273,6 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      * @param reason Reason for being disconnected 切断された理由
      */
     ondisconnect?: (reason: unknown) => void | Promise<void>;
-    /**
-     * Initialization processing before calling this.ondisconnect().
-     *
-     * this.ondisconnect()を呼ぶ前の初期化処理
-     *
-     * @param reason Reason for being disconnected
-     */
-    protected abstract beforeOnDisconnectWait(reason: unknown): Promise<void>;
     /**
      * Check if connected.
      *
@@ -284,10 +308,10 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      *
      * @param serviceUuid Service UUID
      * @param characteristicUuid Characteristic UUID
-     * @param data Write data
-     * @returns Data write result
+     * @param data Write data 書き込むデータ
+     * @returns Data write result データ書き込み結果
      */
-    protected writeCharWait(serviceUuid: string, characteristicUuid: string, data?: number[], needResponse?: boolean): Promise<boolean>;
+    protected writeCharWait(serviceUuid: string, characteristicUuid: string, data?: number[] | Uint8Array, needResponse?: boolean): Promise<boolean>;
     /**
      * Register notification to any characteristic of any service.
      *
@@ -295,7 +319,7 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      *
      * @param serviceUuid Service UUID
      * @param characteristicUuid Characteristic UUID
-     * @param callback It is called when data comes
+     * @param callback Function called when data arrives データが来たときに呼ばれる関数
      */
     protected subscribeWait(serviceUuid: string, characteristicUuid: string, callback?: (data: number[]) => void | Promise<void>): Promise<void>;
     /**
@@ -308,6 +332,35 @@ export declare abstract class ObnizPartsBleConnectable<S, T> extends ObnizPartsB
      */
     protected unsubscribeWait(serviceUuid: string, characteristicUuid: string): Promise<void>;
 }
+export declare abstract class ObnizPartsBlePairable<S, T> extends ObnizPartsBleConnectable<S, T> {
+    /**
+     * Disconnect request after pairing
+     *
+     * ペアリング後に切断要求を行う
+     */
+    protected requestDisconnectAfterPairing: boolean;
+    /**
+     * Wait for disconnect event at the end of pairing
+     *
+     * ペアリングの終了時には切断イベントを待つ
+     */
+    protected waitDisconnectAfterPairing: boolean;
+    /**
+     * After pairing and before disconnect
+     *
+     * ペアリング後、切断前に行う操作
+     */
+    protected afterPairingWait(): Promise<void>;
+    /**
+     * Perform pairing
+     *
+     * ペアリングを実行
+     *
+     * @returns Pairing key ペアリングキー
+     */
+    pairingWait(): Promise<string | null>;
+}
 export declare const iBeaconCompanyID: number[];
+export declare const iBeaconDataWithStrict: ObnizBleBeaconStructStrict<IBeacon, 'type'>;
 export declare const iBeaconData: ObnizBleBeaconStruct<IBeacon>;
 export {};

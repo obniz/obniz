@@ -17,5 +17,5 @@ export default abstract class MINEW<S extends MINEW_Base_Data> extends ObnizPart
         number,
         number
     ]>;
-    protected static getServiceDataStruct: <T>(macAddressIndex: number, versionNumber: number, additonalData: ObnizBleBeaconStruct<Omit<T, never>>) => ObnizPartsBleCompare<ObnizBleBeaconStruct<T>>;
+    protected static getServiceDataStruct: <T>(macAddressIndex: number, versionNumber: number, additonalData: ObnizBleBeaconStruct<Omit<T, never>>) => ObnizBleBeaconStruct<T>;
 }
