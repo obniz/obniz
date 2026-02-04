@@ -1952,7 +1952,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/wifi/scan.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/wifi/scan","desccription":"wifi scan","type":"object","required":["scan"],"properties":{"scan":{"type":"object","required":["data"],"properties":{"data":{"$ref":"/dataArray"}}}}}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/wifi/scan","desccription":"wifi scan","type":"object","required":["scan"],"properties":{"scan":{"type":"array","items":{"type":"object","required":["ssid","macAddress","rssi"],"properties":{"ssid":{"type":"string"},"macAddress":{"type":"string"},"rssi":{"type":"integer"}}}}}}
 
 /***/ }),
 
@@ -20932,9 +20932,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WiFi = void 0;
 const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semver.js"));
-class WiFi {
+const ComponentAbstact_1 = __webpack_require__("./dist/src/obniz/libs/ComponentAbstact.js");
+class WiFi extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this._reset();
     }
     /**
@@ -20946,15 +20947,13 @@ class WiFi {
      * ```
      *
      */
-    scanWait() {
+    async scanWait() {
         if (semver_1.default.lt(this.Obniz.firmware_ver, '3.3.0')) {
             throw new Error(`Please update obniz firmware >= 3.3.0`);
         }
-        this.connectObservers = [];
-        return new Promise((resolve, reject) => {
-            this._addConnectObserver(resolve);
-            this.Obniz.send({ wifi: { scan: true } });
-        });
+        const obj = { wifi: { scan: true } };
+        const json = await this.sendAndReceiveJsonWait(obj, '/response/wifi/scan');
+        return json.scan;
     }
     /**
      *
@@ -20966,26 +20965,11 @@ class WiFi {
     end() {
         this._reset();
     }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (obj.scan) {
-            /* Connectino state update. response of connect(), close from destination, response from */
-            const callback = this.connectObservers.shift();
-            if (callback) {
-                callback(obj.scan);
-            }
-        }
+    schemaBasePath() {
+        return 'wifi';
     }
     _reset() {
-        this.connectObservers = [];
-    }
-    _addConnectObserver(callback) {
-        if (callback) {
-            this.connectObservers.push(callback);
-        }
+        // no-op
     }
 }
 exports.WiFi = WiFi;

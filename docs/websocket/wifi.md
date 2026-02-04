@@ -38,7 +38,9 @@ wifi command
 
 | path | type | conditions  | description |
 |:---- |:---- |:---- |:---- |
-| `wifi.scan.data` | [dataArray](#dataarray)  | <ul><li>required</li></ul> | wifi scan data&nbsp; |
+| `wifi.scan[].ssid` |  string  | <ul><li>required</li></ul> | &nbsp; |
+| `wifi.scan[].macAddress` |  string  | <ul><li>required</li></ul> | &nbsp; |
+| `wifi.scan[].rssi` |  integer  | <ul><li>required</li></ul> | &nbsp; |
 
 
 
@@ -47,9 +49,13 @@ wifi command
 [
     {
         "wifi": {
-            "scan": {
-                "data": [16, 34, 242]
-            }
+            "scan": [
+                {
+                    "ssid": "obniz-wifi",
+                    "macAddress": "001122aabbcc",
+                    "rssi": 500
+                }
+            ]
         }
     }
 ]
@@ -57,17 +63,6 @@ wifi command
 
 
 
-
-
-
-# type defines
-
-
-
-##  <a name="dataarray">dataArray</a>
-| type | conditions | examples | description |
-|:----|:----|:----|:----|
-| array | <ul><li>items<br/><ul><li>0 &le; value &le; 255</li></ul></li></ul>  |  <ul><li>`[16, 34, 242]`</li><li>`[100, 255, 21, 0, 21]`</li></ul> | Binary data array.&nbsp; |
 
 
 

@@ -9,9 +9,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WiFi = void 0;
 const semver_1 = __importDefault(require("semver"));
-class WiFi {
+const ComponentAbstact_1 = require("../ComponentAbstact");
+class WiFi extends ComponentAbstact_1.ComponentAbstract {
     constructor(obniz, id) {
-        this.Obniz = obniz;
+        super(obniz);
         this._reset();
     }
     /**
@@ -23,15 +24,13 @@ class WiFi {
      * ```
      *
      */
-    scanWait() {
+    async scanWait() {
         if (semver_1.default.lt(this.Obniz.firmware_ver, '3.3.0')) {
             throw new Error(`Please update obniz firmware >= 3.3.0`);
         }
-        this.connectObservers = [];
-        return new Promise((resolve, reject) => {
-            this._addConnectObserver(resolve);
-            this.Obniz.send({ wifi: { scan: true } });
-        });
+        const obj = { wifi: { scan: true } };
+        const json = await this.sendAndReceiveJsonWait(obj, '/response/wifi/scan');
+        return json.scan;
     }
     /**
      *
@@ -43,26 +42,11 @@ class WiFi {
     end() {
         this._reset();
     }
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj) {
-        if (obj.scan) {
-            /* Connectino state update. response of connect(), close from destination, response from */
-            const callback = this.connectObservers.shift();
-            if (callback) {
-                callback(obj.scan);
-            }
-        }
+    schemaBasePath() {
+        return 'wifi';
     }
     _reset() {
-        this.connectObservers = [];
-    }
-    _addConnectObserver(callback) {
-        if (callback) {
-            this.connectObservers.push(callback);
-        }
+        // no-op
     }
 }
 exports.WiFi = WiFi;

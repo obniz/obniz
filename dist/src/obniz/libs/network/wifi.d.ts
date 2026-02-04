@@ -3,9 +3,8 @@
  * @module ObnizCore.Components
  */
 import Obniz from '../../index';
-export declare class WiFi {
-    private Obniz;
-    private connectObservers;
+import { ComponentAbstract } from '../ComponentAbstact';
+export declare class WiFi extends ComponentAbstract {
     constructor(obniz: Obniz, id: number);
     /**
      * Scan WiFi
@@ -25,11 +24,6 @@ export declare class WiFi {
      * ```
      */
     end(): void;
-    /**
-     * @ignore
-     * @param obj
-     */
-    notified(obj: any): void;
-    private _reset;
-    private _addConnectObserver;
+    schemaBasePath(): string;
+    protected _reset(): void;
 }

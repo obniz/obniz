@@ -8,10 +8,17 @@ type: object
 required: [scan]
 properties:
   scan:
-    type: object
-    required: [data]
-    properties:
-      data:
-        $ref: "/dataArray"
-        description: "wifi scan data"
-
+    type: array
+    description: "wifi scan list"
+    items:
+      type: object
+      required: [ssid, macAddress, rssi]
+      properties:
+        ssid:
+          type: string
+          example: "obniz-wifi"
+        macAddress:
+          type: string
+          example: "001122aabbcc"
+        rssi:
+          type: integer

@@ -5,13 +5,11 @@
 
 import semver from 'semver';
 import Obniz from '../../index';
+import { ComponentAbstract } from '../ComponentAbstact';
 
-export class WiFi {
-  private Obniz: Obniz;
-  private connectObservers: any;
-
+export class WiFi extends ComponentAbstract {
   constructor(obniz: Obniz, id: number) {
-    this.Obniz = obniz;
+    super(obniz);
     this._reset();
   }
 
@@ -24,16 +22,14 @@ export class WiFi {
    * ```
    *
    */
-  public scanWait(): Promise<any> {
+  public async scanWait(): Promise<any> {
     if (semver.lt(this.Obniz.firmware_ver!, '3.3.0')) {
       throw new Error(`Please update obniz firmware >= 3.3.0`);
     }
 
-    this.connectObservers = [];
-    return new Promise((resolve: any, reject: any) => {
-      this._addConnectObserver(resolve);
-      this.Obniz.send({ wifi: { scan: true } });
-    });
+    const obj = { wifi: { scan: true } };
+    const json = await this.sendAndReceiveJsonWait(obj, '/response/wifi/scan');
+    return json.scan;
   }
 
   /**
@@ -47,27 +43,11 @@ export class WiFi {
     this._reset();
   }
 
-  /**
-   * @ignore
-   * @param obj
-   */
-  public notified(obj: any) {
-    if (obj.scan) {
-      /* Connectino state update. response of connect(), close from destination, response from */
-      const callback = this.connectObservers.shift();
-      if (callback) {
-        callback(obj.scan);
-      }
-    }
+  public schemaBasePath(): string {
+    return 'wifi';
   }
 
-  private _reset() {
-    this.connectObservers = [];
-  }
-
-  private _addConnectObserver(callback: any) {
-    if (callback) {
-      this.connectObservers.push(callback);
-    }
+  protected _reset() {
+    // no-op
   }
 }
