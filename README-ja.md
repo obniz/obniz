@@ -1,245 +1,388 @@
-# obniz.js: SDK for JavaScript
+<div align="center">
+  <h1>⚡ obniz.js</h1>
+  <p><strong>IoTハードウェア制御のための TypeScript SDK</strong></p>
+  <p>わずか数行の TypeScript で、Node.js からリアルワールドのハードウェアを制御</p>
 
-[![npm version](https://badge.fury.io/js/obniz.svg)](https://badge.fury.io/js/obniz)
-![](https://img.shields.io/npm/dt/obniz.svg) [![test](https://github.com/obniz/obniz/actions/workflows/node.js.yml/badge.svg)](https://github.com/obniz/obniz/actions/workflows/node.js.yml)
+  <p>
+    <a href="https://www.npmjs.com/package/obniz"><img src="https://img.shields.io/npm/v/obniz.svg?style=flat-square&logo=npm" alt="npm version"></a>
+    <a href="https://www.npmjs.com/package/obniz"><img src="https://img.shields.io/npm/dm/obniz.svg?style=flat-square&logo=npm" alt="npm downloads"></a>
+    <a href="https://github.com/obniz/obniz/actions/workflows/node.js.yml"><img src="https://img.shields.io/github/actions/workflow/status/obniz/obniz/node.js.yml?style=flat-square&logo=github" alt="Build Status"></a>
+    <a href="https://github.com/obniz/obniz/blob/master/LICENSE.txt"><img src="https://img.shields.io/npm/l/obniz.svg?style=flat-square" alt="License"></a>
+    <a href="https://github.com/obniz/obniz"><img src="https://img.shields.io/github/stars/obniz/obniz?style=flat-square&logo=github" alt="GitHub Stars"></a>
+  </p>
 
+  <p>
+    <a href="./README.md">English</a> •
+    <a href="https://docs.obniz.io/ja/guides/">ドキュメント</a> •
+    <a href="https://obniz.github.io/obniz/obnizjs/index.html">APIリファレンス</a> •
+    <a href="./examples">サンプル</a> •
+    <a href="https://obniz.com/ja/">ウェブサイト</a>
+  </p>
+</div>
 
-[obniz](https://obniz.com/ja/) や[obnizOS](https://obniz.com/ja/doc/obnizos)をobniz websocket APIを使いJavaScriptから操作するためのsdkです。
+---
 
-ドキュメント
+## ✨ 特徴
 
-- [ガイド](https://docs.obniz.io/ja/guides/)
-- [クラスリファレンス](https://obniz.github.io/obniz/obnizjs/index.html)
+- 🚀 **TypeScript ファースト** — TypeScript で構築され、完全な型定義を含む
+- 🔌 **ハードウェア抽象化** — GPIO、PWM、I2C、SPI、UART などを制御
+- 📦 **パーツライブラリ** — 100以上の事前構築コンポーネント（センサー、モーター、ディスプレイ）
+- 🖥️ **サーバーサイド** — Node.js バックエンドアプリケーションに最適
+- ☁️ **クラウド接続** — WebSocket 経由でデバイスをリモート制御
+- ⚡ **リアルタイム** — インターネット経由の低遅延ハードウェア制御
 
-関係するサイト
+## 🚀 クイックスタート
 
-- [obniz ウェブサイト](https://obniz.com/ja)
-- [デバイス一覧](https://obniz.com/ja/products)
-- [制作例](https://blog.obniz.io/example-2/)
+### インストール
 
-obniz.js内 Example集
-
-- [Examples](./examples)
-
-## 使い方
-
-```html
-<html>
-<head>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://unpkg.com/obniz/obniz.js"></script>
-</head>
-<body>
-
-<input id="text">
-<button id="send">send</button>
-
-<script>
-  var obniz = new Obniz("0000-0000");
-  obniz.onconnect = async function () {
-    // embed parts
-    obniz.display.print("hello!");
-    obniz.switch.onchange = function(state) {
-      $('body').css({
-        "background-color" : (state == "push") ? "#F00" : "#FFF"
-        });
-    }
-
-    // parts library
-    var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
-    servo.angle(90);
-    
-    // peripherals
-    var uart = obniz.getFreeUart();
-    uart.start({tx: 5, rx: 6, baud:9600});  
-    
-    $('#send').click(function () {
-      uart.send($("#text").val());
-    });
-
-    obniz.io7.drive("5v")
-    obniz.io7.output(true)
-    obniz.io8.pull("3v");
-    obniz.io8.drive("open-drain");
-    obniz.io8.output(false);
-  }
-</script>
-</body>
-</html>
+```bash
+npm install obniz
 ```
 
-## TypeScript
+### Hello World
+
+わずか数行の TypeScript でハードウェアを制御：
 
 ```typescript
-import * as Obniz from 'obniz'
+import Obniz from 'obniz';
 
-const obniz = new Obniz("0000-0000");
-obniz.onconnect = async () => {
+const obniz = new Obniz("0000-0000", { access_token: "token_xxxxxxxxxxxxxxxx" });
 
+obniz.onconnect = async (): Promise<void> => {
+  // メッセージを表示
+  obniz.display.print("Hello, World!");
+  
+  // LED を制御
+  const led = obniz.wired("LED", { anode: 0, cathode: 1 });
+  led.blink();
+};
+```
+
+### 実行
+
+```bash
+npx ts-node index.ts
+```
+
+## 📖 使用例
+
+<details>
+<summary><b>🔌 基本的なハードウェア制御</b></summary>
+
+```typescript
+import Obniz from 'obniz';
+
+const obniz = new Obniz("0000-0000", { access_token: "token_xxxxxxxxxxxxxxxx" });
+
+obniz.onconnect = async (): Promise<void> => {
+  // メッセージを表示
   obniz.display.print("hello!");
-  obniz.switch.onchange = (state: string) => {
-    console.log(state);
-  }
-  const servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
+  
+  // スイッチイベント処理
+  obniz.switch.onchange = (state: string): void => {
+    console.log(`スイッチ状態: ${state}`);
+  };
+
+  // サーボモーター制御
+  const servo = obniz.wired("ServoMotor", { gnd: 0, vcc: 1, signal: 2 });
   servo.angle(90);
-}
+  
+  // UART 通信
+  const uart = obniz.getFreeUart();
+  uart.start({ tx: 5, rx: 6, baud: 9600 });
+  uart.send("Hello from TypeScript!");
+
+  // GPIO 制御
+  obniz.io7.drive("5v");
+  obniz.io7.output(true);
+  obniz.io8.pull("3v");
+  obniz.io8.drive("open-drain");
+  obniz.io8.output(false);
+};
 ```
 
-## インストール
+</details>
 
-### ブラウザ
-次のscriptタグをhtmlに組み込むだけです
-```html
-  <script src="https://unpkg.com/obniz/obniz.js"></script>
-```
-### Nodejs
-npmでインストールします。
-```shell
-  npm install obniz
-```
-そしてjsの中でrequireして下さい。
-```javascript
-  const Obniz = require('obniz');
-```
+<details>
+<summary><b>🎚️ サーボモーター制御</b></summary>
 
-## 接続
-obnizデバイスをobniz idを使ってインスタンス化します。
-そして接続が完了した時に呼ばれる関数をセットします。
-```javascript
-  var obniz = new Obniz("0000-0000");
-  obniz.onconnect = async function () {
+```typescript
+import Obniz from 'obniz';
+import * as readline from 'readline';
 
-  }
-```
-接続完了後にobnizデバイスを遠隔で操作できます。
-```javascript
-  var obniz = new Obniz("0000-0000");
-  obniz.onconnect = async function () {
-    obniz.display.print("hello!");
-    obniz.switch.onchange = function(state) {
-      if (state === "push") {
-        obniz.display.print("Button Pressed");
-      }
-    }
-  }
-  obniz.onloop = async function () {
-    // 接続中は繰り返し呼ばれる関数
-  }
-  obniz.onclose = async function () {
-    // 切断時に呼ばれる関数
-  }
-```
-IOペリフェラルも利用可能です。詳しくはそれぞれのペリフェラルドキュメントを見てください。
-```javascript
-  var obniz = new Obniz("0000-0000");
-  obniz.onconnect = async function () {
-    obniz.io0.drive("5v");
-    obniz.io0.output(true)
-    obniz.io1.pull("3v");
-    obniz.io1.drive("open-drain");
-    obniz.io1.output(true);
-    obniz.io2.drive("3v");
-    obniz.io2.output(true);
+const obniz = new Obniz("0000-0000", { access_token: "token_xxxxxxxxxxxxxxxx" });
 
-    obniz.ad3.start(function(voltage){
-      console.log("changed to "+voltage+" v")
-    });
-
-    var pwm = obniz.getFreePwm();
-    pwm.start({io: 4});
-    pwm.freq(1000);
-    pwm.duty(50);
-
-    var uart = obniz.getFreeUart();
-    uart.start({tx: 5, rx: 6, baud:9600});  
-    uart.onreceive = function(data, text) {
-      console.log(data);
-    }
-    uart.send("Hello");
-  }
-```
-
-## パーツライブラリ
-パーツライブラリはobniz.jsに含まれています。ドキュメントはこちらで
-
-[obniz Parts Library](https://obniz.com/sdk/parts)
-
-obniz Boardにつながれた部品をつかうにはpartsをonconnect関数の中でインスタンス化します。どんな関数があるかなども [obniz Parts Library](https://obniz.com/sdk/parts/) で確認できます。
-
-例えば LED [https://obniz.com/sdk/parts/LED](https://obniz.com/sdk/parts/LED)
-```javascript
-  var obniz = new Obniz("0000-0000");
-  obniz.onconnect = async function () {
-    var led = obniz.wired("LED", {anode:0, cathode:1});
-    led.blink();
-  }
-```
-
-HC-SR40(distance measure) [https://obniz.com/sdk/parts/HC-SR04](https://obniz.com/sdk/parts/HC-SR04)
-```javascript
-  var obniz = new Obniz("0000-0000");
-  obniz.onconnect = async function () {
-    var hcsr04 = obniz.wired("HC-SR04", {gnd:0, echo:1, trigger:2, vcc:3});
-    hcsr04.unit("inch");
-    hcsr04.measure(function( distance ){
-      console.log("distance " + distance + " inch")
-    })
-  }
-```
-
-## ブラウザのUIとハードウェアの連携
-HTML上のUIとハードウェアの連携
-```html
-<input id="slider" type="range"  min="0" max="180" />
-
-<script src="https://unpkg.com/obniz/obniz.js"></script>
-<script>
-var obniz = new Obniz("0000-0000");
-obniz.onconnect = async function () {
-  var servo = obniz.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
-  $("#slider").on('input', function() {
-    servo.angle($("#slider").val())
+obniz.onconnect = async (): Promise<void> => {
+  const servo = obniz.wired("ServoMotor", { gnd: 0, vcc: 1, signal: 2 });
+  
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
   });
-}
-</script>
+
+  rl.on('line', (input: string): void => {
+    const angle = parseInt(input, 10);
+    if (angle >= 0 && angle <= 180) {
+      servo.angle(angle);
+      console.log(`サーボ角度を設定: ${angle}`);
+    }
+  });
+
+  console.log('角度を入力してください (0-180):');
+};
 ```
 
-## 外部WEBサービスとの連携
-DropboxやTwitterなどのwebサービスとの連携
-```javascript
-// save data from obniz to dropbox
-var obniz = new Obniz("0000-0000");
-obniz.onconnect = async function () {
-  var dbx = new Dropbox({ accessToken: '<YOUR ACCESS TOKEN HERE>' });
-  var button = obniz.wired("Button",  {signal:0, gnd:1});
-  button.onchange = function(pressed){
+</details>
+
+<details>
+<summary><b>☁️ クラウドサービス連携</b></summary>
+
+```typescript
+import Obniz from 'obniz';
+import { Dropbox } from 'dropbox';
+
+const obniz = new Obniz("0000-0000", { access_token: "token_xxxxxxxxxxxxxxxx" });
+
+obniz.onconnect = async (): Promise<void> => {
+  const dbx = new Dropbox({ accessToken: '<YOUR ACCESS TOKEN>' });
+  const button = obniz.wired("Button", { signal: 0, gnd: 1 });
+  
+  button.onchange = async (pressed: boolean): Promise<void> => {
     if (pressed) {
-  　　dbx.filesUpload({path: '/obniz.txt', contents: "[Button Pressed]\n" + new Date(), mode: 'overwrite' });
+      await dbx.filesUpload({
+        path: '/obniz.txt', 
+        contents: `[ボタンが押されました]\n${new Date().toISOString()}`, 
+        mode: { '.tag': 'overwrite' }
+      });
+      console.log('Dropbox にデータをアップロードしました');
     }
   };
-}
+};
 ```
 
-## 2つ以上のobnizデバイスとの連携  
-obniz Boardにつながれたサーボモーターを別のobniz Boardにつながれたつまみから操作。
-```javascript
-// control servomotor from potention meter which connected to another obniz.
-var obnizA = new Obniz("0000-0000");
-obnizA.onconnect = async function () {
-  var obnizB = new Obniz("0000-0001");
-  obnizB.onconnect = async function(){
-    var meter = obnizA.wired("Potentiometer", {pin0:0, pin1:1, pin2:2});
-    var servo = obnizB.wired("ServoMotor", {gnd:0, vcc:1, signal:2});
-    meter.onchange =function(position) {
-      servo.angle(position * 180);
-    }; 
+</details>
+
+<details>
+<summary><b>🔗 マルチデバイス制御</b></summary>
+
+```typescript
+import { App, AppInstanceType, Worker } from 'obniz-app-sdk'
+import Obniz from 'obniz';
+
+class MyWorker extends Worker {
+
+  async onObnizConnect(obniz){
+    console.log(`obniz ${obniz.id} が接続されました`);
+    await obniz.ble!.initWait();
   }
+
+  async onObnizLoop(obniz){
+    if (!obniz.ble!.isInitialized) return;
+    const peripherals = await obniz.ble.scan.startAllWait(null, {
+      duration : 20
+    });
+    console.log(`obniz ${obniz.id} によって検出された BLE デバイス数=${peripherals.length}`)
+  }
+
 }
+
+const app = new App({
+  appToken: process.env.APPTOKEN,
+  workerClass: MyWorker,
+  instanceType: AppInstanceType.Master,
+  obnizClass: Obniz
+})
+
+app.start();
 ```
 
-## Lisence
-See [LICENSE.txt](./LICENSE.txt)
+</details>
 
-## Contribute
+<details>
+<summary><b>🌡️ 温度監視</b></summary>
 
-[Contribution](./devtools/docs/README.md)
+```typescript
+import Obniz from 'obniz';
+
+const obniz = new Obniz("0000-0000", { access_token: "token_xxxxxxxxxxxxxxxx" });
+
+obniz.onconnect = async (): Promise<void> => {
+  const tempSensor = obniz.wired("LM35DZ", { gnd: 0, output: 1, vcc: 2 });
+  
+  setInterval(async (): Promise<void> => {
+    const temp = await tempSensor.getWait();
+    console.log(`温度: ${temp.toFixed(1)}°C`);
+    obniz.display.clear();
+    obniz.display.print(`${temp.toFixed(1)} C`);
+  }, 1000);
+};
+```
+
+</details>
+
+<details>
+<summary><b>📡 Express.js API サーバー</b></summary>
+
+```typescript
+import Obniz from 'obniz';
+import express, { Request, Response } from 'express';
+
+const app = express();
+const obniz = new Obniz("0000-0000", { access_token: "token_xxxxxxxxxxxxxxxx" });
+
+let led: ReturnType<typeof obniz.wired<"LED">> | null = null;
+
+obniz.onconnect = async (): Promise<void> => {
+  led = obniz.wired("LED", { anode: 0, cathode: 1 });
+  console.log('obniz が接続されました');
+};
+
+app.get('/led/on', (req: Request, res: Response): void => {
+  if (led) {
+    led.on();
+    res.json({ status: 'LED がオンになりました' });
+  } else {
+    res.status(503).json({ error: 'デバイスが接続されていません' });
+  }
+});
+
+app.get('/led/off', (req: Request, res: Response): void => {
+  if (led) {
+    led.off();
+    res.json({ status: 'LED がオフになりました' });
+  } else {
+    res.status(503).json({ error: 'デバイスが接続されていません' });
+  }
+});
+
+app.listen(3000, (): void => {
+  console.log('サーバーが起動しました: http://localhost:3000');
+});
+```
+
+</details>
+
+## 🔧 コア機能
+
+### 接続ライフサイクル
+
+```typescript
+import Obniz from 'obniz';
+
+const obniz = new Obniz("0000-0000", { access_token: "token_xxxxxxxxxxxxxxxx" });
+
+obniz.onconnect = async (): Promise<void> => {
+  // 接続成功時に呼ばれる
+  obniz.display.print("接続しました!");
+};
+
+obniz.onloop = async (): Promise<void> => {
+  // 接続中に継続的に呼ばれる
+};
+
+obniz.onclose = async (): Promise<void> => {
+  // 接続が切断された時に呼ばれる
+  console.log('接続が切断されました');
+};
+```
+
+### GPIO と周辺機器
+
+```typescript
+import Obniz from 'obniz';
+
+const obniz = new Obniz("0000-0000", { access_token: "token_xxxxxxxxxxxxxxxx" });
+
+obniz.onconnect = async (): Promise<void> => {
+  // デジタル I/O
+  obniz.io0.drive("5v");
+  obniz.io0.output(true);
+  
+  // アナログ入力
+  obniz.ad3.start((voltage: number): void => {
+    console.log(`電圧: ${voltage}V`);
+  });
+
+  // PWM
+  const pwm = obniz.getFreePwm();
+  pwm.start({ io: 4 });
+  pwm.freq(1000);
+  pwm.duty(50);
+
+  // UART
+  const uart = obniz.getFreeUart();
+  uart.start({ tx: 5, rx: 6, baud: 9600 });
+  uart.send("Hello");
+};
+```
+
+## 🧩 パーツライブラリ
+
+100以上の事前構築コンポーネントがすぐに使えます。[ライブラリ全体を見る →](https://obniz.com/sdk/parts/)
+
+| カテゴリ | 例 |
+|----------|----------|
+| 💡 **LED とディスプレイ** | LED、OLED、LCD、7セグメント |
+| 🔊 **センサー** | 温度、湿度、距離、モーション |
+| ⚙️ **モーター** | サーボ、DC モーター、ステッピング |
+| 📡 **通信** | Bluetooth、GPS、RFID |
+
+**例: 距離センサー (HC-SR04)**
+
+```typescript
+import Obniz from 'obniz';
+
+const obniz = new Obniz("0000-0000");
+
+obniz.onconnect = async (): Promise<void> => {
+  const hcsr04 = obniz.wired("HC-SR04", { gnd: 0, echo: 1, trigger: 2, vcc: 3 });
+  hcsr04.unit("inch");
+  
+  hcsr04.measure((distance: number): void => {
+    console.log(`距離: ${distance} インチ`);
+  });
+};
+```
+
+## 📚 ドキュメント
+
+| リソース | 説明 |
+|----------|-------------|
+| [📖 ガイド](https://docs.obniz.io/ja/guides/) | ステップバイステップのチュートリアル |
+| [📘 APIリファレンス](https://obniz.github.io/obniz/obnizjs/index.html) | 完全なクラスドキュメント |
+| [🔌 パーツライブラリ](https://obniz.com/sdk/parts/) | コンポーネントドキュメント |
+| [💻 サンプル](./examples) | サンプルプロジェクト |
+
+## 🛠️ 必要環境
+
+- **Node.js**: 10.23.0 以上
+- **TypeScript**: 4.0 以上（推奨）
+
+## 🤝 コントリビューション
+
+コントリビューションを歓迎します！詳細については[コントリビューションガイド](./devtools/docs/README.md)をご覧ください。
+
+1. リポジトリをフォーク
+2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを開く
+
+## 📄 ライセンス
+
+このプロジェクトは MIT ライセンスの下でライセンスされています - 詳細については [LICENSE.txt](./LICENSE.txt) ファイルを参照してください。
+
+## 🔗 リンク
+
+- [obniz ウェブサイト](https://obniz.com/ja/)
+- [obniz デバイス](https://iot.obniz.com/product-comparison)
+
+---
+
+<div align="center">
+  <p><a href="https://obniz.com/">obniz</a> チームが ❤️ を込めて作成</p>
+  <p>
+    <a href="https://twitter.com/obniz_jp">Twitter</a> •
+    <a href="https://github.com/obniz">GitHub</a>
+  </p>
+</div>
