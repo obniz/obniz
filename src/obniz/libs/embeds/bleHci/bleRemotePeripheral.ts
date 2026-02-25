@@ -1127,6 +1127,8 @@ export class BleRemotePeripheral {
     if (this.advertise_data_rows) return;
 
     this.advertise_data_rows = [];
+    this.advertisingDataRows = {};
+    this.scanResponseDataRows = {};
     if (this.adv_data) {
       for (let i = 0; i < this.adv_data.length; i++) {
         const length = this.adv_data[i];
