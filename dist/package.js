@@ -32,6 +32,7 @@ module.exports = {
     "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule --quiet",
     "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
+    "doc-link-test": "npm run doc && mocha --timeout 60000 test/doc-link-check.js",
     "precommit": "lint-staged && npm run build && git add obniz.js",
     "prepublishOnly": "npm run build",
     "code-quality": "docker run --rm -it -v $PWD:/data/project/ -p 8080:8080 jetbrains/qodana-js:2022.2-eap --show-report",

@@ -46,6 +46,9 @@ jobs:
           max_attempts: 3
           command: npm test
 
+      - name: Doc Link Test
+        run: npm run doc-link-test
+
   slack-notify:
     name: workflow notification to slack
     runs-on: ubuntu-latest
