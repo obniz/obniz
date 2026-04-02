@@ -1,8 +1,28 @@
-const { Converter, ReflectionKind, DeclarationReflection } = require('typedoc');
+const {
+  Converter,
+  ReflectionKind,
+  DeclarationReflection,
+  RendererEvent,
+} = require('typedoc');
 
 exports.load = (app) => {
   app.converter.on(Converter.EVENT_RESOLVE_BEGIN, (context) => {
     mergeModules(context.project);
+  });
+
+  // GitHub Pages (Linux) is case-sensitive, and git on macOS doesn't track
+  // filename case changes. Lowercase all URLs so they stay consistent
+  // across platforms regardless of reflection name casing.
+  app.renderer.on(RendererEvent.BEGIN, (event) => {
+    for (const mapping of event.urls) {
+      mapping.url = mapping.url.toLowerCase();
+      mapping.model.url = mapping.url;
+    }
+    for (const ref of Object.values(event.project.reflections)) {
+      if (ref.url) {
+        ref.url = ref.url.toLowerCase();
+      }
+    }
   });
 };
 

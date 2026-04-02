@@ -124,6 +124,7 @@ module.exports = {
     "lint-js": "eslint --fix './**/*.js' --rulesdir devtools/eslint/rule --quiet",
     "lint-ts": "eslint --fix 'src/**/*.ts' 'test/**/*.ts' --rulesdir devtools/eslint/rule  --quiet",
     "lint-test": "mocha $NODE_DEBUG_OPTION ./devtools/eslint/test/**/*.js",
+    "doc-link-test": "npm run doc && mocha --timeout 60000 test/doc-link-check.js",
     "precommit": "lint-staged && npm run build && git add obniz.js",
     "prepublishOnly": "npm run build",
     "code-quality": "docker run --rm -it -v $PWD:/data/project/ -p 8080:8080 jetbrains/qodana-js:2022.2-eap --show-report",
@@ -9488,6 +9489,8 @@ class BleRemotePeripheral {
         if (this.advertise_data_rows)
             return;
         this.advertise_data_rows = [];
+        this.advertisingDataRows = {};
+        this.scanResponseDataRows = {};
         if (this.adv_data) {
             for (let i = 0; i < this.adv_data.length; i++) {
                 const length = this.adv_data[i];
