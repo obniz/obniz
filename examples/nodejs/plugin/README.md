@@ -58,7 +58,7 @@ end
 
 -- OS
 os.getTick(); -- system tick in msec 
-os.getUnix(); -- get seconds from 1970/1/1. you must adjust time by calling pingWait();
+os.getUnixTime(); -- get seconds from 1970/1/1. you must adjust time by calling pingWait();
 os.log("hello world");
 os.wait(1000); -- 1,000msec wait
 os.reboot();
