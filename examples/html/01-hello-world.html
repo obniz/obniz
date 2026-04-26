@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>obniz | Hello World</title>
+  <script src="https://unpkg.com/obniz/obniz.js" crossorigin="anonymous"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 40px auto; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    #status { margin-top: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>obniz Hello World</h1>
+  <p>obnizのディスプレイに文字を表示します。</p>
+
+  <label>obniz ID
+    <input id="obnizId" placeholder="0000-0000" />
+  </label>
+
+  <p>
+    <label>Message
+      <input id="message" value="Hello!" />
+    </label>
+  </p>
+
+  <button id="send" disabled>Send to display</button>
+  <div id="status">Enter your obniz ID to connect.</div>
+
+  <script>
+    const idInput = document.getElementById('obnizId');
+    const messageInput = document.getElementById('message');
+    const sendBtn = document.getElementById('send');
+    const status = document.getElementById('status');
+
+    let obniz = null;
+
+    idInput.addEventListener('change', () => {
+      if (obniz) obniz.close();
+
+      obniz = new Obniz(idInput.value);
+      status.textContent = 'connecting...';
+
+      obniz.onconnect = async () => {
+        status.textContent = `connected to ${obniz.id}`;
+        sendBtn.disabled = false;
+        obniz.display.clear();
+        obniz.display.print('Hello, World!');
+      };
+
+      obniz.onclose = () => {
+        status.textContent = 'disconnected';
+        sendBtn.disabled = true;
+      };
+    });
+
+    sendBtn.addEventListener('click', () => {
+      obniz.display.clear();
+      obniz.display.print(messageInput.value);
+    });
+  </script>
+</body>
+</html>
