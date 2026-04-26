@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>obniz | Onboard Switch</title>
+  <script src="https://unpkg.com/obniz/obniz.js" crossorigin="anonymous"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 40px auto; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    .state {
+      margin-top: 24px;
+      padding: 32px;
+      text-align: center;
+      font-size: 48px;
+      border-radius: 8px;
+      background: #f3f3f3;
+      transition: background 0.15s;
+    }
+    .state.push { background: #ffd966; }
+    .state.left { background: #b6d7a8; }
+    .state.right { background: #a4c2f4; }
+    #status { margin-top: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Onboard Switch</h1>
+  <p>obniz Boardのスライドスイッチの状態をリアルタイムに表示します。</p>
+
+  <label>obniz ID
+    <input id="obnizId" placeholder="0000-0000" />
+  </label>
+
+  <div id="state" class="state">—</div>
+  <div id="status">Enter your obniz ID to connect.</div>
+
+  <script>
+    const idInput = document.getElementById('obnizId');
+    const stateBox = document.getElementById('state');
+    const status = document.getElementById('status');
+
+    let obniz = null;
+
+    idInput.addEventListener('change', () => {
+      if (obniz) obniz.close();
+
+      obniz = new Obniz(idInput.value);
+      status.textContent = 'connecting...';
+
+      obniz.onconnect = async () => {
+        status.textContent = `connected to ${obniz.id}`;
+        obniz.switch.onchange = (state) => {
+          stateBox.textContent = state;
+          stateBox.className = `state ${state}`;
+        };
+      };
+
+      obniz.onclose = () => {
+        status.textContent = 'disconnected';
+      };
+    });
+  </script>
+</body>
+</html>
