@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>obniz | Servo Slider</title>
+  <script src="https://unpkg.com/obniz/obniz.js" crossorigin="anonymous"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 40px auto; }
+    input[type=text] { width: 100%; padding: 8px; box-sizing: border-box; }
+    input[type=range] { width: 100%; margin: 24px 0 8px; }
+    .angle { font-size: 48px; text-align: center; font-variant-numeric: tabular-nums; }
+    #status { margin-top: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Servo Slider</h1>
+  <p>スライダーでサーボの角度を制御します。配線: <code>gnd: io0 / vcc: io1 / signal: io2</code>。</p>
+
+  <label>obniz ID
+    <input type="text" id="obnizId" placeholder="0000-0000" />
+  </label>
+
+  <input type="range" id="slider" min="0" max="180" value="90" disabled />
+  <div class="angle"><span id="angle">90</span>°</div>
+
+  <div id="status">Enter your obniz ID to connect.</div>
+
+  <script>
+    const idInput = document.getElementById('obnizId');
+    const slider = document.getElementById('slider');
+    const angleLabel = document.getElementById('angle');
+    const status = document.getElementById('status');
+
+    let obniz = null;
+    let servo = null;
+
+    idInput.addEventListener('change', () => {
+      if (obniz) obniz.close();
+
+      obniz = new Obniz(idInput.value);
+      status.textContent = 'connecting...';
+
+      obniz.onconnect = async () => {
+        status.textContent = `connected to ${obniz.id}`;
+        servo = obniz.wired('ServoMotor', { gnd: 0, vcc: 1, signal: 2 });
+        slider.disabled = false;
+        servo.angle(Number(slider.value));
+      };
+
+      obniz.onclose = () => {
+        status.textContent = 'disconnected';
+        slider.disabled = true;
+      };
+    });
+
+    slider.addEventListener('input', () => {
+      const angle = Number(slider.value);
+      angleLabel.textContent = angle;
+      if (servo) servo.angle(angle);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>obniz | LED Button</title>
+  <script src="https://unpkg.com/obniz/obniz.js" crossorigin="anonymous"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 40px auto; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    .row { display: flex; gap: 12px; margin-top: 16px; }
+    button { flex: 1; padding: 16px; font-size: 18px; cursor: pointer; }
+    #status { margin-top: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>LED Button</h1>
+  <p>画面のボタンでLEDをON/OFFします。LEDは <code>anode: io0 / cathode: io1</code> に配線してください。</p>
+
+  <label>obniz ID
+    <input id="obnizId" placeholder="0000-0000" />
+  </label>
+
+  <div class="row">
+    <button id="on" disabled>ON</button>
+    <button id="off" disabled>OFF</button>
+    <button id="blink" disabled>Blink</button>
+  </div>
+
+  <div id="status">Enter your obniz ID to connect.</div>
+
+  <script>
+    const idInput = document.getElementById('obnizId');
+    const status = document.getElementById('status');
+    const onBtn = document.getElementById('on');
+    const offBtn = document.getElementById('off');
+    const blinkBtn = document.getElementById('blink');
+
+    let obniz = null;
+    let led = null;
+
+    idInput.addEventListener('change', () => {
+      if (obniz) obniz.close();
+
+      obniz = new Obniz(idInput.value);
+      status.textContent = 'connecting...';
+
+      obniz.onconnect = async () => {
+        status.textContent = `connected to ${obniz.id}`;
+        led = obniz.wired('LED', { anode: 0, cathode: 1 });
+        [onBtn, offBtn, blinkBtn].forEach((b) => (b.disabled = false));
+      };
+
+      obniz.onclose = () => {
+        status.textContent = 'disconnected';
+        [onBtn, offBtn, blinkBtn].forEach((b) => (b.disabled = true));
+      };
+    });
+
+    onBtn.addEventListener('click', () => led.on());
+    offBtn.addEventListener('click', () => led.off());
+    blinkBtn.addEventListener('click', () => led.blink(500));
+  </script>
+</body>
+</html>
