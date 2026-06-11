@@ -84,9 +84,13 @@ export class MCP23S08 {
    * @returns readed value of address
    */
   public async readWait(address: number) {
-    await this.spi.writeWait([this.readSlaveAddress, address]);
-    const ret = await this.spi.writeWait([0x00]);
-    return ret[0];
+    // opcode + address + dummy must be one transaction (CS held low)
+    const ret = await this.spi.writeWait([
+      this.readSlaveAddress,
+      address,
+      0x00,
+    ]);
+    return ret[2];
   }
 
   /**

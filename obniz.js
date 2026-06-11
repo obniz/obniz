@@ -17771,9 +17771,13 @@ class MCP23S08 {
      * @returns readed value of address
      */
     async readWait(address) {
-        await this.spi.writeWait([this.readSlaveAddress, address]);
-        const ret = await this.spi.writeWait([0x00]);
-        return ret[0];
+        // opcode + address + dummy must be one transaction (CS held low)
+        const ret = await this.spi.writeWait([
+            this.readSlaveAddress,
+            address,
+            0x00,
+        ]);
+        return ret[2];
     }
     /**
      * Write byte to address. It will wait until success response receive
