@@ -22,7 +22,9 @@ function init()
 
   -- Kilo Internal Shared SPI for MCP23S08
   io.retain(8, true); -- CLK
+  os.log(spi.isUsed() and "spi is used" or "spi is not used");
   local err = spi.start(20, 21, 19, 8, 100 * 1000); -- MOSI, MISO, CLK, CS(could be null for non shared SPI), baudrate
+  os.log(spi.isUsed() and "spi is used" or "spi is not used");
   if err > 0 then
     os.log("SPI Error: " .. err);
     return

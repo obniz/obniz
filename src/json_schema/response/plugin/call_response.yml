@@ -1,0 +1,23 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/plugin/call_response"
+
+type: object
+required: [call_response]
+properties:
+  call_response:
+    type: object
+    required: [id, status]
+    properties:
+      id:
+        type: integer
+        description: "transaction id of the matching callWait request"
+      status:
+        type: integer
+        description: "0 when Lua finished successfully, 1 on error"
+        example: 0
+      result:
+        type: string
+        description: "value returned by the Lua script (or error message)"
+        example: "hello from lua"

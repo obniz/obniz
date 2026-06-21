@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/plugin/error"
+
+type: object
+required: [error]
+properties:
+  error:
+    type: object
+    required: [message]
+    additionalProperties: true
+    properties:
+      message:
+        type: string
+        example: "[string \"e\"]:1: syntax error near 'FAILED'"

@@ -347,6 +347,8 @@ var map = {
 	"./request/motion/deinit.yml": "./dist/src/json_schema/request/motion/deinit.yml",
 	"./request/motion/index.yml": "./dist/src/json_schema/request/motion/index.yml",
 	"./request/motion/init.yml": "./dist/src/json_schema/request/motion/init.yml",
+	"./request/plugin/call_request.yml": "./dist/src/json_schema/request/plugin/call_request.yml",
+	"./request/plugin/cloud_transaction_response.yml": "./dist/src/json_schema/request/plugin/cloud_transaction_response.yml",
 	"./request/plugin/exec_lua.yml": "./dist/src/json_schema/request/plugin/exec_lua.yml",
 	"./request/plugin/index.yml": "./dist/src/json_schema/request/plugin/index.yml",
 	"./request/plugin/reload_lua.yml": "./dist/src/json_schema/request/plugin/reload_lua.yml",
@@ -453,6 +455,9 @@ var map = {
 	"./response/motion/index.yml": "./dist/src/json_schema/response/motion/index.yml",
 	"./response/motion/recognition.yml": "./dist/src/json_schema/response/motion/recognition.yml",
 	"./response/motion/temperature.yml": "./dist/src/json_schema/response/motion/temperature.yml",
+	"./response/plugin/call_response.yml": "./dist/src/json_schema/response/plugin/call_response.yml",
+	"./response/plugin/cloud_transaction_request.yml": "./dist/src/json_schema/response/plugin/cloud_transaction_request.yml",
+	"./response/plugin/error.yml": "./dist/src/json_schema/response/plugin/error.yml",
 	"./response/plugin/frame.yml": "./dist/src/json_schema/response/plugin/frame.yml",
 	"./response/plugin/index.yml": "./dist/src/json_schema/response/plugin/index.yml",
 	"./response/plugin/receive.yml": "./dist/src/json_schema/response/plugin/receive.yml",
@@ -1075,6 +1080,20 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/request/plugin/call_request.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin/call_request","desccription":"Run Lua and wait for its result (obniz.plugin.callWait)","type":"object","required":["call_request"],"properties":{"call_request":{"type":"object","required":["id","lua"],"properties":{"id":{"type":"integer","minimum":0,"maximum":4294967295},"lua":{"type":"string"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/request/plugin/cloud_transaction_response.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin/cloud_transaction_response","desccription":"Response to a cloud transaction requested by Lua (cloud.transactionWait)","type":"object","required":["cloud_transaction_response"],"properties":{"cloud_transaction_response":{"type":"object","required":["id","success"],"properties":{"id":{"type":"integer","minimum":0,"maximum":4294967295},"success":{"type":"boolean"},"result":{"type":"string","default":""}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/request/plugin/exec_lua.yml":
 /***/ (function(module, exports) {
 
@@ -1085,7 +1104,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/req
 /***/ "./dist/src/json_schema/request/plugin/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin","basePath":"plugin","anyOf":[{"$ref":"/request/plugin/send"},{"$ref":"/request/plugin/exec_lua"},{"$ref":"/request/plugin/reload_lua"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/request/plugin","basePath":"plugin","anyOf":[{"$ref":"/request/plugin/send"},{"$ref":"/request/plugin/exec_lua"},{"$ref":"/request/plugin/reload_lua"},{"$ref":"/request/plugin/call_request"},{"$ref":"/request/plugin/cloud_transaction_response"}]}
 
 /***/ }),
 
@@ -1817,6 +1836,27 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 
 /***/ }),
 
+/***/ "./dist/src/json_schema/response/plugin/call_response.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/call_response","type":"object","required":["call_response"],"properties":{"call_response":{"type":"object","required":["id","status"],"properties":{"id":{"type":"integer"},"status":{"type":"integer"},"result":{"type":"string"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/plugin/cloud_transaction_request.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/cloud_transaction_request","type":"object","required":["cloud_transaction_request"],"properties":{"cloud_transaction_request":{"type":"object","required":["id","data"],"properties":{"id":{"type":"integer"},"data":{"$ref":"/dataArray"}}}}}
+
+/***/ }),
+
+/***/ "./dist/src/json_schema/response/plugin/error.yml":
+/***/ (function(module, exports) {
+
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin/error","type":"object","required":["error"],"properties":{"error":{"type":"object","required":["message"],"additionalProperties":true,"properties":{"message":{"type":"string"}}}}}
+
+/***/ }),
+
 /***/ "./dist/src/json_schema/response/plugin/frame.yml":
 /***/ (function(module, exports) {
 
@@ -1827,7 +1867,7 @@ module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/res
 /***/ "./dist/src/json_schema/response/plugin/index.yml":
 /***/ (function(module, exports) {
 
-module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin","basePath":"plugin","anyOf":[{"$ref":"/response/plugin/receive"},{"$ref":"/response/plugin/frame"}]}
+module.exports = {"$schema":"http://json-schema.org/draft-04/schema#","id":"/response/plugin","basePath":"plugin","anyOf":[{"$ref":"/response/plugin/receive"},{"$ref":"/response/plugin/frame"},{"$ref":"/response/plugin/error"},{"$ref":"/response/plugin/call_response"},{"$ref":"/response/plugin/cloud_transaction_request"}]}
 
 /***/ }),
 
@@ -17771,9 +17811,13 @@ class MCP23S08 {
      * @returns readed value of address
      */
     async readWait(address) {
-        await this.spi.writeWait([this.readSlaveAddress, address]);
-        const ret = await this.spi.writeWait([0x00]);
-        return ret[0];
+        // opcode + address + dummy must be one transaction (CS held low)
+        const ret = await this.spi.writeWait([
+            this.readSlaveAddress,
+            address,
+            0x00,
+        ]);
+        return ret[2];
     }
     /**
      * Write byte to address. It will wait until success response receive
@@ -20998,6 +21042,8 @@ const semver_1 = __importDefault(__webpack_require__("./node_modules/semver/semv
 const util_1 = __webpack_require__("./dist/src/obniz/libs/utils/util.js");
 class Plugin {
     constructor(obniz, id) {
+        this._callTransactionId = 0;
+        this._pendingCalls = {};
         this.Obniz = obniz;
     }
     /**
@@ -21054,6 +21100,49 @@ class Plugin {
         this.Obniz.send({ plugin: { exec_lua: lua_script } });
     }
     /**
+     * Executing Lua on target device and wait for its returned value.
+     *
+     * The Lua script is run inside a coroutine on the device. Whatever the script
+     * `return`s (as a string) is resolved here. If the script raises an error, the
+     * returned Promise is rejected with that error message.
+     *
+     * The Lua side may itself call `cloud.transactionWait(...)` while running,
+     * which is delivered to {@link Plugin.onCloudTransaction}.
+     *
+     * ```javascript
+     * // Javascript Example
+     * const result = await obniz.plugin.callWait(`return "hello from lua"`);
+     * console.log(result); // "hello from lua"
+     * ```
+     *
+     * @param lua_script Lua script to be run on target device
+     * @param timeout timeout in milliseconds (default 30000)
+     */
+    callWait(lua_script, timeout = 30 * 1000) {
+        // Require firmware 7.1 or later. Compare by major/minor so prereleases
+        // (e.g. 7.1.0-beta.0) are also accepted.
+        const major = semver_1.default.major(this.Obniz.firmware_ver);
+        const minor = semver_1.default.minor(this.Obniz.firmware_ver);
+        if (major < 7 || (major === 7 && minor < 1)) {
+            throw new Error(`Please update obniz firmware >= 7.1.0`);
+        }
+        if (typeof lua_script !== 'string') {
+            throw new Error(`Lua Script must be a string`);
+        }
+        const id = this._getNextTransactionId();
+        return new Promise((resolve, reject) => {
+            let timer = null;
+            if (timeout > 0) {
+                timer = setTimeout(() => {
+                    delete this._pendingCalls[id];
+                    reject(new Error(`obniz.plugin.callWait() timed out`));
+                }, timeout);
+            }
+            this._pendingCalls[id] = { resolve, reject, timer };
+            this.Obniz.send({ plugin: { call_request: { id, lua: lua_script } } });
+        });
+    }
+    /**
      * Executing Lua on target device and save to it's flash memory.
      *
      * ```javascript
@@ -21074,7 +21163,15 @@ class Plugin {
      * @private
      */
     _reset() {
-        // do nothing.
+        // Reject all in-flight callWait() promises since the connection was reset.
+        for (const id of Object.keys(this._pendingCalls)) {
+            const pending = this._pendingCalls[id];
+            if (pending.timer) {
+                clearTimeout(pending.timer);
+            }
+            pending.reject(new Error(`obniz.plugin.callWait() aborted by reset`));
+        }
+        this._pendingCalls = {};
     }
     /**
      * @ignore
@@ -21096,6 +21193,88 @@ class Plugin {
                 this.Obniz._runUserCreatedFunction(this.onFrameEnd);
             }
         }
+        else if (obj.error) {
+            this.Obniz._runUserCreatedFunction(this.onError, obj.error);
+        }
+        else if (obj.call_response) {
+            this._onCallResponse(obj.call_response);
+        }
+        else if (obj.cloud_transaction_request) {
+            this._handleCloudTransactionWait(obj.cloud_transaction_request);
+        }
+    }
+    _getNextTransactionId() {
+        this._callTransactionId = (this._callTransactionId + 1) >>> 0;
+        if (this._callTransactionId === 0) {
+            this._callTransactionId = 1;
+        }
+        return this._callTransactionId;
+    }
+    _onCallResponse(res) {
+        const pending = this._pendingCalls[res.id];
+        if (!pending) {
+            return;
+        }
+        delete this._pendingCalls[res.id];
+        if (pending.timer) {
+            clearTimeout(pending.timer);
+        }
+        if (res.status === 0) {
+            pending.resolve(res.result);
+        }
+        else {
+            pending.reject(new Error(res.result || `Lua error`));
+        }
+    }
+    async _handleCloudTransactionWait(req) {
+        const string = util_1.ObnizUtil.dataArray2string(req.data) || '';
+        if (typeof this.onCloudTransaction !== 'function') {
+            // No handler registered. Report failure so Lua does not hang until timeout.
+            this.Obniz.send({
+                plugin: {
+                    cloud_transaction_response: {
+                        id: req.id,
+                        success: false,
+                        result: `no onCloudTransaction handler`,
+                    },
+                },
+            });
+            return;
+        }
+        let success = true;
+        let result = '';
+        try {
+            const ret = await this.onCloudTransaction(req.data, string);
+            result = this._transactionResultToString(ret);
+        }
+        catch (e) {
+            success = false;
+            result = e instanceof Error ? e.message : `${e}`;
+        }
+        this.Obniz.send({
+            plugin: {
+                cloud_transaction_response: {
+                    id: req.id,
+                    success,
+                    result,
+                },
+            },
+        });
+    }
+    _transactionResultToString(ret) {
+        if (ret === undefined || ret === null) {
+            return '';
+        }
+        if (typeof ret === 'string') {
+            return ret;
+        }
+        if (this.Obniz.isNode && ret instanceof Buffer) {
+            return ret.toString('utf8');
+        }
+        if (Array.isArray(ret)) {
+            return Buffer.from(ret).toString('utf8');
+        }
+        return `${ret}`;
     }
 }
 exports.Plugin = Plugin;
@@ -26369,6 +26548,15 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
         this._CommandFrame = 2;
         this._CommandExec = 3;
         this._CommandDirective = 4;
+        this._CommandLuaError = 5;
+        // JS -> device: run lua and return the result (obniz.plugin.callWait)
+        this._CommandCallRequest = 6;
+        // device -> JS: result of a call request
+        this._CommandCallResponse = 7;
+        // device -> JS: lua asked the cloud to run a transaction (cloud.transactionWait)
+        this._CommandCloudTransactionRequest = 8;
+        // JS -> device: response to a cloud transaction
+        this._CommandCloudTransactionResponse = 9;
     }
     send(params, index) {
         const buf = new Uint8Array(params.send);
@@ -26386,6 +26574,29 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
             this.sendCommand(this._CommandDirective, buf);
         }
     }
+    call_request(json) {
+        const { id, lua } = json.call_request;
+        const luaBuf = Buffer.from(lua, 'utf8');
+        const buf = new Uint8Array(4 + luaBuf.length);
+        buf[0] = (id >>> 24) & 0xff;
+        buf[1] = (id >>> 16) & 0xff;
+        buf[2] = (id >>> 8) & 0xff;
+        buf[3] = id & 0xff;
+        buf.set(luaBuf, 4);
+        this.sendCommand(this._CommandCallRequest, buf);
+    }
+    cloud_transaction_response(json) {
+        const { id, success, result } = json.cloud_transaction_response;
+        const resultBuf = Buffer.from(result || '', 'utf8');
+        const buf = new Uint8Array(5 + resultBuf.length);
+        buf[0] = (id >>> 24) & 0xff;
+        buf[1] = (id >>> 16) & 0xff;
+        buf[2] = (id >>> 8) & 0xff;
+        buf[3] = id & 0xff;
+        buf[4] = success ? 1 : 0;
+        buf.set(resultBuf, 5);
+        this.sendCommand(this._CommandCloudTransactionResponse, buf);
+    }
     parseFromJson(json) {
         const module = json.plugin;
         if (module === undefined) {
@@ -26395,6 +26606,11 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
             { uri: '/request/plugin/send', onValid: this.send },
             { uri: '/request/plugin/exec_lua', onValid: this.exec_lua },
             { uri: '/request/plugin/reload_lua', onValid: this.reload_lua },
+            { uri: '/request/plugin/call_request', onValid: this.call_request },
+            {
+                uri: '/request/plugin/cloud_transaction_response',
+                onValid: this.cloud_transaction_response,
+            },
         ];
         const res = this.validateCommandSchema(schemaData, module, 'plugin');
         if (res.valid === 0) {
@@ -26444,6 +26660,56 @@ class WSCommandPlugin extends WSCommandAbstract_1.WSCommandAbstract {
                         },
                     };
                 }
+                break;
+            }
+            case this._CommandLuaError: {
+                const errorMessage = new TextDecoder().decode(payload);
+                objToSend.plugin = {
+                    error: {
+                        message: errorMessage,
+                    },
+                };
+                break;
+            }
+            case this._CommandCallResponse: {
+                // [4B transaction_id BE][1B status][result]
+                if (payload.length < 5) {
+                    break;
+                }
+                const id = (payload[0] << 24) |
+                    (payload[1] << 16) |
+                    (payload[2] << 8) |
+                    payload[3];
+                const status = payload[4];
+                const result = new TextDecoder().decode(payload.slice(5));
+                objToSend.plugin = {
+                    call_response: {
+                        id: id >>> 0,
+                        status,
+                        result,
+                    },
+                };
+                break;
+            }
+            case this._CommandCloudTransactionRequest: {
+                // [4B transaction_id BE][data]
+                if (payload.length < 4) {
+                    break;
+                }
+                const id = (payload[0] << 24) |
+                    (payload[1] << 16) |
+                    (payload[2] << 8) |
+                    payload[3];
+                const data = new Array(payload.byteLength - 4);
+                for (let i = 0; i < data.length; i++) {
+                    data[i] = payload[i + 4];
+                }
+                objToSend.plugin = {
+                    cloud_transaction_request: {
+                        id: id >>> 0,
+                        data,
+                    },
+                };
                 break;
             }
         }

@@ -1,0 +1,22 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/plugin/call_request"
+desccription: "Run Lua and wait for its result (obniz.plugin.callWait)"
+
+type: object
+required: [call_request]
+properties:
+  call_request:
+    type: object
+    required: [id, lua]
+    properties:
+      id:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+        description: "transaction id which response will carry back"
+      lua:
+        type: string
+        description: "Lua script to be run on target device"
+        example: "return 'hello'"

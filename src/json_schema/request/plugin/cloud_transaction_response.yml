@@ -1,0 +1,26 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/request/plugin/cloud_transaction_response"
+desccription: "Response to a cloud transaction requested by Lua (cloud.transactionWait)"
+
+type: object
+required: [cloud_transaction_response]
+properties:
+  cloud_transaction_response:
+    type: object
+    required: [id, success]
+    properties:
+      id:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+        description: "transaction id which Lua is waiting on"
+      success:
+        type: boolean
+        description: "whether the transaction succeeded"
+        example: true
+      result:
+        type: string
+        default: ""
+        description: "result string passed back to Lua"
