@@ -145,7 +145,10 @@ module.exports = {
   "keywords": [
     "obniz"
   ],
-  "repository": "obniz/obniz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/obniz/obniz.git"
+  },
   "author": "obniz Inc. <supportteam@obniz.com>",
   "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
