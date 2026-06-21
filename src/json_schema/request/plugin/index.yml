@@ -9,3 +9,5 @@ description: "plugin command"
   - {$ref: "/request/plugin/send"}
   - {$ref: "/request/plugin/exec_lua"}
   - {$ref: "/request/plugin/reload_lua"}
+  - {$ref: "/request/plugin/call_request"}
+  - {$ref: "/request/plugin/cloud_transaction_response"}

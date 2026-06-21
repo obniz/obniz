@@ -9,21 +9,13 @@ if (typeof process.env.OBNIZ_ID !== "string") {
 const obniz = new Obniz(process.env.OBNIZ_ID, { local_connect: false });
 
 const luaFilePath = path.join(__dirname, 'script.lua');
-const luaBuffer = fs.readFileSync(luaFilePath);
+const luaScript = fs.readFileSync(luaFilePath, 'utf8');
 
 console.log("connecting");
 obniz.onconnect = async () => {
   console.log("connected");
 
-  obniz.plugin!.onreceive = (data) => {
-    console.log(`received=${Buffer.from(data).toString()}`);
-  };
-
-  obniz.plugin!.onError = (error) => {
-    console.log(`error occurred: ${error.message}`);
-  }
-
-  // WARNING: This is not needed every time. just onece.
-  obniz.storage!.savePluginLua(luaBuffer);
-  obniz.plugin!.reloadLua();
+  // Run the Lua instantly. Unlike savePluginLua/reloadLua this does not use
+  // storage, so it also works on obniz Board.
+  obniz.plugin!.execLua(luaScript);
 };

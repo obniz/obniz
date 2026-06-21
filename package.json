@@ -1,6 +1,6 @@
 {
   "name": "obniz",
-  "version": "4.0.0",
+  "version": "4.1.0-beta.0",
   "description": "obniz sdk for javascript",
   "main": "./dist/src/obniz/index.js",
   "types": "./dist/src/obniz/index.d.ts",
@@ -53,7 +53,10 @@
   "keywords": [
     "obniz"
   ],
-  "repository": "obniz/obniz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/obniz/obniz.git"
+  },
   "author": "obniz Inc. <supportteam@obniz.com>",
   "homepage": "https://obniz.com/",
   "license": "SEE LICENSE IN LICENSE.txt",
