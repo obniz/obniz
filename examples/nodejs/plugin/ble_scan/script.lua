@@ -8,14 +8,16 @@ local function tohex(data)
 end
 
 function onFind(peripheral)
-  os.log("found\n addr: " .. tohex(peripheral.address) .. "\n rssi:" .. tostring(peripheral.rssi) .. "\n data:" .. tohex(peripheral.advData));
+  local found = "found\n addr: " .. tohex(peripheral.address) .. "\n rssi:" .. tostring(peripheral.rssi) .. "\n data:" .. tohex(peripheral.advData) .. "\n scanResp:" .. tostring(peripheral.isScanResp) .. "\n"
+  os.log(found);
+  cloud.pluginSend(found);
 end
 
 local ret = ble.on();
 os.log("ble on ret=" .. tostring(ret));
 
 ret = ble.scanStart(onFind, {
-  active=false,
+  active=true,
   interval=16,
   window=16,
   phy1m=true,
