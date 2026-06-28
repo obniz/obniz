@@ -1,60 +1,60 @@
--- TCP example using the `net` module: send a raw HTTP request and read the reply.
+-- TCP example using the `net` module: open a persistent connection and keep
+-- exchanging data with the server every 3 seconds (HTTP has its own example).
 --
--- net.tcpConnect(host, port[, secure]) -> id | nil, err   (secure = true for TLS)
--- net.tcpWrite(id, data)               -> written | nil, err
--- net.tcpRead(id[, maxlen])            -> data ("" = nothing yet) | nil (closed/error)
--- net.tcpClose(id)
+-- net.tcp.connect(host, port[, secure]) -> id | nil, err   (secure = true for TLS)
+-- net.tcp.write(id, data)               -> written | nil, err
+-- net.tcp.read(id[, maxlen])            -> data ("" = nothing yet) | nil (closed/error)
+-- net.tcp.close(id)
 --
--- tcpRead is non-blocking, so we poll it from on_online_loop.
+-- net.tcp.read is non-blocking, so we poll it from on_online_loop.
+--
+-- HOST/PORT are filled in by index.ts, which runs a local TCP server on this
+-- machine, so running index.ts alone is enough to test end to end.
 
-local state = "idle"
+local HOST = "__SERVER_HOST__"
+local PORT = __SERVER_PORT__
+
 local sock = nil
 local tick = 0
-local total = 0
+local seq = 0
 
 function on_online_loop()
-  if state == "idle" then
+  -- Open the connection once and keep it open.
+  if sock == nil then
     os.log("TCP connecting ...");
-    local id, err = net.tcpConnect("example.com", 80); -- use true as 3rd arg + port 443 for TLS
+    local id, err = net.tcp.connect(HOST, PORT); -- use true as 3rd arg + a TLS port for TLS
     if not id then
       os.log("connect error: " .. (err or "?"));
-      state = "done"
+      sock = -1 -- mark as failed so we do not retry every loop
       return
     end
     sock = id
+    os.log("TCP connected");
+  end
+  if sock == -1 then return end
 
-    local w, werr = net.tcpWrite(sock,
-      "GET / HTTP/1.0\r\nHost: example.com\r\nConnection: close\r\n\r\n");
-    if not w then
-      os.log("write error: " .. (werr or "?"));
-      net.tcpClose(sock);
-      state = "done"
-      return
-    end
-    os.log("request sent (" .. w .. " bytes)");
+  -- send a message every 3 seconds
+  if os.getTick() - tick > 3000 then
     tick = os.getTick()
-    state = "reading"
-
-  elseif state == "reading" then
-    local data = net.tcpRead(sock);
-    if data == nil then
-      -- nil = connection closed by peer (or error): we received everything
-      os.log("TCP closed. total " .. total .. " bytes");
-      net.tcpClose(sock);
-      state = "done"
-    elseif #data > 0 then
-      if total == 0 then
-        os.log("first chunk head: " .. data:sub(1, 80));
-      end
-      total = total + #data
+    seq = seq + 1
+    local msg = "ping " .. seq .. "\n"
+    local w, err = net.tcp.write(sock, msg);
+    if w then
+      os.log("sent: ping " .. seq);
+    else
+      os.log("write error: " .. (err or "?"));
     end
+  end
 
-    -- safety timeout
-    if state == "reading" and os.getTick() - tick > 15000 then
-      os.log("TCP timeout");
-      net.tcpClose(sock);
-      state = "done"
-    end
+  -- poll for incoming data (non-blocking)
+  local data = net.tcp.read(sock);
+  if data == nil then
+    -- nil = connection closed by peer (or error)
+    os.log("TCP closed by server");
+    net.tcp.close(sock);
+    sock = -1
+  elseif #data > 0 then
+    os.log("recv: " .. data:gsub("%s+$", ""));
   end
 end
 
