@@ -53,12 +53,18 @@
         "0": {},
         "1": {}
       }
+    },
+    "canbus": {
+      "units": {
+        "0": {}
+      }
     }
   },
   "embeds": {
     "ble": {
       "extended": true
-    }
+    },
+    "storage": {}
   },
   "protocol": {
     "tcp": {
