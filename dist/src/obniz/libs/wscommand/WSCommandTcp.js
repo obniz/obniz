@@ -23,8 +23,8 @@ class WSCommandTcp extends WSCommandAbstract_1.WSCommandAbstract {
         const domain = new Uint8Array(Buffer.from(params.connect.domain, 'utf8'));
         const buf = new Uint8Array(domain.length + 3);
         buf[0] = index;
-        buf[1] = 0xff && params.connect.port >> 8;
-        buf[2] = 0xff && params.connect.port;
+        buf[1] = 0xff & (params.connect.port >> 8);
+        buf[2] = 0xff & params.connect.port;
         for (let i = 0; i < domain.length; i++) {
             buf[3 + i] = domain[i];
         }
