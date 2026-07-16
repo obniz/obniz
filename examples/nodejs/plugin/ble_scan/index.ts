@@ -15,6 +15,10 @@ console.log("connecting");
 obniz.onconnect = async () => {
   console.log("connected");
 
+  obniz.plugin!.onreceive = (data) => {
+    console.log(Buffer.from(data).toString());
+  }
+
   obniz.storage!.savePluginLua(luaBuffer);
   obniz.plugin!.reloadLua();
 };

@@ -19,6 +19,10 @@ obniz.onconnect = async () => {
     console.log(`received=${Buffer.from(data).toString()}`);
   };
 
+  obniz.plugin!.onError = (error) => {
+    console.log(`error occurred: ${error.message}`);
+  }
+
   // WARNING: This is not needed every time. just onece.
   obniz.storage!.savePluginLua(luaBuffer);
   obniz.plugin!.reloadLua();

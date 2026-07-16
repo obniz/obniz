@@ -1,0 +1,16 @@
+## YAML Template.
+##---
+$schema: http://json-schema.org/draft-04/schema#
+id: "/response/plugin/cloud_transaction_request"
+
+type: object
+required: [cloud_transaction_request]
+properties:
+  cloud_transaction_request:
+    type: object
+    required: [id, data]
+    properties:
+      id:
+        type: integer
+        description: "transaction id that the response must carry back"
+      data: {$ref: "/dataArray"}

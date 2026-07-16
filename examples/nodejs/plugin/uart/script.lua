@@ -6,7 +6,10 @@ local flag = false
 os.log(" - Lua Start");
 io.retain(1, true);
 io.retain(2, true);
+-- You will see "used" when second time.
+os.log(uart.isUsed() and "uart is used" or "uart is not used");
 uart.start(1, 2, 115200); -- tx:io1 rx:io2 baud:115200
+os.log(uart.isUsed() and "uart is used" or "uart is not used");
 uart.send("Hello World");
 
 function on_offline_loop()

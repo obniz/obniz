@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import Obniz from "../../../../"
+import Obniz from "../../../../dist/src/obniz"
 if (typeof process.env.OBNIZ_ID !== "string") {
   throw new Error(`Please set export OBNIZ_ID=your_obniz_id`)
 }
@@ -15,7 +15,10 @@ console.log("connecting");
 obniz.onconnect = async () => {
   console.log("connected");
 
-  // WARNING: This is not needed every time. just onece.
+  obniz.plugin!.onError = (error) => {
+    console.log(`error occurred: ${error.message}`);
+  }
+
   obniz.storage!.savePluginLua(luaBuffer);
   obniz.plugin!.reloadLua();
 };
