@@ -52,6 +52,7 @@ class IntelligentEdgeKiloComponent {
             this.mcp23s08.io4.value = true;
             this.mcp23s08.io5.value = false;
         }
+        this.isDirectionFlashed = false;
     }
     /**
      * Powering on Each Interface.
