@@ -3,9 +3,10 @@
 --
 -- net.http.get(url) -> status, body, headers | nil, err
 --
--- Both http:// and https:// URLs are supported (https uses port 443).
+-- Only http:// URLs are supported. TLS is not available from net, so an
+-- https:// URL returns nil, "https not supported from net; use http://".
 -- NOTE: redirects are NOT followed, so the status may be 301/302 if a site
---       redirects. Use the final URL directly (e.g. the https:// one).
+--       redirects. Use the final URL directly.
 
 local URLS = {
   "http://example.com/",

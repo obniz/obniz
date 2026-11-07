@@ -1,7 +1,7 @@
 -- TCP example using the `net` module: open a persistent connection and keep
 -- exchanging data with the server every 3 seconds (HTTP has its own example).
 --
--- net.tcp.connect(host, port[, secure]) -> id | nil, err   (secure = true for TLS)
+-- net.tcp.connect(host, port)          -> id | nil, err   (plain TCP only; TLS is not supported)
 -- net.tcp.write(id, data)               -> written | nil, err
 -- net.tcp.read(id[, maxlen])            -> data ("" = nothing yet) | nil (closed/error)
 -- net.tcp.close(id)
@@ -22,7 +22,7 @@ function on_online_loop()
   -- Open the connection once and keep it open.
   if sock == nil then
     os.log("TCP connecting ...");
-    local id, err = net.tcp.connect(HOST, PORT); -- use true as 3rd arg + a TLS port for TLS
+    local id, err = net.tcp.connect(HOST, PORT);
     if not id then
       os.log("connect error: " .. (err or "?"));
       sock = -1 -- mark as failed so we do not retry every loop
